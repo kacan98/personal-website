@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import TopBar from "@/components/topBar";
 import SocialIcons from "@/components/socialIcons";
 import FullScreenPicture from "@/components/fullScreenPicture";
+import AnimatedText from "@/components/springingText";
 
 export default function MuiPage() {
   return (
@@ -24,11 +25,25 @@ export default function MuiPage() {
           width: "100%",
           height: "60%",
           opacity: 0.7,
+          flexDirection: "column",
         }}
       >
-        <Typography textAlign={"center"} variant={"h1"}>
-          Karel Čančara
-        </Typography>
+        <Box>
+          <Typography textAlign={"center"} variant={"h1"}>
+            Karel Čančara
+          </Typography>
+        </Box>
+        <Box>
+          <AnimatedText
+            texts={[
+              "Frontend developer",
+              "Web Developer",
+              "Angular Developer",
+              "React Developer",
+              "Scum Master",
+            ]}
+          />
+        </Box>
       </Box>
       <Box
         sx={{
