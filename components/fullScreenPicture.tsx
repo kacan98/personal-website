@@ -20,7 +20,7 @@ function FullScreenPicture() {
           width: "100%",
           height: "100%",
           background:
-            "radial-gradient(circle, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.9) 100%)", // This creates a radial gradient that is lighter in the middle
+            "radial-gradient(circle, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.9) 100%)",
         }}
       />
     </>

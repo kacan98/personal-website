@@ -39,6 +39,7 @@ const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
               height: "100%",
               position: "absolute",
               bgcolor: "background.paper",
+              overflow: "auto",
             }}
           >
             <IconButton
@@ -48,6 +49,7 @@ const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
                 top: 0,
                 padding: 5,
                 margin: 2,
+                zIndex: 100,
               }}
               edge="end"
               color="inherit"
@@ -57,18 +59,7 @@ const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
             >
               <CloseIcon fontSize={"large"} />
             </IconButton>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                boxShadow: 24,
-                p: 4,
-              }}
-            >
-              {children}
-            </Box>
+            {children}
           </Box>
         </Slide>
       </Modal>

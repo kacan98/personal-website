@@ -1,29 +1,16 @@
-import { AppBar, Card, CardContent, Toolbar, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import ModalButton from "@/components/modalButton";
 import { ReactNode } from "react";
+import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 
-const TopBar = () => {
-  const pages: {
+type TopBarProps = {
+  pages: {
     buttonName: string;
     page: ReactNode;
-  }[] = [
-    {
-      buttonName: "Portfolio",
-      page: (
-        <>
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Portfolio</Typography>
-              <Typography variant="body1">
-                This is a portfolio page. It is a simple example of a modal
-                dialog.
-              </Typography>
-            </CardContent>
-          </Card>
-        </>
-      ),
-    },
-  ];
+  }[];
+};
+
+const TopBar = ({ pages }: TopBarProps) => {
   return (
     <AppBar position="static" color={"transparent"}>
       <Toolbar>

@@ -3,6 +3,7 @@ import TopBar from "@/components/topBar";
 import SocialIcons from "@/components/socialIcons";
 import FullScreenPicture from "@/components/fullScreenPicture";
 import AnimatedText from "@/components/springingText";
+import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 
 export default function MuiPage() {
   return (
@@ -15,7 +16,14 @@ export default function MuiPage() {
       }}
     >
       <FullScreenPicture />
-      <TopBar />
+      <TopBar
+        pages={[
+          {
+            buttonName: "Portfolio",
+            page: <PortfolioPage />,
+          },
+        ]}
+      />
       <Box
         sx={{
           display: "flex",
