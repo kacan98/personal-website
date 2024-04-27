@@ -1,7 +1,6 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
-import ModalButton from "@/components/modalButton";
+import ModalButton from "@/components/menu/modalButton";
 import { ReactNode } from "react";
-import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 
 type TopBarProps = {
   pages: {
@@ -15,7 +14,7 @@ const TopBar = ({ pages }: TopBarProps) => {
     <AppBar position="static" color={"transparent"}>
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Karel&apos;s Next.js App
+          Karel Čančara
         </Typography>
         {pages.map(({ buttonName, page }, index) => (
           <ModalButton key={index} buttonName={buttonName}>

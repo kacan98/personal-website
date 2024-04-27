@@ -8,7 +8,7 @@ type AnimatedTextProps = {
 };
 
 const AnimatedText = ({ texts }: AnimatedTextProps) => {
-  const [{ open, chars, index }, setState] = useState({
+  const [{ open, chars }, setState] = useState({
     open: true,
     index: 0,
     chars: texts[0].split(""),
