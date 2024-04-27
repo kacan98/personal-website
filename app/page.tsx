@@ -5,7 +5,7 @@ import FullScreenPicture from "@/components/fullScreenPicture";
 import AnimatedText from "@/components/springingText";
 import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 
-export default function MuiPage() {
+export default function App() {
   return (
     <Box
       sx={{

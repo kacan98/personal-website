@@ -5,6 +5,7 @@ import {
   Project,
   ProjectCard,
 } from "@/components/pages/portfolio/projects/projectCard";
+import { a, useTransition } from "@react-spring/web";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { useMediaQuery } from "@mui/system";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
@@ -30,6 +31,13 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
       ? projects.filter((project) => project.tags.includes(selectedTag))
       : projects;
 
+  const transitions = useTransition(filteredProjects, {
+    from: { opacity: 0, transform: "scale(0.5)", height: 0 },
+    enter: { opacity: 1, transform: "scale(1)", height: "auto" },
+    leave: { opacity: 0, transform: "scale(0.5)", height: 0 },
+    keys: (project) => project.title,
+  });
+
   return (
     <Grid2
       container
@@ -53,8 +61,10 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        {filteredProjects.map((project) => (
-          <ProjectCard key={project.title} project={project} />
+        {transitions((props, project) => (
+          <a.div style={props}>
+            <ProjectCard key={project.title} project={project} />
+          </a.div>
         ))}
       </Grid2>
     </Grid2>
