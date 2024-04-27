@@ -1,16 +1,40 @@
-'use client';
-import { Roboto } from 'next/font/google';
-import { createTheme } from '@mui/material/styles';
-
-const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-});
+"use client";
+import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#1976d2",
+    },
+    info: {
+      main: "#fff",
+    },
+  },
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: "system-ui, sans-serif",
+
+    h1: {
+      fontWeight: 700,
+    },
+    h2: {
+      fontWeight: 700,
+    },
+    h3: {
+      fontWeight: 700,
+    },
+    h4: {
+      fontWeight: 700,
+    },
+    h5: {
+      fontWeight: 700,
+    },
+    h6: {
+      fontWeight: 700,
+    },
+    button: {
+      fontWeight: 500,
+    },
   },
 });
 
