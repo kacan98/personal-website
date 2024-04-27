@@ -8,9 +8,17 @@ function FullScreenPicture() {
       <Image
         src="/færøerne_karel.jpg"
         alt="Background Image"
-        layout="fill"
-        objectFit="cover"
-        objectPosition="center"
+        width={3840}
+        height={2160}
+        style={{
+          color: "transparent",
+          objectFit: "cover",
+          position: "absolute",
+          top: "0px",
+          left: "-70vw",
+          zIndex: "-1",
+          height: "100%",
+        }}
       />
       <Box
         sx={{

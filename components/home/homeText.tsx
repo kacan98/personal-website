@@ -32,6 +32,16 @@ function HomeText() {
           ]}
         />
       </Box>
+      {/*TODO: Add those?*/}
+      {/*<ButtonGroup*/}
+      {/*  sx={{*/}
+      {/*    margin: "20px",*/}
+      {/*  }}*/}
+      {/*  size={"large"}*/}
+      {/*>*/}
+      {/*  <Button variant={"contained"}>Contact me</Button>*/}
+      {/*  <Button variant={"outlined"}>Portfolio</Button>*/}
+      {/*</ButtonGroup>*/}
     </Box>
   );
 }

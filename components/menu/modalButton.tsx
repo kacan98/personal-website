@@ -44,11 +44,10 @@ const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
           >
             <IconButton
               sx={{
-                position: "absolute",
-                right: 0,
-                top: 0,
+                position: "fixed",
+                right: 50,
+                top: 30,
                 padding: 5,
-                margin: 2,
                 zIndex: 100,
               }}
               edge="end"

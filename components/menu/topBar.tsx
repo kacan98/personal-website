@@ -11,16 +11,20 @@ type TopBarProps = {
 
 const TopBar = ({ pages }: TopBarProps) => {
   return (
-    <AppBar position="static" color={"transparent"}>
+    <AppBar
+      position="static"
+      color={"transparent"}
+      sx={{
+        boxShadow: "none",
+      }}
+    >
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Karel Čančara
-        </Typography>
         {pages.map(({ buttonName, page }, index) => (
           <ModalButton key={index} buttonName={buttonName}>
             {page}
           </ModalButton>
         ))}
+        <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
       </Toolbar>
     </AppBar>
   );

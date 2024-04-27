@@ -21,8 +21,8 @@ export const karelsProjects = [
     url: "https://github.com/kacan98/buying-vs-renting",
   },
   {
-    title: "This Portfolio",
-    description: "My portfolio",
+    title: "My Portfolio Website",
+    description: "My Portfolio Website",
     image: "https://via.placeholder.com/150",
     tags: ["Next.js", "TypeScript", "React", "Next.js"],
     url: "https://github.com/kacan98/my-porfolio",
