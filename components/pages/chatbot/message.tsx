@@ -1,9 +1,16 @@
-import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Card,
+  CardContent,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import React from "react";
 
 type MessageProps = {
   role: "user" | "assistant";
-  text: string;
+  text: string | null;
 };
 
 const Message = ({ role, text }: MessageProps) => {
@@ -31,7 +38,23 @@ const Message = ({ role, text }: MessageProps) => {
         }}
       >
         <CardContent>
-          <Typography variant="body1">{text}</Typography>
+          {text ? (
+            <Typography variant="body1">{text}</Typography>
+          ) : (
+            <>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton
+                  key={index}
+                  variant="rectangular"
+                  width={300}
+                  height={20}
+                  sx={{
+                    mb: 1,
+                  }}
+                />
+              ))}
+            </>
+          )}
         </CardContent>
       </Card>
       {role === "user" && AvatarPicture}

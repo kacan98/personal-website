@@ -1,12 +1,5 @@
 "use client";
-import {
-  Box,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-} from "@mui/material";
+import { Box, Button, List, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { ChatCompletionStream } from "openai/lib/ChatCompletionStream";
 import {
@@ -103,11 +96,7 @@ const ChatBotUI = () => {
             text={message.content as string}
           />
         ))}
-        {loading && messageBeingReceived && (
-          <ListItem sx={{ textAlign: "left" }}>
-            <ListItemText primary={messageBeingReceived} />
-          </ListItem>
-        )}
+        {loading && <Message role="assistant" text={messageBeingReceived} />}
         <div ref={messagesEndRef} />
       </List>
       <Box
