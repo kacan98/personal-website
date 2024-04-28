@@ -1,44 +1,66 @@
-import { Box, Card, CardContent, Typography } from "@mui/material";
-import Image from "next/image";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
-import { ConditionalWrapper } from "@/components/conditionalWrapper";
+import { GitHub, OpenInNew } from "@mui/icons-material";
+import Grid2 from "@mui/material/Unstable_Grid2";
 
 export type Project = {
   title: string;
   description: string;
   image: string;
   tags: string[];
-  URL?: string;
+  githubUrl?: string;
+  deploymentUrl?: string;
 };
 
-type ProjectCardProps = {
-  project: Project;
-};
-
-export const ProjectCard = ({ project }: ProjectCardProps) => (
-  <Card sx={{ width: 300, height: 300 }}>
-    <ConditionalWrapper
-      condition={!!project.URL}
-      wrapper={(children) => (
-        <Link href={project.URL!} target={"_blank"}>
-          {children}
-        </Link>
-      )}
-    >
-      <CardContent>
-        {project.image && (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Image
-              src={project.image}
-              alt={project.title}
-              width={150}
-              height={150}
+export const ProjectCard = ({
+  title,
+  description,
+  image,
+  githubUrl,
+  deploymentUrl,
+}: Project) => (
+  <Card sx={{ width: 300, height: 350, m: 2, p: 2 }}>
+    <CardContent>
+      <Grid2
+        container
+        justifyContent="center"
+        alignItems="center"
+        columnSpacing={5}
+        direction="column"
+      >
+        {image && (
+          <Box display="flex" mb={2}>
+            <CardMedia
+              image={image}
+              title={title}
+              sx={{ height: 150, width: 150 }}
             />
           </Box>
         )}
-        <Typography variant="h5">{project.title}</Typography>
-        <Typography variant="body2">{project.description}</Typography>
-      </CardContent>
-    </ConditionalWrapper>
+        <Typography variant="h5">{title}</Typography>
+        <Typography variant="body2">{description}</Typography>
+        <Grid2 container alignItems="center" justifyContent="center">
+          {githubUrl && (
+            <Link href={githubUrl} target={"_blank"}>
+              <IconButton>
+                <GitHub />
+              </IconButton>
+            </Link>
+          )}
+          {deploymentUrl && (
+            <Link href={deploymentUrl} target={"_blank"}>
+              <OpenInNew />
+            </Link>
+          )}
+        </Grid2>
+      </Grid2>
+    </CardContent>
   </Card>
 );

@@ -63,7 +63,7 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
       >
         {transitions((props, project) => (
           <a.div style={props}>
-            <ProjectCard key={project.title} project={project} />
+            <ProjectCard key={project.title} {...project} />
           </a.div>
         ))}
       </Grid2>
