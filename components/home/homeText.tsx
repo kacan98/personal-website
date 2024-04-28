@@ -14,6 +14,7 @@ function HomeText() {
         height: "80%",
         opacity: 0.7,
         flexDirection: "column",
+        padding: 3,
       }}
     >
       <Box>

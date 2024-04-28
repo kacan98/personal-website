@@ -1,9 +1,7 @@
 import React from "react";
 import { Avatar, Box, Paper, Typography } from "@mui/material";
 import PageWrapper from "@/components/pages/pageWrapper";
-import CvSection, {
-  SectionProps,
-} from "@/components/pages/portfolio/cv/cvSection";
+import CvSection, { SectionProps } from "@/components/pages/cv/cvSection";
 import Grid2 from "@mui/material/Unstable_Grid2";
 
 type CvProps = {
@@ -14,7 +12,7 @@ type CvProps = {
   sideSection: SectionProps[];
 };
 
-function Cv({ name, intro, picture, sideSection, mainSection }: CvProps) {
+function CvPage({ name, intro, picture, sideSection, mainSection }: CvProps) {
   return (
     <PageWrapper title={"CV"} description="Here is my CV">
       <Grid2 container spacing={2}>
@@ -57,4 +55,4 @@ function Cv({ name, intro, picture, sideSection, mainSection }: CvProps) {
   );
 }
 
-export default Cv;
+export default CvPage;
