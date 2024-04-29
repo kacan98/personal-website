@@ -8,6 +8,7 @@ import {
   Science,
   Translate,
 } from "@mui/icons-material";
+import { SectionProps } from "@/components/pages/cv/cvSection";
 
 export const karelsProjects = [
   {
@@ -52,7 +53,11 @@ export const karelsProjects = [
   },
 ];
 
-export const karelCvData = {
+export const karelCvData: {
+  name: string;
+  intro: string;
+  sections: SectionProps[];
+} = {
   name: "Karel Čančara",
   intro: "Frontend Developer and Scrum Master at Dynaway",
   sections: [

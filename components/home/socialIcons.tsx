@@ -1,4 +1,4 @@
-import { Box, Grid, IconButton } from "@mui/material";
+import { Box, Grid, IconButton, Tooltip, Zoom } from "@mui/material";
 import { Email, GitHub, LinkedIn } from "@mui/icons-material";
 
 type SocialProps = {
@@ -16,15 +16,35 @@ const SocialIcons = ({ direction }: SocialProps) => (
   >
     <Grid container spacing={2} direction={direction}>
       {[
-        { href: "https://github.com/kacan98", Icon: GitHub },
-        { href: "https://www.linkedin.com/in/kcancara", Icon: LinkedIn },
-        { href: "mailto:karel.cancara@gmail.com", Icon: Email },
-      ].map(({ href, Icon }) => (
-        <Grid item key={href}>
-          <IconButton href={href} target="_blank">
-            <Icon />
-          </IconButton>
-        </Grid>
+        {
+          href: "https://github.com/kacan98",
+          Icon: GitHub,
+          text: "See my projects",
+        },
+        {
+          href: "https://www.linkedin.com/in/kcancara",
+          Icon: LinkedIn,
+          text: "Let's connect",
+        },
+        {
+          href: "mailto:karel.cancara@gmail.com",
+          Icon: Email,
+          text: "Send me an email!",
+        },
+      ].map(({ href, Icon, text }) => (
+        <Tooltip
+          TransitionComponent={Zoom}
+          placement="left"
+          key={href}
+          title={text}
+          arrow
+        >
+          <Grid item>
+            <IconButton href={href} target="_blank">
+              <Icon />
+            </IconButton>
+          </Grid>
+        </Tooltip>
       ))}
     </Grid>
   </Box>

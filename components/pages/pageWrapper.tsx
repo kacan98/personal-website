@@ -5,7 +5,7 @@ import { Container } from "@mui/system";
 type PageWrapperProps = {
   children: React.ReactNode;
   title: string;
-  description: string;
+  description?: string;
 };
 
 function PageWrapper({ children, title, description }: PageWrapperProps) {
@@ -18,7 +18,9 @@ function PageWrapper({ children, title, description }: PageWrapperProps) {
     >
       <Box m={5} mb={15}>
         <Typography variant={"h2"}>{title}</Typography>
-        <Typography variant={"body1"}>{description}</Typography>
+        {description && (
+          <Typography variant={"body1"}>{description}</Typography>
+        )}
       </Box>
       {children}
     </Container>

@@ -6,10 +6,7 @@ import { karelsProjects } from "@/store/staticObjects";
 
 function PortfolioPage() {
   return (
-    <PageWrapper
-      title={"Projects"}
-      description={"Here are some of my projects"}
-    >
+    <PageWrapper title={"Projects"}>
       <Card>
         <CardContent>
           <ProjectDisplay

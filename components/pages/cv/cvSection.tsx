@@ -26,7 +26,7 @@ export type SectionProps = {
   bulletPoints?: BulletPoint[];
 };
 
-type SubSection = {
+export type SubSection = {
   title: string;
   subtitles?: {
     left?: string;
