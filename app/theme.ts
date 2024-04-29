@@ -10,9 +10,15 @@ const theme = createTheme({
     info: {
       main: "#fff",
     },
+    action: {
+      active: "#fff", // choose a suitable color for icons
+    },
   },
   typography: {
     fontFamily: "system-ui, sans-serif",
+    allVariants: {
+      color: "#fff",
+    },
 
     h1: {
       fontWeight: 700,
@@ -34,6 +40,15 @@ const theme = createTheme({
     },
     button: {
       fontWeight: 500,
+    },
+  },
+  components: {
+    MuiIcon: {
+      styleOverrides: {
+        root: {
+          color: "#fff",
+        },
+      },
     },
   },
 });
