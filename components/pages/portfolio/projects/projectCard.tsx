@@ -56,7 +56,9 @@ export const ProjectCard = ({
           )}
           {deploymentUrl && (
             <Link href={deploymentUrl} target={"_blank"}>
-              <OpenInNew />
+              <IconButton>
+                <OpenInNew />
+              </IconButton>
             </Link>
           )}
         </Grid2>

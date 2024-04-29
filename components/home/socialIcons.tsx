@@ -18,7 +18,7 @@ const SocialIcons = ({ direction }: SocialProps) => (
       {[
         { href: "https://github.com/kacan98", Icon: GitHub },
         { href: "https://www.linkedin.com/in/kcancara", Icon: LinkedIn },
-        { href: "karel.cancara@gmail.com", Icon: Email },
+        { href: "mailto:karel.cancara@gmail.com", Icon: Email },
       ].map(({ href, Icon }) => (
         <Grid item key={href}>
           <IconButton href={href} target="_blank">

@@ -49,6 +49,7 @@ const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
                 top: 30,
                 padding: 5,
                 zIndex: 100,
+                color: "white",
               }}
               edge="end"
               color="inherit"
