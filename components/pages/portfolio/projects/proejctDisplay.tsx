@@ -1,14 +1,12 @@
 "use client";
 import { Theme } from "@mui/material";
 import { useState } from "react";
-import {
-  Project,
-  ProjectCard,
-} from "@/components/pages/portfolio/projects/projectCard";
+import { ProjectCard } from "@/components/pages/portfolio/projects/projectCard";
 import { a, useTransition } from "@react-spring/web";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { useMediaQuery } from "@mui/system";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
+import { Project } from "@/sanity/schemaTypes/project";
 
 type ProjectDisplayProps = {
   projects: Project[];
@@ -22,7 +20,11 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
 
   const uniqueTags = Array.from(
     new Set(projects.flatMap((project) => project.tags)),
-  ).sort();
+  )
+    .sort()
+    //I accidentally added an empty string to the tags array in sanity studio
+    //So make sure it does not happen to others
+    .filter((tag) => !!tag);
 
   uniqueTags.unshift("All");
 

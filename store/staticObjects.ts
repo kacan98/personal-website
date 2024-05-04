@@ -10,49 +10,6 @@ import {
 } from "@mui/icons-material";
 import { SectionProps } from "@/components/pages/cv/cvSection";
 
-export const karelsProjects = [
-  {
-    title: "Common Birthday Calculator",
-    description: "Calculates the common birthday of a group of people",
-    image: "/common-age-calculator.png",
-    tags: ["Angular", "TypeScript"],
-    githubUrl: "https://github.com/kacan98/common-age-calculator",
-    deploymentUrl: "https://kacan98.github.io/common-age-calculator/",
-  },
-  {
-    title: "R8tit",
-    description: "An app for rating supermarkets",
-    image: "/r8tit.png",
-    tags: ["C#", "SQL", "Angular", "TypeScript"],
-    githubUrl: "https://github.com/kacan98/r8tit",
-    deploymentUrl: "https://r8tit.azurewebsites.net/",
-  },
-  {
-    title: "Buying vs Renting",
-    description: "A calculator for buying vs renting a property",
-    image: "/buying-vs-renting.png",
-    tags: ["React", "TypeScript", "Redux"],
-    githubUrl: "https://github.com/kacan98/buying-vs-renting",
-    deploymentUrl: "https://kacan98.github.io/buying-vs-renting/",
-  },
-  {
-    title: "My Portfolio Website",
-    description: "My Portfolio Website",
-    image: "/portfolio.png",
-    tags: ["Next.js", "TypeScript", "React", "Next.js"],
-    githubUrl: "https://github.com/kacan98/my-porfolio",
-    deploymentUrl: "https://my-porfolio-sigma-murex.vercel.app/",
-  },
-  {
-    title: "Teams app",
-    description: "An app for managing teams",
-    image: "/teams-app.png",
-    tags: ["Angular", "TypeScript"],
-    githubUrl: "https://github.com/josef-kriz/team-app",
-    deploymentUrl: "https://josef-kriz.github.io/team-app/",
-  },
-];
-
 export const karelCvData: {
   name: string;
   intro: string;
@@ -154,15 +111,15 @@ export const karelCvData: {
         },
       ],
     },
-    {
-      title: "Projects",
-      bulletPoints: karelsProjects
-        .map((project) => ({
-          text: `${project.title} (${project.tags.join(", ")})`,
-          icon: LibraryBooks,
-          url: project.githubUrl,
-        }))
-        .sort((a, b) => a.text.localeCompare(b.text)),
-    },
+    // {
+    //   title: "Projects",
+    //   bulletPoints: karelsProjects
+    //     .map((project) => ({
+    //       text: `${project.title} (${project.tags.join(", ")})`,
+    //       icon: LibraryBooks,
+    //       url: project.githubUrl,
+    //     }))
+    //     .sort((a, b) => a.text.localeCompare(b.text)),
+    // },
   ],
 };
