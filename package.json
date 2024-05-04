@@ -15,14 +15,21 @@
     "@mui/material": "^5.15.15",
     "@mui/material-nextjs": "^5.15.11",
     "@react-spring/web": "^9.7.3",
+    "@sanity/client": "^6.17.2",
+    "@sanity/image-url": "^1.0.2",
+    "@sanity/react-loader": "^1.9.16",
+    "@sanity/vision": "^3.40.0",
     "dotenv": "^16.4.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "next": "14.2.3",
+    "next-sanity": "^7.1.4",
     "openai": "^4.38.5",
     "react": "^18",
     "react-dom": "^18",
-    "react-use": "^17.5.0"
+    "react-use": "^17.5.0",
+    "sanity": "^3.40.0",
+    "styled-components": "^6.1.9"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
