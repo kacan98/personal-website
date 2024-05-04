@@ -6,8 +6,10 @@ import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 import KarelCv from "@/components/pages/cv/karelCv";
 import HomeText from "@/components/home/homeText";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
+import { getSettings } from "@/sanity/sanity-utils";
 
-export default function App() {
+export default async function App() {
+  const settings = await getSettings();
   return (
     <Box
       sx={{
@@ -15,7 +17,7 @@ export default function App() {
         width: "100vw",
       }}
     >
-      <FullScreenPicture />
+      <FullScreenPicture sanityImage={settings.mainPage?.mainImage} />
       <TopBar
         pages={[
           {
@@ -32,7 +34,10 @@ export default function App() {
           },
         ]}
       />
-      <HomeText />
+      <HomeText
+        title={settings.mainPage?.title}
+        subtitles={settings.mainPage?.subtitles}
+      />
       <SocialIcons direction={"column"} />
     </Box>
   );

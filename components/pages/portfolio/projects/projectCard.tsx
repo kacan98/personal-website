@@ -27,11 +27,13 @@ export const ProjectCard = ({
           columnSpacing={5}
           direction="column"
         >
-          {image.asset && (
-            <Box display="flex" mb={2}>
-              <Image {...imageProps} alt={`Image of ${title} project`} />
-            </Box>
-          )}
+          <Box display="flex" mb={2}>
+            <Image
+              {...imageProps}
+              alt={`Image of ${title} project`}
+              unoptimized
+            />
+          </Box>
           <Typography variant="h5">{title}</Typography>
           <Typography variant="body2">{description}</Typography>
           <Grid2 container alignItems="center" justifyContent="center">

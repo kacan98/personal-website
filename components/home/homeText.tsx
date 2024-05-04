@@ -2,7 +2,12 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import AnimatedText from "@/components/home/springingText";
 
-function HomeText() {
+type HomeTextProps = {
+  title?: string;
+  subtitles?: string[];
+};
+
+function HomeText({ title, subtitles }: HomeTextProps) {
   return (
     <Box
       sx={{
@@ -17,22 +22,18 @@ function HomeText() {
         padding: 3,
       }}
     >
-      <Box>
-        <Typography textAlign={"center"} variant={"h1"}>
-          Karel Čančara
-        </Typography>
-      </Box>
-      <Box sx={{ opacity: 0.7 }}>
-        <AnimatedText
-          texts={[
-            "Frontend developer",
-            "Web Developer",
-            "Angular Developer",
-            "React Developer",
-            "Scum Master",
-          ]}
-        />
-      </Box>
+      {title && (
+        <Box>
+          <Typography textAlign={"center"} variant={"h1"}>
+            {title}
+          </Typography>
+        </Box>
+      )}
+      {subtitles && (
+        <Box sx={{ opacity: 0.7 }}>
+          <AnimatedText texts={subtitles} />
+        </Box>
+      )}
       {/*TODO: Add those?*/}
       {/*<ButtonGroup*/}
       {/*  sx={{*/}

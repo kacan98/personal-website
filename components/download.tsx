@@ -3,12 +3,17 @@ import React, { ReactNode, useCallback, useRef } from "react";
 import html2canvas from "html2canvas";
 import JsPdf from "jspdf";
 import { Box, Button } from "@mui/material";
+import { useMediaQuery } from "@mui/system";
+import { Theme } from "@mui/material";
 
 interface ExportProps {
   children: ReactNode;
 }
 
 export const Download: React.FC<ExportProps> = ({ children }) => {
+  const isSmallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("lg"),
+  );
   const printDocument = useCallback(async (element: HTMLDivElement) => {
     // Clone the element and apply a fixed width
     const clonedElement = element.cloneNode(true) as HTMLElement;
@@ -62,17 +67,20 @@ export const Download: React.FC<ExportProps> = ({ children }) => {
         {children}
       </Box>
 
-      <Button
-        variant="contained"
-        color="info"
-        fullWidth
-        onClick={() => ref.current && printDocument(ref.current)}
-        sx={{
-          mt: 3,
-        }}
-      >
-        Download
-      </Button>
+      {/* Unfortunetly I've seen the button fail on phones :( */}
+      {!isSmallScreen && (
+        <Button
+          variant="contained"
+          color="info"
+          fullWidth
+          onClick={() => ref.current && printDocument(ref.current)}
+          sx={{
+            mt: 3,
+          }}
+        >
+          Download
+        </Button>
+      )}
     </>
   );
 };
