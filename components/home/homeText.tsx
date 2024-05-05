@@ -14,12 +14,14 @@ function HomeText({ title, subtitles }: HomeTextProps) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        position: "relative",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
         width: "100%",
         height: "100%",
         opacity: 0.65,
         flexDirection: "column",
-        padding: 3,
       }}
     >
       {title && (

@@ -3,7 +3,6 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/app/theme";
 import { CssBaseline } from "@mui/material";
-import { Inter } from "next/font/google";
 import TopBar from "@/components/menu/topBar";
 import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 import KarelCv from "@/components/pages/cv/karelCv";
@@ -13,7 +12,6 @@ export const metadata: Metadata = {
   title: "Karel Čančara",
   description: "Frontend Developer's personal website",
 };
-const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -22,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <CssBaseline />
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>

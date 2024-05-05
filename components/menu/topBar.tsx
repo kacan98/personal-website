@@ -2,8 +2,7 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import ModalButton from "@/components/menu/modalButton";
 import { ReactNode, useCallback } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type TopBarProps = {
   pages: {
@@ -17,6 +16,8 @@ const TopBar = ({ pages }: TopBarProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const modalOpenName = searchParams.get("modalOpen");
+
+  const weAreInSanityStudio = pathname.startsWith("/studio");
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -42,9 +43,11 @@ const TopBar = ({ pages }: TopBarProps) => {
     router.push(pathname + "?" + createQueryString("modalOpen"));
   }
 
-  return (
+  return weAreInSanityStudio ? (
+    <></>
+  ) : (
     <AppBar
-      position="absolute"
+      position="fixed"
       color={"transparent"}
       sx={{
         boxShadow: "none",
