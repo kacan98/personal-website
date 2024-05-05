@@ -42,11 +42,6 @@ export default defineType({
         }),
       ],
     }),
-    defineField({
-      name: "profilePicture",
-      title: "Profile picture",
-      type: "image",
-    }),
   ],
   preview: {
     prepare() {

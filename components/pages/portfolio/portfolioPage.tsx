@@ -6,6 +6,7 @@ import { getProjects } from "@/sanity/sanity-utils";
 
 async function PortfolioPage() {
   const projects = await getProjects();
+
   return (
     <PageWrapper title={"Projects"}>
       <Card>

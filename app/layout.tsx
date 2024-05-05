@@ -4,6 +4,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/app/theme";
 import { CssBaseline } from "@mui/material";
 import { Inter } from "next/font/google";
+import TopBar from "@/components/menu/topBar";
+import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
+import KarelCv from "@/components/pages/cv/karelCv";
+import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
 
 export const metadata: Metadata = {
   title: "Karel Čančara",
@@ -21,7 +25,25 @@ export default function RootLayout({
       <body className={inter.className}>
         <CssBaseline />
         <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <TopBar
+              pages={[
+                {
+                  name: "Portfolio",
+                  page: <PortfolioPage />,
+                },
+                {
+                  name: "CV",
+                  page: <KarelCv />,
+                },
+                {
+                  name: "Chatbot",
+                  page: <ChatbotPage />,
+                },
+              ]}
+            />
+            {children}
+          </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

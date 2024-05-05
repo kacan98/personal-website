@@ -8,32 +8,7 @@ import {
 } from "@mui/material";
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import Link from "next/link";
-
-type BulletPoint = {
-  icon: React.ElementType;
-  text: string;
-  url?: string;
-};
-
-export type SectionProps = {
-  title?: string;
-  subtitles?: {
-    left?: string;
-    right?: string;
-  };
-  contents?: string[];
-  subSections?: SubSection[];
-  bulletPoints?: BulletPoint[];
-};
-
-export type SubSection = {
-  title: string;
-  subtitles?: {
-    left?: string;
-    right?: string;
-  };
-  contents: string[];
-};
+import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
 
 function CvSection({
   title,
@@ -41,7 +16,7 @@ function CvSection({
   subSections,
   bulletPoints,
   subtitles,
-}: SectionProps) {
+}: CvSection) {
   return (
     <Box textAlign={"left"}>
       {title && (
@@ -96,11 +71,12 @@ function CvSection({
                   </Typography>
                 </Box>
               )}
-              {section.contents.map((content, idx) => (
-                <Typography key={idx} variant="body1" gutterBottom>
-                  {content}
-                </Typography>
-              ))}
+              {section.contents &&
+                section.contents.map((content, idx) => (
+                  <Typography key={idx} variant="body1" gutterBottom>
+                    {content}
+                  </Typography>
+                ))}
             </div>
           ))}
         </>

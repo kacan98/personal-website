@@ -1,17 +1,17 @@
-import { SubSection } from "@/components/pages/cv/cvSection";
 import { defineField, defineType } from "sanity";
-import { BulletPoint } from "@/sanity/schemaTypes/cv/bulletPoint";
+import React from "react";
+import { CvSubSection } from "@/sanity/schemaTypes/cv/cvSubSection";
 
-export type Section = {
-  title?: string;
-  subtitles?: {
-    left?: string;
-    right?: string;
-  };
-  contents?: string[];
-  subSections?: SubSection[];
-  bulletPoints?: BulletPoint[];
+type BulletPoint = {
+  icon: React.ElementType;
+  text: string;
+  url?: string;
 };
+
+export interface CvSection extends CvSubSection {
+  subSections?: CvSubSection[];
+  bulletPoints?: BulletPoint[];
+}
 
 export default defineType({
   name: "cvSection",

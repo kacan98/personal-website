@@ -7,31 +7,35 @@ import {
   Slide,
   Typography,
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
 type ModalButtonProps = {
   buttonName: string;
   children: ReactNode;
+  onOpen: () => void;
+  onClose: () => void;
+  open: boolean;
 };
 
-const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+const ModalButton = ({
+  buttonName,
+  children,
+  onOpen,
+  onClose,
+  open,
+}: ModalButtonProps) => {
   return (
     <div>
       <Button
         size={"large"}
         color={"info"}
         sx={{ my: 2, display: "block" }}
-        onClick={handleOpen}
+        onClick={onOpen}
       >
         <Typography variant="button">{buttonName}</Typography>
       </Button>
-      <Modal open={open} onClose={handleClose} closeAfterTransition>
+      <Modal open={open} onClose={onClose} closeAfterTransition>
         <Slide direction="up" in={open} timeout={700}>
           <Box
             sx={{
@@ -54,7 +58,7 @@ const ModalButton = ({ buttonName, children }: ModalButtonProps) => {
               edge="end"
               color="inherit"
               size={"medium"}
-              onClick={handleClose}
+              onClick={onClose}
               aria-label="close"
             >
               <CloseIcon fontSize={"large"} />

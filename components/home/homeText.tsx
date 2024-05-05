@@ -16,7 +16,7 @@ function HomeText({ title, subtitles }: HomeTextProps) {
         alignItems: "center",
         position: "relative",
         width: "100%",
-        height: "80%",
+        height: "100%",
         opacity: 0.65,
         flexDirection: "column",
         padding: 3,
