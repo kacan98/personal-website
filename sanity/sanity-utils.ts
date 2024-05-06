@@ -2,6 +2,7 @@ import { sanityClient } from "@/sanity/lib/sanityClient";
 import { Project } from "@/sanity/schemaTypes/project";
 import { Settings } from "@/sanity/schemaTypes/singletons/settings";
 import { Gallery } from "@/sanity/schemaTypes/gallery";
+import { Social } from "@/sanity/schemaTypes/social";
 
 export const getProjects = async (): Promise<Project[]> => {
   return sanityClient.fetch(
@@ -36,6 +37,16 @@ export const getGalleries = async (): Promise<Gallery[]> => {
 export const getSettings = async (): Promise<Settings> => {
   return sanityClient.fetch(
     `*[_type == "settings"][0]`,
+    {},
+    {
+      cache: "no-cache",
+    },
+  );
+};
+
+export const getSocials = async (): Promise<Social[]> => {
+  return sanityClient.fetch(
+    `*[_type == "social"]`,
     {},
     {
       cache: "no-cache",

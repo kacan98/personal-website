@@ -1,24 +1,16 @@
-import { ListItemBuilder, StructureResolver } from "sanity/structure";
+import { StructureResolver } from "sanity/structure";
 import settings from "@/sanity/desk/settings";
-
-//TODO: Probably I want a pages section, where I can enable or disable the CV and ChatBot pages
-//TODO: Be able to add new pages like
-// - Podcast
-// - Photography
-// - Articles
-const DOCUMENT_TYPES_IN_STRUCTURE = ["settings"];
+import galleryModals from "@/sanity/desk/galleryModals";
+import social from "@/sanity/desk/social";
 
 export const structure: StructureResolver = (S, context) =>
   S.list()
     .title("Content")
     //includes all document types
     .items([
-      ...S.documentTypeListItems().filter(
-        (listItem: ListItemBuilder) =>
-          // @ts-expect-error Object is possibly 'undefined'
-          !DOCUMENT_TYPES_IN_STRUCTURE.includes(listItem.getId().toString()),
-      ),
+      galleryModals(S, context),
       S.divider(),
       settings(S, context),
+      social(S, context),
       S.divider(),
     ]);
