@@ -10,10 +10,10 @@ export type Settings = {
     mainImage?: Image;
     metadataDescription?: string;
   };
-  metadata: {
-    title: string;
-    description: string;
-    keywords: string;
+  metadata?: {
+    title?: string;
+    description?: string;
+    keywords?: string;
   };
   specialPages?: {
     portfolio: boolean;

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { a, useTransition } from "@react-spring/web";
 import { Project } from "@/sanity/schemaTypes/project";
-import { ProjectCard } from "@/components/pages/portfolio/projects/projectCard";
+import { ProjectCard } from "@/components/pages/galery/projectCard";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { useMediaQuery } from "@mui/system";
@@ -10,9 +10,13 @@ import { Theme } from "@mui/material";
 
 type GalleryComponentProps = {
   projects: Project[];
+  filteringIsEnabled: boolean;
 };
 
-export const GalleryComponent = ({ projects }: GalleryComponentProps) => {
+export const GalleryComponent = ({
+  projects,
+  filteringIsEnabled,
+}: GalleryComponentProps) => {
   const [selectedTag, setSelectedTag] = useState<string>("All");
   const isBigScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.up("sm"),
@@ -30,7 +34,10 @@ export const GalleryComponent = ({ projects }: GalleryComponentProps) => {
   uniqueTags.unshift("All");
 
   const filteredProjects =
-    selectedTag && selectedTag !== "All" && uniqueTags.length > 1 && isBigScreen
+    !!selectedTag &&
+    selectedTag !== "All" &&
+    uniqueTags.length > 1 &&
+    isBigScreen
       ? projects.filter((project) => project.tags.includes(selectedTag))
       : projects;
 
@@ -48,7 +55,7 @@ export const GalleryComponent = ({ projects }: GalleryComponentProps) => {
       alignItems={"center"}
       direction={"column"}
     >
-      {uniqueTags.length > 1 && (
+      {filteringIsEnabled && (
         <Grid2>
           {isBigScreen && (
             <ProjectFilter
@@ -59,7 +66,6 @@ export const GalleryComponent = ({ projects }: GalleryComponentProps) => {
           )}
         </Grid2>
       )}
-
       <Grid2
         container
         spacing={2}

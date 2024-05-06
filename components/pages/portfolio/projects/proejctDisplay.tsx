@@ -1,7 +1,7 @@
 "use client";
 import { Theme } from "@mui/material";
 import { useState } from "react";
-import { ProjectCard } from "@/components/pages/portfolio/projects/projectCard";
+import { ProjectCard } from "@/components/pages/galery/projectCard";
 import { a, useTransition } from "@react-spring/web";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { useMediaQuery } from "@mui/system";

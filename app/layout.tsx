@@ -4,7 +4,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/app/theme";
 import { CssBaseline, Skeleton } from "@mui/material";
 import TopBar from "@/components/menu/topBar";
-import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 import KarelCv from "@/components/pages/cv/karelCv";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
 import GalleryPage from "@/components/pages/galery/galleryPage";
@@ -20,21 +19,20 @@ export default async function RootLayout({
 }>) {
   const settings = await getSettings();
   const galleries = await getGalleries();
-  metadata = settings.metadata;
+  metadata = settings?.metadata || {
+    title: "Portfolio",
+    description: "Portfolio",
+  };
 
-  const pages = galleries.map((gallery) => ({
-    name: gallery.title,
-    page: <GalleryPage {...gallery} />,
-  }));
+  const pages = [];
+  pages.push(
+    ...galleries.map((gallery) => ({
+      name: gallery.title,
+      page: <GalleryPage {...gallery} />,
+    })),
+  );
 
-  const { portfolio, chatbot, cv } = settings.specialPages || {};
-
-  if (portfolio) {
-    pages.unshift({
-      name: "Portfolio",
-      page: <PortfolioPage />,
-    });
-  }
+  const { chatbot, cv } = settings?.specialPages || {};
 
   if (chatbot) {
     pages.unshift({

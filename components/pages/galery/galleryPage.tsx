@@ -9,10 +9,7 @@ async function GalleryPage(gallery: Gallery) {
   const projects = await getProjectsByRefs(
     gallery.projectRefs.map((p) => p._ref),
   );
-
-  return process.env.NODE_ENV === "production" ? (
-    <></>
-  ) : (
+  return (
     <PageWrapper title={gallery.title}>
       <Grid2
         container
@@ -21,7 +18,10 @@ async function GalleryPage(gallery: Gallery) {
         columnSpacing={5}
         direction="row"
       >
-        <GalleryComponent projects={projects} />
+        <GalleryComponent
+          projects={projects}
+          filteringIsEnabled={!!gallery.filteringIsEnabled}
+        />
       </Grid2>
     </PageWrapper>
   );

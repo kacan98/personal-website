@@ -9,9 +9,12 @@ export type Project = {
   deploymentUrl: string;
 };
 
+/*For example 'R8tit, an article, '*/
 export default defineType({
   name: "project",
   title: "Project",
+  description:
+    "For example a website, an article, podcast episode... In the future it will be possible to have a related page for this specific instance.",
   type: "document",
   fields: [
     defineField({

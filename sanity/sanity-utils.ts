@@ -34,7 +34,8 @@ export const getGalleries = async (): Promise<Gallery[]> => {
   );
 };
 
-export const getSettings = async (): Promise<Settings> => {
+// Can be undefined when the project is initialized
+export const getSettings = async (): Promise<Settings | undefined> => {
   return sanityClient.fetch(
     `*[_type == "settings"][0]`,
     {},

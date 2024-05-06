@@ -10,7 +10,7 @@ export const structure: StructureResolver = (S, context) =>
     .items([
       galleryModals(S, context),
       S.divider(),
-      settings(S, context),
       social(S, context),
+      settings(S, context),
       S.divider(),
     ]);
