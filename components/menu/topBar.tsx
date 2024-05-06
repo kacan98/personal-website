@@ -51,6 +51,8 @@ const TopBar = ({ pages }: TopBarProps) => {
       color={"transparent"}
       sx={{
         boxShadow: "none",
+        //so that it shows up above the modals (zIndex 1300 in MUI)
+        zIndex: 1301,
       }}
     >
       <Toolbar>

@@ -15,10 +15,10 @@ export default async function App() {
           position: "relative",
         }}
       >
-        <FullScreenPicture sanityImage={settings.mainPage?.mainImage} />
+        <FullScreenPicture sanityImage={settings?.mainPage?.mainImage} />
         <HomeText
-          title={settings.mainPage?.title}
-          subtitles={settings.mainPage?.subtitles}
+          title={settings?.mainPage?.title}
+          subtitles={settings?.mainPage?.subtitles}
         />
         <SocialIcons direction={"column"} />
       </Box>

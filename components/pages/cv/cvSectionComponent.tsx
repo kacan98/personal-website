@@ -10,7 +10,7 @@ import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import Link from "next/link";
 import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
 
-function CvSection({
+function CvSectionComponent({
   title,
   contents,
   subSections,
@@ -85,4 +85,4 @@ function CvSection({
   );
 }
 
-export default CvSection;
+export default CvSectionComponent;

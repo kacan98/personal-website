@@ -8,12 +8,12 @@ import {
   Science,
   Translate,
 } from "@mui/icons-material";
-import { SectionProps } from "@/components/pages/cv/cvSection";
+import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
 
 export const karelCvData: {
   name: string;
   intro: string;
-  sections: SectionProps[];
+  sections: CvSection[];
 } = {
   name: "Karel Čančara",
   intro: "Frontend Developer and Scrum Master at Dynaway",

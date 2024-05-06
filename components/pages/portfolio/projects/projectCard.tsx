@@ -18,7 +18,10 @@ export const ProjectCard = ({
     imageBuilder: (builder) => builder.width(300).height(200),
   });
   return (
-    <Card sx={{ width: 300, height: 350, m: 2, p: 2 }}>
+    <Card
+      sx={{ width: 350, minHeight: 400, m: 2, p: 2, borderRadius: 3 }}
+      variant="outlined"
+    >
       <CardContent>
         <Grid2
           container
@@ -26,6 +29,9 @@ export const ProjectCard = ({
           alignItems="center"
           columnSpacing={5}
           direction="column"
+          sx={{
+            height: "100%",
+          }}
         >
           <Box display="flex" mb={2}>
             <Image

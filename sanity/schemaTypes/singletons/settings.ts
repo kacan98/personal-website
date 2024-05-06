@@ -8,8 +8,18 @@ export type Settings = {
     title?: string;
     subtitles?: string[];
     mainImage?: Image;
+    metadataDescription?: string;
   };
-  profilePicture?: Image;
+  metadata: {
+    title: string;
+    description: string;
+    keywords: string;
+  };
+  specialPages?: {
+    portfolio: boolean;
+    cv: boolean;
+    chatbot: boolean;
+  };
 };
 
 export default defineType({
@@ -38,7 +48,50 @@ export default defineType({
           name: "mainImage",
           title: "Main page background image",
           type: "image",
-          validation: (Rule) => Rule.required(),
+        }),
+      ],
+    }),
+    defineField({
+      name: "metadata",
+      title: "Metadata",
+      type: "object",
+      fields: [
+        defineField({
+          name: "title",
+          title: "Title",
+          type: "string",
+        }),
+        defineField({
+          name: "description",
+          title: "Description",
+          type: "string",
+        }),
+        defineField({
+          name: "keywords",
+          title: "Keywords",
+          type: "string",
+        }),
+      ],
+    }),
+    defineField({
+      name: "specialPages",
+      title: "Special pages",
+      type: "object",
+      fields: [
+        defineField({
+          name: "cv",
+          title: "CV",
+          type: "boolean",
+        }),
+        defineField({
+          name: "chatbot",
+          title: "Chatbot",
+          type: "boolean",
+        }),
+        defineField({
+          name: "portfolio",
+          title: "Portfolio",
+          type: "boolean",
         }),
       ],
     }),

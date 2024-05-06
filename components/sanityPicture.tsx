@@ -1,3 +1,4 @@
+"use client";
 import { useNextSanityImage } from "next-sanity-image";
 import { sanityClient } from "@/sanity/lib/sanityClient";
 import { Image as SanityImage } from "sanity";

@@ -1,16 +1,17 @@
 import React from "react";
 import { Avatar, Box, Paper, Typography } from "@mui/material";
 import PageWrapper from "@/components/pages/pageWrapper";
-import CvSection, { SectionProps } from "@/components/pages/cv/cvSection";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Download from "@/components/download";
+import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/cvSection";
+import CvSectionComponent from "@/components/pages/cv/cvSectionComponent";
 
 type CvProps = {
   name: string;
   intro: string;
   picture: string;
-  mainSection: SectionProps[];
-  sideSection: SectionProps[];
+  mainSection: CvSectionSanitySchemaType[];
+  sideSection: CvSectionSanitySchemaType[];
 };
 
 function CvPage({ name, intro, picture, sideSection, mainSection }: CvProps) {
@@ -40,7 +41,7 @@ function CvPage({ name, intro, picture, sideSection, mainSection }: CvProps) {
               </Grid2>
               {sideSection.map((sections, index) => (
                 <Box key={index} mb={2}>
-                  <CvSection {...sections} />
+                  <CvSectionComponent {...sections} />
                 </Box>
               ))}
             </Box>
@@ -48,7 +49,7 @@ function CvPage({ name, intro, picture, sideSection, mainSection }: CvProps) {
           <Grid2 xs={12} md={8} textAlign="left">
             {mainSection.map((section, index) => (
               <Paper key={index} sx={{ p: 2, mb: 2 }}>
-                <CvSection {...section} />
+                <CvSectionComponent {...section} />
               </Paper>
             ))}
           </Grid2>
