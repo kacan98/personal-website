@@ -50,6 +50,7 @@ const AnimatedText = ({ texts }: AnimatedTextProps) => {
       });
     }, displayTime);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayTime]);
 
   return (

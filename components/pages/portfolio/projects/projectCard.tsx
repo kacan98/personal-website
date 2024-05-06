@@ -19,7 +19,14 @@ export const ProjectCard = ({
   });
   return (
     <Card
-      sx={{ width: 350, minHeight: 400, m: 2, p: 2, borderRadius: 3 }}
+      sx={{
+        width: 350,
+        maxWidth: "78vw",
+        minHeight: 400,
+        m: 2,
+        p: 2,
+        borderRadius: 3,
+      }}
       variant="outlined"
     >
       <CardContent>
@@ -33,7 +40,14 @@ export const ProjectCard = ({
             height: "100%",
           }}
         >
-          <Box display="flex" mb={2}>
+          <Box
+            display="flex"
+            mb={2}
+            sx={{
+              maxWidth: "100%",
+              overflow: "hidden",
+            }}
+          >
             <Image
               {...imageProps}
               alt={`Image of ${title} project`}

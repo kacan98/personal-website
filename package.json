@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -38,6 +39,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
-    "typescript": "^5"
+    "husky": "^9.0.11",
+    "typescript": "^5.4.5"
   }
 }

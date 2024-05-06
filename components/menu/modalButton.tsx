@@ -57,7 +57,7 @@ const ModalButton = ({
               }}
               edge="end"
               color="inherit"
-              size={"medium"}
+              size={"large"}
               onClick={onClose}
               aria-label="close"
             >

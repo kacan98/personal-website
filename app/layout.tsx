@@ -7,7 +7,7 @@ import TopBar from "@/components/menu/topBar";
 import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
 import KarelCv from "@/components/pages/cv/karelCv";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
-import GalleryPage from "@/components/pages/galery/galery";
+import GalleryPage from "@/components/pages/galery/galleryPage";
 import { getGalleries, getSettings } from "@/sanity/sanity-utils";
 import { Suspense } from "react";
 
