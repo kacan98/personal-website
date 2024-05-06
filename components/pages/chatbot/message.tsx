@@ -9,15 +9,15 @@ import {
 import React from "react";
 
 type MessageProps = {
-  role: "user" | "assistant";
+  chatRole: "user" | "assistant";
   text: string | null;
 };
 
-const Message = ({ role, text }: MessageProps) => {
+const Message = ({ chatRole, text }: MessageProps) => {
   const AvatarPicture = (
     <Avatar
-      alt={`${role} avatar`}
-      src={role === "assistant" ? "/færøerne_karel.jpg" : "user.png"} //TODO: Make this generic
+      alt={`${chatRole} avatar`}
+      src={chatRole === "assistant" ? "/færøerne_karel.jpg" : "user.png"} //TODO: Make this generic
       sx={{ width: 50, height: 50, marginBottom: "15px", margin: 2 }}
     />
   );
@@ -25,16 +25,16 @@ const Message = ({ role, text }: MessageProps) => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: role === "assistant" ? "flex-start" : "flex-end",
+        justifyContent: chatRole === "assistant" ? "flex-start" : "flex-end",
         mb: 2,
       }}
     >
-      {role === "assistant" && AvatarPicture}
+      {chatRole === "assistant" && AvatarPicture}
       <Card
-        color={role === "user" ? "primary" : "secondary"}
+        color={chatRole === "user" ? "primary" : "secondary"}
         sx={{
           maxWidth: 345,
-          textAlign: role === "assistant" ? "left" : "right",
+          textAlign: chatRole === "assistant" ? "left" : "right",
         }}
       >
         <CardContent>
@@ -57,7 +57,7 @@ const Message = ({ role, text }: MessageProps) => {
           )}
         </CardContent>
       </Card>
-      {role === "user" && AvatarPicture}
+      {chatRole === "user" && AvatarPicture}
     </Box>
   );
 };

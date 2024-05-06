@@ -55,6 +55,7 @@ const ChatBotUI = () => {
         });
       })
       .catch((err) => console.error(err)); //TODO: handle error
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
   const handleSend = () => {
@@ -92,11 +93,13 @@ const ChatBotUI = () => {
         {messages.map((message, index) => (
           <Message
             key={index}
-            role={message.role as "assistant" | "user"}
+            chatRole={message.role as "assistant" | "user"}
             text={message.content as string}
           />
         ))}
-        {loading && <Message role="assistant" text={messageBeingReceived} />}
+        {loading && (
+          <Message chatRole="assistant" text={messageBeingReceived} />
+        )}
         <div ref={messagesEndRef} />
       </List>
       <Box
