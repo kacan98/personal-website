@@ -7,9 +7,13 @@ export type Project = {
   tags: string[];
   githubUrl: string;
   deploymentUrl: string;
+  page?: {
+    _type: "reference";
+    _ref: string;
+  };
 };
 
-/*For example 'R8tit, an article, '*/
+/*For example 'R8tit, an article, ... '*/
 export default defineType({
   name: "project",
   title: "Project",
@@ -28,27 +32,12 @@ export default defineType({
       type: "text",
     }),
     defineField({
-      name: "slug",
-      title: "Slug",
-      type: "slug",
-      options: {
-        source: "title",
-        maxLength: 96,
-      },
-    }),
-    defineField({
-      name: "image",
       title: "Main Image",
+      name: "image",
       type: "image",
       options: {
         hotspot: true,
       },
-    }),
-    defineField({
-      title: "Other Images",
-      name: "otherImages",
-      type: "array",
-      of: [{ type: "image" }],
     }),
     defineField({
       name: "tags",
@@ -65,6 +54,12 @@ export default defineType({
       name: "deploymentUrl",
       title: "Deployment URL",
       type: "string",
+    }),
+    defineField({
+      name: "page",
+      title: "Related Page",
+      type: "reference",
+      to: [{ type: "page" }],
     }),
   ],
   preview: {
