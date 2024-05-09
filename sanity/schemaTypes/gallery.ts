@@ -43,6 +43,8 @@ export default defineType({
     {
       name: "filteringIsEnabled",
       title: "Tag-based Filtering",
+      description:
+        'You can add tags to projects. For example "React, TypeScript, ..." and enable filtering based on these tags. If on, a filter will be displayed on the page.',
       type: "boolean",
     },
   ],

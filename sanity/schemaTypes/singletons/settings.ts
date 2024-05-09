@@ -48,13 +48,25 @@ export default defineType({
           name: "mainImage",
           title: "Main page background image",
           type: "image",
+          options: {
+            hotspot: true,
+          },
         }),
       ],
+    }),
+    defineField({
+      name: "social",
+      description: "Will be shown in the bottom right of the homepage",
+      title: "Social",
+      type: "array",
+      of: [{ type: "link" }],
     }),
     defineField({
       name: "metadata",
       title: "Metadata",
       type: "object",
+      description:
+        "This is the metadata for the whole website. It will be used for SEO. (it's optional)",
       fields: [
         defineField({
           name: "title",
@@ -76,6 +88,8 @@ export default defineType({
     defineField({
       name: "specialPages",
       title: "Special pages",
+      description:
+        "These are temporary and used so that I can turn them on in my portfolio. They will be removed in the future. They are both hard-coded to show info about me (Karel)",
       type: "object",
       fields: [
         defineField({
@@ -86,11 +100,6 @@ export default defineType({
         defineField({
           name: "chatbot",
           title: "Chatbot",
-          type: "boolean",
-        }),
-        defineField({
-          name: "portfolio",
-          title: "Portfolio",
           type: "boolean",
         }),
       ],

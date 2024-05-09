@@ -7,6 +7,7 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { useMediaQuery } from "@mui/system";
 import { Theme } from "@mui/material";
+import Link from "next/link";
 
 type GalleryComponentProps = {
   projects: Project[];
@@ -72,11 +73,20 @@ export const GalleryComponent = ({
         justifyContent={"center"}
         alignItems={"center"}
       >
-        {transitions((props, project) => (
-          <a.div style={props}>
-            <ProjectCard key={project.title} {...project} />
-          </a.div>
-        ))}
+        {transitions((props, project) => {
+          const card = <ProjectCard key={project.title} {...project} />;
+          return (
+            <a.div style={props}>
+              {project.relatedPage?.slug ? (
+                <Link href={`/project/${project.relatedPage.slug.current}`}>
+                  {card}
+                </Link>
+              ) : (
+                card
+              )}
+            </a.div>
+          );
+        })}
       </Grid2>
     </Grid2>
   );

@@ -11,14 +11,24 @@ type FullScreenPictureProps = {
 function FullScreenPicture({ sanityImage }: FullScreenPictureProps) {
   return (
     <>
-      {sanityImage && (
-        <SanityPicture
-          sanityImage={sanityImage}
-          alt="Background Image"
-          objectFit={"cover"}
-          layout={"fill"}
-        />
-      )}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+        }}
+      >
+        {sanityImage && (
+          <SanityPicture
+            sanityImage={sanityImage}
+            alt="Background Image"
+            objectFit="cover"
+            fill
+          />
+        )}
+      </Box>
       <Box
         sx={{
           position: "relative",

@@ -24,27 +24,27 @@ export default async function RootLayout({
     description: "Portfolio",
   };
 
-  const pages = [];
-  pages.push(
+  const modals: { name: string; modal: React.ReactNode }[] = [];
+  modals.push(
     ...galleries.map((gallery) => ({
       name: gallery.title,
-      page: <GalleryPage {...gallery} />,
+      modal: <GalleryPage {...gallery} />,
     })),
   );
 
   const { chatbot, cv } = settings?.specialPages || {};
 
   if (chatbot) {
-    pages.unshift({
+    modals.unshift({
       name: "Chatbot",
-      page: <ChatbotPage />,
+      modal: <ChatbotPage />,
     });
   }
 
   if (cv) {
-    pages.unshift({
+    modals.unshift({
       name: "CV",
-      page: <KarelCv />,
+      modal: <KarelCv />,
     });
   }
 
@@ -56,7 +56,7 @@ export default async function RootLayout({
           <ThemeProvider theme={theme}>
             {/*Had to be in Suspense because of useSearchParams inside */}
             <Suspense fallback={<Skeleton />}>
-              <TopBar pages={pages} />
+              <TopBar modals={modals} />
             </Suspense>
             {children}
           </ThemeProvider>

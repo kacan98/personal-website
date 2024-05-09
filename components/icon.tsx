@@ -3,8 +3,8 @@ import {
   GitHub,
   Instagram,
   LinkedIn,
-  LinkOff,
   Mail,
+  OpenInNew,
   Pinterest,
   Reddit,
   Twitter,
@@ -24,7 +24,7 @@ export const SUPPORTED_ICONS: {
   },
   externalLink: {
     name: "External link",
-    component: () => <LinkOff />,
+    component: () => <OpenInNew />,
   },
   mail: {
     name: "Mail",

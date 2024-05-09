@@ -1,19 +1,12 @@
 import { Box, Card, CardContent, IconButton, Typography } from "@mui/material";
-import Link from "next/link";
-import { GitHub, OpenInNew } from "@mui/icons-material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Project } from "@/sanity/schemaTypes/project";
 import Image from "next/image";
 import { useNextSanityImage } from "next-sanity-image";
 import { sanityClient } from "@/sanity/lib/sanityClient";
+import { SUPPORTED_ICONS } from "@/components/icon";
 
-export const ProjectCard = ({
-  title,
-  description,
-  image,
-  githubUrl,
-  deploymentUrl,
-}: Project) => {
+export const ProjectCard = ({ title, description, image, links }: Project) => {
   const imageProps = useNextSanityImage(sanityClient, image, {
     imageBuilder: (builder) => builder.width(300).height(200),
   });
@@ -57,20 +50,12 @@ export const ProjectCard = ({
           <Typography variant="h5">{title}</Typography>
           <Typography variant="body2">{description}</Typography>
           <Grid2 container alignItems="center" justifyContent="center">
-            {githubUrl && (
-              <Link href={githubUrl} target={"_blank"}>
-                <IconButton>
-                  <GitHub />
+            {links &&
+              links.map(({ url, iconName, title }) => (
+                <IconButton key={title} href={url} target="_blank">
+                  {SUPPORTED_ICONS[iconName]?.component()}
                 </IconButton>
-              </Link>
-            )}
-            {deploymentUrl && (
-              <Link href={deploymentUrl} target={"_blank"}>
-                <IconButton>
-                  <OpenInNew />
-                </IconButton>
-              </Link>
-            )}
+              ))}
           </Grid2>
         </Grid2>
       </CardContent>

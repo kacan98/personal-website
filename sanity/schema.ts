@@ -5,7 +5,7 @@ import cvSection from "@/sanity/schemaTypes/cv/cvSection";
 import bulletPoint from "@/sanity/schemaTypes/cv/bulletPoint";
 import cvSubSection from "@/sanity/schemaTypes/cv/cvSubSection";
 import gallery from "@/sanity/schemaTypes/gallery";
-import social from "@/sanity/schemaTypes/social";
+import links from "@/sanity/schemaTypes/link";
 import blockContent from "@/sanity/schemaTypes/blockContent";
 import page from "@/sanity/schemaTypes/page";
 
@@ -19,7 +19,7 @@ export const schema: {
     bulletPoint,
     settings,
     gallery,
-    social,
+    links,
     page,
 
     //rich texts:

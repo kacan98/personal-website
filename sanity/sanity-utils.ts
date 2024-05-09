@@ -2,7 +2,7 @@ import { sanityClient } from "@/sanity/lib/sanityClient";
 import { Project } from "@/sanity/schemaTypes/project";
 import { Settings } from "@/sanity/schemaTypes/singletons/settings";
 import { Gallery } from "@/sanity/schemaTypes/gallery";
-import { Social } from "@/sanity/schemaTypes/social";
+import { Link } from "@/sanity/schemaTypes/link";
 
 export const getProjects = async (): Promise<Project[]> => {
   return sanityClient.fetch(
@@ -45,10 +45,23 @@ export const getSettings = async (): Promise<Settings | undefined> => {
   );
 };
 
-export const getSocials = async (): Promise<Social[]> => {
+export const getSocials = async (): Promise<Link[]> => {
   return sanityClient.fetch(
-    `*[_type == "social"]`,
+    `*[_type == "settings"][0].social`,
     {},
+    {
+      cache: "no-cache",
+    },
+  );
+};
+
+export const getProjectBySlug = async (
+  slug: string,
+): Promise<Project | undefined> => {
+  //slug exists at project.relatedPage.slug.current
+  return sanityClient.fetch(
+    `*[_type == "project" && relatedPage.slug.current == $slug][0]`,
+    { slug },
     {
       cache: "no-cache",
     },

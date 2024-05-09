@@ -1,7 +1,6 @@
 import { StructureResolver } from "sanity/structure";
 import settings from "@/sanity/desk/settings";
 import galleryModals from "@/sanity/desk/galleryModals";
-import social from "@/sanity/desk/social";
 
 export const structure: StructureResolver = (S, context) =>
   S.list()
@@ -10,7 +9,6 @@ export const structure: StructureResolver = (S, context) =>
     .items([
       galleryModals(S, context),
       S.divider(),
-      social(S, context),
       settings(S, context),
       S.divider(),
     ]);

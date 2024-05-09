@@ -1,5 +1,5 @@
 import React from "react";
-import ProjectDisplay from "@/components/pages/portfolio/projects/proejctDisplay";
+import ProjectDisplay from "@/components/pages/portfolio/projects/projectDisplay";
 import PageWrapper from "@/components/pages/pageWrapper";
 import { getProjects } from "@/sanity/sanity-utils";
 

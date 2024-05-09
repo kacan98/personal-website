@@ -18,21 +18,22 @@ const SocialIcons = async ({ direction }: SocialProps) => {
       }}
     >
       <Grid container spacing={2} direction={direction}>
-        {socials.map(({ url, iconName, title }) => (
-          <Tooltip
-            TransitionComponent={Zoom}
-            placement="left"
-            key={url}
-            title={title}
-            arrow
-          >
-            <Grid item>
-              <IconButton href={url} target="_blank">
-                {SUPPORTED_ICONS[iconName]?.component()}
-              </IconButton>
-            </Grid>
-          </Tooltip>
-        ))}
+        {socials &&
+          socials.map(({ url, iconName, title }) => (
+            <Tooltip
+              TransitionComponent={Zoom}
+              placement="left"
+              key={url}
+              title={title}
+              arrow
+            >
+              <Grid item>
+                <IconButton href={url} target="_blank">
+                  {SUPPORTED_ICONS[iconName]?.component()}
+                </IconButton>
+              </Grid>
+            </Tooltip>
+          ))}
       </Grid>
     </Box>
   );

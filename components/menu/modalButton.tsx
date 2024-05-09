@@ -42,8 +42,8 @@ const ModalButton = ({
               width: "100%",
               height: "100%",
               position: "absolute",
-              bgcolor: "background.paper",
               overflow: "auto",
+              bgcolor: "background.paper",
             }}
           >
             <IconButton

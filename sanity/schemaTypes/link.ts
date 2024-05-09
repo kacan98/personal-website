@@ -1,16 +1,16 @@
 import { defineType } from "sanity";
 import { supportedIconNames } from "@/components/icon";
 
-export interface Social {
-  _type: "social";
+export interface Link {
+  _type: "link";
   title: string;
   url: string;
   iconName: string;
 }
 
 export default defineType({
-  name: "social",
-  title: "Social Media",
+  name: "link",
+  title: "Link",
   type: "document",
   fields: [
     {

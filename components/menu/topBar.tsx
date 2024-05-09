@@ -1,23 +1,48 @@
 "use client";
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  IconButton,
+  Toolbar,
+  Typography,
+  useScrollTrigger,
+} from "@mui/material";
 import ModalButton from "@/components/menu/modalButton";
-import { ReactNode, useCallback } from "react";
+import { cloneElement, ReactElement, ReactNode, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Home } from "@mui/icons-material";
 
 type TopBarProps = {
-  pages: {
+  modals: {
     name: string;
-    page: ReactNode;
+    modal: ReactNode;
   }[];
 };
 
-const TopBar = ({ pages }: TopBarProps) => {
+interface ElevationScrollProps {
+  children: ReactElement;
+}
+
+function ElevationScroll(props: ElevationScrollProps) {
+  const { children } = props;
+  const trigger = useScrollTrigger({
+    threshold: 0,
+    disableHysteresis: true,
+  });
+
+  return cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+    color: trigger ? "background" : "transparent",
+  });
+}
+
+const TopBar = ({ modals }: TopBarProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const modalOpenName = searchParams.get("modalOpen");
 
   const weAreInSanityStudio = pathname.startsWith("/studio");
+  const weAreHome = pathname === "/";
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
@@ -46,30 +71,36 @@ const TopBar = ({ pages }: TopBarProps) => {
   return weAreInSanityStudio ? (
     <></>
   ) : (
-    <AppBar
-      position="fixed"
-      color={"transparent"}
-      sx={{
-        boxShadow: "none",
-        //so that it shows up above the modals (zIndex 1300 in MUI)
-        zIndex: 1301,
-      }}
-    >
-      <Toolbar>
-        {pages.map(({ name, page }) => (
-          <ModalButton
-            onOpen={() => handleModalOpen(name)}
-            onClose={() => handleModalClose()}
-            open={modalOpenName === name}
-            key={name}
-            buttonName={name}
-          >
-            {page}
-          </ModalButton>
-        ))}
-        <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-      </Toolbar>
-    </AppBar>
+    <ElevationScroll>
+      <AppBar
+        position="fixed"
+        color={"transparent"}
+        sx={{
+          //so that it shows up above the modals (zIndex 1300 in MUI)
+          zIndex: 1301,
+        }}
+      >
+        <Toolbar>
+          {!weAreHome && (
+            <IconButton onClick={() => router.push("/")} color="inherit">
+              <Home color="info" />
+            </IconButton>
+          )}
+          {modals.map(({ name, modal }) => (
+            <ModalButton
+              onOpen={() => handleModalOpen(name)}
+              onClose={() => handleModalClose()}
+              open={modalOpenName === name}
+              key={name}
+              buttonName={name}
+            >
+              {modal}
+            </ModalButton>
+          ))}
+          <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+        </Toolbar>
+      </AppBar>
+    </ElevationScroll>
   );
 };
 export default TopBar;
