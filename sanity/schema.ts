@@ -8,6 +8,7 @@ import gallery from "@/sanity/schemaTypes/gallery";
 import links from "@/sanity/schemaTypes/link";
 import blockContent from "@/sanity/schemaTypes/blockContent";
 import page from "@/sanity/schemaTypes/page";
+import cvSettings from "@/sanity/schemaTypes/singletons/cvSettings";
 
 export const schema: {
   types: SchemaTypeDefinition[];
@@ -16,6 +17,7 @@ export const schema: {
     project,
     cvSection,
     cvSubSection,
+    cvSettings,
     bulletPoint,
     settings,
     gallery,

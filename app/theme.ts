@@ -12,7 +12,7 @@ const theme = responsiveFontSizes(
         main: "#fff",
       },
       action: {
-        active: "#fff", // choose a suitable color for icons
+        active: "#fff",
       },
     },
     typography: {
