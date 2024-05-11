@@ -12,8 +12,8 @@ export const structure: StructureResolver = (S, context) =>
       galleryModals(S, context),
       projects(S, context),
       S.divider(),
-      // cvSettings(S, context),
-      // S.divider(),
+      cvSettings(S, context),
+      S.divider(),
       settings(S, context),
       S.divider(),
     ]);

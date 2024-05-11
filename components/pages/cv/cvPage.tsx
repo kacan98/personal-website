@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Download from "@/components/download";
@@ -9,12 +9,12 @@ import CvSectionComponent from "@/components/pages/cv/cvSectionComponent";
 type CvProps = {
   name: string;
   intro: string;
-  picture: string;
+  // picture: string;
   mainSection: CvSectionSanitySchemaType[];
   sideSection: CvSectionSanitySchemaType[];
 };
 
-function CvPage({ name, intro, picture, sideSection, mainSection }: CvProps) {
+function CvPage({ name, intro, sideSection, mainSection }: CvProps) {
   return (
     <PageWrapper title={"CV"}>
       <Download>
@@ -27,11 +27,11 @@ function CvPage({ name, intro, picture, sideSection, mainSection }: CvProps) {
                 direction="column"
                 textAlign="left"
               >
-                <Avatar
-                  alt={name}
-                  src={picture}
-                  sx={{ width: 100, height: 100, marginBottom: "15px" }}
-                />
+                {/*<Avatar*/}
+                {/*  alt={name}*/}
+                {/*  src={picture}*/}
+                {/*  sx={{ width: 100, height: 100, marginBottom: "15px" }}*/}
+                {/*/>*/}
                 <Typography variant="h4" component="div" gutterBottom>
                   {name}
                 </Typography>

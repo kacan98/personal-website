@@ -1,18 +1,41 @@
 import { defineType } from "sanity";
+import { DocumentIcon } from "@sanity/icons";
+import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
+
+export type CVSettings = {
+  on: boolean;
+  name: string;
+  subtitle: string;
+  mainColumn: CvSection[];
+  sideColumn: CvSection[];
+};
+
+const TITLE = "CV Settings";
 
 export default defineType({
-  title: "CV Settings",
+  title: TITLE,
   name: "cvSettings",
   type: "document",
+  icon: DocumentIcon,
   fields: [
     {
-      title: "on",
+      title: "CV modal on",
       name: "on",
       type: "boolean",
     },
     {
-      title: "Left Column",
-      name: "leftColumn",
+      title: "Name",
+      name: "name",
+      type: "string",
+    },
+    {
+      title: "Subtitle",
+      name: "subtitle",
+      type: "string",
+    },
+    {
+      title: "Main Column",
+      name: "mainColumn",
       type: "array",
       of: [
         {
@@ -21,8 +44,8 @@ export default defineType({
       ],
     },
     {
-      title: "Right Column",
-      name: "rightColumn",
+      title: "Side Column",
+      name: "sideColumn",
       type: "array",
       of: [
         {
@@ -31,4 +54,11 @@ export default defineType({
       ],
     },
   ],
+  preview: {
+    prepare() {
+      return {
+        title: TITLE,
+      };
+    },
+  },
 });

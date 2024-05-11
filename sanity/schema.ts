@@ -9,6 +9,7 @@ import links from "@/sanity/schemaTypes/link";
 import blockContent from "@/sanity/schemaTypes/blockContent";
 import page from "@/sanity/schemaTypes/page";
 import cvSettings from "@/sanity/schemaTypes/singletons/cvSettings";
+import icon from "@/sanity/schemaTypes/icon";
 
 export const schema: {
   types: SchemaTypeDefinition[];
@@ -23,6 +24,7 @@ export const schema: {
     gallery,
     links,
     page,
+    icon,
 
     //rich texts:
     blockContent,

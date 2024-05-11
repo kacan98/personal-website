@@ -23,8 +23,8 @@ export type Settings = {
 };
 
 export default defineType({
-  name: "settings",
   title: TITLE,
+  name: "settings",
   type: "document",
   icon: CogIcon,
   fields: [

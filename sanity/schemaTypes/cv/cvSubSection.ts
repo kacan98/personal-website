@@ -6,7 +6,7 @@ export interface CvSubSection {
     left?: string;
     right?: string;
   };
-  contents?: string[];
+  paragraphs?: string[];
 }
 
 export default defineType({
@@ -37,10 +37,10 @@ export default defineType({
       ],
     }),
     defineField({
-      name: "contents",
-      title: "Contents",
+      name: "paragraphs",
+      title: "Paragraphs",
       type: "array",
-      of: [{ type: "string" }],
+      of: [{ type: "text" }],
     }),
   ],
 });

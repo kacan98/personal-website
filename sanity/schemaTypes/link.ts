@@ -28,13 +28,7 @@ export default defineType({
     {
       name: "iconName",
       title: "Icon",
-      type: "string",
-      options: {
-        list: supportedIconNames.map(({ name, key }) => ({
-          title: name,
-          value: key,
-        })),
-      },
+      type: "icon",
       validation: (Rule) => Rule.required(),
     },
   ],

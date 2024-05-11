@@ -1,10 +1,12 @@
 import OpenAI from "openai";
 import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
-import { karelCvData } from "@/store/staticObjects";
+import { getCvSettings } from "@/sanity/sanity-utils";
+
 type ChatCompletionMessageParam =
   OpenAI.Chat.Completions.ChatCompletionMessageParam;
 
 export async function POST(req: Request) {
+  const cvSettings = await getCvSettings();
   const { chatHistory } = (await req.json()) as ChatPOSTBody;
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -14,7 +16,7 @@ export async function POST(req: Request) {
     role: "user",
     content: `
     You are this person with this experience:
-      ${JSON.stringify(karelCvData)}
+      ${JSON.stringify(cvSettings)}
       You are talking to a potential customer or employer visiting your portfolio website.
       Be friendly and paint yourself in the best possible light.
       Also be brief.

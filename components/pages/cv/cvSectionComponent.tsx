@@ -9,10 +9,11 @@ import {
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import Link from "next/link";
 import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
+import { SUPPORTED_ICONS } from "@/components/icon";
 
 function CvSectionComponent({
   title,
-  contents,
+  paragraphs,
   subSections,
   bulletPoints,
   subtitles,
@@ -30,17 +31,17 @@ function CvSectionComponent({
           <Typography variant="subtitle1">{subtitles.right}</Typography>
         </Box>
       )}
-      {contents &&
-        contents.map((content, idx) => (
+      {paragraphs &&
+        paragraphs.map((paragraph, idx) => (
           <Typography key={idx} variant="body1" gutterBottom>
-            {content}
+            {paragraph}
           </Typography>
         ))}
       {bulletPoints &&
         bulletPoints.map((point, idx) => (
           <ListItem key={idx}>
             <ListItemIcon>
-              <point.icon />
+              {SUPPORTED_ICONS[point.iconName]?.component()}
             </ListItemIcon>
             <ConditionalWrapper
               condition={!!point.url}
@@ -71,10 +72,10 @@ function CvSectionComponent({
                   </Typography>
                 </Box>
               )}
-              {section.contents &&
-                section.contents.map((content, idx) => (
+              {section.paragraphs &&
+                section.paragraphs.map((paragraph, idx) => (
                   <Typography key={idx} variant="body1" gutterBottom>
-                    {content}
+                    {paragraph}
                   </Typography>
                 ))}
             </div>

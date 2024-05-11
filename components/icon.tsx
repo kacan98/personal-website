@@ -2,11 +2,15 @@ import {
   Facebook,
   GitHub,
   Instagram,
+  Language,
+  LibraryBooks,
   LinkedIn,
   Mail,
   OpenInNew,
   Pinterest,
   Reddit,
+  School,
+  Science,
   Twitter,
   WhatsApp,
   YouTube,
@@ -42,9 +46,17 @@ export const SUPPORTED_ICONS: {
     name: "LinkedIn",
     component: () => <LinkedIn />,
   },
+  libraryBooks: {
+    name: "Library Books",
+    component: () => <LibraryBooks />,
+  },
   twitter: {
     name: "Twitter",
     component: () => <Twitter />,
+  },
+  translate: {
+    name: "Translate",
+    component: () => <Language />,
   },
   youTube: {
     name: "YouTube",
@@ -57,6 +69,14 @@ export const SUPPORTED_ICONS: {
   reddit: {
     name: "Reddit",
     component: () => <Reddit />,
+  },
+  school: {
+    name: "School",
+    component: () => <School />,
+  },
+  science: {
+    name: "Science",
+    component: () => <Science />,
   },
   whatsApp: {
     name: "WhatsApp",
