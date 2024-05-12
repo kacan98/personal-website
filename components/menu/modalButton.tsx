@@ -29,12 +29,15 @@ const ModalButton = ({
     <div>
       <Button
         size={"large"}
-        color={"info"}
+        color={"primary"}
         sx={{ my: 2, display: "block" }}
         onClick={onOpen}
       >
-        <Typography variant="button">{buttonName}</Typography>
+        <Typography variant="button" fontSize="1.2rem" fontWeight={700}>
+          {buttonName}
+        </Typography>
       </Button>
+
       <Modal open={open} onClose={onClose} closeAfterTransition>
         <Slide direction="up" in={open} timeout={700}>
           <Box
@@ -44,6 +47,7 @@ const ModalButton = ({
               position: "absolute",
               overflow: "auto",
               bgcolor: "background.paper",
+              color: "text.primary",
             }}
           >
             <IconButton
@@ -53,10 +57,9 @@ const ModalButton = ({
                 top: 30,
                 padding: 5,
                 zIndex: 100,
-                color: "white",
+                color: "text.primary",
               }}
               edge="end"
-              color="inherit"
               size={"large"}
               onClick={onClose}
               aria-label="close"

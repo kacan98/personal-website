@@ -3,6 +3,7 @@ import settings from "@/sanity/desk/settings";
 import galleryModals from "@/sanity/desk/galleryModals";
 import projects from "@/sanity/desk/projects";
 import cvSettings from "@/sanity/desk/cvSettings";
+import stylesSettings from "@/sanity/desk/stylesSettings";
 
 export const structure: StructureResolver = (S, context) =>
   S.list()
@@ -15,5 +16,6 @@ export const structure: StructureResolver = (S, context) =>
       cvSettings(S, context),
       S.divider(),
       settings(S, context),
+      stylesSettings(S, context),
       S.divider(),
     ]);

@@ -10,7 +10,7 @@ async function GalleryPage(gallery: Gallery) {
     gallery.projectRefs.map((p) => p._ref),
   );
   return (
-    <PageWrapper title={gallery.title}>
+    <PageWrapper title={gallery.title} containerMaxWidth="lg">
       <Grid2
         container
         justifyContent="center"

@@ -82,8 +82,12 @@ const TopBar = ({ modals }: TopBarProps) => {
       >
         <Toolbar>
           {!weAreHome && (
-            <IconButton onClick={() => router.push("/")} color="inherit">
-              <Home color="info" />
+            <IconButton
+              size="large"
+              onClick={() => router.push("/")}
+              color="inherit"
+            >
+              <Home color="primary" />
             </IconButton>
           )}
           {modals.map(({ name, modal }) => (

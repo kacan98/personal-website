@@ -30,15 +30,17 @@ function FullScreenPicture({ sanityImage }: FullScreenPictureProps) {
         )}
       </Box>
       <Box
-        sx={{
+        sx={(theme) => ({
           position: "relative",
           top: 0,
           left: 0,
           width: "100%",
           height: "100%",
           background:
-            "radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%)",
-        }}
+            theme.palette.mode === "light"
+              ? "rgba(255,255,255,0.35)"
+              : "radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.7) 100%)",
+        })}
       ></Box>
     </>
   );

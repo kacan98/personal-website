@@ -10,6 +10,7 @@ import blockContent from "@/sanity/schemaTypes/blockContent";
 import page from "@/sanity/schemaTypes/page";
 import cvSettings from "@/sanity/schemaTypes/singletons/cvSettings";
 import icon from "@/sanity/schemaTypes/icon";
+import styles from "@/sanity/schemaTypes/singletons/stylesSettings";
 
 export const schema: {
   types: SchemaTypeDefinition[];
@@ -21,6 +22,7 @@ export const schema: {
     cvSettings,
     bulletPoint,
     settings,
+    styles,
     gallery,
     links,
     page,

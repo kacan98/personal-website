@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import AnimatedText from "@/components/home/springingText";
@@ -10,7 +11,7 @@ type HomeTextProps = {
 function HomeText({ title, subtitles }: HomeTextProps) {
   return (
     <Box
-      sx={{
+      sx={(theme) => ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -20,9 +21,11 @@ function HomeText({ title, subtitles }: HomeTextProps) {
         right: 0,
         width: "100%",
         height: "100%",
-        opacity: 0.65,
+        opacity: theme.palette.mode === "light" ? 0.9 : 0.7,
         flexDirection: "column",
-      }}
+        fontSize: "2rem",
+        color: "text.primary",
+      })}
     >
       {title && (
         <Box>

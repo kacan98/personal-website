@@ -1,30 +1,24 @@
 "use client";
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
+import { Theme } from "@mui/material";
+import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
+import { ThemeOptions } from "@mui/material/styles/createTheme";
 
-const theme = responsiveFontSizes(
-  createTheme({
-    palette: {
-      mode: "dark",
-      primary: {
-        main: "#1976d2",
-      },
-      info: {
-        main: "#fff",
-      },
-      action: {
-        active: "#fff",
-      },
-    },
+//create a type for the first argument of createTheme
+const getBaseTheme = (): ThemeOptions => {
+  // createTheme somehow breaks at least fonts below,
+  // so modify and set below instead
+  return {
     typography: {
       fontFamily: "system-ui, sans-serif",
-      allVariants: {
-        color: "#fff",
-      },
+      fontSize: 14,
 
       h1: {
+        fontSize: "2.5em",
         fontWeight: 700,
       },
       h2: {
+        fontSize: "2.3em",
         fontWeight: 700,
       },
       h3: {
@@ -39,20 +33,55 @@ const theme = responsiveFontSizes(
       h6: {
         fontWeight: 700,
       },
-      button: {
-        fontWeight: 500,
-      },
     },
     components: {
-      MuiIcon: {
-        styleOverrides: {
-          root: {
-            color: "#fff",
-          },
+      MuiContainer: {
+        defaultProps: {
+          maxWidth: "md",
         },
       },
     },
-  }),
-);
+  };
+};
 
-export default theme;
+export function getTheme(styles?: StylesSettings): Theme {
+  const baseTheme = getBaseTheme();
+  console.log(styles?.font);
+  if (styles?.font && styles.font !== "System font") {
+    baseTheme.typography = {
+      ...baseTheme.typography,
+      fontFamily: styles.font,
+      body1: {
+        fontFamily: "'Open Sans Variable', sans-serif",
+      },
+      body2: {
+        fontFamily: "'Open Sans Variable', sans-serif",
+      },
+      caption: {
+        fontFamily: "'Open Sans Variable', sans-serif",
+      },
+    };
+  }
+
+  if (styles?.theme === "light") {
+    return createTheme({
+      ...baseTheme,
+      palette: {
+        mode: "light",
+        primary: {
+          main: "#000000",
+        },
+      },
+    });
+  }
+
+  return createTheme({
+    ...baseTheme,
+    palette: {
+      mode: "dark",
+      primary: {
+        main: "#fff",
+      },
+    },
+  });
+}

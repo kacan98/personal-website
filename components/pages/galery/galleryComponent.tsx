@@ -6,7 +6,7 @@ import { ProjectCard } from "@/components/pages/galery/projectCard";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { useMediaQuery } from "@mui/system";
-import { Theme } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import Link from "next/link";
 
 type GalleryComponentProps = {
@@ -56,15 +56,15 @@ export const GalleryComponent = ({
       alignItems={"center"}
       direction={"column"}
     >
-      {filteringIsEnabled && (
-        <Grid2>
-          {isBigScreen && (
+      {filteringIsEnabled && isBigScreen && (
+        <Grid2 mb={3}>
+          {
             <ProjectFilter
               selectedFilter={selectedTag}
               setSelectedFilter={setSelectedTag}
               filters={uniqueTags}
             />
-          )}
+          }
         </Grid2>
       )}
       <Grid2
@@ -74,17 +74,19 @@ export const GalleryComponent = ({
         alignItems={"center"}
       >
         {transitions((props, project) => {
-          const card = <ProjectCard key={project.title} {...project} />;
+          const card = <ProjectCard {...project} />;
           return (
-            <a.div style={props}>
-              {project.relatedPage?.slug ? (
-                <Link href={`/project/${project.relatedPage.slug.current}`}>
-                  {card}
-                </Link>
-              ) : (
-                card
-              )}
-            </a.div>
+            <Box key={project.title}>
+              <a.div style={props}>
+                {project.relatedPage?.slug ? (
+                  <Link href={`/project/${project.relatedPage.slug.current}`}>
+                    {card}
+                  </Link>
+                ) : (
+                  card
+                )}
+              </a.div>
+            </Box>
           );
         })}
       </Grid2>

@@ -28,7 +28,7 @@ function ProjectFilter({
               key={filter}
               onClick={() => setSelectedFilter(filter)}
               variant={filter === selectedFilter ? "contained" : "text"}
-              color={filter === selectedFilter ? "primary" : "info"}
+              color={"primary"}
               sx={{
                 "&:hover": {
                   backgroundColor: "rgba(0,0,0,0.1)",

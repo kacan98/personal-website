@@ -21,7 +21,7 @@ function CvSectionComponent({
   return (
     <Box textAlign={"left"}>
       {title && (
-        <Typography variant="h4" component="div" gutterBottom>
+        <Typography variant="h4" gutterBottom>
           {title}
         </Typography>
       )}
@@ -59,7 +59,7 @@ function CvSectionComponent({
         <>
           {subSections.map((section, index) => (
             <div key={index}>
-              <Typography variant="h5" component="div" gutterBottom>
+              <Typography variant="h5" gutterBottom>
                 {section.title}
               </Typography>
               {section.subtitles && (

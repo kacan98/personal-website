@@ -1,15 +1,10 @@
 import { Box, Card, CardContent, IconButton, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Project } from "@/sanity/schemaTypes/project";
-import Image from "next/image";
-import { useNextSanityImage } from "next-sanity-image";
-import { sanityClient } from "@/sanity/lib/sanityClient";
 import { SUPPORTED_ICONS } from "@/components/icon";
+import SanityPicture from "@/components/sanityPicture";
 
 export const ProjectCard = ({ title, description, image, links }: Project) => {
-  const imageProps = useNextSanityImage(sanityClient, image, {
-    imageBuilder: (builder) => builder.width(300).height(200),
-  });
   return (
     <Card
       sx={{
@@ -19,6 +14,7 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
         m: 2,
         p: 2,
         borderRadius: 3,
+        borderColor: "divider",
       }}
       variant="outlined"
     >
@@ -41,18 +37,23 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
               overflow: "hidden",
             }}
           >
-            <Image
-              {...imageProps}
-              alt={`Image of ${title} project`}
-              unoptimized
-            />
+            <Box width={300} height={200}>
+              {/*This should work better... */}
+              <SanityPicture
+                sanityImage={image}
+                alt={`Image of ${title} project`}
+                width={300}
+                height={200}
+                fitMode="scale"
+              />
+            </Box>
           </Box>
           <Typography variant="h5">{title}</Typography>
           <Typography variant="body2">{description}</Typography>
           <Grid2 container alignItems="center" justifyContent="center">
             {links &&
-              links.map(({ url, iconName, title }) => (
-                <IconButton key={title} href={url} target="_blank">
+              links.map(({ url, iconName }) => (
+                <IconButton key={iconName} href={url} target="_blank">
                   {SUPPORTED_ICONS[iconName]?.component()}
                 </IconButton>
               ))}

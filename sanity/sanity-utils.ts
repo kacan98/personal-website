@@ -4,6 +4,7 @@ import { Settings } from "@/sanity/schemaTypes/singletons/settings";
 import { Gallery } from "@/sanity/schemaTypes/gallery";
 import { Link } from "@/sanity/schemaTypes/link";
 import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
 
 export const getProjects = async (): Promise<Project[]> => {
   return sanityClient.fetch(
@@ -72,6 +73,16 @@ export const getProjectBySlug = async (
 export const getCvSettings = async (): Promise<CVSettings> => {
   return sanityClient.fetch(
     `*[_type == "cvSettings"][0]`,
+    {},
+    {
+      cache: "no-cache",
+    },
+  );
+};
+
+export const getStyles = async (): Promise<StylesSettings | undefined> => {
+  return sanityClient.fetch(
+    `*[_type == "stylesSettings"][0]`,
     {},
     {
       cache: "no-cache",
