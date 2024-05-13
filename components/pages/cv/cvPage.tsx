@@ -11,7 +11,7 @@ type CvProps = {
   intro: string;
   // picture: string;
   mainSection: CvSectionSanitySchemaType[];
-  sideSection: CvSectionSanitySchemaType[];
+  sideSection?: CvSectionSanitySchemaType[];
 };
 
 function CvPage({ name, intro, sideSection, mainSection }: CvProps) {
@@ -39,7 +39,7 @@ function CvPage({ name, intro, sideSection, mainSection }: CvProps) {
                   {intro}
                 </Typography>
               </Grid2>
-              {sideSection.map((sections, index) => (
+              {sideSection?.map((sections, index) => (
                 <Box key={index} mb={2}>
                   <CvSectionComponent {...sections} />
                 </Box>

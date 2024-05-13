@@ -53,6 +53,11 @@ export default defineType({
         },
       ],
     },
+    {
+      title: "Profile Picture",
+      name: "profilePicture",
+      type: "image",
+    },
   ],
   preview: {
     prepare() {

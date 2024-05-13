@@ -1,3 +1,4 @@
+"use client";
 import {
   Avatar,
   Box,
@@ -6,18 +7,42 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { getUserPicture } from "@/sanity/sanity-utils";
+import imageUrlBuilder from "@sanity/image-url";
+import { sanityClient } from "@/sanity/lib/sanityClient";
+import { Image } from "sanity";
 
 type MessageProps = {
   chatRole: "user" | "assistant";
   text: string | null;
 };
 
-const Message = ({ chatRole, text }: MessageProps) => {
+export default function Message({ chatRole, text }: MessageProps) {
+  const [userPicture, setUserPicture] = useState<Image | null>(null);
+
+  useEffect(() => {
+    const fetchUserPicture = async () => {
+      const picture = await getUserPicture();
+      setUserPicture(picture);
+    };
+
+    fetchUserPicture();
+  }, []);
+
+  const urlFor = useCallback((source: Image) => {
+    const builder = imageUrlBuilder(sanityClient);
+    return builder.image(source);
+  }, []);
+
   const AvatarPicture = (
     <Avatar
       alt={`${chatRole} avatar`}
-      src={chatRole === "assistant" ? "/færøerne_karel.jpg" : "user.png"} //TODO: Make this generic
+      src={
+        chatRole === "assistant"
+          ? (userPicture && urlFor(userPicture).url()) ?? "/færøerne_karel.jpg"
+          : "user.png"
+      }
       sx={{ width: 50, height: 50, marginBottom: "15px", margin: 2 }}
     />
   );
@@ -60,6 +85,4 @@ const Message = ({ chatRole, text }: MessageProps) => {
       {chatRole === "user" && AvatarPicture}
     </Box>
   );
-};
-
-export default Message;
+}
