@@ -1,5 +1,7 @@
 # Next.js Portfolio Website 
-bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app), 
+Made this as a portfolio for [myself](https://kcancara.vercel.app/) and [my girlfriend](https://msvensson.vercel.app/).
+
+Bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app), 
 utilizing [Sanity](https://www.sanity.io/) as a CMS, styled with [MUI](https://mui.com/), 
 and written in TypeScript.
 
