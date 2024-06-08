@@ -4,7 +4,6 @@ import { Theme } from "@mui/material";
 import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
 import { ThemeOptions } from "@mui/material/styles/createTheme";
 
-//create a type for the first argument of createTheme
 const getBaseTheme = (): ThemeOptions => {
   // createTheme somehow breaks at least fonts below,
   // so modify and set below instead
@@ -43,10 +42,18 @@ const getBaseTheme = (): ThemeOptions => {
     },
   };
 };
+type getThemeProps = {
+  styles?: StylesSettings;
+  forceMode?: "dark" | "light";
+  forceSmallerBreakpoints?: boolean;
+};
 
-export function getTheme(styles?: StylesSettings): Theme {
+export function getTheme({
+  styles,
+  forceMode,
+  forceSmallerBreakpoints,
+}: getThemeProps): Theme {
   const baseTheme = getBaseTheme();
-  console.log(styles?.font);
   if (styles?.font && styles.font !== "System font") {
     baseTheme.typography = {
       ...baseTheme.typography,
@@ -63,7 +70,19 @@ export function getTheme(styles?: StylesSettings): Theme {
     };
   }
 
-  if (styles?.theme === "light") {
+  if (forceSmallerBreakpoints) {
+    baseTheme.breakpoints = {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 600,
+        lg: 1280,
+        xl: 1920,
+      },
+    };
+  }
+
+  if (styles?.theme === "light" || forceMode === "light") {
     return createTheme({
       ...baseTheme,
       palette: {

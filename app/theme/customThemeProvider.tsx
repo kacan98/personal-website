@@ -7,10 +7,17 @@ import { getTheme } from "@/app/theme";
 type CustomThemeProviderProps = {
   children: React.ReactNode;
   styles?: StylesSettings;
+  forceMode?: "light" | "dark";
+  forceSmallerBreakpoints?: boolean;
 };
 
-function CustomThemeProvider({ children, styles }: CustomThemeProviderProps) {
-  const theme = getTheme(styles);
+function CustomThemeProvider({
+  children,
+  styles,
+  forceMode,
+  forceSmallerBreakpoints,
+}: CustomThemeProviderProps) {
+  const theme = getTheme({ styles, forceMode, forceSmallerBreakpoints });
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
 

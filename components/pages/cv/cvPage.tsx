@@ -17,9 +17,9 @@ type CvProps = {
 function CvPage({ name, intro, sideSection, mainSection }: CvProps) {
   return (
     <PageWrapper title={"CV"}>
-      <Download>
+      <Download fileName={`${name}_CV`}>
         <Grid2 container spacing={2}>
-          <Grid2 xs={12} md={4}>
+          <Grid2 xs={12} sm={4}>
             <Box display="flex" flexDirection="column" alignItems="left">
               <Grid2
                 container

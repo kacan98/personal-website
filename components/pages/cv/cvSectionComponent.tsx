@@ -7,9 +7,9 @@ import {
   Typography,
 } from "@mui/material";
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
-import Link from "next/link";
 import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
 import { SUPPORTED_ICONS } from "@/components/icon";
+import Grid2 from "@mui/material/Unstable_Grid2";
 
 function CvSectionComponent({
   title,
@@ -40,18 +40,21 @@ function CvSectionComponent({
       {bulletPoints &&
         bulletPoints.map((point, idx) => (
           <ListItem key={idx}>
-            <ListItemIcon>
-              {SUPPORTED_ICONS[point.iconName]?.component()}
-            </ListItemIcon>
             <ConditionalWrapper
               condition={!!point.url}
               wrapper={(c) => (
-                <Link href={point.url!} target={"_blank"}>
+                <a href={point.url!} target={"_blank"} rel="noreferrer">
                   {c}
-                </Link>
+                </a>
               )}
             >
-              <ListItemText primary={point.text} />
+              <Grid2 container spacing={2} alignItems="center" wrap={"nowrap"}>
+                <ListItemIcon>
+                  {SUPPORTED_ICONS[point.iconName]?.component()}
+                </ListItemIcon>
+
+                <ListItemText primary={point.text} />
+              </Grid2>
             </ConditionalWrapper>
           </ListItem>
         ))}

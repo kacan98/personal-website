@@ -31,5 +31,11 @@ export default defineType({
     select: {
       text: "text",
     },
+    prepare(selection) {
+      const { text } = selection;
+      return {
+        title: text ? text : "No text provided",
+      };
+    },
   },
 });

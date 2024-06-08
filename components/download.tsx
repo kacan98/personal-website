@@ -1,86 +1,71 @@
 "use client";
-import React, { ReactNode, useCallback, useRef } from "react";
-import html2canvas from "html2canvas";
-import JsPdf from "jspdf";
+import React, { ReactNode, useRef } from "react";
 import { Box, Button } from "@mui/material";
-import { useMediaQuery } from "@mui/system";
-import { Theme } from "@mui/material";
+import DownloadThemeWrapper from "@/components/download/downloadThemeWrapper";
+import { ReactToPrint } from "react-to-print";
 
 interface ExportProps {
   children: ReactNode;
+  fileName?: string;
 }
 
-export const Download: React.FC<ExportProps> = ({ children }) => {
-  const isSmallScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down("lg"),
-  );
-  const printDocument = useCallback(async (element: HTMLDivElement) => {
-    // Clone the element and apply a fixed width
-    const clonedElement = element.cloneNode(true) as HTMLElement;
+export const Download: React.FC<ExportProps> = ({ children, fileName }) => {
+  const ref = useRef<HTMLDivElement>(null);
 
-    // Append the clone to the body, off-screen
-    clonedElement.style.position = "absolute";
-    clonedElement.style.left = "9999px";
-    document.body.appendChild(clonedElement);
+  const reactToPrintTrigger = React.useCallback(() => {
+    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+    // to the root node of the returned component as it will be overwritten.
 
-    // Generate the canvas
-    const canvas = await html2canvas(clonedElement, {
-      useCORS: true,
-    });
+    // Bad: the `onClick` here will be overwritten by `react-to-print`
+    // return <button onClick={() => alert('This will not work')}>Print this out!</button>;
 
-    // Generate the PDF
-    const imgData = canvas.toDataURL("image/jpeg");
-    const documentWidth = 210;
-    const documentHeight = (canvas.height * documentWidth) / canvas.width;
-
-    const doc = new JsPdf(
-      "portrait",
-      "mm",
-      [documentWidth, documentHeight],
-      true,
+    // Good
+    return (
+      <Button
+        variant="contained"
+        color="info"
+        fullWidth
+        sx={{
+          mt: 3,
+        }}
+      >
+        Print
+      </Button>
     );
-
-    // Add the image to the PDF
-    doc.addImage(imgData, "JPEG", 0, 0, documentWidth, documentHeight);
-    doc.save("download.pdf");
-
-    // Remove the cloned element from the body
-    document.body.removeChild(clonedElement);
   }, []);
 
-  const ref = useRef<HTMLDivElement>(null);
+  const reactToPrintContent = React.useCallback(() => {
+    return ref.current;
+  }, [ref.current]);
 
   return (
     <>
       <>{children}</>
+      <ReactToPrint
+        content={reactToPrintContent}
+        documentTitle={fileName ? fileName : "download"}
+        removeAfterPrint
+        trigger={reactToPrintTrigger}
+      ></ReactToPrint>
       <Box
-        ref={ref}
-        sx={(theme) => ({
+        sx={{
           position: "absolute",
           right: 99999,
           width: 905,
-          backgroundColor: theme.palette.background.paper,
           padding: 3,
           margin: 3,
-        })}
+        }}
       >
-        {children}
-      </Box>
-
-      {/* Unfortunetly I've seen the button fail on phones :( */}
-      {!isSmallScreen && (
-        <Button
-          variant="contained"
-          color="info"
-          fullWidth
-          onClick={() => ref.current && printDocument(ref.current)}
+        <Box
+          ref={ref}
           sx={{
-            mt: 3,
+            width: 905,
+            padding: 3,
           }}
         >
-          Download
-        </Button>
-      )}
+          <DownloadThemeWrapper>{children}</DownloadThemeWrapper>
+        </Box>
+      </Box>
     </>
   );
 };
