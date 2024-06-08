@@ -5,7 +5,12 @@ import TopBar from "@/components/menu/topBar";
 import KarelCv from "@/components/pages/cv/karelCv";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
 import GalleryPage from "@/components/pages/galery/galleryPage";
-import { getGalleries, getSettings, getStyles } from "@/sanity/sanity-utils";
+import {
+  getCvSettings,
+  getGalleries,
+  getSettings,
+  getStyles,
+} from "@/sanity/sanity-utils";
 import { Suspense } from "react";
 import "@/app/app.css";
 import CustomThemeProvider from "@/app/theme/customThemeProvider";
@@ -23,6 +28,7 @@ export default async function RootLayout({
   const styles = await getStyles();
   const settings = await getSettings();
   const galleries = await getGalleries();
+  const cvSettings = await getCvSettings();
   metadata = settings?.metadata || {
     title: "Portfolio",
     description: "Portfolio",
@@ -36,7 +42,7 @@ export default async function RootLayout({
     })),
   );
 
-  const { chatbot, cv } = settings?.specialPages || {};
+  const { chatbot } = settings?.specialPages || {};
 
   if (chatbot) {
     modals.unshift({
@@ -45,7 +51,7 @@ export default async function RootLayout({
     });
   }
 
-  if (cv) {
+  if (cvSettings.on) {
     modals.unshift({
       name: "CV",
       modal: <KarelCv />,

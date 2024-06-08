@@ -16,8 +16,6 @@ export type Settings = {
     keywords?: string;
   };
   specialPages?: {
-    portfolio: boolean;
-    cv: boolean;
     chatbot: boolean;
   };
 };
@@ -92,11 +90,6 @@ export default defineType({
         "These are temporary and used so that I can turn them on in my portfolio. They will be removed in the future. They are both hard-coded to show info about me (Karel)",
       type: "object",
       fields: [
-        defineField({
-          name: "cv",
-          title: "CV",
-          type: "boolean",
-        }),
         defineField({
           name: "chatbot",
           title: "Chatbot",

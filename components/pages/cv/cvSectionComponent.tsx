@@ -42,11 +42,15 @@ function CvSectionComponent({
           <ListItem key={idx}>
             <ConditionalWrapper
               condition={!!point.url}
-              wrapper={(c) => (
-                <a href={point.url!} target={"_blank"} rel="noreferrer">
-                  {c}
-                </a>
-              )}
+              wrapper={(c) =>
+                point.url!.startsWith("mailto:") ? (
+                  <a href={point.url!}>{c}</a>
+                ) : (
+                  <a href={point.url!} target="_blank" rel="noreferrer">
+                    {c}
+                  </a>
+                )
+              }
             >
               <Grid2 container spacing={2} alignItems="center" wrap={"nowrap"}>
                 <ListItemIcon>
