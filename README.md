@@ -6,16 +6,14 @@ utilizing [Sanity](https://www.sanity.io/) as a CMS, styled with [MUI](https://m
 and written in TypeScript.
 
 # Features
-- [x] Display CV
+- [x] Display CV on the website
+- [x] Print it
 - [x] Chatbot based on OpenAI's GPT-3 that learns from the CV
-- [x] Display and filter projects 
-- [x] Dark Mode
-- [x] Responsive Design
+- [x] Editable in Contentful CMS for non-developers
+- [x] Dark/Light Mode
 - [x] Mobile Friendly
-
-# Future Features
-- [ ] Optional Pages from each project
-
+- [x] Display and filter projects
+- [x] Optional Pages from each project
 
 # Getting Started
 
