@@ -1,5 +1,5 @@
 import React from "react";
-import CustomThemeProvider from "@/app/theme/customThemeProvider";
+import CustomThemeProvider from "@/components/theme/customThemeProvider";
 
 type ThemeWrapperProps = {
   children: React.ReactNode;

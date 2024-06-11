@@ -13,7 +13,7 @@ import {
 } from "@/sanity/sanity-utils";
 import { Suspense } from "react";
 import "@/app/app.css";
-import CustomThemeProvider from "@/app/theme/customThemeProvider";
+import CustomThemeProvider from "@/components/theme/customThemeProvider";
 import "@fontsource/yeseva-one";
 import "@fontsource/cormorant-garamond";
 import "@fontsource-variable/open-sans";

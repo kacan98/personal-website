@@ -54,6 +54,9 @@ export const Download: React.FC<ExportProps> = ({ children, fileName }) => {
           width: 905,
           padding: 3,
           margin: 3,
+          "@media print": {
+            transform: "scale(0.9)",
+          },
         }}
       >
         <Box
