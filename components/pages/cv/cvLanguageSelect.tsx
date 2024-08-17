@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { ReactNode } from "react";
 
-type CvLanguageSelectProps = {
+export type CvLanguageSelectProps = {
   selectedLanguage: string;
   handleLanguageChange: (
     event: SelectChangeEvent<string>,

@@ -3,10 +3,7 @@ import { CvTranslateParams } from "@/app/api/translate-cv/route";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/cvSection";
-import {
-  Backdrop,
-  CircularProgress
-} from "@mui/material";
+import { Backdrop, Box, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { CvComponent } from "./cvComponent";
 import CvLanguageSelectionComponent from "./cvLanguageSelect";
@@ -48,11 +45,18 @@ function CvPage(cvProps: CvProps) {
       .finally(() => setOpen(false));
   }, [cvProps, selectedLanguage]);
 
-  const handleLanguageChange = async (l) => {
+  const handleLanguageChange = async (l: any) => {
     setLanguage(l.target.value);
   };
   return (
     <PageWrapper title={"CV"}>
+      <Box sx={{ mb: 5 }}>
+        <CvLanguageSelectionComponent
+          selectedLanguage={selectedLanguage}
+          handleLanguageChange={handleLanguageChange}
+        />
+      </Box>
+
       <Print fileName={`${cvProps.name}_CV`}>
         {translatedCv ? (
           <CvComponent {...translatedCv} />
@@ -60,11 +64,6 @@ function CvPage(cvProps: CvProps) {
           <CvComponent {...cvProps} />
         )}
       </Print>
-
-      <CvLanguageSelectionComponent
-        selectedLanguage={selectedLanguage}
-        handleLanguageChange={handleLanguageChange}
-      />
 
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
