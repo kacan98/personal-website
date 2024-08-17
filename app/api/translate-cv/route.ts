@@ -40,6 +40,7 @@ export async function POST(req: Request) {
   return new Response(JSON.stringify(translation.choices[0].message.content), {
     headers: {
       "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
     },
   });
 }
