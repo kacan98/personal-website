@@ -1,12 +1,17 @@
-import React from "react";
-import { Box, Paper, Typography } from "@mui/material";
+"use client";
+import { CvTranslateParams } from "@/app/api/translate-cv/route";
 import PageWrapper from "@/components/pages/pageWrapper";
-import Grid2 from "@mui/material/Unstable_Grid2";
-import Download from "@/components/download";
+import Print from "@/components/print";
 import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/cvSection";
-import CvSectionComponent from "@/components/pages/cv/cvSectionComponent";
+import {
+  Backdrop,
+  CircularProgress
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { CvComponent } from "./cvComponent";
+import CvLanguageSelectionComponent from "./cvLanguageSelect";
 
-type CvProps = {
+export type CvProps = {
   name: string;
   intro: string;
   // picture: string;
@@ -14,47 +19,59 @@ type CvProps = {
   sideSection?: CvSectionSanitySchemaType[];
 };
 
-function CvPage({ name, intro, sideSection, mainSection }: CvProps) {
+function CvPage(cvProps: CvProps) {
+  const [selectedLanguage, setLanguage] = useState("English");
+  const [translatedCv, setTranslatedCv] = useState<CvProps | null>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (selectedLanguage === "English") {
+      setTranslatedCv(null);
+      return;
+    }
+
+    const cvTranslateParams: CvTranslateParams = {
+      cvBody: cvProps,
+      targetLanguage: selectedLanguage,
+    };
+
+    setOpen(true);
+    fetch("/api/translate-cv", {
+      method: "POST",
+      body: JSON.stringify(cvTranslateParams),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        setTranslatedCv(JSON.parse(data));
+      })
+      .catch((err) => console.error(err)) //TODO: handle error
+      .finally(() => setOpen(false));
+  }, [cvProps, selectedLanguage]);
+
+  const handleLanguageChange = async (l) => {
+    setLanguage(l.target.value);
+  };
   return (
     <PageWrapper title={"CV"}>
-      <Download fileName={`${name}_CV`}>
-        <Grid2 container spacing={2}>
-          <Grid2 xs={12} sm={4}>
-            <Box display="flex" flexDirection="column" alignItems="left">
-              <Grid2
-                container
-                alignItems="left"
-                direction="column"
-                textAlign="left"
-              >
-                {/*<Avatar*/}
-                {/*  alt={name}*/}
-                {/*  src={picture}*/}
-                {/*  sx={{ width: 100, height: 100, marginBottom: "15px" }}*/}
-                {/*/>*/}
-                <Typography variant="h4" component="div" gutterBottom>
-                  {name}
-                </Typography>
-                <Typography variant="body1" pb={5}>
-                  {intro}
-                </Typography>
-              </Grid2>
-              {sideSection?.map((sections, index) => (
-                <Box key={index} mb={2}>
-                  <CvSectionComponent {...sections} />
-                </Box>
-              ))}
-            </Box>
-          </Grid2>
-          <Grid2 xs={12} md={8} textAlign="left">
-            {mainSection.map((section, index) => (
-              <Paper key={index} sx={{ p: 2, mb: 2 }}>
-                <CvSectionComponent {...section} />
-              </Paper>
-            ))}
-          </Grid2>
-        </Grid2>
-      </Download>
+      <Print fileName={`${cvProps.name}_CV`}>
+        {translatedCv ? (
+          <CvComponent {...translatedCv} />
+        ) : (
+          <CvComponent {...cvProps} />
+        )}
+      </Print>
+
+      <CvLanguageSelectionComponent
+        selectedLanguage={selectedLanguage}
+        handleLanguageChange={handleLanguageChange}
+      />
+
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </PageWrapper>
   );
 }

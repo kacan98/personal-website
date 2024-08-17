@@ -1,13 +1,20 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   compiler: {
     styledComponents: true,
   },
   images: {
-    remotePatterns: [{
-      hostname: 'cdn.sanity.io',
-    }],
+    remotePatterns: [
+      {
+        hostname: "cdn.sanity.io",
+      },
+    ],
   },
 };
 

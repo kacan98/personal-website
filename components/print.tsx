@@ -9,7 +9,7 @@ interface ExportProps {
   fileName?: string;
 }
 
-export const Download: React.FC<ExportProps> = ({ children, fileName }) => {
+export const Print: React.FC<ExportProps> = ({ children, fileName }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const reactToPrintTrigger = React.useCallback(() => {
@@ -73,4 +73,4 @@ export const Download: React.FC<ExportProps> = ({ children, fileName }) => {
   );
 };
 
-export default Download;
+export default Print;

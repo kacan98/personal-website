@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
-import { CssBaseline, Skeleton } from "@mui/material";
+import "@/app/app.css";
 import TopBar from "@/components/menu/topBar";
-import KarelCv from "@/components/pages/cv/karelCv";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
+import CvPage from "@/components/pages/cv/cvPage";
 import GalleryPage from "@/components/pages/galery/galleryPage";
+import CustomThemeProvider from "@/components/theme/customThemeProvider";
 import {
   getCvSettings,
   getGalleries,
   getSettings,
   getStyles,
 } from "@/sanity/sanity-utils";
-import { Suspense } from "react";
-import "@/app/app.css";
-import CustomThemeProvider from "@/components/theme/customThemeProvider";
-import "@fontsource/yeseva-one";
-import "@fontsource/cormorant-garamond";
 import "@fontsource-variable/open-sans";
+import "@fontsource/cormorant-garamond";
+import "@fontsource/yeseva-one";
+import { CssBaseline, Skeleton } from "@mui/material";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export let metadata: Metadata = {};
 
@@ -39,7 +39,7 @@ export default async function RootLayout({
     ...galleries.map((gallery) => ({
       name: gallery.title,
       modal: <GalleryPage {...gallery} />,
-    })),
+    }))
   );
 
   const { chatbot } = settings?.specialPages || {};
@@ -54,7 +54,14 @@ export default async function RootLayout({
   if (cvSettings.on) {
     modals.unshift({
       name: "CV",
-      modal: <KarelCv />,
+      modal: (
+        <CvPage
+          name={cvSettings.name}
+          intro={cvSettings.subtitle}
+          mainSection={cvSettings.mainColumn}
+          sideSection={cvSettings.sideColumn}
+        />
+      ),
     });
   }
 

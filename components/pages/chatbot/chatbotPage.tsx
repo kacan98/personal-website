@@ -6,7 +6,7 @@ export function ChatbotPage() {
   return (
     <PageWrapper
       title={"Chatbot"}
-      description='Chat to "me" (buit on Chat GPT 3.5 turbo)'
+      description='Chat to "me" (buit on Chat gpt-4o-mini)'
     >
       <ChatBotUI />
     </PageWrapper>

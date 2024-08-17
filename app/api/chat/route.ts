@@ -19,8 +19,11 @@ export async function POST(req: Request) {
       ${JSON.stringify(cvSettings)}
       You are talking to a potential customer or employer visiting your portfolio website.
       Be friendly and paint yourself in the best possible light.
-      Also be brief.
+      Be brief.
       Do NOT answer things unrelated to this topic.
+      Do not lie.
+      If you are unsure about something, say so.
+      If you are asked about technology that is not listed in your CV, admit it.
       Start by asking what they would like to know about you.`,
   });
 
@@ -35,7 +38,7 @@ export async function POST(req: Request) {
   }
 
   const stream = openai.beta.chat.completions.stream({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
     stream: true,
     messages: chatHistory,
     max_tokens: 100,
