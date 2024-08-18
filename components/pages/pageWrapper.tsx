@@ -7,6 +7,7 @@ type PageWrapperProps = {
   title: string;
   description?: string;
   containerMaxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
+  onTitleClicked?: () => void;
 };
 
 function PageWrapper({
@@ -14,6 +15,7 @@ function PageWrapper({
   title,
   description,
   containerMaxWidth,
+  onTitleClicked
 }: PageWrapperProps) {
   return (
     <Container
@@ -24,7 +26,7 @@ function PageWrapper({
       }}
     >
       <Box m={4} mb={8}>
-        <Typography variant={"h2"}>{title}</Typography>
+        <Typography variant={"h2"} onClick={onTitleClicked}>{title}</Typography>
         {description && (
           <Typography variant={"body1"}>{description}</Typography>
         )}

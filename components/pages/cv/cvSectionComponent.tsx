@@ -1,4 +1,6 @@
-import React from "react";
+import { ConditionalWrapper } from "@/components/conditionalWrapper";
+import { SUPPORTED_ICONS } from "@/components/icon";
+import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
 import {
   Box,
   ListItem,
@@ -6,9 +8,6 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { ConditionalWrapper } from "@/components/conditionalWrapper";
-import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
-import { SUPPORTED_ICONS } from "@/components/icon";
 import Grid2 from "@mui/material/Unstable_Grid2";
 
 function CvSectionComponent({
@@ -21,7 +20,7 @@ function CvSectionComponent({
   return (
     <Box textAlign={"left"}>
       {title && (
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" mb={1}>
           {title}
         </Typography>
       )}

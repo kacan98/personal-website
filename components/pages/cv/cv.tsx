@@ -11,12 +11,7 @@ type CvProps = {
   sideSection?: CvSectionSanitySchemaType[];
 };
 
-export function CvComponent({
-  name,
-  intro,
-  sideSection,
-  mainSection,
-}: CvProps) {
+export function cv({ name, intro, sideSection, mainSection }: CvProps) {
   return (
     <Grid2 container spacing={2}>
       <Grid2 xs={12} sm={4}>
@@ -32,10 +27,10 @@ export function CvComponent({
             {/*  src={picture}*/}
             {/*  sx={{ width: 100, height: 100, marginBottom: "15px" }}*/}
             {/*/>*/}
-            <Typography variant="h4" component="div" gutterBottom>
+            <Typography variant="h4" component="div" >
               {name}
             </Typography>
-            <Typography variant="body1" pb={5}>
+            <Typography variant="body1" pb={2}>
               {intro}
             </Typography>
           </Grid2>
@@ -57,4 +52,4 @@ export function CvComponent({
   );
 }
 
-export default CvComponent;
+export default cv;

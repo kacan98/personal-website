@@ -1,6 +1,6 @@
-import OpenAI from "openai";
 import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
 import { getCvSettings } from "@/sanity/sanity-utils";
+import OpenAI from "openai";
 
 type ChatCompletionMessageParam =
   OpenAI.Chat.Completions.ChatCompletionMessageParam;
