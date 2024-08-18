@@ -68,7 +68,6 @@ function CvPage(cvProps: CvProps) {
         setLanguage("English");
         setsnackbarMessage("Error translating CV: " + err.message);
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps - we don't want extraGptInput to trigger this
   }, [cvProps, selectedLanguage]);
 
   const handleLanguageChange = async (l: any) => {
