@@ -4,12 +4,12 @@ import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/cvSection";
 import {
-    Backdrop,
-    Box,
-    CircularProgress,
-    Snackbar,
-    SnackbarCloseReason,
-    TextField
+  Backdrop,
+  Box,
+  CircularProgress,
+  Snackbar,
+  SnackbarCloseReason,
+  TextField
 } from "@mui/material";
 import { ChatCompletionStream } from "openai/lib/ChatCompletionStream.mjs";
 import { useEffect, useState } from "react";
@@ -46,28 +46,33 @@ function CvPage(cvProps: CvProps) {
     };
 
     setLoading(true);
-    fetch("/api/translate-cv", {
-      method: "POST",
-      body: JSON.stringify(cvTranslateParams),
-    })
-      .then((res) => {
+    (async () => {
+      try {
+        const res = await fetch("/api/translate-cv", {
+          method: "POST",
+          body: JSON.stringify(cvTranslateParams),
+        });
         console.log("res", res);
         const runner = ChatCompletionStream.fromReadableStream(res.body!);
 
         runner.on("finalChatCompletion", async (completion) => {
-          if (completion.choices[0].message.content) {
-            setTranslatedCv(JSON.parse(completion.choices[0].message.content));
-          } else {
-            setTranslatedCv(null);
+          try {
+            if (completion.choices[0].message.content) {
+              setTranslatedCv(JSON.parse(completion.choices[0].message.content));
+            } else {
+              setTranslatedCv(null);
+            }
+          } catch (e) {
+            setsnackbarMessage("Error translating CV: " + e);
           }
           setLoading(false);
         });
-      })
-      .catch((err) => {
+      } catch (err: any) {
         setLoading(false);
         setLanguage("English");
         setsnackbarMessage("Error translating CV: " + err.message);
-      });
+      }
+    })();
   }, [cvProps, selectedLanguage]);
 
   const handleLanguageChange = async (l: any) => {
@@ -91,21 +96,27 @@ function CvPage(cvProps: CvProps) {
   return (
     <PageWrapper title={"CV"} onTitleClicked={onTitleClicked}>
       <Box sx={{ mb: 5 }}>
-        <CvLanguageSelectionComponent
-          selectedLanguage={selectedLanguage}
-          handleLanguageChange={handleLanguageChange}
-        />
-        {(titleClickedTimes >= 5) && 
-        <Box sx={{ mt: 2 }}>
-                  <TextField
-          disabled={loading}
-          variant="outlined"
-          size="small"
-          fullWidth
-          value={extraGptInput}
-          onChange={(e) => setExtraGptInput(e.target.value)}
-        />
-        </Box> }
+        {process.env.DEV && (
+          <>
+            <CvLanguageSelectionComponent
+              selectedLanguage={selectedLanguage}
+              handleLanguageChange={handleLanguageChange}
+            />
+            {(titleClickedTimes >= 5) &&
+              <Box sx={{ mt: 2 }}>
+                <TextField
+                  disabled={loading}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  value={extraGptInput}
+                  onChange={(e) => setExtraGptInput(e.target.value)}
+                />
+              </Box>}
+          </>
+        )}
+
+
       </Box>
 
       <Print fileName={`${cvProps.name}_CV`}>
