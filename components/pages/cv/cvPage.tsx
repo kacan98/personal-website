@@ -6,6 +6,7 @@ import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/
 import {
   Backdrop,
   Box,
+  Button,
   CircularProgress,
   Snackbar,
   SnackbarCloseReason,
@@ -15,6 +16,8 @@ import { ChatCompletionStream } from "openai/lib/ChatCompletionStream.mjs";
 import { useEffect, useState } from "react";
 import Cv from "./cv";
 import CvLanguageSelectionComponent from "./languageSelect";
+
+const DEV = process.env.NODE_ENV;
 
 export type CvProps = {
   name: string;
@@ -96,8 +99,8 @@ function CvPage(cvProps: CvProps) {
   return (
     <PageWrapper title={"CV"} onTitleClicked={onTitleClicked}>
       <Box sx={{ mb: 5 }}>
-        {process.env.DEV && (
-          <>
+        {DEV && (
+          <form>
             <CvLanguageSelectionComponent
               selectedLanguage={selectedLanguage}
               handleLanguageChange={handleLanguageChange}
@@ -113,7 +116,10 @@ function CvPage(cvProps: CvProps) {
                   onChange={(e) => setExtraGptInput(e.target.value)}
                 />
               </Box>}
-          </>
+            <Button variant="contained" color="primary" type="submit">
+              Translate
+            </Button>
+          </form>
         )}
 
 

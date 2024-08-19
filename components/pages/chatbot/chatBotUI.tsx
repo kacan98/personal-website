@@ -13,8 +13,9 @@ const ChatBotUI = () => {
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [messageBeingReceived, setMessageBeingReceived] = useState<
-    string | null
+  string | null
   >(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     //useEffect is triggered when messages change
@@ -50,6 +51,7 @@ const ChatBotUI = () => {
             ];
             setMessageBeingReceived(null);
             setLoading(false);
+            localStorage.setItem("chatMessages", JSON.stringify(newMessages));
             return newMessages;
           });
         });
@@ -58,15 +60,27 @@ const ChatBotUI = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
+  if (messages.length === 0) {
+    const messagesFromLocalStorage = localStorage.getItem("chatMessages");
+    if (messagesFromLocalStorage) {
+      setMessages(JSON.parse(messagesFromLocalStorage));
+    }
+    setLoading(false);
+    return null;
+  }
+
   const handleSend = () => {
     if (input.trim() === "") return;
     setMessages((prev) => [...prev, { content: input, role: "user" }]);
+    localStorage.setItem(
+      "chatMessages",
+      JSON.stringify([...messages, { content: input, role: "user" }])
+    );
     setInput("");
     setLoading(true);
     scrollToBottom();
   };
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -136,4 +150,4 @@ const ChatBotUI = () => {
   );
 };
 
-export default ChatBotUI;
+export default ChatBotUI
