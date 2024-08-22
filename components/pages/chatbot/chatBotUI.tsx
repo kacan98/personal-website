@@ -13,14 +13,18 @@ const ChatBotUI = () => {
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [messageBeingReceived, setMessageBeingReceived] = useState<
-  string | null
+    string | null
   >(null);
+  const [triedLocalStorage, setTriedLocalStorage] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    //useEffect is triggered when messages change
-    //This is here because we only want to send user messages
-    if (!loading || messages[messages.length - 1]?.role === "assistant") {
+    if (!loading) return
+
+    // useEffect is triggered when messages change
+    // we don't want to send a request after receiving a message from the assistant
+    // but we do want to send a request on the first render
+    if (messages[messages.length - 1]?.role === "assistant") {
       return;
     }
 
@@ -60,12 +64,13 @@ const ChatBotUI = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  if (messages.length === 0) {
+  if (messages.length === 0 && !triedLocalStorage) {
     const messagesFromLocalStorage = localStorage.getItem("chatMessages");
     if (messagesFromLocalStorage) {
-      setMessages(JSON.parse(messagesFromLocalStorage));
+      setMessages(JSON.parse(messagesFromLocalStorage))
+      setLoading(false);
     }
-    setLoading(false);
+    setTriedLocalStorage(true);
     return null;
   }
 

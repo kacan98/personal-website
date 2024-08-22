@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import Cv from "./cv";
 import CvLanguageSelectionComponent from "./languageSelect";
 
-const DEV = process.env.NODE_ENV;
+const DEV = process.env.NODE_ENV === "development";
 
 export type CvProps = {
   name: string;
