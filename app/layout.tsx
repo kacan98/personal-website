@@ -1,5 +1,5 @@
 import "@/app/app.css";
-import TopBar from "@/components/menu/topBar";
+import NavBar from "@/components/menu/navBar";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
 import CvPage from "@/components/pages/cv/cvPage";
 import GalleryPage from "@/components/pages/galery/galleryPage";
@@ -73,7 +73,7 @@ export default async function RootLayout({
           <CustomThemeProvider styles={styles}>
             {/*Had to be in Suspense because of useSearchParams inside */}
             <Suspense fallback={<Skeleton />}>
-              <TopBar modals={modals} />
+              <NavBar modals={modals} />
             </Suspense>
             {children}
           </CustomThemeProvider>

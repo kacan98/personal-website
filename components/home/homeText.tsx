@@ -1,7 +1,8 @@
-"use client";
-import React from "react";
-import { Box, Typography } from "@mui/material";
 import AnimatedText from "@/components/home/springingText";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import KarelSignature from "../spline/karel";
+import { useState } from "react";
+import { isKarelsPortfolio } from "@/globalVars";
 
 type HomeTextProps = {
   title?: string;
@@ -11,7 +12,7 @@ type HomeTextProps = {
 function HomeText({ title, subtitles }: HomeTextProps) {
   return (
     <Box
-      sx={(theme) => ({
+      sx={({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -21,19 +22,29 @@ function HomeText({ title, subtitles }: HomeTextProps) {
         right: 0,
         width: "100%",
         height: "100%",
-        opacity: theme.palette.mode === "light" ? 0.9 : 0.7,
+        opacity: 0.9,
         flexDirection: "column",
         fontSize: "2rem",
         color: "text.primary",
       })}
     >
-      {title && (
+      <Box width={'300px'}>
+        <Typography textAlign={"center"} variant={"h3"}>Hi, I&apos;m</Typography>
+      </Box>
+      {!isKarelsPortfolio && title && (
         <Box>
           <Typography textAlign={"center"} variant={"h1"}>
             {title}
           </Typography>
         </Box>
       )}
+      {isKarelsPortfolio && <Box sx={{
+        minWidth: '30vw',
+        maxWidth: '500px',
+        minHeight: '20vh',
+      }}>
+        {<KarelSignature />}
+      </Box>}
       {subtitles && (
         <Box sx={{ opacity: 0.7 }}>
           <AnimatedText texts={subtitles} />

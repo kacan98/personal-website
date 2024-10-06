@@ -10,6 +10,7 @@ import ModalButton from "@/components/menu/modalButton";
 import { cloneElement, ReactElement, ReactNode, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Home } from "@mui/icons-material";
+import React from "react";
 
 type TopBarProps = {
   modals: {
@@ -35,7 +36,7 @@ function ElevationScroll(props: ElevationScrollProps) {
   });
 }
 
-const TopBar = ({ modals }: TopBarProps) => {
+const NavBar = ({ modals }: TopBarProps) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -68,14 +69,15 @@ const TopBar = ({ modals }: TopBarProps) => {
     router.push(pathname + "?" + createQueryString("modalOpen"));
   }
 
-  return weAreInSanityStudio ? (
-    <></>
-  ) : (
+  if (weAreInSanityStudio) return <></>;
+
+  return (
     <ElevationScroll>
       <AppBar
         position="fixed"
         color={"transparent"}
         sx={{
+          m: 0,
           //so that it shows up above the modals (zIndex 1300 in MUI)
           zIndex: 1301,
         }}
@@ -107,4 +109,4 @@ const TopBar = ({ modals }: TopBarProps) => {
     </ElevationScroll>
   );
 };
-export default TopBar;
+export default NavBar;
