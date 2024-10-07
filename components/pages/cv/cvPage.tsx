@@ -1,8 +1,9 @@
 "use client";
-import { CvTranslateParams } from "@/app/api/translate-cv/route";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
+import { useAppSelector } from "@/redux/hooks";
 import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/cvSection";
+import CreateIcon from '@mui/icons-material/Create';
 import {
   Backdrop,
   Box,
@@ -10,12 +11,17 @@ import {
   CircularProgress,
   Snackbar,
   SnackbarCloseReason,
-  TextField
+  TextField,
+  Typography
 } from "@mui/material";
-import { ChatCompletionStream } from "openai/lib/ChatCompletionStream.mjs";
-import { useEffect, useState } from "react";
-import Cv from "./cv";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
+import { translateCv as transformCv } from "./translateCv";
+import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { initCv } from "@/redux/slices/cv";
+import React from "react";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -23,60 +29,22 @@ export type CvProps = {
   name: string;
   intro: string;
   // picture: string;
-  mainSection: CvSectionSanitySchemaType[];
-  sideSection?: CvSectionSanitySchemaType[];
+  mainSections: CvSectionSanitySchemaType[];
+  sideSections: CvSectionSanitySchemaType[];
 };
 
-function CvPage(cvProps: CvProps) {
+function CvPage() {
+  const reduxCvProps = useAppSelector((state) => state.cv);
   const [selectedLanguage, setLanguage] = useState("English");
-  const [translatedCv, setTranslatedCv] = useState<CvProps | null>(null);
   const [loading, setLoading] = useState(false);
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
   const [extraGptInput, setExtraGptInput] = useState("");
-
-  useEffect(() => {
-    setsnackbarMessage(null);
-    if (selectedLanguage === "English") {
-      setTranslatedCv(null);
-      return;
-    }
-
-    const cvTranslateParams: CvTranslateParams = {
-      cvBody: cvProps,
-      targetLanguage: selectedLanguage,
-      extraGptInput: extraGptInput,
-    };
-
-    setLoading(true);
-    (async () => {
-      try {
-        const res = await fetch("/api/translate-cv", {
-          method: "POST",
-          body: JSON.stringify(cvTranslateParams),
-        });
-        console.log("res", res);
-        const runner = ChatCompletionStream.fromReadableStream(res.body!);
-
-        runner.on("finalChatCompletion", async (completion) => {
-          try {
-            if (completion.choices[0].message.content) {
-              setTranslatedCv(JSON.parse(completion.choices[0].message.content));
-            } else {
-              setTranslatedCv(null);
-            }
-          } catch (e) {
-            setsnackbarMessage("Error translating CV: " + e);
-          }
-          setLoading(false);
-        });
-      } catch (err: any) {
-        setLoading(false);
-        setLanguage("English");
-        setsnackbarMessage("Error translating CV: " + err.message);
-      }
-    })();
-  }, [cvProps, selectedLanguage]);
+  const editable = titleClickedTimes >= 5;
+  const dispatch = useDispatch();
+  const updateCvInRedux = (cv: CVSettings) => {
+    dispatch(initCv(cv));
+  }
 
   const handleLanguageChange = async (l: any) => {
     setLanguage(l.target.value);
@@ -96,19 +64,35 @@ function CvPage(cvProps: CvProps) {
   const onTitleClicked = () => {
     setTitleClickedTimes(prev => prev + 1);
   }
+
   return (
     <PageWrapper title={"CV"} onTitleClicked={onTitleClicked}>
+      {editable && (
+        <>
+          <Typography variant="h2" mb={2}>
+            Now you can edit. <CreateIcon />
+          </Typography>
+          <Typography variant="body1">
+            But be careful. This is possible just to tweak something (or translate) before sending it to potential employers.
+            The changes currently won&apos;t be saved in any way. I might add saving in the future.
+          </Typography>
+        </>
+      )}
+
       <Box sx={{ mb: 5 }}>
-        {DEV && (
-          <form>
+        {/* AI does not work in production because of limitations in Vercel :((( */}
+        {DEV && editable && (
+          <>
             <CvLanguageSelectionComponent
               selectedLanguage={selectedLanguage}
               handleLanguageChange={handleLanguageChange}
             />
-            {(titleClickedTimes >= 5) &&
+            {
               <Box sx={{ mt: 2 }}>
                 <TextField
+                  multiline
                   disabled={loading}
+                  label="Anything else AI should change?"
                   variant="outlined"
                   size="small"
                   fullWidth
@@ -116,17 +100,25 @@ function CvPage(cvProps: CvProps) {
                   onChange={(e) => setExtraGptInput(e.target.value)}
                 />
               </Box>}
-            <Button variant="contained" color="primary" type="submit">
-              Translate
+            <Button
+              type="button"
+              onClick={() => transformCv({
+                cvProps: reduxCvProps,
+                selectedLanguage,
+                extraGptInput,
+                setLanguage,
+                setLoading,
+                setsnackbarMessage,
+                updateCvInRedux
+              })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
+              Transform by AI
             </Button>
-          </form>
+          </>
         )}
-
-
       </Box>
 
-      <Print fileName={`${cvProps.name}_CV`}>
-        {translatedCv ? <Cv {...translatedCv} /> : <Cv {...cvProps} />}
+      <Print fileName={`${reduxCvProps.name}_CV`}>
+        <CvPaper editable={editable} />
       </Print>
 
       <Backdrop
