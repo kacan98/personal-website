@@ -17,6 +17,7 @@ import { CssBaseline, Skeleton } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import StoreProvider from "./StoreProvider";
 
 export let metadata: Metadata = {};
 
@@ -55,12 +56,7 @@ export default async function RootLayout({
     modals.unshift({
       name: "CV",
       modal: (
-        <CvPage
-          name={cvSettings.name}
-          intro={cvSettings.subtitle}
-          mainSection={cvSettings.mainColumn}
-          sideSection={cvSettings.sideColumn}
-        />
+        <CvPage />
       ),
     });
   }
@@ -70,13 +66,15 @@ export default async function RootLayout({
       <body>
         <CssBaseline />
         <AppRouterCacheProvider>
-          <CustomThemeProvider styles={styles}>
-            {/*Had to be in Suspense because of useSearchParams inside */}
-            <Suspense fallback={<Skeleton />}>
-              <NavBar modals={modals} />
-            </Suspense>
-            {children}
-          </CustomThemeProvider>
+          <StoreProvider cvSettings={cvSettings}>
+            <CustomThemeProvider styles={styles}>
+              {/*Had to be in Suspense because of useSearchParams inside */}
+              <Suspense fallback={<Skeleton />}>
+                <NavBar modals={modals} />
+              </Suspense>
+              {children}
+            </CustomThemeProvider>
+          </StoreProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
