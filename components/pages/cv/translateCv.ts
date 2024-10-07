@@ -1,8 +1,7 @@
 import { CvTranslateParams } from '@/app/api/translate-cv/route'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
-import { ChatCompletionStream } from 'openai/lib/ChatCompletionStream.mjs'
 
-export const translateCv = ({
+export const translateCv = async ({
   cvProps,
   selectedLanguage,
   extraGptInput,
@@ -27,31 +26,23 @@ export const translateCv = ({
   }
 
   setLoading(true)
-  ;(async () => {
-    try {
-      const res = await fetch('/api/translate-cv', {
-        method: 'POST',
-        body: JSON.stringify(cvTranslateParams),
-      })
-      const runner = ChatCompletionStream.fromReadableStream(res.body!)
+  try {
+    const res = await fetch('/api/translate-cv', {
+      method: 'POST',
+      body: JSON.stringify(cvTranslateParams),
+    })
 
-      runner.on('finalChatCompletion', async (completion) => {
-        try {
-          if (completion.choices[0].message.content) {
-            // setTranslatedCv(JSON.parse(completion.choices[0].message.content))
-            console.log(JSON.parse(completion.choices[0].message.content))
-            updateCvInRedux(JSON.parse(completion.choices[0].message.content))
-          } else {
-            // setTranslatedCv(null)
-          }
-        } catch (e) {
-          setsnackbarMessage('Error translating CV: ' + e)
-        }
-        setLoading(false)
-      })
-    } catch (err: any) {
-      setLoading(false)
-      setsnackbarMessage('Error translating CV: ' + err.message)
+    const transformedCv: string = await res.json()
+    if (transformedCv) {
+      // setTranslatedCv(JSON.parse(completion.choices[0].message.content))
+      updateCvInRedux(JSON.parse(transformedCv))
+    } else {
+      setsnackbarMessage('Error transforming CV')
     }
-  })()
+    setLoading(false)
+    setsnackbarMessage('CV transformed')
+  } catch (err: any) {
+    setLoading(false)
+    setsnackbarMessage('Error transforming CV: ' + err.message)
+  }
 }

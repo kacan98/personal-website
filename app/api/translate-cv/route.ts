@@ -14,11 +14,11 @@ export async function POST(req: Request): Promise<Response> {
     apiKey: process.env.OPENAI_API_KEY,
   });
 
-  const translationStream = openai.beta.chat.completions.stream({
-    model: "gpt-4o-mini",
+  const completion = await openai.beta.chat.completions.parse({
+    model: 'gpt-4o-mini',
     messages: [
       {
-        role: "user",
+        role: 'user',
         content: `
           Translate the following json to ${body.targetLanguage} where there is text. 
           Keep links and so as they are. 
@@ -38,21 +38,19 @@ export async function POST(req: Request): Promise<Response> {
           `,
       },
       {
-        role: "user",
+        role: 'user',
         content: JSON.stringify(body.cvBody),
       },
     ],
     max_tokens: 2500,
     response_format: {
-      type: "json_object",
+      type: 'json_object',
     },
-  });
+  })
 
-  return (
-    new Response(translationStream.toReadableStream(), {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-  )
+  return new Response(JSON.stringify(completion.choices[0].message.content), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
 }
