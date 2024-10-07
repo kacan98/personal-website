@@ -2,7 +2,7 @@
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
-import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/cv/cvSection";
+import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/singletons/cvSettings";
 import CreateIcon from '@mui/icons-material/Create';
 import {
   Backdrop,
@@ -23,7 +23,7 @@ import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
 import { initCv } from "@/redux/slices/cv";
 import React from "react";
 
-const DEV = process.env.NODE_ENV === "development";
+// const DEV = process.env.NODE_ENV === "development";
 
 export type CvProps = {
   name: string;
@@ -73,15 +73,16 @@ function CvPage() {
             Now you can edit. <CreateIcon />
           </Typography>
           <Typography variant="body1">
-            But be careful. This is possible just to tweak something (or translate) before sending it to potential employers.
+            But be careful. This is possible just to tweak something (or transform with AI) locally on your machine before sending it to potential employers.
             The changes currently won&apos;t be saved in any way. I might add saving in the future.
           </Typography>
         </>
       )}
 
       <Box sx={{ mb: 5 }}>
-        {/* AI does not work in production because of limitations in Vercel :((( */}
-        {DEV && editable && (
+        {/* AI did not work in the past in production because of limitations in Vercel :((( */}
+        {/* but let's try */}
+        {editable && (
           <>
             <CvLanguageSelectionComponent
               selectedLanguage={selectedLanguage}

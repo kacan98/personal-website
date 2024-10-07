@@ -1,11 +1,4 @@
 import { defineField, defineType } from "sanity";
-import { CvSubSection } from "@/sanity/schemaTypes/cv/cvSubSection";
-import { BulletPoint } from "@/sanity/schemaTypes/cv/bulletPoint";
-
-export interface CvSection extends CvSubSection {
-  subSections?: CvSubSection[];
-  bulletPoints?: BulletPoint[];
-}
 
 export default defineType({
   name: "cvSection",

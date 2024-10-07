@@ -1,7 +1,7 @@
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { SUPPORTED_ICONS } from "@/components/icon";
-import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
+import { CvSection } from "@/sanity/schemaTypes/singletons/cvSettings";
 import {
   Box,
   ListItem,

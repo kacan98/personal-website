@@ -1,69 +1,88 @@
-import { defineType } from "sanity";
-import { DocumentIcon } from "@sanity/icons";
-import { CvSection } from "@/sanity/schemaTypes/cv/cvSection";
+import { defineType } from 'sanity'
+import { DocumentIcon } from '@sanity/icons'
 
 export type CVSettings = {
-  on: boolean;
-  name: string;
-  subtitle: string;
-  mainColumn: CvSection[];
-  sideColumn: CvSection[];
-};
+  on: boolean
+  name: string
+  subtitle: string
+  mainColumn: CvSection[]
+  sideColumn: CvSection[]
+}
 
-const TITLE = "CV Settings";
+export interface CvSubSection {
+  title?: string
+  subtitles?: {
+    left?: string
+    right?: string
+  }
+  paragraphs?: string[]
+}
+
+export interface CvSection extends CvSubSection {
+  subSections?: CvSubSection[]
+  bulletPoints?: BulletPoint[]
+}
+
+export type BulletPoint = {
+  iconName: string
+  text: string
+  url?: string
+}
+
+const TITLE = 'CV Settings'
 
 export default defineType({
   title: TITLE,
-  name: "cvSettings",
-  type: "document",
+  name: 'cvSettings',
+  type: 'document',
   icon: DocumentIcon,
   fields: [
     {
-      title: "CV modal on",
-      name: "on",
-      type: "boolean",
+      title: 'CV modal on',
+      name: 'on',
+      type: 'boolean',
     },
     {
-      title: "Name",
-      name: "name",
-      type: "string",
+      title: 'Name',
+      name: 'name',
+      type: 'string',
     },
     {
-      title: "Subtitle",
-      name: "subtitle",
-      type: "string",
+      title: 'Subtitle',
+      name: 'subtitle',
+      type: 'string',
     },
     {
-      title: "Main Column",
-      name: "mainColumn",
-      type: "array",
+      title: 'Main Column',
+      name: 'mainColumn',
+      type: 'array',
       of: [
         {
-          type: "cvSection",
+          type: 'cvSection',
         },
       ],
     },
     {
-      title: "Side Column",
-      name: "sideColumn",
-      type: "array",
+      title: 'Side Column',
+      name: 'sideColumn',
+      type: 'array',
       of: [
         {
-          type: "cvSection",
+          type: 'cvSection',
         },
       ],
     },
     {
-      title: "Profile Picture",
-      name: "profilePicture",
-      type: "image",
+      title: 'Profile Picture',
+      name: 'profilePicture',
+      type: 'image',
     },
   ],
   preview: {
     prepare() {
       return {
         title: TITLE,
-      };
+      }
     },
   },
-});
+})

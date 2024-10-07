@@ -1,14 +1,5 @@
 import { defineField, defineType } from "sanity";
 
-export interface CvSubSection {
-  title?: string;
-  subtitles?: {
-    left?: string;
-    right?: string;
-  };
-  paragraphs?: string[];
-}
-
 export default defineType({
   name: "subSection",
   title: "Sub Section",
