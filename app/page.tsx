@@ -56,8 +56,8 @@ export default async function App() {
             color="text.primary"
             spacing={2}
             pt={4}
-            alignItems='stretch'
-
+            alignItems='center'
+            justifyContent='center'
           >
             <Grid2 lg={3} xs={12}>{aboutMe.slice(0, 2).map(({ header, content }) => {
               return (
@@ -71,7 +71,8 @@ export default async function App() {
               width: '100%',
               height: '100%',
             }}>
-              <ThreeDLaptop /></Grid2>
+              <ThreeDLaptop />
+            </Grid2>
             <Grid2 lg={3} xs={12}>{aboutMe.slice(2, 4).map(({ header, content }) => {
               return (
                 <Box key={header}>

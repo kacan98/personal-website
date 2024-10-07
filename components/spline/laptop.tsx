@@ -1,11 +1,9 @@
 import Spline from '@splinetool/react-spline/next';
 
-export default function Home() {
+export default function ThreeDeeLaptop() {
     return (
-        <main>
-            <Spline
-                scene="https://prod.spline.design/CKHWYHYZO5Icx-vv/scene.splinecode"
-            />
-        </main>
+        <Spline
+            scene="https://prod.spline.design/CKHWYHYZO5Icx-vv/scene.splinecode"
+        />
     );
 }
