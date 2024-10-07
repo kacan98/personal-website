@@ -1,12 +1,10 @@
 'use client';
-
-import { TextField, Typography, TypographyProps } from "@mui/material";
-import React, { useState } from "react";
-import CheckIcon from '@mui/icons-material/Check';
-import IconButton from '@mui/material/IconButton';
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
 import { updateCv, UpdateSectionAction } from "@/redux/slices/cv";
+import CheckIcon from '@mui/icons-material/Check';
+import { TextField, Typography, TypographyProps } from "@mui/material";
+import IconButton from '@mui/material/IconButton';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export type EditableTextExtraProps = {
     text?: string;

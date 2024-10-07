@@ -31,7 +31,7 @@ export function CvPaper({ editable }: CvPaperProps) {
           </Grid2>
           {reduxCv.sideColumn?.map((section, index) => (
             <Box key={index} mb={2}>
-              <CvSectionComponent sideOrMain="sideColumn" sectionIndex={index} {...section} editable={editable} />
+              <CvSectionComponent sideOrMain="sideColumn" sectionIndex={index} section={section} editable={editable} />
             </Box>
           ))}
         </Box>
@@ -39,7 +39,7 @@ export function CvPaper({ editable }: CvPaperProps) {
       <Grid2 xs={12} md={8} textAlign="left">
         {reduxCv.mainColumn?.map((section, index) => (
           <Paper key={index} sx={{ p: 2, mb: 2 }}>
-            <CvSectionComponent sideOrMain="mainColumn" sectionIndex={index} {...section} editable={editable} />
+            <CvSectionComponent sideOrMain="mainColumn" sectionIndex={index} section={section} editable={editable} />
           </Paper>
         ))}
       </Grid2>

@@ -1,5 +1,3 @@
-import { CvProps } from '@/components/pages/cv/cvPage'
-import { CvSection } from '@/sanity/schemaTypes/cv/cvSection'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { createSlice } from '@reduxjs/toolkit'
 
@@ -39,7 +37,7 @@ export const cvSlice = createSlice({
       for (let i = 0; i < query.length - 1; i++) {
         current = (current as any)[query[i]]
       }
-        ;(current as any)[query[query.length - 1]] = newValue
+      ;(current as any)[query[query.length - 1]] = newValue
     },
   },
 })

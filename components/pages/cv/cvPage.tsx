@@ -74,7 +74,7 @@ function CvPage() {
           </Typography>
           <Typography variant="body1">
             But be careful. This is possible just to tweak something (or translate) before sending it to potential employers.
-            The changes currently won't be saved in any way. I might add saving in the future.
+            The changes currently won&apos;t be saved in any way. I might add saving in the future.
           </Typography>
         </>
       )}

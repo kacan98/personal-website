@@ -1,9 +1,9 @@
 import {
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent
 } from "@mui/material";
 import { ReactNode } from "react";
 
@@ -38,4 +38,4 @@ export function CvLanguageSelectionComponent({
 
 export default CvLanguageSelectionComponent;
 
-const extraSupportedLanguages = ["Czech", "Danish", "Swedish"];
+const extraSupportedLanguages = ["English", "Czech", "Danish", "Swedish"];

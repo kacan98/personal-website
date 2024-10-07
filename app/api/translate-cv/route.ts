@@ -1,4 +1,3 @@
-import { CvProps } from "@/components/pages/cv/cvPage";
 import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
 import { OpenAI } from "openai";
 

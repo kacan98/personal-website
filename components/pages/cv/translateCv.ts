@@ -19,9 +19,6 @@ export const translateCv = ({
   updateCvInRedux: (cvSettings: CVSettings) => void
 }) => {
   setsnackbarMessage(null)
-  if (selectedLanguage === 'English') {
-    return
-  }
 
   const cvTranslateParams: CvTranslateParams = {
     cvBody: cvProps,

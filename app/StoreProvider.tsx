@@ -1,6 +1,4 @@
 'use client'
-import { useAppDispatch } from '@/redux/hooks';
-import { initCv } from '@/redux/slices/cv';
 import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
 import { useRef } from 'react';
 import { Provider } from 'react-redux';

@@ -14,9 +14,9 @@ export function CvSectionComponent({
   sectionIndex,
   editable,
   sideOrMain,
-  ...cvProps
-}: CvSection & { editable?: boolean; sectionIndex: number; sideOrMain: "mainColumn" | "sideColumn" }) {
-  const { title, subtitles, paragraphs, bulletPoints, subSections } = cvProps;
+  section
+}: { editable?: boolean; sectionIndex: number; sideOrMain: "mainColumn" | "sideColumn"; section: CvSection }) {
+  const { title, subtitles, paragraphs, bulletPoints, subSections } = section;
   const SuperEditableText = ({ query, ...props }: EditableTextProps) => {
     return <EditableText {...props} query={[sideOrMain, sectionIndex, ...query]} editable={editable} />;
   }
@@ -64,16 +64,16 @@ export function CvSectionComponent({
       {subSections && (subSections.map((section, index) => (
         //TODO: Move this to cvSubSection.tsx
         <div key={index}>
-          <SuperEditableText query={['subsections', index, 'title']} editable={editable} variant="h5" gutterBottom text={section.title} />
+          <SuperEditableText query={['subSections', index, 'title']} editable={editable} variant="h5" gutterBottom text={section.title} />
           {section.subtitles && (
             <Box display="flex" justifyContent="space-between" mb={2}>
-              <SuperEditableText query={['subsections', index, 'subtitle', 'left']} editable={editable} variant="subtitle1" text={section.subtitles.left} />
-              <SuperEditableText query={['subsections', index, 'subtitle', 'right']} editable={editable} variant="subtitle1" text={section.subtitles.right} />
+              <SuperEditableText query={['subSections', index, 'subtitles', 'left']} editable={editable} variant="subtitle1" text={section.subtitles.left} />
+              <SuperEditableText query={['subSections', index, 'subtitles', 'right']} editable={editable} variant="subtitle1" text={section.subtitles.right} />
             </Box>
           )}
           {section.paragraphs &&
             section.paragraphs.map((paragraph, idx) => (
-              <SuperEditableText query={['subsections', index, 'subtitle', 'paragraph']} key={idx} editable={editable} variant="body1" gutterBottom text={paragraph} />
+              <SuperEditableText query={['subSections', index, 'paragraphs', idx]} key={idx} editable={editable} variant="body1" gutterBottom text={paragraph} />
             ))}
         </div>
       ))
