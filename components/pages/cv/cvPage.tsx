@@ -21,7 +21,8 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
-import { upgradeCv as transformCv } from "./translateCv";
+import { upgradeCv as adjustCvBasedOnPosition } from "./translateCv";
+import { CvTranslateParams } from "@/app/api/translate/route";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -43,6 +44,7 @@ function CvPage() {
   const [positionSummary, setPositionSummary] = useState<null | string>(null)
   const [positionDetails, setPositionDetails] = useState<null | string>(null)
   const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
+  const [progress, setProgress] = useState<null | string>(null)
 
   const dispatch = useDispatch();
   const updateCvInRedux = (cv: CVSettings) => {
@@ -103,9 +105,31 @@ function CvPage() {
         method: 'POST',
         body: JSON.stringify(getJudgementParams),
       })
-      console.log(res)
       const result = await res.json()
       setJudgement(JSON.parse(result))
+    } catch (err) {
+      setsnackbarMessage('Error getting a judgement')
+    }
+    setLoading(false)
+  }
+
+  const translateCv = async ({ cvProps, selectedLanguage }: { cvProps: CVSettings; selectedLanguage: string; }) => {
+    if (selectedLanguage === 'English') return setsnackbarMessage('Please select a language to translate to')
+
+    setLoading(true)
+    try {
+      const cvTranslateParams: CvTranslateParams = {
+        targetLanguage: selectedLanguage,
+        cv: cvProps
+      }
+
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        body: JSON.stringify(cvTranslateParams),
+      })
+      const result = await res.json()
+      const parsed: CVSettings = JSON.parse(result)
+      updateCvInRedux(parsed)
     } catch (err) {
       setsnackbarMessage('Error getting a judgement')
     }
@@ -126,74 +150,86 @@ function CvPage() {
         </>
       )}
 
-      <Box sx={{ mb: 5 }}>
+      <Box sx={{ mb: 5, mt: 2 }}>
         {/* AI did not work in the past in production because of limitations in Vercel :((( */}
         {/* but let's try */}
         {DEV && editable && (
           <>
-            <Box mb={2}>
-              <CvLanguageSelectionComponent
-                selectedLanguage={selectedLanguage}
-                handleLanguageChange={handleLanguageChange}
-              />
-            </Box>
             {
               <Box>
                 <TextField
                   multiline
                   maxRows={15}
-                  label="Position we are applying for"
+                  label="Enter a job description here"
                   variant="outlined"
                   value={positionDetails}
                   onChange={(e) => setPositionDetails(e.target.value)}
                   fullWidth>
                 </TextField>
-                {positionSummary && (
-                  <TextField
-                    multiline
-                    fullWidth
-                    label="Position Summary"
-                    variant="outlined"
-                    value={positionSummary}
-                    onChange={(e) => setPositionSummary(e.target.value)}
-                  >
-                    {positionSummary}
-                  </TextField>
-                )}
-                <Button
-                  type="button"
-                  onClick={() => getSummary()}
-                  sx={{ mt: 2, width: "100%" }}
-                  variant="contained"
-                  color="secondary">
-                  Summarize
-                </Button>
-                {judgement && (
-                  <Box>
-                    <Typography variant="h6">Judgement : {`${judgement.rating}/10`}</Typography>
-                    <Typography variant="body1">
-                      {judgement.opinion}
-                    </Typography>
-                    <Typography variant="h6">Why?</Typography>
-                    <Typography variant="body1">
-                      {judgement.whatIsGood}
-                    </Typography>
-                    <Typography variant="h6">What could be better?</Typography>
-                    <Typography variant="body1">
-                      {judgement.whatIsMissing}
-                    </Typography>
-                  </Box>
-                )}
                 {
                   positionDetails && (positionDetails.length > 10) && (
-                    <Button
-                      type="button"
-                      onClick={() => getJudgement()}
-                      sx={{ mt: 2, width: "100%" }}
-                      variant="contained"
-                      color="secondary">
-                      How well does the candidate fit the position?
-                    </Button>
+                    <>
+                      <Button
+                        type="button"
+                        onClick={() => getSummary()}
+                        sx={{ mt: 2, width: "100%" }}
+                        variant="contained"
+                        color="secondary">
+                        Get &quot;Hiring manager&apos;s summary&quot;
+                      </Button>
+                      {positionSummary && (
+                        <TextField
+                          sx={{
+                            mt: 2
+                          }}
+                          multiline
+                          fullWidth
+                          label="Position Summary"
+                          variant="outlined"
+                          value={positionSummary}
+                          onChange={(e) => setPositionSummary(e.target.value)}
+                        >
+                          {positionSummary}
+                        </TextField>
+                      )}
+                      <Button
+                        type="button"
+                        onClick={() => getJudgement()}
+                        sx={{ mt: 2, width: "100%" }}
+                        variant="contained"
+                        color="secondary">
+                        How well does the candidate fit the position?
+                      </Button>
+                      {judgement && (
+                        <Box>
+                          <Typography variant="h6">Judgement : {`${judgement.rating}/10`}</Typography>
+                          <Typography variant="body1">
+                            {judgement.opinion}
+                          </Typography>
+                          <Typography variant="h6">Why?</Typography>
+                          <Typography variant="body1">
+                            {judgement.whatIsGood}
+                          </Typography>
+                          <Typography variant="h6">What could be better?</Typography>
+                          <Typography variant="body1">
+                            {judgement.whatIsMissing}
+                          </Typography>
+                        </Box>
+                      )}
+                      <Button
+                        type="button"
+                        onClick={() => adjustCvBasedOnPosition({
+                          cvProps: reduxCvProps,
+                          setLanguage,
+                          setLoading,
+                          setsnackbarMessage,
+                          updateCvInRedux,
+                          positionSummary,
+                          positionDetails
+                        })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
+                        Transform CV by AI, based on the position
+                      </Button>
+                    </>
                   )
                 }
               </Box>
@@ -207,19 +243,22 @@ function CvPage() {
       </Print>
 
       {DEV && (
-        <Button
-          type="button"
-          onClick={() => transformCv({
-            cvProps: reduxCvProps,
-            setLanguage,
-            setLoading,
-            setsnackbarMessage,
-            updateCvInRedux,
-            positionSummary,
-            positionDetails
-          })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
-          Transform CV by AI
-        </Button>
+        <>
+          <Box mb={2}>
+            <CvLanguageSelectionComponent
+              selectedLanguage={selectedLanguage}
+              handleLanguageChange={handleLanguageChange}
+            />
+          </Box>
+          <Button
+            type="button"
+            onClick={() => translateCv({
+              cvProps: reduxCvProps,
+              selectedLanguage
+            })} sx={{ mt: 2, width: "100%" }} variant="outlined" >
+            Translate
+          </Button>
+        </>
       )}
 
       <Backdrop
