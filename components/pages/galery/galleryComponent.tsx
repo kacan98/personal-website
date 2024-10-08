@@ -8,6 +8,7 @@ import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { useMediaQuery } from "@mui/system";
 import { Box, Theme } from "@mui/material";
 import Link from "next/link";
+import Tilt from 'react-parallax-tilt';
 
 type GalleryComponentProps = {
   projects: Project[];
@@ -36,9 +37,9 @@ export const GalleryComponent = ({
 
   const filteredProjects =
     !!selectedTag &&
-    selectedTag !== "All" &&
-    uniqueTags.length > 1 &&
-    isBigScreen
+      selectedTag !== "All" &&
+      uniqueTags.length > 1 &&
+      isBigScreen
       ? projects.filter((project) => project.tags.includes(selectedTag))
       : projects;
 
@@ -76,17 +77,19 @@ export const GalleryComponent = ({
         {transitions((props, project) => {
           const card = <ProjectCard {...project} />;
           return (
-            <Box key={project.title}>
-              <a.div style={props}>
-                {project.relatedPage?.slug ? (
-                  <Link href={`/project/${project.relatedPage.slug.current}`}>
-                    {card}
-                  </Link>
-                ) : (
-                  card
-                )}
-              </a.div>
-            </Box>
+            <Tilt>
+              <Box key={project.title}>
+                <a.div style={props}>
+                  {project.relatedPage?.slug ? (
+                    <Link href={`/project/${project.relatedPage.slug.current}`}>
+                      {card}
+                    </Link>
+                  ) : (
+                    card
+                  )}
+                </a.div>
+              </Box>
+            </Tilt>
           );
         })}
       </Grid2>
