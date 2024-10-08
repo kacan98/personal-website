@@ -1,6 +1,7 @@
 "use client";
 import { JobCvIntersectionParams, JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
 import { PositionSummarizeParams } from "@/app/api/position-summary/route";
+import { CvTranslateParams } from "@/app/api/translate/route";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
@@ -22,7 +23,6 @@ import { useDispatch } from "react-redux";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
 import { upgradeCv as adjustCvBasedOnPosition } from "./translateCv";
-import { CvTranslateParams } from "@/app/api/translate/route";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -44,7 +44,6 @@ function CvPage() {
   const [positionSummary, setPositionSummary] = useState<null | string>(null)
   const [positionDetails, setPositionDetails] = useState<null | string>(null)
   const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
-  const [progress, setProgress] = useState<null | string>(null)
 
   const dispatch = useDispatch();
   const updateCvInRedux = (cv: CVSettings) => {
@@ -225,7 +224,8 @@ function CvPage() {
                           setsnackbarMessage,
                           updateCvInRedux,
                           positionSummary,
-                          positionDetails
+                          positionDetails,
+                          setPositionSummary
                         })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
                         Transform CV by AI, based on the position
                       </Button>
@@ -262,10 +262,18 @@ function CvPage() {
       )}
 
       <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
         open={loading}
       >
         <CircularProgress color="inherit" />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Loading...
+        </Typography>
       </Backdrop>
 
       <Snackbar
