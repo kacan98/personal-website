@@ -1,17 +1,17 @@
-import { CvTranslateParams } from '@/app/api/translate-cv/route'
+import { CvUpgradeParams } from '@/app/api/upgrade-cv/route'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 
-export const translateCv = async ({
+export const upgradeCv = async ({
   cvProps,
-  selectedLanguage,
-  extraGptInput,
   setLoading,
   setsnackbarMessage,
   updateCvInRedux,
+  positionDetails,
+  positionSummary,
 }: {
   cvProps: CVSettings
-  selectedLanguage: string
-  extraGptInput: string
+  positionDetails: string | null
+  positionSummary: string | null
   setLanguage: (language: string) => void
   setLoading: (loading: boolean) => void
   setsnackbarMessage: (message: string | null) => void
@@ -19,17 +19,17 @@ export const translateCv = async ({
 }) => {
   setsnackbarMessage(null)
 
-  const cvTranslateParams: CvTranslateParams = {
+  const cvUpgradeParams: CvUpgradeParams = {
     cvBody: cvProps,
-    targetLanguage: selectedLanguage,
-    extraGptInput: extraGptInput,
+    positionWeAreApplyingFor: positionDetails ?? undefined,
+    positionSummary: positionSummary ?? undefined,
   }
 
   setLoading(true)
   try {
-    const res = await fetch('/api/translate-cv', {
+    const res = await fetch('/api/upgrade-cv', {
       method: 'POST',
-      body: JSON.stringify(cvTranslateParams),
+      body: JSON.stringify(cvUpgradeParams),
     })
 
     const transformedCv: string = await res.json()

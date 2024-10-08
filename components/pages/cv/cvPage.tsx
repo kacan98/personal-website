@@ -1,8 +1,11 @@
 "use client";
+import { JobCvIntersectionParams, JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
+import { PositionSummarizeParams } from "@/app/api/position-summary/route";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
-import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { initCv } from "@/redux/slices/cv";
+import { CvSection as CvSectionSanitySchemaType, CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
 import CreateIcon from '@mui/icons-material/Create';
 import {
   Backdrop,
@@ -14,16 +17,13 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
-import { translateCv as transformCv } from "./translateCv";
-import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
-import { initCv } from "@/redux/slices/cv";
-import React from "react";
+import { upgradeCv as transformCv } from "./translateCv";
 
-// const DEV = process.env.NODE_ENV === "development";
+const DEV = process.env.NODE_ENV === "development";
 
 export type CvProps = {
   name: string;
@@ -39,8 +39,11 @@ function CvPage() {
   const [loading, setLoading] = useState(false);
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
-  const [extraGptInput, setExtraGptInput] = useState("");
-  const editable = titleClickedTimes >= 5;
+  const editable = titleClickedTimes >= 5 || DEV
+  const [positionSummary, setPositionSummary] = useState<null | string>(null)
+  const [positionDetails, setPositionDetails] = useState<null | string>(null)
+  const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
+
   const dispatch = useDispatch();
   const updateCvInRedux = (cv: CVSettings) => {
     dispatch(initCv(cv));
@@ -65,6 +68,50 @@ function CvPage() {
     setTitleClickedTimes(prev => prev + 1);
   }
 
+  const getSummary = async () => {
+    if (!positionDetails) return setsnackbarMessage('Please provide position details')
+
+    setLoading(true)
+
+    const positionSummaryParams: PositionSummarizeParams = {
+      description: positionDetails
+    }
+
+    try {
+      const res = await fetch('/api/position-summary', {
+        method: 'POST',
+        body: JSON.stringify(positionSummaryParams),
+      })
+      const summary = await res.text()
+      setPositionSummary(summary)
+    } catch (err) {
+      setsnackbarMessage('Error summarizing position')
+    }
+    setLoading(false)
+  }
+
+  const getJudgement = async () => {
+    if (!positionDetails) return setsnackbarMessage('Please provide position details')
+    setLoading(true)
+    try {
+      const getJudgementParams: JobCvIntersectionParams = {
+        candidate: reduxCvProps,
+        jobDescription: positionDetails
+      }
+
+      const res = await fetch('/api/job-cv-intersection', {
+        method: 'POST',
+        body: JSON.stringify(getJudgementParams),
+      })
+      console.log(res)
+      const result = await res.json()
+      setJudgement(JSON.parse(result))
+    } catch (err) {
+      setsnackbarMessage('Error getting a judgement')
+    }
+    setLoading(false)
+  }
+
   return (
     <PageWrapper title={"CV"} onTitleClicked={onTitleClicked}>
       {editable && (
@@ -82,38 +129,75 @@ function CvPage() {
       <Box sx={{ mb: 5 }}>
         {/* AI did not work in the past in production because of limitations in Vercel :((( */}
         {/* but let's try */}
-        {editable && (
+        {DEV && editable && (
           <>
-            <CvLanguageSelectionComponent
-              selectedLanguage={selectedLanguage}
-              handleLanguageChange={handleLanguageChange}
-            />
+            <Box mb={2}>
+              <CvLanguageSelectionComponent
+                selectedLanguage={selectedLanguage}
+                handleLanguageChange={handleLanguageChange}
+              />
+            </Box>
             {
-              <Box sx={{ mt: 2 }}>
+              <Box>
                 <TextField
                   multiline
-                  disabled={loading}
-                  label="Anything else AI should change?"
+                  maxRows={15}
+                  label="Position we are applying for"
                   variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={extraGptInput}
-                  onChange={(e) => setExtraGptInput(e.target.value)}
-                />
-              </Box>}
-            <Button
-              type="button"
-              onClick={() => transformCv({
-                cvProps: reduxCvProps,
-                selectedLanguage,
-                extraGptInput,
-                setLanguage,
-                setLoading,
-                setsnackbarMessage,
-                updateCvInRedux
-              })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
-              Transform by AI
-            </Button>
+                  value={positionDetails}
+                  onChange={(e) => setPositionDetails(e.target.value)}
+                  fullWidth>
+                </TextField>
+                {positionSummary && (
+                  <TextField
+                    multiline
+                    fullWidth
+                    label="Position Summary"
+                    variant="outlined"
+                    value={positionSummary}
+                    onChange={(e) => setPositionSummary(e.target.value)}
+                  >
+                    {positionSummary}
+                  </TextField>
+                )}
+                <Button
+                  type="button"
+                  onClick={() => getSummary()}
+                  sx={{ mt: 2, width: "100%" }}
+                  variant="contained"
+                  color="secondary">
+                  Summarize
+                </Button>
+                {judgement && (
+                  <Box>
+                    <Typography variant="h6">Judgement : {`${judgement.rating}/10`}</Typography>
+                    <Typography variant="body1">
+                      {judgement.opinion}
+                    </Typography>
+                    <Typography variant="h6">Why?</Typography>
+                    <Typography variant="body1">
+                      {judgement.whatIsGood}
+                    </Typography>
+                    <Typography variant="h6">What could be better?</Typography>
+                    <Typography variant="body1">
+                      {judgement.whatIsMissing}
+                    </Typography>
+                  </Box>
+                )}
+                {
+                  positionDetails && (positionDetails.length > 10) && (
+                    <Button
+                      type="button"
+                      onClick={() => getJudgement()}
+                      sx={{ mt: 2, width: "100%" }}
+                      variant="contained"
+                      color="secondary">
+                      How well does the candidate fit the position?
+                    </Button>
+                  )
+                }
+              </Box>
+            }
           </>
         )}
       </Box>
@@ -122,6 +206,22 @@ function CvPage() {
         <CvPaper editable={editable} />
       </Print>
 
+      {DEV && (
+        <Button
+          type="button"
+          onClick={() => transformCv({
+            cvProps: reduxCvProps,
+            setLanguage,
+            setLoading,
+            setsnackbarMessage,
+            updateCvInRedux,
+            positionSummary,
+            positionDetails
+          })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
+          Transform CV by AI
+        </Button>
+      )}
+
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
@@ -129,7 +229,6 @@ function CvPage() {
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      {/* Honestly I'm not sure if this works but I don't want to remove it either. :D */}
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         open={snackbarMessage !== null}
@@ -138,7 +237,7 @@ function CvPage() {
         message={snackbarMessage}
         color="error"
       />
-    </PageWrapper>
+    </PageWrapper >
   );
 }
 
