@@ -15,14 +15,13 @@ import {
   CircularProgress,
   Snackbar,
   SnackbarCloseReason,
-  TextField,
   Typography
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { AiForm } from "./aiForm";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
-import { adjustCvBasedOnPosition } from "./hooks/adjustCvBasedOnPosition";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -44,6 +43,7 @@ function CvPage() {
   const [positionSummary, setPositionSummary] = useState<string>('')
   const [positionDetails, setPositionDetails] = useState<string>('')
   const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
+  const [checked, setChecked] = useState<string[]>([])
   const [companyName, setCompanyName] = useState<string | null>(null)
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
 
@@ -107,7 +107,7 @@ function CvPage() {
         body: JSON.stringify(getJudgementParams),
       })
       const result = await res.json()
-      setJudgement(JSON.parse(result))
+      setJudgement(result)
     } catch (err) {
       setsnackbarMessage('Error getting a judgement')
     }
@@ -137,6 +137,19 @@ function CvPage() {
     setLoading(false)
   }
 
+  const handleChecked = (value: string) => () => {
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setChecked(newChecked);
+  }
+
   return (
     <PageWrapper title={"CV"} onTitleClicked={onTitleClicked}>
       {editable && (
@@ -157,85 +170,24 @@ function CvPage() {
         {DEV && editable && (
           <>
             {
-              <Box>
-                <TextField
-                  multiline
-                  maxRows={15}
-                  label="Enter a job description here"
-                  variant="outlined"
-                  value={positionDetails}
-                  onChange={(e) => setPositionDetails(e.target.value)}
-                  fullWidth>
-                </TextField>
-                {
-                  positionDetails && (positionDetails.length > 10) && (
-                    <>
-                      <Button
-                        type="button"
-                        onClick={() => getSummary()}
-                        sx={{ mt: 2, width: "100%" }}
-                        variant="contained"
-                        color="secondary">
-                        Get &quot;Hiring manager&apos;s summary&quot;
-                      </Button>
-                      {positionSummary && (
-                        <TextField
-                          sx={{
-                            mt: 2
-                          }}
-                          multiline
-                          fullWidth
-                          label="Position Summary"
-                          variant="outlined"
-                          value={positionSummary}
-                          onChange={(e) => setPositionSummary(e.target.value)}
-                        >
-                          {positionSummary}
-                        </TextField>
-                      )}
-                      <Button
-                        type="button"
-                        onClick={() => getJudgement()}
-                        sx={{ mt: 2, width: "100%" }}
-                        variant="contained"
-                        color="secondary">
-                        How well does the candidate fit the position?
-                      </Button>
-                      {judgement && (
-                        <Box>
-                          <Typography variant="h6">Judgement : {`${judgement.rating}/10`}</Typography>
-                          <Typography variant="body1">
-                            {judgement.opinion}
-                          </Typography>
-                          <Typography variant="h6">Why?</Typography>
-                          <Typography variant="body1">
-                            {judgement.whatIsGood}
-                          </Typography>
-                          <Typography variant="h6">What could be better?</Typography>
-                          <Typography variant="body1">
-                            {judgement.whatIsMissing}
-                          </Typography>
-                        </Box>
-                      )}
-                      <Button
-                        type="button"
-                        onClick={() => adjustCvBasedOnPosition({
-                          cvProps: reduxCvProps,
-                          setLanguage,
-                          setLoading,
-                          setsnackbarMessage,
-                          updateCvInRedux,
-                          positionSummary,
-                          positionDetails,
-                          setPositionSummary,
-                          setCompanyName
-                        })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
-                        Transform CV by AI, based on the position
-                      </Button>
-                    </>
-                  )
-                }
-              </Box>
+              <AiForm
+                positionDetails={positionDetails}
+                positionSummary={positionSummary}
+                judgement={judgement}
+                checked={checked}
+                reduxCvProps={reduxCvProps}
+                setPositionDetails={setPositionDetails}
+                setPositionSummary={setPositionSummary}
+                setLanguage={setLanguage}
+                setLoading={setLoading}
+                setsnackbarMessage={setsnackbarMessage}
+                setCompanyName={setCompanyName}
+
+                updateCvInRedux={updateCvInRedux}
+                getSummary={getSummary}
+                getJudgement={getJudgement}
+                handleChecked={handleChecked}
+              />
             }
           </>
         )}

@@ -31,6 +31,7 @@ export const adjustCvBasedOnPosition = async ({
     positionWeAreApplyingFor: positionDetails ?? undefined,
     positionSummary: positionSummary ?? undefined,
   }
+  console.log(cvUpgradeParams)
 
   setLoading(true)
   try {

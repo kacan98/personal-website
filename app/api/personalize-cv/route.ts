@@ -1,24 +1,29 @@
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { OpenAI } from 'openai'
 import { PositionSummarizeResponse } from '../position-summary/route'
+import { log } from '../helper'
+import { z } from 'zod'
 
-export type CvUpgradeParams = {
-  cvBody: CVSettings
-  positionWeAreApplyingFor?: string
-  positionSummary?: string
-}
-
-export type CvUpgradeResponse = {
-  cv: CVSettings
-  newPositionSummary?: string
-  companyName?: string
-}
-
-const DEV = process.env.NODE_ENV === 'development'
-const log = (message: string) => {
-  if (DEV) {
-    console.log(message)
+const CVUpgradeParams = z.object(
+  //can be any object doesn't matter the content
+  {
+    cvBody: z.object({}),
+    positionWeAreApplyingFor: z.string().optional(),
+    positionSummary: z.string().optional(),
   }
+)
+
+export type CvUpgradeParams = z.infer<typeof CVUpgradeParams>
+
+const CVUpgradeResponse = z.object({
+  cv: z.record(z.unknown()),
+  newPositionSummary: z.string().optional(),
+  companyName: z.string().optional(),
+})
+
+type ZodCvUpgradeResponse = z.infer<typeof CVUpgradeResponse>
+export interface CvUpgradeResponse extends ZodCvUpgradeResponse {
+  cv: CVSettings
 }
 
 const baseUrl = process.env.VERCEL_URL
@@ -26,14 +31,17 @@ const baseUrl = process.env.VERCEL_URL
   : 'http://localhost:3000'
 
 export async function POST(req: Request): Promise<Response> {
-  const body: CvUpgradeParams = await req.json()
-
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
-
-  let positionSummary = body.positionSummary
   try {
+    const body: CvUpgradeParams = await req.json()
+
+    CVUpgradeParams.parse(body)
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+
+    let positionSummary = body.positionSummary
+
     //summarize the CV
     let newPositionSummary: string | undefined
     let companyName: string | undefined
@@ -46,7 +54,7 @@ export async function POST(req: Request): Promise<Response> {
         `${baseUrl}/api/position-summary`,
         {
           method: 'POST',
-          body: JSON.stringify({ description: body.positionWeAreApplyingFor }),
+          body: body.positionWeAreApplyingFor,
         }
       ).then((res) => res.json())
       log('[personalize-cv] positionSummary fetched from /api/position-summary')
@@ -74,6 +82,8 @@ export async function POST(req: Request): Promise<Response> {
           The candidate is applying for a position: ${positionSummary}.
           
           Improve the CV. Don't lie, but make it cusomized for the position.
+
+          Don't be afraid to remove irrelevant information.
           `,
         },
         {

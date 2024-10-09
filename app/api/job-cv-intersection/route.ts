@@ -10,9 +10,11 @@ export type JobCvIntersectionParams = {
 
 export type JobCvIntersectionResponse = {
   opinion: string
-  whatIsMissing: string
-  whatIsGood: string
+  whatIsMissing: string[]
+  whatIsGood: string[]
+
   motivationalLetter: string
+  
   rating: number
 }
 
@@ -25,8 +27,8 @@ export async function POST(req: Request): Promise<Response> {
 
   const ResponseZod = z.object({
     opinion: z.string(),
-    whatIsMissing: z.string(),
-    whatIsGood: z.string(),
+    whatIsMissing: z.array(z.string()),
+    whatIsGood: z.array(z.string()),
     motivationalLetter: z.string(),
     rating: z.number(),
   })
@@ -67,7 +69,7 @@ export async function POST(req: Request): Promise<Response> {
       response_format: zodResponseFormat(ResponseZod, 'transformed_cv'),
     })
 
-    return new Response(JSON.stringify(response.choices[0].message.content), {
+    return new Response(response.choices[0].message.content, {
       status: 200,
     })
   } catch (e: any) {
