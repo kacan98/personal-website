@@ -1,7 +1,10 @@
-import { CvUpgradeParams, CvUpgradeResponse } from '@/app/api/upgrade-cv/route'
+import {
+  CvUpgradeParams,
+  CvUpgradeResponse,
+} from '@/app/api/personalize-cv/route'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 
-export const upgradeCv = async ({
+export const adjustCvBasedOnPosition = async ({
   cvProps,
   setLoading,
   setsnackbarMessage,
@@ -9,6 +12,7 @@ export const upgradeCv = async ({
   positionDetails,
   positionSummary,
   setPositionSummary,
+  setCompanyName,
 }: {
   cvProps: CVSettings
   positionDetails: string | null
@@ -18,6 +22,7 @@ export const upgradeCv = async ({
   setsnackbarMessage: (message: string | null) => void
   updateCvInRedux: (cvSettings: CVSettings) => void
   setPositionSummary: (positionSummary: string) => void
+  setCompanyName: (companyName: string) => void
 }) => {
   setsnackbarMessage(null)
 
@@ -29,26 +34,22 @@ export const upgradeCv = async ({
 
   setLoading(true)
   try {
-    const res = await fetch('/api/upgrade-cv', {
+    const res = await fetch('/api/personalize-cv', {
       method: 'POST',
       body: JSON.stringify(cvUpgradeParams),
     })
 
-    const transformedCv: string = await res.json()
-    const parsedResponse: CvUpgradeResponse = JSON.parse(transformedCv)
-    if (transformedCv) {
-      updateCvInRedux(parsedResponse.cv)
-      if (!positionSummary && parsedResponse.newPositionSummary) {
-        // if positionSummary is not provided, the endpoint will get it internally
-        setPositionSummary(parsedResponse.newPositionSummary)
-      }
-    } else {
-      setsnackbarMessage('Error transforming CV')
+    const transformedCv: CvUpgradeResponse = await res.json()
+    const { cv, newPositionSummary, companyName } = transformedCv
+    if (cv) updateCvInRedux(cv)
+    if (!positionSummary && newPositionSummary) {
+      setPositionSummary(newPositionSummary)
     }
-    setLoading(false)
+    if (companyName) setCompanyName(companyName)
     setsnackbarMessage('CV transformed')
   } catch (err: any) {
-    setLoading(false)
     setsnackbarMessage('Error transforming CV: ' + err.message)
   }
+
+  setLoading(false)
 }

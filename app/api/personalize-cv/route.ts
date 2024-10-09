@@ -1,5 +1,6 @@
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { OpenAI } from 'openai'
+import { PositionSummarizeResponse } from '../position-summary/route'
 
 export type CvUpgradeParams = {
   cvBody: CVSettings
@@ -10,6 +11,7 @@ export type CvUpgradeParams = {
 export type CvUpgradeResponse = {
   cv: CVSettings
   newPositionSummary?: string
+  companyName?: string
 }
 
 const DEV = process.env.NODE_ENV === 'development'
@@ -31,24 +33,29 @@ export async function POST(req: Request): Promise<Response> {
   })
 
   let positionSummary = body.positionSummary
-  //TODO: ADD try catch
   try {
     //summarize the CV
-    let newPositionSummary
+    let newPositionSummary: string | undefined
+    let companyName: string | undefined
     if (body.positionWeAreApplyingFor && !positionSummary) {
       log(
-        '[upgrade-cv] positionSummary not provided, fetching from /api/position-summary'
+        '[personalize-cv] positionSummary not provided, fetching from /api/position-summary'
       )
       //call another endpoint to summarize the position
-      positionSummary = await fetch(`${baseUrl}/api/position-summary`, {
-        method: 'POST',
-        body: JSON.stringify({ description: body.positionWeAreApplyingFor }),
-      }).then((res) => res.text())
-      log('[upgrade-cv] positionSummary fetched from /api/position-summary')
-      newPositionSummary = positionSummary
+      const resultOfCall: PositionSummarizeResponse = await fetch(
+        `${baseUrl}/api/position-summary`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ description: body.positionWeAreApplyingFor }),
+        }
+      ).then((res) => res.json())
+      log('[personalize-cv] positionSummary fetched from /api/position-summary')
+      newPositionSummary = resultOfCall.summary
+      positionSummary = newPositionSummary
+      companyName = resultOfCall.companyName
     }
 
-    log('[upgrade-cv] starting with upgrading the CV')
+    log('[personalize-cv] starting with upgrading the CV')
     const completion = await openai.beta.chat.completions.parse({
       model: 'gpt-4o',
       messages: [
@@ -80,13 +87,14 @@ export async function POST(req: Request): Promise<Response> {
       },
     })
 
-    log('[upgrade-cv] CV upgraded successfully')
+    log('[personalize-cv] CV upgraded successfully')
 
     if (completion.choices[0].message.content) {
       const cv: CVSettings = JSON.parse(completion.choices[0].message.content)
       const response: CvUpgradeResponse = {
         cv,
         newPositionSummary,
+        companyName,
       }
 
       return new Response(JSON.stringify(response), {

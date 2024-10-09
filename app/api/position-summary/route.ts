@@ -1,19 +1,36 @@
 import OpenAI from 'openai'
+import { zodResponseFormat } from 'openai/helpers/zod.mjs'
+import { z } from 'zod'
 
 export type PositionSummarizeParams = {
   description: string
 }
 
+export type PositionSummarizeResponse = {
+  summary: string
+  companyName?: string
+}
+
 export async function POST(req: Request): Promise<Response> {
   const body: PositionSummarizeParams = await req.json()
+
+  //throw error if too short
+  if (body.description.length < 20) {
+    return new Response('Description too short', { status: 400 })
+  }
+
+  const ResponseZod = z.object({
+    summary: z.string(),
+    companyName: z.string(),
+  })
 
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   })
 
   try {
-    const response = await openai.beta.chat.completions.parse({
-      model: 'chatgpt-4o-latest',
+    const completion = await openai.beta.chat.completions.parse({
+      model: 'gpt-4o',
       messages: [
         {
           role: 'user',
@@ -30,12 +47,27 @@ export async function POST(req: Request): Promise<Response> {
         },
         {
           role: 'user',
-          content: 'Be brief and to the point',
+          content:
+            'Be brief and to the point. Return it in a json object with the summary and the company name if available.',
         },
       ],
+      response_format: zodResponseFormat(ResponseZod, 'transformed_cv'),
     })
-    return new Response(response.choices[0].message.content, {
-      status: 200,
+
+    const content = completion.choices[0].message.content
+    if (!content) return new Response('No summary found', { status: 400 })
+
+    const { summary, companyName } = JSON.parse(content) as PositionSummarizeResponse
+
+    const response: PositionSummarizeResponse = {
+      summary,
+      companyName,
+    }
+
+    return new Response(JSON.stringify(response), {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
   } catch (e: any) {
     return new Response(e.message, { status: 500 })

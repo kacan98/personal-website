@@ -37,8 +37,9 @@ export function CvSectionComponent({
           <SuperEditableText query={['paragraphs', idx]} key={idx} variant="body1" gutterBottom text={paragraph} />
         ))}
       {bulletPoints &&
-        bulletPoints.map((point, idx) => (
-          <ListItem key={idx}>
+        bulletPoints.map((point, idx) => {
+          if (!point.text) return <></>
+          return (<ListItem key={idx}>
             <ConditionalWrapper
               condition={!!point.url}
               wrapper={(c) =>
@@ -56,11 +57,12 @@ export function CvSectionComponent({
                   {SUPPORTED_ICONS[point.iconName]?.component()}
                 </ListItemIcon>
 
-                <ListItemText><SuperEditableText query={['bulletpoints', idx, 'text']} text={point.text} /></ListItemText>
+                <ListItemText><SuperEditableText query={['bulletPoints', idx, 'text']} text={point.text} /></ListItemText>
               </Grid2>
             </ConditionalWrapper>
-          </ListItem>
-        ))}
+          </ListItem>)
+        }
+        )}
       {subSections && (subSections.map((section, index) => (
         //TODO: Move this to cvSubSection.tsx
         <div key={index}>

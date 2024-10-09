@@ -1,6 +1,6 @@
 "use client";
 import { JobCvIntersectionParams, JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
-import { PositionSummarizeParams } from "@/app/api/position-summary/route";
+import { PositionSummarizeParams, PositionSummarizeResponse } from "@/app/api/position-summary/route";
 import { CvTranslateParams } from "@/app/api/translate/route";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
@@ -22,7 +22,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
-import { upgradeCv as adjustCvBasedOnPosition } from "./translateCv";
+import { adjustCvBasedOnPosition } from "./hooks/adjustCvBasedOnPosition";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -41,9 +41,11 @@ function CvPage() {
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
   const editable = titleClickedTimes >= 5 || DEV
-  const [positionSummary, setPositionSummary] = useState<null | string>(null)
-  const [positionDetails, setPositionDetails] = useState<null | string>(null)
+  const [positionSummary, setPositionSummary] = useState<string>('')
+  const [positionDetails, setPositionDetails] = useState<string>('')
   const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
+  const [companyName, setCompanyName] = useState<string | null>(null)
+  const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
 
   const dispatch = useDispatch();
   const updateCvInRedux = (cv: CVSettings) => {
@@ -79,12 +81,12 @@ function CvPage() {
     }
 
     try {
-      const res = await fetch('/api/position-summary', {
+      const res: PositionSummarizeResponse = await fetch('/api/position-summary', {
         method: 'POST',
         body: JSON.stringify(positionSummaryParams),
-      })
-      const summary = await res.text()
-      setPositionSummary(summary)
+      }).then(res => res.json())
+      setPositionSummary(res.summary)
+      if (res.companyName) setCompanyName(res.companyName)
     } catch (err) {
       setsnackbarMessage('Error summarizing position')
     }
@@ -225,7 +227,8 @@ function CvPage() {
                           updateCvInRedux,
                           positionSummary,
                           positionDetails,
-                          setPositionSummary
+                          setPositionSummary,
+                          setCompanyName
                         })} sx={{ mt: 2, width: "100%" }} variant="contained" color="primary">
                         Transform CV by AI, based on the position
                       </Button>
@@ -238,7 +241,7 @@ function CvPage() {
         )}
       </Box>
 
-      <Print fileName={`${reduxCvProps.name}_CV`}>
+      <Print fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
         <CvPaper editable={editable} />
       </Print>
 
@@ -272,7 +275,7 @@ function CvPage() {
       >
         <CircularProgress color="inherit" />
         <Typography variant="h6" sx={{ mt: 2 }}>
-          Loading...
+          Discussing with Chat GPT...
         </Typography>
       </Backdrop>
 
