@@ -22,6 +22,7 @@ import { useDispatch } from "react-redux";
 import { AiForm } from "./aiForm";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
+import { MotivationalLetterParams } from "@/app/api/motivational-letter/route";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -45,6 +46,7 @@ function CvPage() {
   const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
   const [checked, setChecked] = useState<string[]>([])
   const [companyName, setCompanyName] = useState<string | null>(null)
+  const [motivationalLetter, setMotivationalLetter] = useState<string | null>(null)
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
 
   const dispatch = useDispatch();
@@ -106,8 +108,8 @@ function CvPage() {
         method: 'POST',
         body: JSON.stringify(getJudgementParams),
       })
-      const result = await res.json()
-      setJudgement(result)
+      const body: JobCvIntersectionResponse = await res.json()
+      setJudgement(body)
     } catch (err) {
       setsnackbarMessage('Error getting a judgement')
     }
@@ -148,6 +150,29 @@ function CvPage() {
     }
 
     setChecked(newChecked);
+  }
+
+  const getMotivationalLetter = async () => {
+    if (!positionDetails) return setsnackbarMessage('Please provide position details')
+
+    setLoading(true)
+    try {
+      const motivationalLetterParams: MotivationalLetterParams = {
+        candidate: reduxCvProps,
+        jobDescription: positionDetails,
+        strongPoints: checked
+      }
+      const res = await fetch('/api/motivational-letter', {
+        method: 'POST',
+        body: JSON.stringify(motivationalLetterParams),
+      })
+      const body = await res.text()
+      // MotivationalLetterParams.parse(body)
+      setMotivationalLetter(body)
+    } catch (err) {
+      setsnackbarMessage('Error getting a motivational letter')
+    }
+    setLoading(false)
   }
 
   return (
@@ -213,6 +238,30 @@ function CvPage() {
             })} sx={{ mt: 2, width: "100%" }} variant="outlined" >
             Translate
           </Button>
+        </>
+      )}
+
+      {DEV && positionDetails && (
+        <>
+          <Button
+            type="button"
+            onClick={() => getMotivationalLetter()}
+            sx={{ mt: 2, mb: 2, width: "100%" }}
+            variant="outlined" >
+            Get Motivational Letter
+          </Button>
+          {motivationalLetter && (
+            <Box sx={{ mt: 5, textAlign: 'left' }}>
+              <Typography variant="h4" mb={2}>
+                Motivational Letter
+              </Typography>
+              {motivationalLetter.split('\\n').map((line, i) => (
+                <Typography key={i} variant="body1">
+                  {line}
+                </Typography>
+              ))}
+            </Box>
+          )}
         </>
       )}
 

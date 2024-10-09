@@ -13,8 +13,6 @@ export type JobCvIntersectionResponse = {
   whatIsMissing: string[]
   whatIsGood: string[]
 
-  motivationalLetter: string
-  
   rating: number
 }
 

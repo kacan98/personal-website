@@ -7,13 +7,17 @@ import { z } from 'zod'
 const CVUpgradeParams = z.object(
   //can be any object doesn't matter the content
   {
-    cvBody: z.object({}),
+    cvBody: z.record(z.any()),
     positionWeAreApplyingFor: z.string().optional(),
     positionSummary: z.string().optional(),
   }
 )
 
-export type CvUpgradeParams = z.infer<typeof CVUpgradeParams>
+type ZodCvUpgradeParams = z.infer<typeof CVUpgradeParams>
+
+export interface CvUpgradeParams extends ZodCvUpgradeParams {
+  cvBody: CVSettings
+}
 
 const CVUpgradeResponse = z.object({
   cv: z.record(z.unknown()),
