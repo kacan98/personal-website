@@ -22,7 +22,7 @@ import { useDispatch } from "react-redux";
 import { AiForm } from "./aiForm";
 import CvPaper from "./cvPaper";
 import CvLanguageSelectionComponent from "./languageSelect";
-import { MotivationalLetterParams } from "@/app/api/motivational-letter/route";
+import { MotivationalLetterParams } from "@/app/api/motivational-letter/motivational-letter.model";
 
 const DEV = process.env.NODE_ENV === "development";
 
