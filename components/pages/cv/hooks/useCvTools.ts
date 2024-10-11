@@ -8,7 +8,7 @@ import { useGetJobCvIntersection } from './useGetJobCvIntersection'
 import { useGetMotivationalLetter } from './useGetMotivationalLeter'
 import { useGetSummary } from './useGetSummary'
 
-export const useCvHooks = ({
+export const useCvTools = ({
   reduxCvProps,
   positionDetails,
   positionSummary,

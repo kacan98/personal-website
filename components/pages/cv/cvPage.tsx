@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { AiForm } from "./aiForm";
-import { useCvHooks } from "./hooks/useCvHooks";
+import { useCvTools } from "./hooks/useCvTools";
 import CvLanguageSelectionComponent from "./languageSelect";
 import CvPaper from "./paper/cvPaper";
 
@@ -46,7 +46,7 @@ function CvPage() {
   const { getMotivationalLetter,
     getJudgement,
     getSummary,
-    adjustCvBasedOnPosition, translateCv } = useCvHooks({
+    adjustCvBasedOnPosition, translateCv } = useCvTools({
       reduxCvProps,
       positionDetails,
       positionSummary,
