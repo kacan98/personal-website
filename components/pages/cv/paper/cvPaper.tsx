@@ -2,7 +2,7 @@ import { EditableText } from "@/components/editableText";
 import { useAppSelector } from "@/redux/hooks";
 import { Box, Paper } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { CvSectionComponent } from "./cvSectionComponent";
+import { CvSectionComponent } from "../cvSectionComponent";
 
 type CvPaperProps = {
   editable?: boolean;

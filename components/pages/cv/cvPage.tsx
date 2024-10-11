@@ -1,12 +1,9 @@
 "use client";
-import { JobCvIntersectionParams, JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
-import { PositionSummarizeParams, PositionSummarizeResponse } from "@/app/api/position-summary/route";
-import { CvTranslateParams } from "@/app/api/translate/route";
+import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
-import { initCv } from "@/redux/slices/cv";
-import { CvSection as CvSectionSanitySchemaType, CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/singletons/cvSettings";
 import CreateIcon from '@mui/icons-material/Create';
 import {
   Backdrop,
@@ -18,11 +15,10 @@ import {
   Typography
 } from "@mui/material";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { AiForm } from "./aiForm";
-import CvPaper from "./cvPaper";
+import { useCvHooks } from "./hooks/useCvHooks";
 import CvLanguageSelectionComponent from "./languageSelect";
-import { MotivationalLetterParams } from "@/app/api/motivational-letter/motivational-letter.model";
+import CvPaper from "./paper/cvPaper";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -47,12 +43,21 @@ function CvPage() {
   const [checked, setChecked] = useState<string[]>([])
   const [companyName, setCompanyName] = useState<string | null>(null)
   const [motivationalLetter, setMotivationalLetter] = useState<string | null>(null)
+  const { getMotivationalLetter,
+    getJudgement,
+    getSummary,
+    adjustCvBasedOnPosition, translateCv } = useCvHooks({
+      reduxCvProps,
+      positionDetails,
+      positionSummary,
+      setLoading,
+      setsnackbarMessage,
+      setMotivationalLetter,
+      setJudgement,
+      setPositionSummary,
+      setCompanyName,
+    })
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
-
-  const dispatch = useDispatch();
-  const updateCvInRedux = (cv: CVSettings) => {
-    dispatch(initCv(cv));
-  }
 
   const handleLanguageChange = async (l: any) => {
     setLanguage(l.target.value);
@@ -73,72 +78,6 @@ function CvPage() {
     setTitleClickedTimes(prev => prev + 1);
   }
 
-  const getSummary = async () => {
-    if (!positionDetails) return setsnackbarMessage('Please provide position details')
-
-    setLoading(true)
-
-    const positionSummaryParams: PositionSummarizeParams = {
-      description: positionDetails
-    }
-
-    try {
-      const res: PositionSummarizeResponse = await fetch('/api/position-summary', {
-        method: 'POST',
-        body: JSON.stringify(positionSummaryParams),
-      }).then(res => res.json())
-      setPositionSummary(res.summary)
-      if (res.companyName) setCompanyName(res.companyName)
-    } catch (err) {
-      setsnackbarMessage('Error summarizing position')
-    }
-    setLoading(false)
-  }
-
-  const getJudgement = async () => {
-    if (!positionDetails) return setsnackbarMessage('Please provide position details')
-    setLoading(true)
-    try {
-      const getJudgementParams: JobCvIntersectionParams = {
-        candidate: reduxCvProps,
-        jobDescription: positionDetails
-      }
-
-      const res = await fetch('/api/job-cv-intersection', {
-        method: 'POST',
-        body: JSON.stringify(getJudgementParams),
-      })
-      const body: JobCvIntersectionResponse = await res.json()
-      setJudgement(body)
-    } catch (err) {
-      setsnackbarMessage('Error getting a judgement')
-    }
-    setLoading(false)
-  }
-
-  const translateCv = async ({ cvProps, selectedLanguage }: { cvProps: CVSettings; selectedLanguage: string; }) => {
-    if (selectedLanguage === 'English') return setsnackbarMessage('Please select a language to translate to')
-
-    setLoading(true)
-    try {
-      const cvTranslateParams: CvTranslateParams = {
-        targetLanguage: selectedLanguage,
-        cv: cvProps
-      }
-
-      const res = await fetch('/api/translate', {
-        method: 'POST',
-        body: JSON.stringify(cvTranslateParams),
-      })
-      const result = await res.json()
-      const parsed: CVSettings = JSON.parse(result)
-      updateCvInRedux(parsed)
-    } catch (err) {
-      setsnackbarMessage('Error getting a judgement')
-    }
-    setLoading(false)
-  }
-
   const handleChecked = (value: string) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
@@ -150,29 +89,6 @@ function CvPage() {
     }
 
     setChecked(newChecked);
-  }
-
-  const getMotivationalLetter = async () => {
-    if (!positionDetails) return setsnackbarMessage('Please provide position details')
-
-    setLoading(true)
-    try {
-      const motivationalLetterParams: MotivationalLetterParams = {
-        candidate: reduxCvProps,
-        jobDescription: positionDetails,
-        strongPoints: checked
-      }
-      const res = await fetch('/api/motivational-letter', {
-        method: 'POST',
-        body: JSON.stringify(motivationalLetterParams),
-      })
-      const body = await res.text()
-      // MotivationalLetterParams.parse(body)
-      setMotivationalLetter(body)
-    } catch (err) {
-      setsnackbarMessage('Error getting a motivational letter')
-    }
-    setLoading(false)
   }
 
   return (
@@ -196,22 +112,21 @@ function CvPage() {
           <>
             {
               <AiForm
-                positionDetails={positionDetails}
-                positionSummary={positionSummary}
                 judgement={judgement}
                 checked={checked}
-                reduxCvProps={reduxCvProps}
-                setPositionDetails={setPositionDetails}
-                setPositionSummary={setPositionSummary}
-                setLanguage={setLanguage}
+                positionSummary={positionSummary}
+                positionDetails={positionDetails}
+                
                 setLoading={setLoading}
                 setsnackbarMessage={setsnackbarMessage}
                 setCompanyName={setCompanyName}
+                setPositionSummary={setPositionSummary}
+                setPositionDetails={setPositionDetails}
+                handleChecked={handleChecked}
 
-                updateCvInRedux={updateCvInRedux}
                 getSummary={getSummary}
                 getJudgement={getJudgement}
-                handleChecked={handleChecked}
+                adjustCvBasedOnPosition={adjustCvBasedOnPosition}
               />
             }
           </>
@@ -245,7 +160,7 @@ function CvPage() {
         <>
           <Button
             type="button"
-            onClick={() => getMotivationalLetter()}
+            onClick={() => getMotivationalLetter(positionDetails, checked)}
             sx={{ mt: 2, mb: 2, width: "100%" }}
             variant="outlined" >
             Get Motivational Letter

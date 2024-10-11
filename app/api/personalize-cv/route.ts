@@ -1,8 +1,11 @@
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { OpenAI } from 'openai'
-import { PositionSummarizeResponse } from '../position-summary/route'
-import { log } from '../helper'
 import { z } from 'zod'
+import { log } from '../helper'
+import {
+  PositionSummarizeParams,
+  PositionSummarizeResponse,
+} from '../position-summary/route'
 
 const CVUpgradeParams = z.object(
   //can be any object doesn't matter the content
@@ -53,12 +56,16 @@ export async function POST(req: Request): Promise<Response> {
       log(
         '[personalize-cv] positionSummary not provided, fetching from /api/position-summary'
       )
+      const positionSummarizeParams: PositionSummarizeParams = {
+        description: body.positionWeAreApplyingFor,
+      }
+
       //call another endpoint to summarize the position
       const resultOfCall: PositionSummarizeResponse = await fetch(
         `${baseUrl}/api/position-summary`,
         {
           method: 'POST',
-          body: body.positionWeAreApplyingFor,
+          body: JSON.stringify(positionSummarizeParams),
         }
       ).then((res) => res.json())
       log('[personalize-cv] positionSummary fetched from /api/position-summary')
