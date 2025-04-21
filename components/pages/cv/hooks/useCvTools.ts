@@ -1,4 +1,4 @@
-import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/route'
+import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/model'
 import { initCv } from '@/redux/slices/cv'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { useDispatch } from 'react-redux'
@@ -12,20 +12,22 @@ export const useCvTools = ({
   reduxCvProps,
   positionDetails,
   positionSummary,
+  positionIntersection,
   setLoading,
   setsnackbarMessage,
   setMotivationalLetter,
-  setJudgement,
+  setPositionIntersection,
   setPositionSummary,
   setCompanyName,
 }: {
   reduxCvProps: CVSettings
   positionDetails: string
   positionSummary: string
+  positionIntersection: JobCvIntersectionResponse | null
   setLoading: (loading: boolean) => void
   setsnackbarMessage: (message: string) => void
   setMotivationalLetter: (motivationalLetter: string) => void
-  setJudgement: (judgement: JobCvIntersectionResponse) => void
+  setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
   setPositionSummary: (summary: string) => void
   setCompanyName: (companyName: string) => void
 }) => {
@@ -41,20 +43,22 @@ export const useCvTools = ({
     reduxCvProps,
     setMotivationalLetter,
   })
-  const { getJudgement } = useGetJobCvIntersection({
+  const { updatePositionIntersection } = useGetJobCvIntersection({
     setLoading,
     setsnackbarMessage,
     reduxCvProps,
     positionDetails,
-    setJudgement,
+    setPositionIntersection,
   })
-  const { getSummary } = useGetSummary({
+
+  const { updateSummary } = useGetSummary({
     positionDetails,
     setPositionSummary,
     setCompanyName,
     setLoading,
     setsnackbarMessage,
   })
+
   const { adjustCvBasedOnPosition } = useAdjustCvBasedOnPosition({
     cvProps: reduxCvProps,
     setLoading,
@@ -62,9 +66,13 @@ export const useCvTools = ({
     updateCvInRedux,
     setCompanyName,
     setPositionSummary,
+    setPositionIntersection,
+    positionIntersection,
+    updateSummary,
     positionDetails,
     positionSummary,
   })
+
   const { translateCv } = useCvTranslation({
     setLoading,
     setsnackbarMessage,
@@ -73,8 +81,8 @@ export const useCvTools = ({
 
   return {
     getMotivationalLetter,
-    getJudgement,
-    getSummary,
+    updatePositionIntersection,
+    getSummary: updateSummary,
     adjustCvBasedOnPosition,
     translateCv,
   }

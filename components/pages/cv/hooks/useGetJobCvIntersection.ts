@@ -1,7 +1,8 @@
 import {
+  jobCvIntersectionAPIEndpointName,
   JobCvIntersectionParams,
   JobCvIntersectionResponse,
-} from '@/app/api/job-cv-intersection/route'
+} from '@/app/api/job-cv-intersection/model'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { useCallback } from 'react'
 
@@ -11,7 +12,7 @@ interface JobCvIntersectionProps {
 
   setLoading: (loading: boolean) => void
   setsnackbarMessage: (message: string) => void
-  setJudgement: (judgement: JobCvIntersectionResponse) => void
+  setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
 }
 
 export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
@@ -20,27 +21,31 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
     positionDetails,
     setLoading,
     setsnackbarMessage,
-    setJudgement,
+    setPositionIntersection,
   } = props
-  const getJudgement = useCallback(async () => {
+  const updatePositionIntersection = useCallback(async () => {
     if (!positionDetails) {
       return setsnackbarMessage('Please provide position details')
     }
+
     setLoading(true)
+
     try {
-      const res = await fetch('/api/job-cv-intersection', {
+      const res = await fetch(jobCvIntersectionAPIEndpointName, {
         method: 'POST',
         body: JSON.stringify({
           candidate: reduxCvProps,
-          jobDescription: positionDetails,
+          jobDescription: positionDetails
         } as JobCvIntersectionParams),
       })
       const body: JobCvIntersectionResponse = await res.json()
-      setJudgement(body)
+      setPositionIntersection(body)
     } catch {
-      setsnackbarMessage('Error getting a judgement')
+      setsnackbarMessage('Error getting a intersection')
     }
+
     setLoading(false)
   }, Object.values(props))
-  return { getJudgement }
+
+  return { updatePositionIntersection }
 }

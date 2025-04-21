@@ -1,4 +1,4 @@
-import { MotivationalLetterParams } from '@/app/api/generate-motivational-letter/route'
+import { MotivationalLetterParams } from '@/app/api/motivational-letter/motivational-letter.model'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 
 interface UseMotivationalLetterProps {
@@ -16,19 +16,22 @@ export const useGetMotivationalLetter = ({
 }: UseMotivationalLetterProps) => {
   const getMotivationalLetter = async (
     positionDetails: string,
-    checked: string[]
+    checked: string[],
+    selectedLanguage: string
   ) => {
     if (!positionDetails)
       return setsnackbarMessage('Please provide position details')
     setLoading(true)
     try {
+      const params: MotivationalLetterParams = {
+        candidate: reduxCvProps,
+        jobDescription: positionDetails,
+        strongPoints: checked,
+        language: selectedLanguage,
+      }
       const res = await fetch('/api/motivational-letter', {
         method: 'POST',
-        body: JSON.stringify({
-          candidate: reduxCvProps,
-          jobDescription: positionDetails,
-          strongPoints: checked,
-        } as MotivationalLetterParams),
+        body: JSON.stringify(params),
       })
       const body = await res.text()
       setMotivationalLetter(body)

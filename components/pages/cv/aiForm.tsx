@@ -1,12 +1,12 @@
-import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
+import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 import {
     Box, Button,
     TextField
 } from "@mui/material";
-import JudgementSection from "./paper/judgementSection";
+import IntersectionSection from "./paper/intersectionSection";
 
 export interface AiFormProps {
-    judgement: JobCvIntersectionResponse | null;
+    positionIntersection: JobCvIntersectionResponse | null;
     checked: string[];
     positionSummary: string;
     positionDetails: string;
@@ -19,12 +19,12 @@ export interface AiFormProps {
     setPositionDetails: (value: string) => void;
 
     getSummary: () => void;
-    getJudgement: () => void;
+    updatePositionIntersection: () => void;
     adjustCvBasedOnPosition: () => void;
 }
 
 export const AiForm = ({
-    judgement,
+    positionIntersection,
     checked,
     positionSummary,
     positionDetails,
@@ -33,7 +33,7 @@ export const AiForm = ({
     setPositionDetails,
 
     getSummary,
-    getJudgement,
+    updatePositionIntersection,
     adjustCvBasedOnPosition
 }: AiFormProps) => {
     return (
@@ -71,16 +71,16 @@ export const AiForm = ({
                     )}
                     <Button
                         type="button"
-                        onClick={getJudgement}
+                        onClick={updatePositionIntersection}
                         sx={{ mt: 2, width: "100%" }}
                         variant="contained"
                         color="secondary"
                     >
                         Match CV with the position
                     </Button>
-                    {judgement && (
-                        <JudgementSection
-                            judgement={judgement}
+                    {positionIntersection && (
+                        <IntersectionSection
+                            positionIntersection={positionIntersection}
                             checked={checked}
                             handleChecked={handleChecked} />
                     )}

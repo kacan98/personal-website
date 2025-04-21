@@ -2,33 +2,13 @@ import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod.mjs'
 import { z } from 'zod'
-
-export type JobCvIntersectionParams = {
-  candidate: CVSettings
-  jobDescription: string
-}
-
-export type JobCvIntersectionResponse = {
-  opinion: string
-  whatIsMissing: string[]
-  whatIsGood: string[]
-
-  rating: number
-}
+import { JobCvIntersectionParams, JobCVIntersectionResponse } from './model'
 
 export async function POST(req: Request): Promise<Response> {
   const body: JobCvIntersectionParams = await req.json()
 
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
-  })
-
-  const ResponseZod = z.object({
-    opinion: z.string(),
-    whatIsMissing: z.array(z.string()),
-    whatIsGood: z.array(z.string()),
-    motivationalLetter: z.string(),
-    rating: z.number(),
   })
 
   try {
@@ -56,7 +36,6 @@ export async function POST(req: Request): Promise<Response> {
           content: `What do you think about this candidate?
           Say your opinion, what is missing in the CV? What is good about the CV?
           Rate the candidate from 1 to 10.
-          Also write a motivated letter for this candidate mentioning the good things and how the candidate would fit the position.
           
           Make sure to return this in a json format as described.
 
@@ -64,12 +43,13 @@ export async function POST(req: Request): Promise<Response> {
           `,
         },
       ],
-      response_format: zodResponseFormat(ResponseZod, 'transformed_cv'),
+      response_format: zodResponseFormat(JobCVIntersectionResponse, 'transformed_cv'),
     })
 
     return new Response(response.choices[0].message.content, {
       status: 200,
     })
+
   } catch (e: any) {
     return new Response(e.message, { status: 500 })
   }

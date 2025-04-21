@@ -19,7 +19,7 @@ export const useGetSummary = (props: {
     setsnackbarMessage,
   } = props
 
-  const getSummary = useCallback(async () => {
+  const updateSummary = useCallback(async () => {
     if (!positionDetails)
       return setsnackbarMessage('Please provide position details')
 
@@ -45,5 +45,5 @@ export const useGetSummary = (props: {
     setLoading(false)
   }, Object.values(props))
 
-  return { getSummary }
+  return { updateSummary }
 }

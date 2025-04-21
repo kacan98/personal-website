@@ -5,14 +5,21 @@ import { log } from '../helper'
 import {
   PositionSummarizeParams,
   PositionSummarizeResponse,
+  positionSummaryAPIRoute,
 } from '../position-summary/route'
+import { JobCVIntersectionResponse, jobCvIntersectionAPIEndpointName } from '../job-cv-intersection/model'
+import { POST as POSTIntersection } from '../job-cv-intersection/route'
+import { baseUrl } from '@/util'
+
+export const personalizeCvAPIEndpointName = 'api/personalize-cv'
 
 const CVUpgradeParams = z.object(
   //can be any object doesn't matter the content
   {
     cvBody: z.record(z.any()),
-    positionWeAreApplyingFor: z.string().optional(),
+    positionWeAreApplyingFor: z.string(),
     positionSummary: z.string().optional(),
+    positionIntersection: JobCVIntersectionResponse.optional(),
   }
 )
 
@@ -25,6 +32,7 @@ export interface CvUpgradeParams extends ZodCvUpgradeParams {
 const CVUpgradeResponse = z.object({
   cv: z.record(z.unknown()),
   newPositionSummary: z.string().optional(),
+  newJobIntersection: JobCVIntersectionResponse.optional(),
   companyName: z.string().optional(),
 })
 
@@ -32,10 +40,6 @@ type ZodCvUpgradeResponse = z.infer<typeof CVUpgradeResponse>
 export interface CvUpgradeResponse extends ZodCvUpgradeResponse {
   cv: CVSettings
 }
-
-const baseUrl = process.env.VERCEL_URL
-  ? 'https://' + process.env.VERCEL_URL
-  : 'http://localhost:3000'
 
 export async function POST(req: Request): Promise<Response> {
   try {
@@ -62,7 +66,7 @@ export async function POST(req: Request): Promise<Response> {
 
       //call another endpoint to summarize the position
       const resultOfCall: PositionSummarizeResponse = await fetch(
-        `${baseUrl}/api/position-summary`,
+        `${baseUrl}/${positionSummaryAPIRoute}`,
         {
           method: 'POST',
           body: JSON.stringify(positionSummarizeParams),
@@ -72,6 +76,24 @@ export async function POST(req: Request): Promise<Response> {
       newPositionSummary = resultOfCall.summary
       positionSummary = newPositionSummary
       companyName = resultOfCall.companyName
+    }
+
+    let newJobIntersection = body.positionIntersection;
+    if (!body.positionIntersection) {
+      const newIntersection = await POSTIntersection(
+        new Request(baseUrl + '/' + jobCvIntersectionAPIEndpointName, {
+          method: 'POST',
+          body: JSON.stringify({
+            candidate: body.cvBody,
+            jobDescription: body.positionWeAreApplyingFor,
+          }),
+        })
+      )
+
+      newJobIntersection = await newIntersection.json()
+
+      log(
+        '[personalize-cv] positionIntersection fetched from /api/job-cv-intersection')
     }
 
     log('[personalize-cv] starting with upgrading the CV')
@@ -90,11 +112,9 @@ export async function POST(req: Request): Promise<Response> {
         {
           role: 'user',
           content: `
-          The candidate is applying for a position: ${positionSummary}.
+          The candidate is applying for a position: ${body.positionWeAreApplyingFor}.
           
           Improve the CV. Don't lie, but make it cusomized for the position.
-
-          Don't be afraid to remove irrelevant information.
           `,
         },
         {
@@ -116,6 +136,7 @@ export async function POST(req: Request): Promise<Response> {
         cv,
         newPositionSummary,
         companyName,
+        newJobIntersection,
       }
 
       return new Response(JSON.stringify(response), {

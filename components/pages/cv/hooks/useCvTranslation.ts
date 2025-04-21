@@ -35,7 +35,7 @@ export const useCvTranslation = ({
         const result = await res.json()
         updateCvInRedux(JSON.parse(result))
       } catch {
-        setsnackbarMessage('Error getting a judgement')
+        setsnackbarMessage('Error getting a intersection')
       }
       setLoading(false)
     },

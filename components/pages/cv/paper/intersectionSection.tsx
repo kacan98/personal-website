@@ -1,4 +1,4 @@
-import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
+import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 import {
     Box,
     Checkbox, List,
@@ -10,19 +10,19 @@ import {
 } from "@mui/material";
 import { memo } from "react";
 
-interface JudgementSectionProps {
-    judgement: JobCvIntersectionResponse
+interface IntersectionSectionProps {
+    positionIntersection: JobCvIntersectionResponse
     checked: string[];
     handleChecked: (missing: string) => () => void
 }
 
-const JudgementSection = ({ judgement, checked, handleChecked }: JudgementSectionProps) => (
+const IntersectionSection = ({ positionIntersection, checked, handleChecked }: IntersectionSectionProps) => (
     <Box sx={{ textAlign: 'left' }}>
-        <Typography variant="h6">Judgement : {`${judgement.rating}/10`}</Typography>
-        <Typography variant="body1" mb={2}>{judgement.opinion}</Typography>
+        <Typography variant="h6">Intersection : {`${positionIntersection.rating}/10`}</Typography>
+        <Typography variant="body1" mb={2}>{positionIntersection.opinion}</Typography>
         <Typography variant="h6">What AI liked?</Typography>
         <List>
-            {judgement.whatIsGood.map((good, idx) => (
+            {positionIntersection.whatIsGood.map((good, idx) => (
                 <ListItem key={idx}>
                     <ListItemText primary={good} />
                 </ListItem>
@@ -33,18 +33,18 @@ const JudgementSection = ({ judgement, checked, handleChecked }: JudgementSectio
             (Make sure to tick those that actually apply and are missing in your CV!!)
         </Typography>
         <List>
-            {judgement.whatIsMissing.map((missing, idx) => (
-                <ListItemButton key={idx} onClick={handleChecked(missing)}>
+            {positionIntersection.whatIsMissing.map((missing, idx) => (
+                <ListItemButton key={idx} onClick={handleChecked(missing.description)}>
                     <ListItem>
                         <ListItemIcon>
                             <Checkbox
                                 edge="start"
-                                checked={checked.includes(missing)}
+                                checked={checked.includes(missing.description)}
                                 tabIndex={-1}
                                 disableRipple
                             />
                         </ListItemIcon>
-                        <ListItemText primary={missing} />
+                        <ListItemText primary={missing.description} secondary={`Improvement suggestion: ${missing.whatWouldImproveTheCv}`} />
                     </ListItem>
                 </ListItemButton>
             ))}
@@ -52,5 +52,5 @@ const JudgementSection = ({ judgement, checked, handleChecked }: JudgementSectio
     </Box>
 );
 
-JudgementSection.displayName = 'JudgementSection';
-export default memo(JudgementSection);
+IntersectionSection.displayName = 'IntersectionSection';
+export default memo(IntersectionSection);

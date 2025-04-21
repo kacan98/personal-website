@@ -1,5 +1,5 @@
 "use client";
-import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/route";
+import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
@@ -39,21 +39,22 @@ function CvPage() {
   const editable = titleClickedTimes >= 5 || DEV
   const [positionSummary, setPositionSummary] = useState<string>('')
   const [positionDetails, setPositionDetails] = useState<string>('')
-  const [judgement, setJudgement] = useState<JobCvIntersectionResponse | null>(null)
+  const [positionIntersection, setPositionIntersection] = useState<JobCvIntersectionResponse | null>(null)
   const [checked, setChecked] = useState<string[]>([])
   const [companyName, setCompanyName] = useState<string | null>(null)
   const [motivationalLetter, setMotivationalLetter] = useState<string | null>(null)
   const { getMotivationalLetter,
-    getJudgement,
+    updatePositionIntersection,
     getSummary,
     adjustCvBasedOnPosition, translateCv } = useCvTools({
       reduxCvProps,
       positionDetails,
       positionSummary,
+      positionIntersection,
       setLoading,
       setsnackbarMessage,
       setMotivationalLetter,
-      setJudgement,
+      setPositionIntersection,
       setPositionSummary,
       setCompanyName,
     })
@@ -100,7 +101,7 @@ function CvPage() {
           </Typography>
           <Typography variant="body1">
             But be careful. This is possible just to tweak something (or transform with AI) locally on your machine before sending it to potential employers.
-            The changes currently won&apos;t be saved in any way. I might add saving in the future.
+            The changes won&apos;t be saved in any way.
           </Typography>
         </>
       )}
@@ -112,7 +113,7 @@ function CvPage() {
           <>
             {
               <AiForm
-                judgement={judgement}
+                positionIntersection={positionIntersection}
                 checked={checked}
                 positionSummary={positionSummary}
                 positionDetails={positionDetails}
@@ -125,7 +126,7 @@ function CvPage() {
                 handleChecked={handleChecked}
 
                 getSummary={getSummary}
-                getJudgement={getJudgement}
+                updatePositionIntersection={updatePositionIntersection}
                 adjustCvBasedOnPosition={adjustCvBasedOnPosition}
               />
             }
@@ -160,7 +161,7 @@ function CvPage() {
         <>
           <Button
             type="button"
-            onClick={() => getMotivationalLetter(positionDetails, checked)}
+            onClick={() => getMotivationalLetter(positionDetails, checked, selectedLanguage)}
             sx={{ mt: 2, mb: 2, width: "100%" }}
             variant="outlined" >
             Get Motivational Letter

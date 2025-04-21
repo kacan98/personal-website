@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "(start http://localhost:3000 || xdg-open http://localhost:3000 || open http://localhost:3000) && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prepare": "husky"
+    "lint": "next lint"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -52,7 +51,6 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.3",
     "eslint-plugin-react": "^7.34.1",
-    "husky": "^9.0.11",
     "prettier": "^3.3.3",
     "typescript": "^5.4.5"
   }

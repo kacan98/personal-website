@@ -11,6 +11,7 @@ export const MotivationalLetterParams = z.object({
   }),
   jobDescription: z.string(),
   strongPoints: z.array(z.string()),
+  language: z.string(),
 })
 
 type ZodMotivationalLetterParams = z.infer<typeof MotivationalLetterParams>

@@ -3,7 +3,7 @@ import { MotivationalLetterParams } from "./motivational-letter.model"
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    const body = await req.json()
+    const body: MotivationalLetterParams = await req.json()
 
     MotivationalLetterParams.parse(body)
 
@@ -32,12 +32,12 @@ export async function POST(req: Request): Promise<Response> {
         },
         {
           role: 'user',
-          content: `Write a motivational letter highlighting your strong points and how you would fit the position.
+          content: `Write a motivational letter in ${body.language} highlighting your strong points and how you would fit the position.
           Make it personal, unique, tailored to the position, and easy to read and understand.
           
           Be brief and to the point.
           
-          No bullshit. No fluff. No jargon!
+          No bullshit. No fluff. No jargon! Max 2 paragraphs/300 words.
 
           Basically like you are talking to a friend.
 
