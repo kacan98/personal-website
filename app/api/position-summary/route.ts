@@ -3,8 +3,6 @@ import { zodResponseFormat } from 'openai/helpers/zod.mjs'
 import { z } from 'zod'
 import { log } from '../helper'
 
-export const positionSummaryAPIRoute = 'api/position-summary'
-
 const PositionSummarizeParams = z.object({
   description: z.string().min(20, 'Description too short'),
 })

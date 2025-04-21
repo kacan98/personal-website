@@ -5,16 +5,15 @@ import { log } from '../helper'
 import {
   PositionSummarizeParams,
   PositionSummarizeResponse,
-  positionSummaryAPIRoute,
 } from '../position-summary/route'
 import { JobCVIntersectionResponse, jobCvIntersectionAPIEndpointName } from '../job-cv-intersection/model'
 import { POST as POSTIntersection } from '../job-cv-intersection/route'
 import { baseUrl } from '@/util'
+import { positionSummaryAPIRoute } from '../position-summary/model'
 
 export const personalizeCvAPIEndpointName = 'api/personalize-cv'
 
 const CVUpgradeParams = z.object(
-  //can be any object doesn't matter the content
   {
     cvBody: z.record(z.any()),
     positionWeAreApplyingFor: z.string(),
