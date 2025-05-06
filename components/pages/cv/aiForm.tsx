@@ -31,7 +31,6 @@ export const AiForm = ({
     handleChecked,
     setPositionSummary,
     setPositionDetails,
-
     getSummary,
     updatePositionIntersection,
     adjustCvBasedOnPosition

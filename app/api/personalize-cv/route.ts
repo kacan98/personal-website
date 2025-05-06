@@ -10,35 +10,9 @@ import { JobCVIntersectionResponse, jobCvIntersectionAPIEndpointName } from '../
 import { POST as POSTIntersection } from '../job-cv-intersection/route'
 import { baseUrl } from '@/util'
 import { positionSummaryAPIRoute } from '../position-summary/model'
+import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
 
-export const personalizeCvAPIEndpointName = 'api/personalize-cv'
-
-const CVUpgradeParams = z.object(
-  {
-    cvBody: z.record(z.any()),
-    positionWeAreApplyingFor: z.string(),
-    positionSummary: z.string().optional(),
-    positionIntersection: JobCVIntersectionResponse.optional(),
-  }
-)
-
-type ZodCvUpgradeParams = z.infer<typeof CVUpgradeParams>
-
-export interface CvUpgradeParams extends ZodCvUpgradeParams {
-  cvBody: CVSettings
-}
-
-const CVUpgradeResponse = z.object({
-  cv: z.record(z.unknown()),
-  newPositionSummary: z.string().optional(),
-  newJobIntersection: JobCVIntersectionResponse.optional(),
-  companyName: z.string().optional(),
-})
-
-type ZodCvUpgradeResponse = z.infer<typeof CVUpgradeResponse>
-export interface CvUpgradeResponse extends ZodCvUpgradeResponse {
-  cv: CVSettings
-}
+export const personalizeCvAPIEndpointName = '/api/personalize-cv'
 
 export async function POST(req: Request): Promise<Response> {
   try {

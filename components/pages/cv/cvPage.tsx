@@ -14,7 +14,7 @@ import {
   SnackbarCloseReason,
   Typography
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiForm } from "./aiForm";
 import { useCvTools } from "./hooks/useCvTools";
 import CvLanguageSelectionComponent from "./languageSelect";
@@ -23,14 +23,10 @@ import CvPaper from "./paper/cvPaper";
 const DEV = process.env.NODE_ENV === "development";
 
 export type CvProps = {
-  name: string;
-  intro: string;
-  // picture: string;
-  mainSections: CvSectionSanitySchemaType[];
-  sideSections: CvSectionSanitySchemaType[];
+  jobDescription?: string
 };
 
-function CvPage() {
+function CvPage({ jobDescription }: CvProps) {
   const reduxCvProps = useAppSelector((state) => state.cv);
   const [selectedLanguage, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
@@ -39,6 +35,7 @@ function CvPage() {
   const editable = titleClickedTimes >= 5 || DEV
   const [positionSummary, setPositionSummary] = useState<string>('')
   const [positionDetails, setPositionDetails] = useState<string>('')
+  const [shouldAdjustCv, setShouldAdjustCv] = useState(false);
   const [positionIntersection, setPositionIntersection] = useState<JobCvIntersectionResponse | null>(null)
   const [checked, setChecked] = useState<string[]>([])
   const [companyName, setCompanyName] = useState<string | null>(null)
@@ -59,6 +56,20 @@ function CvPage() {
       setCompanyName,
     })
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
+
+  useEffect(() => {
+    if (jobDescription && jobDescription.trim().length > 0) {
+      setPositionDetails(jobDescription);
+      setShouldAdjustCv(true);
+    }
+  }, [jobDescription]);
+
+  useEffect(() => {
+    if (shouldAdjustCv && positionDetails && positionDetails.trim().length > 0) {
+      adjustCvBasedOnPosition();
+      setShouldAdjustCv(false);
+    }
+  }, [positionDetails, shouldAdjustCv, adjustCvBasedOnPosition]);
 
   const handleLanguageChange = async (l: any) => {
     setLanguage(l.target.value);
