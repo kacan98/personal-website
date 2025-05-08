@@ -3,13 +3,13 @@ import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
-import { CvSection as CvSectionSanitySchemaType } from "@/sanity/schemaTypes/singletons/cvSettings";
 import CreateIcon from '@mui/icons-material/Create';
 import {
   Backdrop,
   Box,
   Button,
   CircularProgress,
+  Slider,
   Snackbar,
   SnackbarCloseReason,
   Typography
@@ -56,6 +56,7 @@ function CvPage({ jobDescription }: CvProps) {
       setCompanyName,
     })
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
+  const [fontSize, setFontSize] = useState(12);
 
   useEffect(() => {
     if (jobDescription && jobDescription.trim().length > 0) {
@@ -128,7 +129,7 @@ function CvPage({ jobDescription }: CvProps) {
                 checked={checked}
                 positionSummary={positionSummary}
                 positionDetails={positionDetails}
-                
+
                 setLoading={setLoading}
                 setsnackbarMessage={setsnackbarMessage}
                 setCompanyName={setCompanyName}
@@ -145,7 +146,19 @@ function CvPage({ jobDescription }: CvProps) {
         )}
       </Box>
 
-      <Print fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
+      {/* show a slider for font size */}
+      {DEV && <Slider
+        min={9}
+        max={20}
+        value={fontSize}
+        onChange={(e, newValue) => setFontSize(newValue as number)}
+        valueLabelDisplay="auto"
+        aria-label="font size"
+        defaultValue={12}
+        sx={{ mb: 2 }} />
+      }
+
+      <Print fontSize={fontSize} fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
         <CvPaper editable={editable} />
       </Print>
 

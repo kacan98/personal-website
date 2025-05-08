@@ -1,18 +1,15 @@
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { baseUrl } from '@/util'
 import { OpenAI } from 'openai'
-import { z } from 'zod'
 import { log } from '../helper'
+import { jobCvIntersectionAPIEndpointName } from '../job-cv-intersection/model'
+import { POST as POSTIntersection } from '../job-cv-intersection/route'
+import { positionSummaryAPIRoute } from '../position-summary/model'
 import {
   PositionSummarizeParams,
   PositionSummarizeResponse,
 } from '../position-summary/route'
-import { JobCVIntersectionResponse, jobCvIntersectionAPIEndpointName } from '../job-cv-intersection/model'
-import { POST as POSTIntersection } from '../job-cv-intersection/route'
-import { baseUrl } from '@/util'
-import { positionSummaryAPIRoute } from '../position-summary/model'
 import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
-
-export const personalizeCvAPIEndpointName = '/api/personalize-cv'
 
 export async function POST(req: Request): Promise<Response> {
   try {

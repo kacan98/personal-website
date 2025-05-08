@@ -1,23 +1,21 @@
 "use client";
-import { createTheme } from "@mui/material/styles";
-import { Theme } from "@mui/material";
 import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
+import { Theme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 import { ThemeOptions } from "@mui/material/styles/createTheme";
 
-const getBaseTheme = (): ThemeOptions => {
+const getBaseTheme = (fontSize:number): ThemeOptions => {
   // createTheme somehow breaks at least fonts below,
   // so modify and set below instead
   return {
     typography: {
       fontFamily: "system-ui, sans-serif",
-      fontSize: 14,
+      fontSize,
 
       h1: {
-        fontSize: "2.5em",
         fontWeight: 700,
       },
       h2: {
-        fontSize: "2.3em",
         fontWeight: 700,
       },
       h3: {
@@ -42,30 +40,48 @@ const getBaseTheme = (): ThemeOptions => {
     },
   };
 };
-type getThemeProps = {
-  styles?: StylesSettings;
-  forceMode?: "dark" | "light";
-  forceSmallerBreakpoints?: boolean;
-};
 
 export function getTheme({
   styles,
   forceMode,
   forceSmallerBreakpoints,
-}: getThemeProps): Theme {
-  const baseTheme = getBaseTheme();
-  if (styles?.font && styles.font !== "System font") {
+  printFontSizes,
+  fontSize = 14,
+}: {
+  styles?: StylesSettings;
+  forceMode?: "dark" | "light";
+  forceSmallerBreakpoints?: boolean;
+  printFontSizes?: boolean;
+  fontSize?: number;
+}): Theme {
+  const baseTheme = getBaseTheme(fontSize);
+
+  baseTheme.typography = {
+    ...baseTheme.typography,
+    fontFamily: styles?.font,
+  };
+
+  if (printFontSizes) {
     baseTheme.typography = {
       ...baseTheme.typography,
-      fontFamily: styles.font,
-      body1: {
-        fontFamily: "'Open Sans Variable', sans-serif",
+      fontSize,
+      h1: {
+        fontSize: "2rem",
       },
-      body2: {
-        fontFamily: "'Open Sans Variable', sans-serif",
+      h2: {
+        fontSize: "1.7rem",
       },
-      caption: {
-        fontFamily: "'Open Sans Variable', sans-serif",
+      h3: {
+        fontSize: "1.5rem",
+      },
+      h4: {
+        fontSize: "1.25rem",
+      },
+      h5: {
+        fontSize: "1.2rem",
+      },
+      h6: {
+        fontSize: "1.1rem",
       },
     };
   }
@@ -86,8 +102,10 @@ export function getTheme({
     return createTheme({
       ...baseTheme,
       palette: {
+        ...baseTheme.palette,
         mode: "light",
         primary: {
+          ...baseTheme.palette?.primary,
           main: "#000000",
         },
       },
@@ -97,8 +115,10 @@ export function getTheme({
   return createTheme({
     ...baseTheme,
     palette: {
+      ...baseTheme.palette,
       mode: "dark",
       primary: {
+        ...baseTheme.palette?.primary,
         main: "#fff",
       },
     },

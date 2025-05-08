@@ -9,6 +9,8 @@ export const CVUpgradeResponse = z.object({
   companyName: z.string().optional(),
 })
 
+export const personalizeCvAPIEndpointName = '/api/personalize-cv'
+
 type ZodCvUpgradeResponse = z.infer<typeof CVUpgradeResponse>
 
 export interface CvUpgradeResponse extends ZodCvUpgradeResponse {

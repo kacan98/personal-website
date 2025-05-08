@@ -1,6 +1,5 @@
 'use client'
 import CvPage from "@/components/pages/cv/cvPage";
-import { RECEIVED_SAVED_TEXT } from "@/globalVars";
 import React, { useEffect } from "react";
 
 type PageProps = {

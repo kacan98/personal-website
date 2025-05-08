@@ -1,5 +1,3 @@
-console.log("Content script loaded.");
-
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.action === "GET_PAGE_TEXT") {
     sendResponse({ text: document.body.innerText });

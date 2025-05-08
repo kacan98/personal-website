@@ -44,7 +44,7 @@ export function CvPaper({ editable }: CvPaperProps) {
         ))}
       </Grid2>
     </Grid2>
-
+    
   );
 }
 

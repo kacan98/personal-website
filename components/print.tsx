@@ -1,15 +1,16 @@
 "use client";
-import React, { ReactNode, useRef } from "react";
 import { Box, Button } from "@mui/material";
-import DownloadThemeWrapper from "@/components/download/downloadThemeWrapper";
+import React, { ReactNode, useRef } from "react";
 import { ReactToPrint } from "react-to-print";
+import CustomThemeProvider, { CustomThemeProviderProps } from "./theme/customThemeProvider";
 
 interface ExportProps {
   children: ReactNode;
   fileName?: string;
+  fontSize?: number;
 }
 
-export const Print: React.FC<ExportProps> = ({ children, fileName }) => {
+export const Print: React.FC<ExportProps> = ({ children, fileName, fontSize }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const reactToPrintTrigger = React.useCallback(() => {
@@ -38,8 +39,14 @@ export const Print: React.FC<ExportProps> = ({ children, fileName }) => {
     return ref.current;
   }, [ref.current]);
 
+  const customThemeProviderProps: Partial<CustomThemeProviderProps> = {
+    forceSmallerBreakpoints: true,
+    printFontSizes: true,
+    fontSize,
+  }
+
   return (
-    <>
+    <CustomThemeProvider {...customThemeProviderProps}>
       <>{children}</>
       <ReactToPrint
         content={reactToPrintContent}
@@ -54,9 +61,7 @@ export const Print: React.FC<ExportProps> = ({ children, fileName }) => {
           width: 905,
           padding: 3,
           margin: 3,
-          "@media print": {
-            transform: "scale(0.9)",
-          },
+
         }}
       >
         <Box
@@ -66,10 +71,12 @@ export const Print: React.FC<ExportProps> = ({ children, fileName }) => {
             padding: 3,
           }}
         >
-          <DownloadThemeWrapper>{children}</DownloadThemeWrapper>
+          <CustomThemeProvider {...customThemeProviderProps} forceMode="light">
+            {children}
+          </CustomThemeProvider>
         </Box>
       </Box>
-    </>
+    </CustomThemeProvider>
   );
 };
 

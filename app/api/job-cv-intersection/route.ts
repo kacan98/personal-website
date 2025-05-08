@@ -1,7 +1,5 @@
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod.mjs'
-import { z } from 'zod'
 import { JobCvIntersectionParams, JobCVIntersectionResponse } from './model'
 
 export async function POST(req: Request): Promise<Response> {
