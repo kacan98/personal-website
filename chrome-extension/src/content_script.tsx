@@ -1,6 +1,7 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.action === "GET_PAGE_TEXT") {
-    sendResponse({ text: document.body.innerText });
+    const selectedText = window.getSelection()?.toString() || "";
+    sendResponse({ isSelectedText: !!selectedText, text: selectedText ?? document.body.innerText });
   }
 });
 

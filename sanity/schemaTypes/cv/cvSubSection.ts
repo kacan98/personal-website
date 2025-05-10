@@ -33,5 +33,11 @@ export default defineType({
       type: "array",
       of: [{ type: "text" }],
     }),
+    defineField({
+      name: "bulletPoints",
+      title: "Bullet Points",
+      type: "array",
+      of: [{ type: "bulletPoint" }],
+    }),
   ],
 });

@@ -32,7 +32,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [loading, setLoading] = useState(false);
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
-  const editable = titleClickedTimes >= 5 || DEV
+  const editable = titleClickedTimes >= 5 || DEV;
   const [positionSummary, setPositionSummary] = useState<string>('')
   const [positionDetails, setPositionDetails] = useState<string>('')
   const [shouldAdjustCv, setShouldAdjustCv] = useState(false);

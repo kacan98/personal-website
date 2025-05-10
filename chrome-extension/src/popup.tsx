@@ -8,11 +8,14 @@ const Popup = () => {
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
-        console.log(tabs);
-        chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, (res) => {
-          console.log(res);
-          if (res?.text) {
-            setPageText(res.text);
+        chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, ({text, isSelectedText}) => {
+          if (text) {
+            setPageText(text);
+            chrome.storage.local.set({ [jobIdRef.current]: text })
+          }
+
+          if(isSelectedText){
+            openCVTool();
           }
         });
       }
@@ -20,8 +23,7 @@ const Popup = () => {
   }, []);
 
   const saveContent = () => {
-    chrome.storage.local.set({ [jobIdRef.current]: pageText }, () => {
-    });
+    chrome.storage.local.set({ [jobIdRef.current]: pageText });
   };
 
   const openCVTool = () => {

@@ -1,5 +1,7 @@
 'use client'
 import CvPage from "@/components/pages/cv/cvPage";
+import CustomThemeProvider from "@/components/theme/customThemeProvider";
+import { Box } from "@mui/material";
 import React, { useEffect } from "react";
 
 type PageProps = {
@@ -33,6 +35,17 @@ export default function Page({ params }: PageProps) {
   }, [jobId]);
 
   return (
-    <CvPage jobDescription={pageText} />
+    <Box sx={{
+      width: "100%",
+      height: "100%",
+      bgcolor: "background.paper",
+      color: "text.primary",
+      overflow: "auto",
+    }}>
+
+      <CustomThemeProvider>
+        <CvPage jobDescription={pageText} />
+      </CustomThemeProvider>
+    </Box>
   );
 }

@@ -16,6 +16,7 @@ export interface CvSubSection {
     right?: string
   }
   paragraphs?: string[]
+  bulletPoints?: BulletPoint[]
 }
 
 export interface CvSection extends CvSubSection {
