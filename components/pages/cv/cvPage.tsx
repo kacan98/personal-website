@@ -147,7 +147,7 @@ function CvPage({ jobDescription }: CvProps) {
       </Box>
 
       {/* show a slider for font size */}
-      {DEV && <Slider
+      {editable && <Slider
         min={9}
         max={20}
         value={fontSize}
@@ -158,7 +158,7 @@ function CvPage({ jobDescription }: CvProps) {
         sx={{ mb: 2 }} />
       }
 
-      <Print fontSize={fontSize} fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
+      <Print printComponent={<CvPaper isPrintVersion />} fontSize={fontSize} fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
         <CvPaper editable={editable} />
       </Print>
 

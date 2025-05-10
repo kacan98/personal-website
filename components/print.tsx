@@ -6,11 +6,12 @@ import CustomThemeProvider, { CustomThemeProviderProps } from "./theme/customThe
 
 interface ExportProps {
   children: ReactNode;
+  printComponent?: ReactNode;
   fileName?: string;
   fontSize?: number;
 }
 
-export const Print: React.FC<ExportProps> = ({ children, fileName, fontSize }) => {
+export const Print: React.FC<ExportProps> = ({ children, printComponent, fileName, fontSize }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const reactToPrintTrigger = React.useCallback(() => {
@@ -72,7 +73,7 @@ export const Print: React.FC<ExportProps> = ({ children, fileName, fontSize }) =
           }}
         >
           <CustomThemeProvider {...customThemeProviderProps} forceMode="light">
-            {children}
+            {printComponent}
           </CustomThemeProvider>
         </Box>
       </Box>

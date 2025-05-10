@@ -9,9 +9,10 @@ export function CvSectionComponent({
   sectionIndex,
   editable,
   sideOrMain,
-  section
-}: { editable?: boolean; sectionIndex: number; sideOrMain: "mainColumn" | "sideColumn"; section: CvSection; }) {
-  const { title, subtitles, paragraphs, bulletPoints, subSections } = section;
+  section,
+  isPrintVersion = false
+}: { editable?: boolean; sectionIndex: number; sideOrMain: "mainColumn" | "sideColumn"; section: CvSection; isPrintVersion: boolean}) {
+  const { title, subtitles, paragraphs, bulletPoints, subSections} = section;
   const SuperEditableText = ({ query, ...props }: EditableTextProps) => {
     return <EditableText {...props} query={[sideOrMain, sectionIndex, ...query]} editable={editable} />;
   }
@@ -34,7 +35,7 @@ export function CvSectionComponent({
       {bulletPoints &&
         bulletPoints.map((point, idx) => {
           if (!point.text) return <></>
-          return (<CvBulletPoint bulletPoint={point} key={idx} editable={editable} baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', idx]} />)
+          return (<CvBulletPoint bulletPoint={point} key={idx} editable={editable} baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', idx]} isPrintVersion={isPrintVersion} />)
         }
         )}
       {subSections && (subSections.map((section, index) => (
@@ -53,7 +54,7 @@ export function CvSectionComponent({
             ))}
           {section.bulletPoints && section.bulletPoints.map((point, idx) => {
             if (!point.text) return <></>
-            return (<CvBulletPoint bulletPoint={point} key={idx} editable={editable} baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', idx]} />)
+            return (<CvBulletPoint bulletPoint={point} key={idx} editable={editable} baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', idx]} isPrintVersion={isPrintVersion} />)
           })
           }
         </Box>

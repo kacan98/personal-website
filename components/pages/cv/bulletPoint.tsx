@@ -9,16 +9,18 @@ export const CvBulletPoint = ({
     bulletPoint,
     editable,
     baseQuery,
+    isPrintVersion
 }: {
     bulletPoint: BulletPoint;
     baseQuery: EditableTextExtraProps["query"];
     editable?: boolean;
+    isPrintVersion: boolean;
 }) => {
     return (
         <>
             <ListItem>
                 <ConditionalWrapper
-                    condition={!!bulletPoint.url && !editable}
+                    condition={!!bulletPoint.url && (isPrintVersion || !editable)}
                     wrapper={(c) =>
                         bulletPoint.url!.startsWith("mailto:") ? (
                             <a href={bulletPoint.url!}>{c}</a>

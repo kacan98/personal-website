@@ -16,6 +16,7 @@ export const cvSlice = createSlice({
     subtitle: '',
     mainColumn: [],
     sideColumn: [],
+    image: '',
   } as CVSettings,
   reducers: {
     initCv: (

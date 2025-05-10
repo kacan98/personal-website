@@ -91,7 +91,7 @@ export const getStyles = async (): Promise<StylesSettings | undefined> => {
   );
 };
 
-export const getUserPicture = async (): Promise<Image> => {
+export const getCVPicture = async (): Promise<Image> => {
   return sanityClient.fetch(
     `*[_type == "cvSettings"][0].profilePicture`,
     {},

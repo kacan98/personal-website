@@ -1,4 +1,4 @@
-import { defineType } from 'sanity'
+import { defineType, Image } from 'sanity'
 import { DocumentIcon } from '@sanity/icons'
 
 export type CVSettings = {
@@ -7,6 +7,7 @@ export type CVSettings = {
   subtitle: string
   mainColumn: CvSection[]
   sideColumn: CvSection[]
+  mainImage?: Image;
 }
 
 export interface CvSubSection {
