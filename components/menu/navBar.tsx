@@ -7,7 +7,14 @@ import {
   useScrollTrigger,
 } from "@mui/material";
 import ModalButton from "@/components/menu/modalButton";
-import { cloneElement, ReactElement, ReactNode, useCallback } from "react";
+import {
+  cloneElement,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Home } from "@mui/icons-material";
 import React from "react";
@@ -42,6 +49,9 @@ const NavBar = ({ modals }: TopBarProps) => {
   const searchParams = useSearchParams();
   const modalOpenName = searchParams.get("modalOpen");
 
+  // Add local state for immediate modal handling
+  const [localModalOpen, setLocalModalOpen] = useState<string | null>(modalOpenName);
+
   const weAreInSanityStudio = pathname.startsWith("/studio");
   const weAreHome = pathname === "/";
 
@@ -61,13 +71,35 @@ const NavBar = ({ modals }: TopBarProps) => {
     [searchParams],
   );
 
+  // Effect to sync URL state with local state
+  useEffect(() => {
+    // Update local state when URL changes
+    if (modalOpenName !== localModalOpen) {
+      setLocalModalOpen(modalOpenName);
+    }
+  }, [modalOpenName]);
+
   function handleModalOpen(name: string) {
-    router.push(pathname + "?" + createQueryString("modalOpen", name));
+    // Set local state immediately for instant modal opening
+    setLocalModalOpen(name);
+    // Update URL in the background
+    setTimeout(() => {
+      router.push(pathname + "?" + createQueryString("modalOpen", name));
+    }, 0);
   }
 
   function handleModalClose() {
-    router.push(pathname + "?" + createQueryString("modalOpen"));
+    // Close modal immediately with local state
+    setLocalModalOpen(null);
+    // Update URL in the background
+    setTimeout(() => {
+      router.push(pathname + "?" + createQueryString("modalOpen"));
+    }, 0);
   }
+
+  useEffect(() => {
+    setLocalModalOpen(modalOpenName);
+  }, [modalOpenName]);
 
   if (weAreInSanityStudio) return <></>;
 
@@ -96,7 +128,7 @@ const NavBar = ({ modals }: TopBarProps) => {
             <ModalButton
               onOpen={() => handleModalOpen(name)}
               onClose={() => handleModalClose()}
-              open={modalOpenName === name}
+              open={localModalOpen === name}
               key={name}
               buttonName={name}
             >
