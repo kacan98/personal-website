@@ -1,7 +1,5 @@
 import AnimatedText from "@/components/home/springingText";
-import { isKarelsPortfolio } from "@/globalVars";
 import { Box, Typography } from "@mui/material";
-import KarelSignature from "../spline/karel";
 
 type HomeTextProps = {
   title?: string;
