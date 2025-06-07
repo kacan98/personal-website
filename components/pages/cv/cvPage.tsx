@@ -54,6 +54,7 @@ function CvPage({ jobDescription }: CvProps) {
       setPositionIntersection,
       setPositionSummary,
       setCompanyName,
+      setLanguage
     })
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
   const [fontSize, setFontSize] = useState(12);

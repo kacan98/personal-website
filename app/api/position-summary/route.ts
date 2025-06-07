@@ -12,6 +12,7 @@ export type PositionSummarizeParams = z.infer<typeof PositionSummarizeParams>
 const PositionSummarizeResponse = z.object({
   summary: z.string(),
   companyName: z.string().optional(),
+  languagePostIsWrittineIn: z.string(),
 })
 
 export type PositionSummarizeResponse = z.infer<
@@ -24,11 +25,6 @@ export async function POST(req: Request): Promise<Response> {
 
     //now validate the request
     PositionSummarizeParams.parse(body)
-
-    const ResponseZod = z.object({
-      summary: z.string(),
-      companyName: z.string(),
-    })
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -58,20 +54,21 @@ export async function POST(req: Request): Promise<Response> {
             'Be brief and to the point. Return it in a json object with the summary and the company name if available.',
         },
       ],
-      response_format: zodResponseFormat(ResponseZod, 'transformed_cv'),
+      response_format: zodResponseFormat(PositionSummarizeResponse, 'transformed_cv'),
     })
     log('[position-summary] got completion', completion)
 
     const content = completion.choices[0].message.content
     if (!content) return new Response('No summary found', { status: 400 })
 
-    const { summary, companyName } = JSON.parse(
+    const { summary, companyName, languagePostIsWrittineIn } = JSON.parse(
       content
     ) as PositionSummarizeResponse
 
     const response: PositionSummarizeResponse = {
       summary,
       companyName,
+      languagePostIsWrittineIn
     }
 
     return new Response(JSON.stringify(response), {

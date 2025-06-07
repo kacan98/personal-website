@@ -10,6 +10,8 @@ type PageProps = {
   };
 };
 
+//This route is used for the chrome extension
+// It will receive a jobId and fetch the saved text
 export default function Page({ params }: PageProps) {
   const { jobId } = params;
 

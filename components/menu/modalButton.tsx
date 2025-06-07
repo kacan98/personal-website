@@ -39,7 +39,7 @@ const ModalButton = ({
       </Button>
 
       <Modal open={open} onClose={onClose} closeAfterTransition>
-        <Slide direction="up" in={open} timeout={700}>
+        <Slide direction="up" in={open} timeout={500}>
           <Box
             sx={{
               width: "100%",

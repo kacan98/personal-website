@@ -30,20 +30,13 @@ function HomeText({ title, subtitles }: HomeTextProps) {
       <Box width={'300px'}>
         <Typography textAlign={"center"} variant={"h3"}>Hi, I&apos;m</Typography>
       </Box>
-      {!isKarelsPortfolio && title && (
+      {title && (
         <Box>
           <Typography textAlign={"center"} variant={"h1"}>
             {title}
           </Typography>
         </Box>
       )}
-      {isKarelsPortfolio && <Box sx={{
-        minWidth: '30vw',
-        maxWidth: '500px',
-        minHeight: '20vh',
-      }}>
-        {<KarelSignature />}
-      </Box>}
       {subtitles && (
         <Box sx={{ opacity: 0.7 }}>
           <AnimatedText texts={subtitles} />

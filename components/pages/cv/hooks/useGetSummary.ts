@@ -10,6 +10,7 @@ export const useGetSummary = (props: {
   setCompanyName: (companyName: string) => void
   setLoading: (loading: boolean) => void
   setsnackbarMessage: (message: string) => void
+  setLanguage: (language: string) => void
 }) => {
   const {
     positionDetails,
@@ -17,6 +18,7 @@ export const useGetSummary = (props: {
     setCompanyName,
     setLoading,
     setsnackbarMessage,
+    setLanguage
   } = props
 
   const updateSummary = useCallback(async () => {
@@ -38,6 +40,7 @@ export const useGetSummary = (props: {
         }
       ).then((res) => res.json())
       setPositionSummary(res.summary)
+      setLanguage(res.languagePostIsWrittineIn)
       if (res.companyName) setCompanyName(res.companyName)
     } catch (err) {
       setsnackbarMessage('Error summarizing position')

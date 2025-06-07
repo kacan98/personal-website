@@ -19,6 +19,7 @@ export const useCvTools = ({
   setPositionIntersection,
   setPositionSummary,
   setCompanyName,
+  setLanguage
 }: {
   reduxCvProps: CVSettings
   positionDetails: string
@@ -30,6 +31,7 @@ export const useCvTools = ({
   setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
   setPositionSummary: (summary: string) => void
   setCompanyName: (companyName: string) => void
+  setLanguage: (language: string) => void
 }) => {
   const dispatch = useDispatch()
 
@@ -57,6 +59,7 @@ export const useCvTools = ({
     setCompanyName,
     setLoading,
     setsnackbarMessage,
+    setLanguage
   })
 
   const { adjustCvBasedOnPosition } = useAdjustCvBasedOnPosition({
