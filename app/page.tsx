@@ -1,5 +1,6 @@
 import Hero from "@/components/home/Hero";
 import SocialIcons from "@/components/home/socialIcons";
+import TechList from "@/components/home/Tech";
 import ContentContainer from "@/components/layout/ContentContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
@@ -29,16 +30,32 @@ const aboutMe = [
   },
 ];
 
+// Example technologies array for the TechList component
+const technologies = [
+  { name: "TypeScript", color: "#3178C6" },
+  { name: "Node.js", color: "#339933" },
+  { name: "Angular", color: "#DD0031" },
+  { name: "React", color: "#61DAFB" },
+  { name: "Next.js", color: "#000000" },
+  { name: "C#", color: "#239120" },
+  { name: ".NET", color: "#F7DF1E" },
+];
+
 export default async function App() {
   return (
     <>
       <ContentContainer fullWidth>
         <Hero firstName="Karel" lastName="Čančara" tagLine="Software Developer" />
       </ContentContainer>
+      <Box backgroundColor="background.default">
+        <TechList
+          technologies={technologies}
+        />
+      </Box>
       <SocialIcons direction={"column"} />
       {isKarelsPortfolio && (
         <>
-          <ContentContainer fullWidth background="background.default">
+          <ContentContainer fullWidth>
             <Grid2
               container
               width="100%"

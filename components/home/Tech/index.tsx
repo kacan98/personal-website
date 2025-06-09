@@ -1,26 +1,33 @@
 "use client";
 
-import { Content } from "@prismicio/client";
-import { SliceComponentProps } from "@prismicio/react";
 import React, { useLayoutEffect, useRef } from "react";
 import { MdCircle } from "react-icons/md";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-import Bounded from "@/components/Bounded";
-import Heading from "@/components/Heading";
+import { Box, Typography } from "@mui/material";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /**
+ * Technology item interface
+ */
+export interface TechItem {
+  name: string;
+  color?: string;
+}
+
+/**
  * Props for `TechList`.
  */
-export type TechListProps = SliceComponentProps<Content.TechListSlice>;
+export type TechListProps = {
+  title?: string;
+  technologies: TechItem[];
+};
 
 /**
  * Component for "TechList" Slices.
  */
-const TechList = ({ slice }: TechListProps): JSX.Element => {
+const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
   const component = useRef(null);
 
   useLayoutEffect(() => {
@@ -56,46 +63,83 @@ const TechList = ({ slice }: TechListProps): JSX.Element => {
     }, component);
     return () => ctx.revert(); // cleanup!
   }, []);
-
   return (
-    <section
-      data-slice-type={slice.slice_type}
-      data-slice-variation={slice.variation}
-      className="wrapper overflow-hidden"
+    <Box
+      component="section"
       ref={component}
+      sx={{
+        overflow: "hidden",
+        py: 4,
+      }}
     >
-      <Bounded as="div">
-        <Heading size="xl" className="mb-8" as="h2">
-          {slice.primary.title}
-        </Heading>
-      </Bounded>
-
-      {slice.items.map(({ tech_color, tech_name }, index) => (
-        <div
+      <Box
+        sx={{
+          maxWidth: "lg",
+          mx: "auto",
+          px: 3,
+          mb: 4,
+        }}
+      >
+        {title && (
+          <Typography
+            variant="h2"
+            component="h2"
+            sx={{
+              fontSize: { xs: "2rem", md: "3rem" },
+              fontWeight: 700,
+              mb: 4,
+              textAlign: "center",
+            }}
+          >
+            {title}
+          </Typography>
+        )}
+      </Box>      {technologies.map(({ name, color }, index) => (
+        <Box
           key={index}
-          className="tech-row mb-8 flex items-center justify-center gap-4 text-slate-700"
-          aria-label={tech_name || ""}
+          className="tech-row"
+          sx={{
+            mb: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+            color: "text.secondary",
+          }}
+          aria-label={name || ""}
         >
-          {Array.from({ length: 15 }, (_, index) => (
-            <React.Fragment key={index}>
-              <span
-                className={
-                  "tech-item text-8xl font-extrabold uppercase tracking-tighter"
-                }
-                style={{
-                  color: index === 7 && tech_color ? tech_color : "inherit",
+          {Array.from({ length: 15 }, (_, itemIndex) => (
+            <React.Fragment key={itemIndex}>
+              <Typography
+                className="tech-item"
+                sx={{
+                  fontSize: { xs: "3rem", md: "5rem", lg: "6rem" },
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  letterSpacing: "-0.05em",
+                  color: itemIndex === 7 && color ? color : "inherit",
+                  opacity: itemIndex === 7 ? 1 : 0.1,
+                  textShadow: "0 0 1px currentColor",
+                  WebkitTextStroke: "0.5px currentColor",
                 }}
               >
-                {tech_name}
-              </span>
-              <span className="text-3xl">
+                {name}
+              </Typography>              <Box
+                component="span"
+                sx={{
+                  fontSize: { xs: "1.5rem", md: "2rem" },
+                  display: "flex",
+                  alignItems: "center",
+                  opacity: 0.1, // All dots should be low opacity
+                }}
+              >
                 <MdCircle />
-              </span>
+              </Box>
             </React.Fragment>
           ))}
-        </div>
+        </Box>
       ))}
-    </section>
+    </Box>
   );
 };
 
