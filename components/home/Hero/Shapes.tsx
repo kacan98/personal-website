@@ -114,12 +114,21 @@ function Geometries({ mousePosition }: {
     new Audio("/sounds/hit6.ogg"),
     new Audio("/sounds/hit7.ogg"),
     new Audio("/sounds/hit8.ogg"),
-  ];
-
-  const materials = [
+  ];  const materials = [
     // Rainbow/Iridescent Material - keeping this one since it's cool
     new THREE.MeshNormalMaterial(),
-    // Neon/Candy like colors with enhanced glow effects
+    // Holographic Chrome Material - similar rainbow effect but with metallic chrome base
+    new THREE.MeshPhysicalMaterial({
+      roughness: 0.0,
+      metalness: 1.0,
+      color: 0xffffff, // White base for chrome effect
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.0,
+      iridescence: 1.0, // Maximum iridescence for rainbow effect
+      iridescenceIOR: 1.3, // Controls the iridescence intensity
+      iridescenceThicknessRange: [100, 400], // Thickness range for color variation
+    }),
+    // Bright Purple (restored from original)
     new THREE.MeshPhysicalMaterial({
       roughness: 0.1,
       metalness: 0.6,
@@ -129,6 +138,7 @@ function Geometries({ mousePosition }: {
       emissive: 0x340137, // Subtle glow
       emissiveIntensity: 2.5,
     }),
+    // Neon/Candy like colors with enhanced glow effects
     new THREE.MeshPhysicalMaterial({
       roughness: 0.05,
       metalness: 0.9,
@@ -180,6 +190,65 @@ function Geometries({ mousePosition }: {
       emissive: 0x2e4016, // Green glow
       emissiveIntensity: 1.5,
     }),
+    // NEW COLORS - Distinct and vibrant
+    new THREE.MeshPhysicalMaterial({
+      color: 0xff6500, // Vivid Orange
+      roughness: 0.1,
+      metalness: 0.7,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      emissive: 0x4a1f00, // Orange glow
+      emissiveIntensity: 2.0,
+    }),
+    new THREE.MeshPhysicalMaterial({
+      color: 0x4169e1, // Royal Blue
+      roughness: 0.05,
+      metalness: 0.8,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      emissive: 0x1a2a5e, // Blue glow
+      emissiveIntensity: 2.5,
+    }),
+    new THREE.MeshPhysicalMaterial({
+      color: 0xff1744, // Bright Red
+      roughness: 0.1,
+      metalness: 0.6,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      emissive: 0x5c0a15, // Red glow
+      emissiveIntensity: 2.5,
+    }),
+    new THREE.MeshPhysicalMaterial({
+      color: 0x00bcd4, // Dark Turquoise
+      roughness: 0.1,
+      metalness: 0.5,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      transmission: 0.4, // Slightly translucent
+      thickness: 0.8,
+      emissive: 0x003c47, // Turquoise glow
+      emissiveIntensity: 2.0,
+    }),
+    new THREE.MeshPhysicalMaterial({
+      color: 0x8e24aa, // Deep Purple (different from bright purple)
+      roughness: 0.1,
+      metalness: 0.4,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      transmission: 0.5, // Translucent
+      thickness: 1.0,
+      emissive: 0x2d0833, // Deep purple glow
+      emissiveIntensity: 1.8,
+    }),
+    new THREE.MeshPhysicalMaterial({
+      color: 0xffc107, // Amber/Gold
+      roughness: 0.05,
+      metalness: 0.9,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+      emissive: 0x664a02, // Gold glow
+      emissiveIntensity: 2.2,
+    }),
   ];
 
   return geometries.map(({ position, r, geometry }) => (
@@ -216,9 +285,10 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
     if (!currentMaterial) {
       setCurrentMaterial(gsap.utils.random(materials));
     }
-  }, [materials, currentMaterial]);
-  function getRandomMaterial() {
-    return gsap.utils.random(materials);
+  }, [materials, currentMaterial]);  function getRandomMaterial() {
+    // Filter out the current material to ensure we always get a different one
+    const availableMaterials = materials.filter(material => material !== currentMaterial);
+    return gsap.utils.random(availableMaterials);
   }
 
   function handleClick(e: {
