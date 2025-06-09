@@ -7,7 +7,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { Box, styled } from "@mui/material";
 
-const lerp = (a, b, t) => a + (b - a) * t;
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 const CanvasContainer = styled(Box)(({ theme }) => ({
   aspectRatio: '1 / 1',
@@ -30,7 +30,7 @@ export function Shapes() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (event) => {
+    const handleMouseMove = (event: any) => {
       // Normalize mouse position values between -1 and 1
       const x = (event.clientX / window.innerWidth) * 2 - 1;
       const y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -69,34 +69,43 @@ export function Shapes() {
   );
 }
 
-function Geometries({ mousePosition }) {  const geometries = [
+function Geometries({ mousePosition }: {
+  mousePosition: { x: number; y: number; };
+}) {
+  const geometries:
     {
-      position: [-1.2, -1, 2],
-      r: 0.5,
-      geometry: new THREE.TorusGeometry(1.0, 0.4, 20, 36), // Donut (in front, left)
-    },
-    {
-      position: [1.5, -.3, 1.5],
-      r: 0.5,
-      geometry: new THREE.ConeGeometry(1.2, 2.0, 6), // Pyramid/cone (in front, right)
-    },
-    {
-      // Middle position - largest shape
-      position: [0, 0, -1],
-      r: 0.8,
-      geometry: new THREE.DodecahedronGeometry(2.5), // Soccer ball (middle - keeping this one)
-    },
-    {
-      position: [-1.7, 1.2, -1],
-      r: 0.6,
-      geometry: new THREE.TorusKnotGeometry(0.8, 0.2, 64, 16, 2, 3), // Knot (back, left)
-    },
-    {
-      position: [1.2, 1.7, -2],
-      r: 0.6,
-      geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Cube (back, right)
-    },
-  ];
+      position: [number, number, number];
+      r: number;
+      geometry: THREE.BufferGeometry;
+    }[]
+    = [
+      {
+        position: [-1.2, -1, 2],
+        r: 0.5,
+        geometry: new THREE.TorusGeometry(1.0, 0.4, 20, 36), // Donut (in front, left)
+      },
+      {
+        position: [1.5, -.3, 1.5],
+        r: 0.5,
+        geometry: new THREE.ConeGeometry(1.2, 2.0, 6), // Pyramid/cone (in front, right)
+      },
+      {
+        // Middle position - largest shape
+        position: [0, 0, -1],
+        r: 0.8,
+        geometry: new THREE.DodecahedronGeometry(2.5), // Soccer ball (middle - keeping this one)
+      },
+      {
+        position: [-1.7, 1.2, -1],
+        r: 0.6,
+        geometry: new THREE.TorusKnotGeometry(0.8, 0.2, 64, 16, 2, 3), // Knot (back, left)
+      },
+      {
+        position: [1.2, 1.7, -2],
+        r: 0.6,
+        geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Cube (back, right)
+      },
+    ];
   const soundEffects = [
     new Audio("/sounds/hit1.ogg"),
     new Audio("/sounds/hit2.ogg"),
@@ -105,7 +114,7 @@ function Geometries({ mousePosition }) {  const geometries = [
     new Audio("/sounds/hit6.ogg"),
     new Audio("/sounds/hit7.ogg"),
     new Audio("/sounds/hit8.ogg"),
-  ];  const materials = [
+  ]; const materials = [
     // Rainbow/Iridescent Material - keeping this one since it's cool
     new THREE.MeshNormalMaterial(),
     // Neon/Candy like colors with enhanced glow effects
@@ -136,7 +145,7 @@ function Geometries({ mousePosition }) {  const geometries = [
       emissive: 0x4a0024, // Subtle glow
       emissiveIntensity: 2.5,
     }),
-    
+
     // More neon colors with glow
     new THREE.MeshPhysicalMaterial({
       color: 0xffff00, // Neon yellow
@@ -146,7 +155,7 @@ function Geometries({ mousePosition }) {  const geometries = [
       clearcoatRoughness: 0.1,
       emissive: 0x6b6b00, // Yellow glow
       emissiveIntensity: 2.5,
-    }),    
+    }),
     // Candy-like translucent materials with glow
     new THREE.MeshPhysicalMaterial({
       color: 0xff00ff, // Magenta
@@ -175,7 +184,7 @@ function Geometries({ mousePosition }) {  const geometries = [
   return geometries.map(({ position, r, geometry }) => (
     <Geometry
       key={JSON.stringify(position)} // Unique key
-      position={position.map((p) => p * 2)}
+      position={position.map((p) => p * 2) as [number, number, number]}
       geometry={geometry}
       soundEffects={soundEffects}
       materials={materials}
@@ -185,12 +194,20 @@ function Geometries({ mousePosition }) {  const geometries = [
   ));
 }
 
-function Geometry({ r, position, geometry, soundEffects, materials, mousePosition }) {
-  const meshRef = useRef();
-  const groupRef = useRef();
-  const [visible, setVisible] = useState(false);
-  const floatRef = useRef();
-  const materialRef = useRef();
+function Geometry({ r, position, geometry, soundEffects, materials, mousePosition }: {
+  r: number;
+  position: [number, number, number];
+  geometry: THREE.BufferGeometry;
+  soundEffects: HTMLAudioElement[];
+  materials: THREE.Material[];
+  mousePosition: { x: number; y: number; };
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  // Remove the unused state variable entirely
+  const setVisible = useState(false)[1];
+  const floatRef = useRef<THREE.Group>(null);
+  const materialRef = useRef<THREE.Material>();
   const initialPosition = useRef([...position]); // Create a copy of the position array
 
   // Initialize material only once
@@ -203,7 +220,9 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
     return gsap.utils.random(materials);
   }
 
-  function handleClick(e) {
+  function handleClick(e: {
+    object: THREE.Object3D;
+  }) {
     const mesh = e.object;
 
     gsap.utils.random(soundEffects).play();
@@ -229,61 +248,65 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
     document.body.style.cursor = "default";
   };
   useEffect(() => {
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       setVisible(true);
-      gsap.from(meshRef.current.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
-        duration: gsap.utils.random(0.8, 1.2),
-        ease: "elastic.out(1,0.3)",
-        delay: gsap.utils.random(0, 0.5),
-      });
+      if (meshRef.current) {
+        gsap.from(meshRef.current.scale, {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: gsap.utils.random(0.8, 1.2),
+          ease: "elastic.out(1,0.3)",
+          delay: gsap.utils.random(0, 0.5),
+        });
+      }
     });
     return () => ctx.revert();
   }, []);
-  
+
   // Apply subtle movement based on mouse position
   useFrame(() => {
     if (groupRef.current && mousePosition) {
       // Detect if this is the middle (largest) shape
       const isMiddleShape = initialPosition.current[0] === 0 && initialPosition.current[1] === 0;
       const movementFactor = isMiddleShape ? 0.8 : 0.5; // More movement for middle shape
-      
+
       // Apply slight position offset based on mouse position
       const targetX = initialPosition.current[0] + mousePosition.x * movementFactor;
       const targetY = initialPosition.current[1] + mousePosition.y * movementFactor;
-      
+
       // Smooth lerping for more natural movement using our custom lerp function
-      groupRef.current.position.x = lerp(
-        groupRef.current.position.x,
-        targetX,
-        isMiddleShape ? 0.07 : 0.05 // Faster response for middle shape
-      );
-      groupRef.current.position.y = lerp(
-        groupRef.current.position.y,
-        targetY,
-        isMiddleShape ? 0.07 : 0.05
-      );
-    }
-    
+      if (groupRef.current) {
+        groupRef.current.position.x = lerp(
+          groupRef.current.position.x,
+          targetX,
+          isMiddleShape ? 0.07 : 0.05 // Faster response for middle shape
+        );
+        groupRef.current.position.y = lerp(
+          groupRef.current.position.y,
+          targetY,
+          isMiddleShape ? 0.07 : 0.05
+        );
+      }
+    }    
     // Always update mesh material to the current materialRef value
-    if (meshRef.current && materialRef.current) {
-      meshRef.current.material = materialRef.current;
+    if (meshRef.current) {
+      if (materialRef.current) {
+        meshRef.current.material = materialRef.current;
+      }
+      if (geometry && !meshRef.current.geometry) {
+        meshRef.current.geometry = geometry;
+      }
     }
-  });  return (
-    <group position={position} ref={groupRef}>
+  }); return (
+    <group ref={groupRef}>
       <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>
         <mesh
-          geometry={geometry}
+          ref={meshRef}
           onClick={handleClick}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
-          visible={visible}
-          material={materialRef.current}
-          ref={meshRef}
-          renderOrder={-position[2]} // Ensure correct depth sorting
-        ></mesh>
+        />
       </Float>
     </group>
   );
