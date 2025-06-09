@@ -26,13 +26,15 @@ function PageWrapper({
       }}
     >
       <Box m={4} mb={8}>
-        <Typography variant="h2" onClick={onTitleClicked}>{title}</Typography>
+        <Typography variant="h2" sx={{
+          fontSize: { xs: "4rem", md: "5rem" }
+        }} onClick={onTitleClicked}>{title}</Typography>
         {description && (
           <Typography variant="body1">{description}</Typography>
         )}
       </Box>
       {children}
-    </Container>
+    </Container >
   );
 }
 

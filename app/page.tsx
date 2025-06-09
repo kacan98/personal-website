@@ -9,22 +9,22 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 
 const aboutMe = [
   {
-    header: "Web developer 🌐",
+    header: "Web developer",
     content:
       "I am a web develper, mainly with experience on the frontend side, but also with some backend experience. I love the challenge of brining a design to life and making it functional.",
   },
   {
-    header: "Marketer turned developer 🚀",
+    header: "Unique user insights",
     content:
       "I studied and worked in makreting before I found my true passion in coding. I love to combine my customer-centric approach with my technical skills to create the best possible solutions.",
   },
   {
-    header: "Fast learner 🕵️",
+    header: "Fast learner",
     content:
-      "With the world of tech constantly evolving, I'm always eager to learn new things. I'm a quick study and I'm no stranger to diving into the unknown.",
+      "I'm always learning new technologies. I'm no stranger to diving into the unknown.",
   },
   {
-    header: "Passionate about design 🎨",
+    header: "Passionate about design",
     content:
       "Apart from coding, I've spent countless hours designing graphics, animations, wireframes and mockups.",
   },

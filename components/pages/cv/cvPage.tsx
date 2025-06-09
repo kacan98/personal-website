@@ -106,7 +106,7 @@ function CvPage({ jobDescription }: CvProps) {
   }
 
   return (
-    <PageWrapper title={"CV"} onTitleClicked={onTitleClicked}>
+    <PageWrapper title={"Resume"} onTitleClicked={onTitleClicked}>
       {editable && (
         <>
           <Typography variant="h2" mb={2}>

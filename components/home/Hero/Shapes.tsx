@@ -114,7 +114,9 @@ function Geometries({ mousePosition }: {
     new Audio("/sounds/hit6.ogg"),
     new Audio("/sounds/hit7.ogg"),
     new Audio("/sounds/hit8.ogg"),
-  ]; const materials = [
+  ];
+
+  const materials = [
     // Rainbow/Iridescent Material - keeping this one since it's cool
     new THREE.MeshNormalMaterial(),
     // Neon/Candy like colors with enhanced glow effects
@@ -302,13 +304,13 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
   return (
     <group ref={groupRef}>
       <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>        <mesh
-          ref={meshRef}
-          geometry={geometry} // eslint-disable-line react/no-unknown-property
-          material={currentMaterial} // eslint-disable-line react/no-unknown-property
-          onClick={handleClick}
-          onPointerOver={handlePointerOver}
-          onPointerOut={handlePointerOut}
-        />
+        ref={meshRef}
+        geometry={geometry} // eslint-disable-line react/no-unknown-property
+        material={currentMaterial} // eslint-disable-line react/no-unknown-property
+        onClick={handleClick}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      />
       </Float>
     </group>
   );
