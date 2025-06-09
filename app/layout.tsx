@@ -82,7 +82,8 @@ export default async function RootLayout({
       <body>
         <CssBaseline />
         <AppRouterCacheProvider>
-          <StoreProvider cvSettings={cvSettings}>            <CustomThemeProvider styles={styles}>
+          <StoreProvider cvSettings={cvSettings}>
+            <CustomThemeProvider styles={styles}>
             <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: '#0f172a' }}>
               <BackgroundEffect />
               {/*Had to be in Suspense because of useSearchParams inside */}

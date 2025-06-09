@@ -1,14 +1,13 @@
 "use client";
+import BackgroundEffect from "@/components/background/BackgroundEffect";
 import {
   Box,
   Button,
-  IconButton,
   Modal,
   Slide,
-  Typography,
+  Typography
 } from "@mui/material";
 import { ReactNode } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 
 type ModalButtonProps = {
   buttonName: string;
@@ -36,38 +35,21 @@ const ModalButton = ({
         <Typography variant="button" fontSize="1.2rem" fontWeight={700}>
           {buttonName}
         </Typography>
-      </Button>
-
-      <Modal open={open} onClose={onClose} closeAfterTransition>
+      </Button>      <Modal open={open} onClose={onClose} closeAfterTransition>
         <Slide direction="up" in={open} timeout={500}>
-          <Box
-            sx={{
+          <div>
+            <Box sx={{
               width: "100%",
               height: "100%",
               position: "absolute",
               overflow: "auto",
-              bgcolor: "background.paper",
+              bgcolor: "#0f172a", // Match the main layout background
               color: "text.primary",
-            }}
-          >
-            <IconButton
-              sx={{
-                position: "fixed",
-                right: 50,
-                top: 30,
-                padding: 5,
-                zIndex: 100,
-                color: "text.primary",
-              }}
-              edge="end"
-              size={"large"}
-              onClick={onClose}
-              aria-label="close"
-            >
-              <CloseIcon fontSize={"large"} />
-            </IconButton>
-            {children}
-          </Box>
+            }}>
+              <BackgroundEffect />
+              {children}
+            </Box>
+          </div>
         </Slide>
       </Modal>
     </div>

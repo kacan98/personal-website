@@ -42,7 +42,6 @@ export function Shapes() {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
-
   return (
     <CanvasContainer>
       <StyledCanvas
@@ -274,8 +273,7 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
-  // Remove the unused state variable entirely
-  const setVisible = useState(false)[1];
+  const [isVisible, setIsVisible] = useState(false);
   const floatRef = useRef<THREE.Group>(null);
   const [currentMaterial, setCurrentMaterial] = useState<THREE.Material>();
   const initialPosition = useRef([...position]); // Create a copy of the position array
@@ -317,7 +315,7 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
     document.body.style.cursor = "default";
   }; useEffect(() => {
     const ctx = gsap.context(() => {
-      setVisible(true);
+      setIsVisible(true);
       if (meshRef.current) {
         gsap.from(meshRef.current.scale, {
           x: 0,
@@ -338,38 +336,34 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
       }
     });
     return () => ctx.revert();
-  }, []);
-
-  // Apply subtle movement based on mouse position
+  }, []);  // Apply subtle movement based on mouse position
   useFrame(() => {
-    if (groupRef.current && mousePosition) {
-      // Detect if this is the middle (largest) shape
-      const isMiddleShape = initialPosition.current[0] === 0 && initialPosition.current[1] === 0;
-      const movementFactor = isMiddleShape ? 0.8 : 0.5; // More movement for middle shape
+    if (!isVisible || !groupRef.current || !mousePosition) return;
 
-      // Apply slight position offset based on mouse position
-      const targetX = initialPosition.current[0] + mousePosition.x * movementFactor;
-      const targetY = initialPosition.current[1] + mousePosition.y * movementFactor;      // Smooth lerping for more natural movement using our custom lerp function
-      if (groupRef.current) {
-        groupRef.current.position.x = lerp(
-          groupRef.current.position.x,
-          targetX,
-          0.07
-        );
-        groupRef.current.position.y = lerp(
-          groupRef.current.position.y,
-          targetY,
-          0.07
-        );
+    // Detect if this is the middle (largest) shape
+    const isMiddleShape = initialPosition.current[0] === 0 && initialPosition.current[1] === 0;
+    const movementFactor = isMiddleShape ? 0.8 : 0.5; // More movement for middle shape
 
-        groupRef.current.position.z = lerp(
-          groupRef.current.position.z,
-          initialPosition.current[2],
-          0.07
-        );
-      }
-    }
-    // Material updates are now handled via props
+    // Apply slight position offset based on mouse position
+    const targetX = initialPosition.current[0] + mousePosition.x * movementFactor;
+    const targetY = initialPosition.current[1] + mousePosition.y * movementFactor;
+
+    // Smooth lerping for more natural movement using our custom lerp function
+    groupRef.current.position.x = lerp(
+      groupRef.current.position.x,
+      targetX,
+      0.07
+    );
+    groupRef.current.position.y = lerp(
+      groupRef.current.position.y,
+      targetY,
+      0.07
+    );
+    groupRef.current.position.z = lerp(
+      groupRef.current.position.z,
+      initialPosition.current[2],
+      0.07
+    );
   });
   return (
     <group ref={groupRef}>
