@@ -82,17 +82,18 @@ export default async function App() {
               </Grid2>
             </Grid2>
           </ContentContainer>
-          <ContentContainer fullWidth background="background.default">
-            <Box
-              sx={{
-                color: "text.primary",
-                textAlign: "center",
-              }}
-            >
-              © Karel Čančara {new Date().getFullYear()}
-            </Box>
-          </ContentContainer>				</>
+        </>
       )}
+      <ContentContainer fullWidth background="background.default">
+        <Box
+          sx={{
+            color: "text.primary",
+            textAlign: "center",
+          }}
+        >
+          © Karel Čančara {new Date().getFullYear()}
+        </Box>
+      </ContentContainer>
     </>
   );
 }

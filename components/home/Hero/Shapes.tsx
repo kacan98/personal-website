@@ -77,8 +77,7 @@ function Geometries({ mousePosition }: {
       position: [number, number, number];
       r: number;
       geometry: THREE.BufferGeometry;
-    }[]
-    = [
+    }[] = [
       {
         position: [-1.2, -1, 2],
         r: 0.5,
@@ -106,6 +105,7 @@ function Geometries({ mousePosition }: {
         geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Cube (back, right)
       },
     ];
+
   const soundEffects = [
     new Audio("/sounds/hit1.ogg"),
     new Audio("/sounds/hit2.ogg"),
@@ -145,7 +145,6 @@ function Geometries({ mousePosition }: {
       emissive: 0x4a0024, // Subtle glow
       emissiveIntensity: 2.5,
     }),
-
     // More neon colors with glow
     new THREE.MeshPhysicalMaterial({
       color: 0xffff00, // Neon yellow
@@ -207,15 +206,15 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
   // Remove the unused state variable entirely
   const setVisible = useState(false)[1];
   const floatRef = useRef<THREE.Group>(null);
-  const materialRef = useRef<THREE.Material>();
+  const [currentMaterial, setCurrentMaterial] = useState<THREE.Material>();
   const initialPosition = useRef([...position]); // Create a copy of the position array
 
   // Initialize material only once
   useEffect(() => {
-    if (!materialRef.current) {
-      materialRef.current = gsap.utils.random(materials);
+    if (!currentMaterial) {
+      setCurrentMaterial(gsap.utils.random(materials));
     }
-  }, [materials]);
+  }, [materials, currentMaterial]);
   function getRandomMaterial() {
     return gsap.utils.random(materials);
   }
@@ -234,10 +233,8 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
       duration: 1.3,
       ease: "elastic.out(1,0.3)",
       yoyo: true,
-    });
-
-    // Only change material on click
-    materialRef.current = getRandomMaterial();
+    });    // Only change material on click
+    setCurrentMaterial(getRandomMaterial());
   }
 
   const handlePointerOver = () => {
@@ -246,8 +243,7 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
 
   const handlePointerOut = () => {
     document.body.style.cursor = "default";
-  };
-  useEffect(() => {
+  }; useEffect(() => {
     const ctx = gsap.context(() => {
       setVisible(true);
       if (meshRef.current) {
@@ -259,6 +255,14 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
           ease: "elastic.out(1,0.3)",
           delay: gsap.utils.random(0, 0.5),
         });
+      }
+      // Set initial position including z-coordinate
+      if (groupRef.current) {
+        groupRef.current.position.set(
+          initialPosition.current[0],
+          initialPosition.current[1],
+          initialPosition.current[2]
+        );
       }
     });
     return () => ctx.revert();
@@ -273,36 +277,34 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
 
       // Apply slight position offset based on mouse position
       const targetX = initialPosition.current[0] + mousePosition.x * movementFactor;
-      const targetY = initialPosition.current[1] + mousePosition.y * movementFactor;
-
-      // Smooth lerping for more natural movement using our custom lerp function
+      const targetY = initialPosition.current[1] + mousePosition.y * movementFactor;      // Smooth lerping for more natural movement using our custom lerp function
       if (groupRef.current) {
         groupRef.current.position.x = lerp(
           groupRef.current.position.x,
           targetX,
-          isMiddleShape ? 0.07 : 0.05 // Faster response for middle shape
+          0.07
         );
         groupRef.current.position.y = lerp(
           groupRef.current.position.y,
           targetY,
-          isMiddleShape ? 0.07 : 0.05
+          0.07
+        );
+
+        groupRef.current.position.z = lerp(
+          groupRef.current.position.z,
+          initialPosition.current[2],
+          0.07
         );
       }
-    }    
-    // Always update mesh material to the current materialRef value
-    if (meshRef.current) {
-      if (materialRef.current) {
-        meshRef.current.material = materialRef.current;
-      }
-      if (geometry && !meshRef.current.geometry) {
-        meshRef.current.geometry = geometry;
-      }
     }
-  }); return (
+    // Material updates are now handled via props
+  });
+  return (
     <group ref={groupRef}>
-      <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>
-        <mesh
+      <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>        <mesh
           ref={meshRef}
+          geometry={geometry} // eslint-disable-line react/no-unknown-property
+          material={currentMaterial} // eslint-disable-line react/no-unknown-property
           onClick={handleClick}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
