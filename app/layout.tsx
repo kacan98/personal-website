@@ -10,8 +10,9 @@ import {
   getSettings,
   getStyles,
 } from "@/sanity/sanity-utils";
-import "@fontsource-variable/open-sans";
+import "@fontsource/open-sans";
 import "@fontsource/cormorant-garamond";
+import "@fontsource/urbanist";
 import "@fontsource/yeseva-one";
 import { CssBaseline, Skeleton } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";

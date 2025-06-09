@@ -27,7 +27,7 @@ export default defineType({
       title: "Font",
       type: "string",
       options: {
-        list: ["System font", "Yeseva One", "Cormorant Garamond"],
+        list: ["System font", "Yeseva One", "Cormorant Garamond", "Urbanist"],
       },
     }),
   ],

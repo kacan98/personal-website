@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import { Image as SanityImage } from "sanity";
 import SanityPicture from "@/components/sanityPicture";
 
@@ -30,7 +30,7 @@ function FullScreenPicture({ sanityImage }: FullScreenPictureProps) {
         )}
       </Box>
       <Box
-        sx={(theme) => ({
+        sx={(theme: Theme) => ({
           position: "relative",
           top: 0,
           left: 0,

@@ -1,9 +1,8 @@
-import FullScreenPicture from "@/components/home/fullScreenPicture";
-import HomeText from "@/components/home/homeText";
+import Hero from "@/components/home/Hero";
 import SocialIcons from "@/components/home/socialIcons";
+import ContentContainer from "@/components/layout/ContentContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
-import { getSettings } from "@/sanity/sanity-utils";
 import { Box } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 
@@ -27,31 +26,16 @@ const aboutMe = [
 ]
 
 export default async function App() {
-  const settings = await getSettings();
   return (
     <>
-      <Box
-        m={0}
-        sx={{
-          height: "100vh",
-          width: "100%",
-          position: "relative",
-        }}
-      >
-        <FullScreenPicture sanityImage={settings?.mainPage?.mainImage} />
-        <HomeText
-          title={settings?.mainPage?.title}
-          subtitles={settings?.mainPage?.subtitles}
-        />
-        <SocialIcons direction={"column"} />
-      </Box>
-      {isKarelsPortfolio && <><Box
-        p={4}
-        sx={{
-          backgroundColor: 'background.default'
-        }}>
-        <Box>
-          <Grid2 container
+      <ContentContainer fullWidth>
+        <Hero firstName="Karel" lastName="Čančara" tagLine="Software Developer" />
+      </ContentContainer>
+      <SocialIcons direction={"column"} />
+      {isKarelsPortfolio && <>
+        <ContentContainer fullWidth background="background.default">
+          <Grid2
+            container
             width="100%"
             color="text.primary"
             spacing={2}
@@ -80,17 +64,18 @@ export default async function App() {
                   <p>{content}</p>
                 </Box>
               )
-            })}</Grid2>
-          </Grid2>
-        </Box >
-      </Box>
-        <Box sx={{
-          backgroundColor: 'background.default',
-          color: "text.primary"
-        }}
-          p={4} >
+          })}</Grid2>        </Grid2>
+        </ContentContainer>
+        <ContentContainer fullWidth background="background.default">
+          <Box
+            sx={{
+              color: "text.primary",
+              textAlign: "center"
+            }} 
+          >
           © Karel Čančara {new Date().getFullYear()}
-        </Box >
+          </Box>
+        </ContentContainer>
       </>
       }
 

@@ -152,7 +152,7 @@ function CvPage({ jobDescription }: CvProps) {
         min={9}
         max={20}
         value={fontSize}
-        onChange={(e, newValue) => setFontSize(newValue as number)}
+        onChange={(_: any, newValue: number) => setFontSize(newValue)}
         valueLabelDisplay="auto"
         aria-label="font size"
         defaultValue={12}
@@ -209,7 +209,6 @@ function CvPage({ jobDescription }: CvProps) {
       <Backdrop
         sx={{
           color: '#fff',
-          zIndex: (theme) => theme.zIndex.drawer + 1,
           display: 'flex',
           flexDirection: 'column',
         }}
