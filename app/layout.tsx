@@ -3,6 +3,7 @@ import NavBar from "@/components/menu/navBar";
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
 import CvPage from "@/components/pages/cv/cvPage";
 import GalleryPage from "@/components/pages/galery/galleryPage";
+import BackgroundEffect from "@/components/layout/BackgroundEffect";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
 import {
   getCvSettings,
@@ -60,20 +61,20 @@ export default async function RootLayout({
         <CvPage />
       ),
     });
-  }
-
-  return (
+  } return (
     <html lang="en">
       <body>
         <CssBaseline />
         <AppRouterCacheProvider>
-          <StoreProvider cvSettings={cvSettings}>
-            <CustomThemeProvider styles={styles}>
+          <StoreProvider cvSettings={cvSettings}>            <CustomThemeProvider styles={styles}>
+            <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: '#0f172a' }}>
+              <BackgroundEffect />
               {/*Had to be in Suspense because of useSearchParams inside */}
               <Suspense fallback={<Skeleton />}>
                 <NavBar modals={modals} />
               </Suspense>
               {children}
+            </div>
             </CustomThemeProvider>
           </StoreProvider>
         </AppRouterCacheProvider>
