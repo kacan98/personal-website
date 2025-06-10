@@ -8,6 +8,8 @@ import {
   Button,
   Drawer,
   IconButton,
+  Modal,
+  Slide,
   Toolbar,
   Typography,
   useMediaQuery,
@@ -94,22 +96,7 @@ const NavBar = ({ modals }: TopBarProps) => {
       setLocalModalOpen(modalOpenName);
     }
   }, [modalOpenName]);
-
-  // Effect to prevent body scroll when modal is open
-  useEffect(() => {
-    if (localModalOpen) {
-      // Prevent body scroll
-      document.body.style.overflow = 'hidden';
-    } else {
-      // Restore body scroll
-      document.body.style.overflow = 'unset';
-    }
-
-    // Cleanup function to ensure scroll is restored when component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [localModalOpen]);
+  // Remove the problematic body scroll effect - let modals handle their own scrolling
   function handleModalOpen(name: string) {
     // Set local state immediately for instant modal opening
     setLocalModalOpen(name);
@@ -324,31 +311,38 @@ const NavBar = ({ modals }: TopBarProps) => {
       </ElevationScroll>
 
       {/* Mobile Drawer */}
-      {isMobile && mobileDrawer}      {/* Modals - only render the modal content, not the buttons */}
-      {modals.map(({ name, modal }) =>
-        localModalOpen === name ? (
-          <Box
-            key={name}
-            sx={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              width: "100%",
-              height: "100%",
-              overflowY: "auto",
-              overflowX: "hidden",
-              bgcolor: "#0f172a", // Match the main layout background - same as desktop modal
-              color: "text.primary",
-              zIndex: 1300, // Same z-index as Material-UI Modal
-            }}
-          >
-            <BackgroundEffect />
-            {modal}
-          </Box>
-        ) : null
-      )}
+      {isMobile && mobileDrawer}      {/* Modals - with proper animation */}
+      {modals.map(({ name, modal }) => (
+        <Modal
+          key={name}
+          open={localModalOpen === name}
+          onClose={handleModalClose}
+          closeAfterTransition
+        >
+          <Slide direction="up" in={localModalOpen === name} timeout={500}>
+            <div>
+              <Box
+                sx={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: "100%",
+                  height: "100%",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                  bgcolor: "#0f172a", // Match the main layout background - same as desktop modal
+                  color: "text.primary",
+                }}
+              >
+                <BackgroundEffect />
+                {modal}
+              </Box>
+            </div>
+          </Slide>
+        </Modal>
+      ))}
     </>
   );
 };
