@@ -94,10 +94,18 @@ const NavBar = ({ modals }: TopBarProps) => {
       anchor="top"
       open={mobileMenuOpen}
       onClose={() => setMobileMenuOpen(false)}
+      SlideProps={{
+        // Override the default Slide transition with a Fade
+        style: {
+          transition: 'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)'
+        },
+        timeout: 500,
+      }}
       PaperProps={{
         sx: {
           height: '100vh',
-          background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(30,30,30,0.98) 100%)',
+          background: 'rgba(59,130,246,0.08)', // Even more subtle blue for a barely-there effect
+          backdropFilter: 'blur(12px)', // More blur for subtlety
           display: 'flex',
           flexDirection: 'column',
           zIndex: 1310, // Higher than modals (1300) and navbar (1301)
@@ -189,9 +197,7 @@ const NavBar = ({ modals }: TopBarProps) => {
           top: 0,
           left: 0,
           right: 0,
-          opacity: 0.22,
           minHeight: { xs: 56, md: 93 }, // Match navbar height exactly
-          backgroundColor: 'background.default', // Match the default background color
           zIndex: 1300, // Below navbar (1301) but above page content
         }}
       />

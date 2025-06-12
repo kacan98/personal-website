@@ -27,7 +27,7 @@ const ContentContainer = ({
       <Box
         sx={{
           width: "100%",
-          backgroundColor: background || "background.default",
+          backgroundColor: background,
           padding: padding,
         }}
       >

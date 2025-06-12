@@ -47,7 +47,7 @@ export default async function App() {
       <ContentContainer fullWidth>
         <Hero firstName="Karel" lastName="Čančara" tagLine="Software Developer" />
       </ContentContainer>
-      <Box backgroundColor="background.default">
+      <Box>
         <TechList
           technologies={technologies}
         />

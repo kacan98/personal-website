@@ -34,9 +34,10 @@ export default function BackgroundEffect({
       <Box
         sx={{
           position: positionType,
-          inset: 0,
+          inset: containInParent ? 'auto' : '0',
           zIndex: 0,
-          height: '100%',
+          minHeight: containInParent ? "0" : '100%', // Use minHeight to extend with content
+          width: '100%',
           backgroundImage: 'url(/noisetexture.jpg)',
           opacity: 0.2,
           mixBlendMode: 'soft-light',
