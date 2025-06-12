@@ -101,7 +101,7 @@ export default async function App() {
           </ContentContainer>
         </>
       )}
-      <ContentContainer fullWidth background="background.default">
+      <ContentContainer fullWidth>
         <Box
           sx={{
             color: "text.primary",

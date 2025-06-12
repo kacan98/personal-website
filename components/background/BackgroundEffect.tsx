@@ -24,6 +24,17 @@ export default function BackgroundEffect() {
           pointerEvents: 'none'
         }}
       />
+      {/* Subtle dark overlay to make background slightly darker */}
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: -30,
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.15)',
+          pointerEvents: 'none'
+        }}
+      />
     </>
   );
 }

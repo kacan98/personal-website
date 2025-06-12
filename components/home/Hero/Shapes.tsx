@@ -96,7 +96,7 @@ function Geometries({ mousePosition }: {
       {
         position: [-1.7, 1.2, -1],
         r: 0.6,
-        geometry: new THREE.TorusKnotGeometry(0.8, 0.2, 64, 16, 2, 3), // Knot (back, left)
+        geometry: new THREE.TorusKnotGeometry(.5, .3, 64, 50, 2, 3), // Knot (back, left)
       },
       {
         position: [1.2, 1.7, -2],

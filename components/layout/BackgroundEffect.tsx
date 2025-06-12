@@ -5,14 +5,15 @@ import { usePathname } from 'next/navigation';
 export default function BackgroundEffect({ onlyForRoot = false }: { onlyForRoot?: boolean }) {
   // Only apply to root page if onlyForRoot is true
   const pathname = usePathname();
-  
+
   if (onlyForRoot && pathname !== '/' && pathname !== '') {
     return null;
   }
-  
+
   return (
     <>
       <Box
+        className="background-effect"
         sx={{
           position: 'fixed',
           inset: 0,

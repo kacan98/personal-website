@@ -1,5 +1,4 @@
 "use client";
-import ModalButton from "@/components/menu/modalButton";
 import BackgroundEffect from "@/components/background/BackgroundEffect";
 import { Close, Home, Menu as MenuIcon } from "@mui/icons-material";
 import {
@@ -17,12 +16,10 @@ import {
 } from "@mui/material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
-  cloneElement,
-  ReactElement,
   ReactNode,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from "react";
 
 type TopBarProps = {
@@ -31,32 +28,6 @@ type TopBarProps = {
     modal: ReactNode;
   }[];
 };
-
-interface ElevationScrollProps {
-  children: ReactElement;
-}
-
-function ElevationScroll(props: ElevationScrollProps) {
-  const { children } = props;
-
-  return cloneElement(children, {
-    elevation: 0,
-    sx: {
-      ...children.props.sx,
-      backgroundColor: 'rgba(15, 23, 42, 0.3)', // Always use the transparent background
-      backdropFilter: 'blur(5px)',
-      transition: 'all 0.3s ease',
-      boxShadow: 'none !important', // Force remove any shadow artifacts
-      borderBottom: 'none', // Remove any border
-      '&::before': { // Remove any pseudo-element shadows
-        display: 'none'
-      },
-      '&::after': { // Remove any pseudo-element shadows
-        display: 'none'
-      }
-    },
-  });
-}
 
 const NavBar = ({ modals }: TopBarProps) => {
   const router = useRouter();
@@ -96,30 +67,22 @@ const NavBar = ({ modals }: TopBarProps) => {
       setLocalModalOpen(modalOpenName);
     }
   }, [modalOpenName]);
-  // Remove the problematic body scroll effect - let modals handle their own scrolling
+
   function handleModalOpen(name: string) {
-    // Set local state immediately for instant modal opening
     setLocalModalOpen(name);
-    // Close mobile menu if open
     setMobileMenuOpen(false);
-    // Update URL in the background
-    setTimeout(() => {
-      router.push(pathname + "?" + createQueryString("modalOpen", name));
-    }, 0);
+    router.push(pathname + "?" + createQueryString("modalOpen", name));
   }
 
   function handleModalClose() {
-    // Close modal immediately with local state
     setLocalModalOpen(null);
-    // Update URL in the background
-    setTimeout(() => {
-      router.push(pathname + "?" + createQueryString("modalOpen"));
-    }, 0);
+    router.push(pathname + "?" + createQueryString("modalOpen"));
   }
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
   const handleMobileNavigation = (path: string) => {
     setMobileMenuOpen(false);
     router.push(path);
@@ -223,9 +186,22 @@ const NavBar = ({ modals }: TopBarProps) => {
         </Box>
       </Box>
     </Drawer>
-  );
-  return (
-    <>      {/* Close button for modals - positioned above everything */}
+  ); return (
+    <>      {/* Background element for navbar - matches main layout background */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          opacity: 0.22,
+          minHeight: { xs: 56, md: 93 }, // Match navbar height exactly
+          backgroundColor: 'background.default', // Match the default background color
+          zIndex: 1300, // Below navbar (1301) but above page content
+        }}
+      />
+
+      {/* Close button for modals - positioned above everything */}
       {localModalOpen && (
         <IconButton
           onClick={handleModalClose}
@@ -245,73 +221,79 @@ const NavBar = ({ modals }: TopBarProps) => {
         </IconButton>
       )}
 
-      <ElevationScroll>
-        <AppBar
-          position="sticky"
-          color="transparent"
-          sx={{
-            m: 0,
-            //so that it shows up above the modals (zIndex 1300 in MUI)
-            zIndex: 1301,
-          }}
-        >
-          <Toolbar sx={{ minHeight: { xs: 56, md: 64 } }}>
-            {/* Mobile Layout */}
-            {isMobile ? (
-              <>
-                {!weAreHome && (
-                  <IconButton
-                    size="large"
-                    onClick={() => router.push("/")}
-                    color="inherit"
-                    sx={{ mr: 1 }}
-                  >
-                    <Home color="primary" />
-                  </IconButton>
-                )}
-
-                <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-
+      <AppBar
+        position="sticky"
+        color="transparent"
+        sx={{
+          m: 0,
+          //so that it shows up above the modals (zIndex 1300 in MUI)
+          zIndex: 1301,
+        }}
+      >
+        <Toolbar sx={{ minHeight: { xs: 56, md: 64 } }}>
+          {/* Mobile Layout */}
+          {isMobile ? (
+            <>
+              {!weAreHome && (
                 <IconButton
                   size="large"
-                  onClick={toggleMobileMenu}
+                  onClick={() => router.push("/")}
+                  color="inherit"
+                  sx={{ mr: 1 }}
+                >
+                  <Home color="primary" />
+                </IconButton>
+              )}
+
+              <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+
+              <IconButton
+                size="large"
+                onClick={toggleMobileMenu}
+                color="inherit"
+              >
+                <MenuIcon color="primary" />
+              </IconButton>
+            </>
+          ) : (
+            /* Desktop Layout */
+            <>
+              {!weAreHome && (
+                <IconButton
+                  size="large"
+                  onClick={() => router.push("/")}
                   color="inherit"
                 >
-                  <MenuIcon color="primary" />
+                  <Home color="primary" />
                 </IconButton>
-              </>
-            ) : (
-              /* Desktop Layout */
-              <>
-                {!weAreHome && (
-                  <IconButton
-                    size="large"
-                    onClick={() => router.push("/")}
-                    color="inherit"
-                  >
-                    <Home color="primary" />
-                  </IconButton>
-                )}
-                {modals.map(({ name, modal }) => (
-                  <ModalButton
-                    onOpen={() => handleModalOpen(name)}
-                    onClose={() => handleModalClose()}
-                    open={localModalOpen === name}
+                )}                {modals.map(({ name }) => (
+                  <Button
                     key={name}
-                    buttonName={name}
+                    onClick={() => handleModalOpen(name)}
+                    size="large"
+                    sx={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      minHeight: 60,
+                      color: 'primary.main',
+                      my: 2,
+                      display: "block",
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                      }
+                    }}
                   >
-                    {modal}
-                  </ModalButton>
+                    {name}
+                  </Button>
                 ))}
-                <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-              </>
-            )}
-          </Toolbar>
-        </AppBar>
-      </ElevationScroll>
+              <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
 
       {/* Mobile Drawer */}
-      {isMobile && mobileDrawer}      {/* Modals - with proper animation */}
+      {isMobile && mobileDrawer}
       {modals.map(({ name, modal }) => (
         <Modal
           key={name}
@@ -319,27 +301,22 @@ const NavBar = ({ modals }: TopBarProps) => {
           onClose={handleModalClose}
           closeAfterTransition
         >
-          <Slide direction="up" in={localModalOpen === name} timeout={500}>
-            <div>
-              <Box
-                sx={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100%",
-                  height: "100%",
-                  overflowY: "auto",
-                  overflowX: "hidden",
-                  bgcolor: "#0f172a", // Match the main layout background - same as desktop modal
-                  color: "text.primary",
-                }}
-              >
-                <BackgroundEffect />
-                {modal}
-              </Box>
-            </div>
+          <Slide direction="up" in={localModalOpen === name} timeout={900} mountOnEnter>
+            <Box
+              sx={{
+                width: "100vw",
+                height: "100vh",
+                position: "relative",
+                overflow: "auto",
+                bgcolor: "#0f172a", // Match the main layout background
+                color: "text.primary",
+                outline: 'none', // Remove focus outline
+                transform: 'translateY(0)', // Ensure the slide has something to animate from
+              }}
+            >
+              <BackgroundEffect />
+              {modal}
+            </Box>
           </Slide>
         </Modal>
       ))}
