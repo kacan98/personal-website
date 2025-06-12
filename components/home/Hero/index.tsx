@@ -25,6 +25,9 @@ const LastNameContainer = styled(Typography)({
   display: 'block',
   color: '#cbd5e1', // text-slate-300 equivalent
   marginTop: '-0.2em',
+  fontSize: '6rem',
+  //add space between letters
+  letterSpacing: '0.001em',
 });
 
 const JobTitle = styled(Typography)({

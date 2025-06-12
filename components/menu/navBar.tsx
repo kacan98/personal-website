@@ -93,11 +93,11 @@ const NavBar = ({ modals }: TopBarProps) => {
     <Drawer
       anchor="top"
       open={mobileMenuOpen}
-      onClose={() => setMobileMenuOpen(false)} PaperProps={{
+      onClose={() => setMobileMenuOpen(false)}
+      PaperProps={{
         sx: {
           height: '100vh',
           background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(30,30,30,0.98) 100%)',
-          backdropFilter: 'blur(20px)',
           display: 'flex',
           flexDirection: 'column',
           zIndex: 1310, // Higher than modals (1300) and navbar (1301)
@@ -181,7 +181,8 @@ const NavBar = ({ modals }: TopBarProps) => {
       </Box>
     </Drawer>
   ); return (
-    <>      {/* Background element for navbar - matches main layout background */}
+    <>
+    {/* Background element for navbar - matches main layout background */}
       <Box
         sx={{
           position: 'absolute',
@@ -194,27 +195,6 @@ const NavBar = ({ modals }: TopBarProps) => {
           zIndex: 1300, // Below navbar (1301) but above page content
         }}
       />
-
-      {/* Close button for modals - positioned above everything */}
-      {localModalOpen && (
-        <IconButton
-          onClick={handleModalClose}
-          sx={{
-            position: "fixed",
-            right: 50,
-            top: 30,
-            padding: 5,
-            zIndex: 1320, // Higher than mobile menu (1310), navbar (1301), and modals (1300)
-            color: "text.primary",
-          }}
-          edge="end"
-          size={"large"}
-          aria-label="close"
-        >
-          <Close fontSize={"large"} />
-        </IconButton>
-      )}
-
       <AppBar
         position="sticky"
         color="transparent"
@@ -260,53 +240,75 @@ const NavBar = ({ modals }: TopBarProps) => {
                 >
                   <Home color="primary" />
                 </IconButton>
-                )}                {modals.map(({ name }) => (
-                  <Button
-                    key={name}
-                    onClick={() => handleModalOpen(name)}
-                    size="large"
-                    sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 700,
-                      minHeight: 60,
-                      color: 'primary.main',
-                      my: 2,
-                      display: "block",
-                      '&:hover': {
-                        backgroundColor: 'rgba(255,255,255,0.1)',
-                      }
-                    }}
-                  >
-                    {name}
-                  </Button>
-                ))}
+              )}
+              {modals.map(({ name }) => (
+                <Button
+                  key={name}
+                  onClick={() => handleModalOpen(name)}
+                  size="large"
+                  sx={{
+                    fontSize: '1.2rem',
+                    fontWeight: 700,
+                    minHeight: 60,
+                    color: 'primary.main',
+                    my: 2,
+                    display: "block",
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                    }
+                  }}
+                >
+                  {name}
+                </Button>
+              ))}
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
             </>
           )}
         </Toolbar>
-      </AppBar>
-
-      {/* Mobile Drawer */}
+      </AppBar>      {/* Mobile Drawer */}
       {isMobile && mobileDrawer}
-      {modals.map(({ name, modal }) => (<Modal
+      {modals.map(({ name, modal }) => (
+        <Modal
           key={name}
           open={localModalOpen === name}
           onClose={handleModalClose}
           closeAfterTransition
+          container={() => document.body} // Force rendering in body
         >
-          <Slide direction="up" in={localModalOpen === name} timeout={900} mountOnEnter>
+          <Slide direction="up" in={localModalOpen === name} timeout={800} mountOnEnter>
             <Box
               sx={{
-                width: "100vw",
-                height: "100vh",
-                position: "relative",
+                position: 'absolute',
+                top: isMobile ? '56px' : '92px',
+                left: 0,
+                right: 0,
+                height: `calc(100vh - ${isMobile ? '56px' : '92px'})`,
+                width: '100vw',
                 overflow: "auto",
                 bgcolor: "#0f172a", // Match the main layout background
                 color: "text.primary",
-                outline: 'none', // Remove focus outline
                 transform: 'translateY(0)', // Ensure the slide has something to animate from
               }}
             >
+              {/* Close button for modals - positioned above everything */}
+              {localModalOpen && (
+                <IconButton
+                  onClick={handleModalClose}
+                  sx={{
+                    //put it on the right side of the modal
+                    position: "absolute",
+                    right: 0,
+                    margin: "16px",
+                    padding: "16px",
+                    zIndex: 1320, // Higher than mobile menu (1310), navbar (1301), and modals (1300)
+                    color: "text.primary",
+                  }}
+                  size={"large"}
+                  aria-label="close"
+                >
+                  <Close fontSize={"large"} />
+                </IconButton>
+              )}
               <BackgroundEffect />
               {modal}
             </Box>
