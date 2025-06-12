@@ -289,7 +289,7 @@ const NavBar = ({ modals }: TopBarProps) => {
                 backgroundColor: '#0f172a',
               }}
             >
-              <BackgroundEffect></BackgroundEffect>
+              <BackgroundEffect containInParent={true}></BackgroundEffect>
               {/* Close button for modals - positioned above everything */}
               {localModalOpen && (
                 <IconButton

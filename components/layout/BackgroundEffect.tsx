@@ -2,30 +2,38 @@
 import { Box } from '@mui/material';
 import { usePathname } from 'next/navigation';
 
-export default function BackgroundEffect({ onlyForRoot = false }: { onlyForRoot?: boolean }) {
-  // Only apply to root page if onlyForRoot is true
+// Add a containInParent prop to control positioning behavior
+export default function BackgroundEffect({
+  containInParent = false
+}: {
+  containInParent?: boolean
+}) {
   const pathname = usePathname();
 
-  if (onlyForRoot && pathname !== '/' && pathname !== '') {
+  // Only apply to root page if onlyForRoot is true
+  if (pathname !== '/' && pathname !== '') {
     return null;
   }
+
+  // Choose positioning based on containInParent prop
+  const positionType = containInParent ? 'absolute' : 'fixed';
 
   return (
     <>
       <Box
         className="background-effect"
         sx={{
-          position: 'fixed',
+          position: positionType,
           inset: 0,
           zIndex: 0,
-          maxHeight: '100vh',
+          maxHeight: '100%',
           background: 'radial-gradient(circle at top center, hsla(222, 80%, 60%, 0.5) 0%, hsla(222, 0%, 0%, 0) 50%, hsla(222, 0%, 0%, 0) 100%)',
           pointerEvents: 'none'
         }}
       />
       <Box
         sx={{
-          position: 'fixed',
+          position: positionType,
           inset: 0,
           zIndex: 0,
           height: '100%',
