@@ -93,8 +93,7 @@ const NavBar = ({ modals }: TopBarProps) => {
     <Drawer
       anchor="top"
       open={mobileMenuOpen}
-      onClose={() => setMobileMenuOpen(false)}
-      PaperProps={{
+      onClose={() => setMobileMenuOpen(false)} PaperProps={{
         sx: {
           height: '100vh',
           background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(30,30,30,0.98) 100%)',
@@ -102,11 +101,6 @@ const NavBar = ({ modals }: TopBarProps) => {
           display: 'flex',
           flexDirection: 'column',
           zIndex: 1310, // Higher than modals (1300) and navbar (1301)
-        }
-      }}
-      SlideProps={{
-        style: {
-          background: 'transparent',
         }
       }}
       sx={{
@@ -294,8 +288,7 @@ const NavBar = ({ modals }: TopBarProps) => {
 
       {/* Mobile Drawer */}
       {isMobile && mobileDrawer}
-      {modals.map(({ name, modal }) => (
-        <Modal
+      {modals.map(({ name, modal }) => (<Modal
           key={name}
           open={localModalOpen === name}
           onClose={handleModalClose}
