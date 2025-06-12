@@ -1,5 +1,4 @@
 "use client";
-import BackgroundEffect from "@/components/background/BackgroundEffect";
 import { Close, Home, Menu as MenuIcon } from "@mui/icons-material";
 import {
   AppBar,
@@ -21,6 +20,7 @@ import {
   useEffect,
   useState
 } from "react";
+import BackgroundEffect from "../layout/BackgroundEffect";
 
 type TopBarProps = {
   modals: {
@@ -182,7 +182,7 @@ const NavBar = ({ modals }: TopBarProps) => {
     </Drawer>
   ); return (
     <>
-    {/* Background element for navbar - matches main layout background */}
+      {/* Background element for navbar - matches main layout background */}
       <Box
         sx={{
           position: 'absolute',
@@ -278,18 +278,18 @@ const NavBar = ({ modals }: TopBarProps) => {
           <Slide direction="up" in={localModalOpen === name} timeout={800} mountOnEnter>
             <Box
               sx={{
-                position: 'absolute',
+                position: 'relative',
                 top: isMobile ? '56px' : '92px',
                 left: 0,
                 right: 0,
                 height: `calc(100vh - ${isMobile ? '56px' : '92px'})`,
                 width: '100vw',
                 overflow: "auto",
-                bgcolor: "#0f172a", // Match the main layout background
                 color: "text.primary",
-                transform: 'translateY(0)', // Ensure the slide has something to animate from
+                backgroundColor: '#0f172a',
               }}
             >
+              <BackgroundEffect></BackgroundEffect>
               {/* Close button for modals - positioned above everything */}
               {localModalOpen && (
                 <IconButton
@@ -309,11 +309,10 @@ const NavBar = ({ modals }: TopBarProps) => {
                   <Close fontSize={"large"} />
                 </IconButton>
               )}
-              <BackgroundEffect />
               {modal}
             </Box>
           </Slide>
-        </Modal>
+        </Modal >
       ))}
     </>
   );
