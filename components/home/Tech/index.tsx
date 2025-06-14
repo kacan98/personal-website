@@ -38,7 +38,8 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
           pin: true, // pin the trigger element while active
           start: "top bottom",
           end: "bottom top",
-          scrub: 4,
+          scrub: 1, // Reduced from 4 to 1 for smoother response
+          anticipatePin: 1, // Helps with smoother pin initialization
         },
       });
 
@@ -47,17 +48,19 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
         {
           x: (index) => {
             return index % 2 === 0
-              ? gsap.utils.random(600, 400)
-              : gsap.utils.random(-600, -400);
+              ? gsap.utils.random(400, 300)
+              : gsap.utils.random(-400, -300);
           },
+          force3D: true, // Force 3D transforms for hardware acceleration
         },
         {
           x: (index) => {
             return index % 2 === 0
-              ? gsap.utils.random(-600, -400)
-              : gsap.utils.random(600, 400);
+              ? gsap.utils.random(-400, -300)
+              : gsap.utils.random(400, 300);
           },
-          ease: "power1.inOut",
+          ease: "power2.inOut", // Smoother easing function
+          force3D: true, // Force 3D transforms for hardware acceleration
         },
       );
     }, component);
@@ -70,6 +73,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
       sx={{
         overflow: "hidden",
         py: 4,
+        willChange: "transform", // Add GPU acceleration hint
       }}
     >
       <Box
@@ -105,6 +109,8 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
             justifyContent: "center",
             gap: 2,
             color: "text.secondary",
+            willChange: "transform", // Add GPU acceleration hint
+            transform: "translateZ(0)", // Force GPU acceleration
           }}
           aria-label={name || ""}
         >
