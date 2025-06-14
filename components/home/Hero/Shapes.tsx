@@ -18,6 +18,7 @@ const CanvasContainer = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   marginTop: theme.spacing(2),
   marginBottom: theme.spacing(2),
+  opacity: 0, // Start hidden for animation
   [theme.breakpoints.up('md')]: {
     marginTop: 0,
     marginBottom: 0,
@@ -30,8 +31,18 @@ const StyledCanvas = styled(Canvas)({
 
 export function Shapes() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Animate container in when component mounts
+    if (containerRef.current) {
+      gsap.to(containerRef.current, {
+        opacity: 1,
+        duration: 0.8,
+        ease: "power2.out",
+      });
+    }
+
     const handleMouseMove = (event: any) => {
       // Normalize mouse position values between -1 and 1
       const x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -44,8 +55,9 @@ export function Shapes() {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+
   return (
-    <CanvasContainer>
+    <CanvasContainer ref={containerRef}>
       <StyledCanvas
         shadows
         gl={{ antialias: false }}
