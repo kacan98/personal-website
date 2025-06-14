@@ -1,2 +1,3 @@
 - Make the navbar blury so that it's easier to read when it's over something?
-Make icons absolute in the bottom right corner of the screen
+- Make icons absolute in the bottom right corner of the screen - social icons
+- Make x in top right of modals also absolute, so that it's always in the same place even when scrolled

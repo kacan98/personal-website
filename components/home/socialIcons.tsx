@@ -8,12 +8,12 @@ type SocialProps = {
 
 const SocialIcons = async ({ direction }: SocialProps) => {
   const socials = await getSocials();
-  return (
-    <Box
+  return (    <Box
       sx={{
-        position: "absolute",
-        bottom: 0,
-        right: 0,
+        position: "fixed",
+        bottom: 16,
+        right: 16,
+        zIndex: 1000, // Below navbar but above page content
         p: 2,
       }}
     >

@@ -200,14 +200,15 @@ const NavBar = ({ modals }: TopBarProps) => {
           minHeight: { xs: 56, md: 93 }, // Match navbar height exactly
           zIndex: 1300, // Below navbar (1301) but above page content
         }}
-      />
-      <AppBar
+      />      <AppBar
         position="sticky"
-        color="transparent"
-        sx={{
+        color="transparent" sx={{
           m: 0,
           //so that it shows up above the modals (zIndex 1300 in MUI)
           zIndex: 1301,
+          backdropFilter: 'blur(10px)',
+          backgroundColor: 'rgba(15, 23, 42, 0.3)', // More transparent background
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)', // Subtle border
         }}
       >
         <Toolbar sx={{ minHeight: { xs: 56, md: 64 } }}>
@@ -294,27 +295,29 @@ const NavBar = ({ modals }: TopBarProps) => {
                 color: "text.primary",
                 backgroundColor: '#0f172a',
               }}
-            >
-              <BackgroundEffect containInParent={true}></BackgroundEffect>
-              {/* Close button for modals - positioned above everything */}
-              {localModalOpen && (
-                <IconButton
-                  onClick={handleModalClose}
-                  sx={{
-                    //put it on the right side of the modal
-                    position: "absolute",
-                    right: 0,
-                    margin: "16px",
-                    padding: "16px",
-                    zIndex: 1320, // Higher than mobile menu (1310), navbar (1301), and modals (1300)
-                    color: "text.primary",
-                  }}
-                  size={"large"}
-                  aria-label="close"
-                >
-                  <Close fontSize={"large"} />
-                </IconButton>
-              )}
+            >              <BackgroundEffect containInParent={true}></BackgroundEffect>              {/* Close button for modals - positioned within the sliding content */}
+              <IconButton
+                onClick={handleModalClose}
+                sx={{
+                  position: "sticky",
+                  top: 16,
+                  left: "calc(100% - 72px)", // Position from left to achieve right alignment
+                  float: "right",
+                  margin: "16px",
+                  padding: "16px",
+                  zIndex: 1320, // Higher than mobile menu (1310), navbar (1301), and modals (1300)
+                  color: "text.primary",
+                  backgroundColor: 'rgba(15, 23, 42, 0.6)', // Semi-transparent background for better visibility
+                  backdropFilter: 'blur(10px)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                  }
+                }}
+                size={"large"}
+                aria-label="close"
+              >
+                <Close fontSize={"large"} />
+              </IconButton>
               {modal}
             </Box>
           </Slide>
