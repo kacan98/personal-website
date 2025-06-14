@@ -16,19 +16,22 @@ const NameLetter = styled('span')({
   opacity: 0,
 });
 
-const FirstNameContainer = styled(Typography)({
+const FirstNameContainer = styled(Typography)(({
   display: 'block',
+  letterSpacing: '0.001em',
   color: '#64748b', // text-slate-500 equivalent
-});
+  marginBottom: '0.7rem',
+  fontSize: 'clamp(2rem, 100%, 11rem)',
+}));
 
-const LastNameContainer = styled(Typography)({
+const LastNameContainer = styled(Typography)(({
   display: 'block',
   color: '#cbd5e1', // text-slate-300 equivalent
-  marginTop: '-0.2em',
-  fontSize: '6rem',
-  //add space between letters
+  marginTop: '16px',
   letterSpacing: '0.001em',
-});
+  whiteSpace: 'nowrap',
+  fontSize: 'clamp(3rem, 100%, 6rem)'
+}));
 
 const JobTitle = styled(Typography)({
   display: 'block',
@@ -42,13 +45,12 @@ const JobTitle = styled(Typography)({
   opacity: 0,
 });
 
-const NameHeading = styled(Typography)({
+const NameHeading = styled(Typography)(({
   marginBottom: '2rem',
-  fontSize: 'clamp(3rem, 20vmin, 20rem)',
   fontWeight: 800,
-  lineHeight: 'none',
+  lineHeight: 0.9,
   letterSpacing: '-0.05em',
-});
+}));
 
 /**
  * Component for "Hero" Slices.
@@ -104,8 +106,6 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
       </NameLetter>
     ));
   };
-
-
 
   return (
     <Box ref={component}>
