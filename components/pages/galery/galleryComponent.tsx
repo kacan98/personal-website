@@ -1,13 +1,12 @@
 "use client";
-import React, { useState } from "react";
-import { a, useTransition } from "@react-spring/web";
-import { Project } from "@/sanity/schemaTypes/project";
 import { ProjectCard } from "@/components/pages/galery/projectCard";
-import Grid2 from "@mui/material/Unstable_Grid2";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
-import { useMediaQuery } from "@mui/system";
-import { Box, Theme } from "@mui/material";
+import { Project } from "@/sanity/schemaTypes/project";
+import { Box } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import { a, useTransition } from "@react-spring/web";
 import Link from "next/link";
+import { useState } from "react";
 
 type GalleryComponentProps = {
   projects: Project[];
@@ -18,13 +17,10 @@ export const GalleryComponent = ({
   projects,
   filteringIsEnabled,
 }: GalleryComponentProps) => {
-  const [selectedTag, setSelectedTag] = useState<string>("All");
-  const isBigScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.up("sm"),
-  );
+  const [selectedTag, setSelectedTag] = useState<string>("all");
 
   const uniqueTags = Array.from(
-    new Set(projects.flatMap((project) => project.tags)),
+    new Set(projects.flatMap((project) => project.tags.map((tag) => tag.trim().toLowerCase()))),
   )
     .sort()
     //I accidentally added an empty string to the tags array in sanity studio
@@ -32,15 +28,12 @@ export const GalleryComponent = ({
     .filter((tag) => !!tag);
 
   //Has to be above filtering projects
-  uniqueTags.unshift("All");
+  uniqueTags.unshift("all");
 
   const filteredProjects =
     !!selectedTag &&
-      selectedTag !== "All" &&
-      uniqueTags.length > 1 &&
-      isBigScreen
-      ? projects.filter((project) => project.tags.includes(selectedTag))
-      : projects;
+      selectedTag !== "all" &&
+      uniqueTags.length > 1 ? projects.filter((project) => project.tags.map(t => t.toLocaleLowerCase()).includes(selectedTag.toLowerCase())) : projects;
 
   const transitions = useTransition(filteredProjects, {
     from: { opacity: 0, transform: "scale(0.5)", height: 0 },
@@ -56,8 +49,8 @@ export const GalleryComponent = ({
       alignItems={"center"}
       direction={"column"}
     >
-      {filteringIsEnabled && isBigScreen && (
-        <Grid2 mb={3}>
+      {filteringIsEnabled && (
+        <Grid2 mb={3} p={2}>
           {
             <ProjectFilter
               selectedFilter={selectedTag}

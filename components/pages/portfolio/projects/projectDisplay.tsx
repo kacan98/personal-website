@@ -1,12 +1,11 @@
 "use client";
-import { Theme } from "@mui/material";
-import { useState } from "react";
 import { ProjectCard } from "@/components/pages/galery/projectCard";
-import { a, useTransition } from "@react-spring/web";
-import Grid2 from "@mui/material/Unstable_Grid2";
-import { useMediaQuery } from "@mui/system";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { Project } from "@/sanity/schemaTypes/project";
+import { Box } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import { a, useTransition } from "@react-spring/web";
+import { useState } from "react";
 
 type ProjectDisplayProps = {
   projects: Project[];
@@ -14,9 +13,6 @@ type ProjectDisplayProps = {
 
 const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
   const [selectedTag, setSelectedTag] = useState<string>("All");
-  const isBigScreen = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.up("sm"),
-  );
 
   const uniqueTags = Array.from(
     new Set(projects.flatMap((project) => project.tags)),
@@ -41,21 +37,20 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
   });
 
   return (
-    <Grid2
-      container
-      justifyContent={"center"}
-      alignItems={"center"}
-      direction={"column"}
-    >
-      <Grid2>
-        {isBigScreen && (
-          <ProjectFilter
-            selectedFilter={selectedTag}
-            setSelectedFilter={setSelectedTag}
-            filters={uniqueTags}
-          />
-        )}
-      </Grid2>
+    <Box p={2}>
+      <Box sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        mb: 3,
+        px: 2
+      }}>
+        <ProjectFilter
+          selectedFilter={selectedTag}
+          setSelectedFilter={setSelectedTag}
+          filters={uniqueTags}
+        />
+      </Box>
 
       <Grid2
         container
@@ -69,7 +64,7 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
           </a.div>
         ))}
       </Grid2>
-    </Grid2>
+    </Box>
   );
 };
 
