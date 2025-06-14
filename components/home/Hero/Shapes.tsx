@@ -1,11 +1,13 @@
 "use client";
 
-import * as THREE from "three";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, Float, Environment } from "@react-three/drei";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 import { Box, styled } from "@mui/material";
+import { ContactShadows, Environment, Float } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { gsap } from "gsap";
+import { Suspense, useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+import { useSoundEffects } from "../../../hooks/useSoundEffects";
+import { getPublicAssetUrl } from "../../../utils/assetHelpers";
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -104,16 +106,20 @@ function Geometries({ mousePosition }: {
         geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Cube (back, right)
       },
     ];
+  // Use our custom hook for sound effects
+  const soundPaths = [
+    getPublicAssetUrl("sounds/hit1.ogg"),
+    getPublicAssetUrl("sounds/hit2.ogg"),
+    getPublicAssetUrl("sounds/hit3.ogg"),
+    getPublicAssetUrl("sounds/hit4.ogg"),
+    getPublicAssetUrl("sounds/hit6.ogg"),
+    getPublicAssetUrl("sounds/hit7.ogg"),
+    getPublicAssetUrl("sounds/hit8.ogg"),
+  ];
 
-  const soundEffects = [
-    new Audio("/sounds/hit1.ogg"),
-    new Audio("/sounds/hit2.ogg"),
-    new Audio("/sounds/hit3.ogg"),
-    new Audio("/sounds/hit4.ogg"),
-    new Audio("/sounds/hit6.ogg"),
-    new Audio("/sounds/hit7.ogg"),
-    new Audio("/sounds/hit8.ogg"),
-  ];  const materials = [
+  const { playRandomSound } = useSoundEffects(soundPaths);
+
+  const materials = [
     // Rainbow/Iridescent Material - keeping this one since it's cool
     new THREE.MeshNormalMaterial(),
     // Holographic Chrome Material - similar rainbow effect but with metallic chrome base
@@ -249,13 +255,12 @@ function Geometries({ mousePosition }: {
       emissiveIntensity: 2.2,
     }),
   ];
-
   return geometries.map(({ position, r, geometry }) => (
     <Geometry
       key={JSON.stringify(position)} // Unique key
       position={position.map((p) => p * 2) as [number, number, number]}
       geometry={geometry}
-      soundEffects={soundEffects}
+      playSound={playRandomSound}
       materials={materials}
       r={r}
       mousePosition={mousePosition}
@@ -263,11 +268,11 @@ function Geometries({ mousePosition }: {
   ));
 }
 
-function Geometry({ r, position, geometry, soundEffects, materials, mousePosition }: {
+function Geometry({ r, position, geometry, playSound, materials, mousePosition }: {
   r: number;
   position: [number, number, number];
   geometry: THREE.BufferGeometry;
-  soundEffects: HTMLAudioElement[];
+  playSound: () => void;
   materials: THREE.Material[];
   mousePosition: { x: number; y: number; };
 }) {
@@ -277,24 +282,24 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
   const floatRef = useRef<THREE.Group>(null);
   const [currentMaterial, setCurrentMaterial] = useState<THREE.Material>();
   const initialPosition = useRef([...position]); // Create a copy of the position array
-
   // Initialize material only once
   useEffect(() => {
     if (!currentMaterial) {
       setCurrentMaterial(gsap.utils.random(materials));
     }
-  }, [materials, currentMaterial]);  function getRandomMaterial() {
+  }, [materials, currentMaterial]);
+  
+  function getRandomMaterial() {
     // Filter out the current material to ensure we always get a different one
     const availableMaterials = materials.filter(material => material !== currentMaterial);
     return gsap.utils.random(availableMaterials);
-  }
-
-  function handleClick(e: {
+  }  function handleClick(e: {
     object: THREE.Object3D;
   }) {
     const mesh = e.object;
 
-    gsap.utils.random(soundEffects).play();
+    // Always play sound - we now handle errors in the hook
+    playSound();
 
     gsap.to(mesh.rotation, {
       x: `+=${gsap.utils.random(0, 2)}`,
@@ -303,17 +308,19 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
       duration: 1.3,
       ease: "elastic.out(1,0.3)",
       yoyo: true,
-    });    // Only change material on click
+    });
+    // Only change material on click
     setCurrentMaterial(getRandomMaterial());
   }
 
   const handlePointerOver = () => {
     document.body.style.cursor = "pointer";
   };
-
   const handlePointerOut = () => {
     document.body.style.cursor = "default";
-  }; useEffect(() => {
+  }; 
+  
+  useEffect(() => {
     const ctx = gsap.context(() => {
       setIsVisible(true);
       if (meshRef.current) {
@@ -364,10 +371,12 @@ function Geometry({ r, position, geometry, soundEffects, materials, mousePositio
       initialPosition.current[2],
       0.07
     );
-  });
+  });  
+  
   return (
     <group ref={groupRef}>
-      <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>        <mesh
+      <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>
+        <mesh
         ref={meshRef}
         geometry={geometry} // eslint-disable-line react/no-unknown-property
         material={currentMaterial} // eslint-disable-line react/no-unknown-property
