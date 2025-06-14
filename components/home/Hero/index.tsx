@@ -21,7 +21,7 @@ const FirstNameContainer = styled(Typography)(({
   letterSpacing: '0.001em',
   color: '#64748b',
   marginBottom: '0.7rem',
-  fontSize: 'clamp(2rem, 100%, 11rem)',
+  fontSize: 'clamp(2rem, 100%, 20vw)',
 }));
 
 const LastNameContainer = styled(Typography)(({
@@ -30,7 +30,7 @@ const LastNameContainer = styled(Typography)(({
   marginTop: '16px',
   letterSpacing: '0.001em',
   whiteSpace: 'nowrap',
-  fontSize: 'clamp(3rem, 100%, 6rem)'
+  fontSize: 'clamp(3rem, 100%, 20vw)'
 }));
 
 const JobTitle = styled(Typography)({
