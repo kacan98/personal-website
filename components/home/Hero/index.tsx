@@ -1,5 +1,5 @@
 "use client";
-import { Box, Grid, Typography, styled } from "@mui/material";
+import { Box, GlobalStyles, Grid, Typography, styled } from "@mui/material";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 import { Shapes } from "./Shapes";
@@ -13,7 +13,6 @@ interface HeroProps {
 // Styled components
 const NameLetter = styled('span')({
   display: 'inline-block',
-  opacity: 0,
   willChange: 'transform, opacity',
 });
 
@@ -43,7 +42,6 @@ const JobTitle = styled(Typography)({
   textTransform: 'uppercase',
   letterSpacing: '0.2em',
   fontWeight: 700,
-  opacity: 0,
   willChange: 'transform, opacity',
 });
 
@@ -76,7 +74,7 @@ const LoadingOverlay = styled(Box)({
 export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element => {
   const component = useRef(null);
   const [showShapes, setShowShapes] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingProgress, setLoadingProgress] = useState(25); // Start at 10% to show initial loading
   const [loading, setLoading] = useState(true);
 
   // Simple loading simulation
@@ -86,7 +84,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
     if (loading) {
       interval = setInterval(() => {
         setLoadingProgress(prev => {
-          const next = prev + 30;
+          const next = prev + 50;
           if (next >= 100) {
             clearInterval(interval);
             // Once loading reaches 100%, wait a bit and hide the loader
@@ -99,8 +97,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
     }
 
     return () => clearInterval(interval);
-  }, [loading]);
-  // Animation effect that runs after loading is complete
+  }, [loading]);  // Animation effect that runs after loading is complete
   useEffect(() => {
     if (loading || !component.current) return;
 
@@ -152,6 +149,17 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
 
   return (
     <>
+      {/* Apply global style to prevent scrolling during loading */}
+      {loading && (
+        <GlobalStyles
+          styles={{
+            body: {
+              overflow: 'hidden'
+            }
+          }}
+        />
+      )}
+
       {loading && (
         <LoadingOverlay>
           <Box sx={{ width: '60%', maxWidth: '400px', mb: 2 }}>
@@ -178,7 +186,14 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
         </LoadingOverlay>
       )}
 
-      <Box ref={component} sx={{ opacity: loading ? 0 : 1, transition: 'opacity 0.5s ease' }}>
+      <Box
+        ref={component}
+        sx={{
+          opacity: loading ? 0 : 1,
+          transition: 'opacity 0.5s ease',
+          visibility: loading ? 'hidden' : 'visible'
+        }}
+      >
         <Grid
           container
           sx={{
