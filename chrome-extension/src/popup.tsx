@@ -1,32 +1,117 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
+const styles = {
+  container: {
+    width: "420px",
+    minHeight: "500px",
+    background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+    color: "#ffffff",
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+    borderRadius: "0px",
+    overflow: "hidden"
+  },
+  header: {
+    background: "linear-gradient(90deg, #333 0%, #444 100%)",
+    padding: "20px",
+    textAlign: "center" as const,
+    borderBottom: "1px solid #444"
+  }, title: {
+    margin: "0",
+    fontSize: "20px",
+    fontWeight: "700",
+    fontFamily: "'Urbanist', sans-serif",
+    background: "linear-gradient(45deg, #ffffff 0%, #e0e0e0 100%)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text"
+  },
+  subtitle: {
+    margin: "5px 0 0 0",
+    fontSize: "12px",
+    color: "#aaaaaa",
+    fontWeight: "400"
+  },
+  content: {
+    padding: "20px"
+  },
+  textarea: {
+    width: "100%",
+    height: "280px",
+    padding: "16px",
+    border: "1px solid #444",
+    borderRadius: "8px",
+    background: "#2a2a2a",
+    color: "#ffffff",
+    fontSize: "13px",
+    fontFamily: "'Open Sans', system-ui, sans-serif",
+    lineHeight: "1.5",
+    resize: "vertical" as const,
+    outline: "none",
+    transition: "border-color 0.2s ease"
+  },
+  textareaFocus: {
+    borderColor: "#666"
+  },
+  buttonContainer: {
+    marginTop: "16px",
+    display: "flex",
+    gap: "12px"
+  },
+  button: {
+    flex: "1",
+    padding: "12px 16px",
+    border: "none",
+    borderRadius: "6px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    fontFamily: "'Open Sans', sans-serif"
+  },
+  primaryButton: {
+    background: "linear-gradient(45deg, #4CAF50 0%, #45a049 100%)",
+    color: "#ffffff",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
+  },
+  primaryButtonHover: {
+    transform: "translateY(-1px)",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.3)"
+  },
+  placeholder: {
+    color: "#888",
+    fontStyle: "italic"
+  }
+};
+
 const Popup = () => {
   const [pageText, setPageText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [focusedButton, setFocusedButton] = useState<string | null>(null);
   const jobIdRef = useRef(`job-${Date.now()}`);
-
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, ({text, isSelectedText}) => {
           if (text) {
             setPageText(text);
-            chrome.storage.local.set({ [jobIdRef.current]: text })
           }
+          setIsLoading(false);
 
           if(isSelectedText){
             openCVTool();
           }
         });
+      } else {
+        setIsLoading(false);
       }
     });
   }, []);
 
-  const saveContent = () => {
-    chrome.storage.local.set({ [jobIdRef.current]: pageText });
-  };
-
   const openCVTool = () => {
+  // Store the current job description content right before opening the CV tool
+    chrome.storage.local.set({ [jobIdRef.current]: pageText });
+
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const currentTabUrl = tabs[0]?.url;
       if (currentTabUrl) {
@@ -45,18 +130,36 @@ const Popup = () => {
     });
   };
 
-  return (
-    <div style={{ width: "500px" }}>
+  return (<div style={styles.container}>
+    <div style={styles.header}>
+      <h1 style={styles.title}>CV Tailor</h1>
+      <p style={styles.subtitle}>Highlight job descriptions to tailor your CV</p>
+    </div>
+    <div style={styles.content}>
       <textarea
-        style={{ width: "100%", height: "300px" }}
+        style={{
+          ...styles.textarea,
+          ...(pageText === "" ? styles.placeholder : {})
+        }}
         value={pageText}
         onChange={(e) => setPageText(e.target.value)}
-      />
-      <div style={{ marginTop: "10px" }}>
-        <button onClick={saveContent} style={{ marginRight: "10px" }}>
-          Save Content
+        placeholder={isLoading ? "Loading page content..." : "Paste or edit job description here..."}
+        disabled={isLoading} />
+      <div style={styles.buttonContainer}>
+        <button
+          onClick={openCVTool}
+          style={{
+            ...styles.button,
+            ...styles.primaryButton,
+            ...(focusedButton === 'tailor' ? styles.primaryButtonHover : {}),
+            width: "100%"
+          }}
+          onMouseEnter={() => setFocusedButton('tailor')}
+          onMouseLeave={() => setFocusedButton(null)}
+        >
+          📝 Tailor CV
         </button>
-        <button onClick={openCVTool}>Open CV Tool</button>
+      </div>
       </div>
     </div>
   );

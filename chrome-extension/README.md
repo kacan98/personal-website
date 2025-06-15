@@ -1,29 +1,28 @@
-# Chrome Extension TypeScript Starter
+# CV Tailor - Chrome Extension
 
 ![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
 
-Chrome Extension, TypeScript and Visual Studio Code
+A simple Chrome extension that helps you tailor your CV for specific job applications.
+
+## What it does
+
+- **Extract Job Descriptions**: Automatically grabs selected text
+- **Quick CV Integration**: Opens the CV tailoring tool with the job description pre-loaded
+- **Simple Workflow**: Highlight text on any job posting → Click "Tailor CV" → Your tool opens with the content ready
+
+Perfect for quickly customizing your CV to match specific job requirements.
 
 ## Prerequisites
 
 * [node + npm](https://nodejs.org/) (Current Version)
 
-## Option
+## Optional Tools
 
-* [Visual Studio Code](https://code.visualstudio.com/)
-
-## Includes the following
+## Tech Stack
 
 * TypeScript
 * Webpack
 * React
-* Jest
-* Example Code
-    * Chrome Storage
-    * Options Version 2
-    * content script
-    * count up badge number
-    * background
 
 ## Project Structure
 
@@ -38,33 +37,8 @@ Chrome Extension, TypeScript and Visual Studio Code
 npm install
 ```
 
-## Import as Visual Studio Code project
-
-...
-
 ## Build
 
 ```
 npm run build
 ```
-
-## Build in watch mode
-
-### terminal
-
-```
-npm run watch
-```
-
-### Visual Studio Code
-
-Run watch mode.
-
-type `Ctrl + Shift + B`
-
-## Load extension to chrome
-
-Load `dist` directory
-
-## Test
-`npx jest` or `npm run test`

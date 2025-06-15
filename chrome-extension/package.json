@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-typescript-starter",
+  "name": "cv-tailor-extension",
   "version": "1.0.0",
-  "description": "chrome-extension-typescript-starter",
+  "description": "CV Tailor - Highlight job descriptions to automatically tailor your CV",
   "main": "index.js",
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
