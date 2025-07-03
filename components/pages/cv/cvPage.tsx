@@ -37,13 +37,19 @@ function CvPage({ jobDescription }: CvProps) {
   const [positionDetails, setPositionDetails] = useState<string>('')
   const [shouldAdjustCv, setShouldAdjustCv] = useState(false);
   const [positionIntersection, setPositionIntersection] = useState<JobCvIntersectionResponse | null>(null)
-  const [checked, setChecked] = useState<string[]>([])
-  const [companyName, setCompanyName] = useState<string | null>(null)
-  const [motivationalLetter, setMotivationalLetter] = useState<string | null>(null)
+  const [checked, setChecked] = useState<string[]>([]);
+  const [companyName, setCompanyName] = useState<string | null>(null);
+  const [motivationalLetter, setMotivationalLetter] = useState<string | null>(null);
+  const [removedSections, setRemovedSections] = useState<Set<string>>(new Set());
+  const [modifiedSections, setModifiedSections] = useState<Set<string>>(new Set());
+  const [removedSubSections, setRemovedSubSections] = useState<Set<string>>(new Set());
+  const [modifiedSubSections, setModifiedSubSections] = useState<Set<string>>(new Set());
   const { getMotivationalLetter,
     updatePositionIntersection,
     getSummary,
-    adjustCvBasedOnPosition, translateCv } = useCvTools({
+    adjustCvBasedOnPosition,
+    translateCv,
+    adjustSection } = useCvTools({
       reduxCvProps,
       positionDetails,
       positionSummary,
@@ -58,6 +64,39 @@ function CvPage({ jobDescription }: CvProps) {
     })
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
   const [fontSize, setFontSize] = useState(12);
+
+  // Callback functions for tracking section changes
+  const handleSectionAdjusted = (sectionKey: string) => {
+    setModifiedSections(prev => new Set([...prev, sectionKey]));
+  };
+
+  const handleRemoveSection = (sectionKey: string) => {
+    setRemovedSections(prev => new Set([...prev, sectionKey]));
+  };
+
+  const handleRestoreSection = (sectionKey: string) => {
+    setRemovedSections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(sectionKey);
+      return newSet;
+    });
+  };
+
+  const handleRemoveSubSection = (subSectionKey: string) => {
+    setRemovedSubSections(prev => new Set([...prev, subSectionKey]));
+  };
+
+  const handleRestoreSubSection = (subSectionKey: string) => {
+    setRemovedSubSections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(subSectionKey);
+      return newSet;
+    });
+  };
+
+  const handleSubSectionAdjusted = (subSectionKey: string) => {
+    setModifiedSubSections(prev => new Set([...prev, subSectionKey]));
+  };
 
   useEffect(() => {
     if (jobDescription && jobDescription.trim().length > 0) {
@@ -122,7 +161,7 @@ function CvPage({ jobDescription }: CvProps) {
       <Box sx={{ mb: 5, mt: 2 }}>
         {/* AI did not work in the past in production because of limitations in Vercel :((( */}
         {/* but let's try */}
-        {DEV && editable && (
+        {DEV && (
           <>
             {
               <AiForm
@@ -159,8 +198,91 @@ function CvPage({ jobDescription }: CvProps) {
         sx={{ mb: 2 }} />
       }
 
+      {/* Fixed bottom-left job description indicator */}
+      {jobDescription && (
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            left: 24,
+            zIndex: 1000,
+            p: 2.5,
+            borderRadius: 2,
+            backgroundColor: 'rgba(59, 130, 246, 0.08)',
+            color: 'text.primary',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: 1,
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            backdropFilter: 'blur(8px)',
+            maxWidth: '200px'
+          }}
+        >
+          <Box sx={{ color: '#3b82f6', fontSize: '18px' }}>✔️</Box>
+          <Typography variant="body2" sx={{ fontWeight: 500, margin: 0, color: 'text.primary' }}>
+            CV tailored for this position
+          </Typography>
+        </Box>
+      )}
+
+      {/* Fixed top-right CV adjustments indicator */}
+      {(modifiedSections.size > 0 || modifiedSubSections.size > 0 || removedSections.size > 0 || removedSubSections.size > 0) && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 24,
+            right: 24,
+            zIndex: 999,
+            p: 2.5,
+            borderRadius: 2,
+            backgroundColor: 'rgba(16, 185, 129, 0.08)',
+            color: 'text.primary',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: 1,
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            backdropFilter: 'blur(8px)',
+            maxWidth: '200px'
+          }}
+        >
+          <Box sx={{ color: '#10b981', fontSize: '18px' }}>✓</Box>
+          <Typography variant="body2" sx={{ fontWeight: 500, margin: 0, color: 'text.primary' }}>
+            CV Successfully Adjusted
+          </Typography>
+          <Typography variant="caption" sx={{ margin: 0, color: 'text.secondary', fontSize: '11px' }}>
+            {modifiedSections.size + modifiedSubSections.size > 0 &&
+              `${modifiedSections.size + modifiedSubSections.size} section${modifiedSections.size + modifiedSubSections.size !== 1 ? 's' : ''} modified`
+            }
+            {(modifiedSections.size + modifiedSubSections.size > 0) && (removedSections.size + removedSubSections.size > 0) && ', '}
+            {removedSections.size + removedSubSections.size > 0 &&
+              `${removedSections.size + removedSubSections.size} removed`
+            }
+          </Typography>
+        </Box>
+      )}
+
       <Print printComponent={<CvPaper isPrintVersion />} fontSize={fontSize} fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
-        <CvPaper editable={editable} />
+        <CvPaper
+          editable={editable}
+          positionDetails={positionDetails}
+          adjustSection={adjustSection}
+          removedSections={removedSections}
+          modifiedSections={modifiedSections}
+          onRemoveSection={handleRemoveSection}
+          onRestoreSection={handleRestoreSection}
+          onSectionAdjusted={handleSectionAdjusted}
+          removedSubSections={removedSubSections}
+          modifiedSubSections={modifiedSubSections}
+          onRemoveSubSection={handleRemoveSubSection}
+          onRestoreSubSection={handleRestoreSubSection}
+          onSubSectionAdjusted={handleSubSectionAdjusted}
+        />
       </Print>
 
       {DEV && (
@@ -182,13 +304,15 @@ function CvPage({ jobDescription }: CvProps) {
         </>
       )}
 
-      {DEV && positionDetails && (
+      {DEV && (
         <>
           <Button
             type="button"
             onClick={() => getMotivationalLetter(positionDetails, checked, selectedLanguage)}
             sx={{ mt: 2, mb: 2, width: "100%" }}
-            variant="outlined" >
+            variant="outlined"
+            disabled={!positionDetails || positionDetails.trim().length === 0}
+          >
             Get Motivational Letter
           </Button>
           {motivationalLetter && (

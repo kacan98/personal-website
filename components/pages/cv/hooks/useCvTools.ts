@@ -3,6 +3,7 @@ import { initCv } from '@/redux/slices/cv'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { useDispatch } from 'react-redux'
 import { useAdjustCvBasedOnPosition } from './useAdjustCvBasedOnPosition'
+import { useAdjustSection } from './useAdjustSection'
 import { useCvTranslation } from './useCvTranslation'
 import { useGetJobCvIntersection } from './useGetJobCvIntersection'
 import { useGetMotivationalLetter } from './useGetMotivationalLeter'
@@ -75,11 +76,15 @@ export const useCvTools = ({
     positionDetails,
     positionSummary,
   })
-
   const { translateCv } = useCvTranslation({
     setLoading,
     setsnackbarMessage,
     updateCvInRedux,
+  })
+
+  const { adjustSection } = useAdjustSection({
+    setLoading,
+    setSnackbarMessage: setsnackbarMessage,
   })
 
   return {
@@ -88,5 +93,6 @@ export const useCvTools = ({
     getSummary: updateSummary,
     adjustCvBasedOnPosition,
     translateCv,
+    adjustSection,
   }
 }

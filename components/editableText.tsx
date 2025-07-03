@@ -16,13 +16,36 @@ export type EditableTextProps = EditableTextExtraProps & TypographyProps
 
 export function EditableText({ query, text, editable, ...typographyProps }: EditableTextProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const [editValue, setEditValue] = useState("");
     const dispatch = useDispatch();
-    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleStartEdit = () => {
+        if (editable) {
+            setEditValue(text || "");
+            setIsEditing(true);
+        }
+    };
 
     const handleSave = () => {
         if (editable) {
-            setIsEditing(false)
-            dispatch(updateCv({ query, newValue: inputRef.current?.value || "" }));
+            setIsEditing(false);
+            dispatch(updateCv({ query, newValue: editValue }));
+        }
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+        setEditValue("");
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            handleSave();
+        }
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            handleCancel();
         }
     };
 
@@ -32,15 +55,15 @@ export function EditableText({ query, text, editable, ...typographyProps }: Edit
                 sx={{ width: "100%" }}
                 multiline
                 type="text"
-                defaultValue={text}
-                onBlur={handleSave}
-                inputRef={inputRef}
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onKeyDown={handleKeyDown}
             />
             <IconButton onClick={handleSave}>
                 <CheckIcon />
             </IconButton>
         </div>
     ) : (
-        <Typography {...typographyProps} onClick={() => editable && setIsEditing(true)}>{text}</Typography>
+            <Typography {...typographyProps} onClick={handleStartEdit}>{text}</Typography>
     );
 }

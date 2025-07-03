@@ -92,13 +92,22 @@ const Popup = () => {
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, ({text, isSelectedText}) => {
+        chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, (response) => {
+          // Handle the case where response might be undefined
+          if (chrome.runtime.lastError) {
+            setIsLoading(false);
+            return;
+          }
+
+          const { text, isSelectedText } = response || {};
+
           if (text) {
             setPageText(text);
           }
           setIsLoading(false);
 
-          if(isSelectedText){
+          // Auto-open if there's selected text 
+          if (isSelectedText) {
             openCVTool();
           }
         });
@@ -109,7 +118,7 @@ const Popup = () => {
   }, []);
 
   const openCVTool = () => {
-  // Store the current job description content right before opening the CV tool
+    // Store the current job description content right before opening the CV tool
     chrome.storage.local.set({ [jobIdRef.current]: pageText });
 
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
@@ -123,7 +132,7 @@ const Popup = () => {
         const newWindowId = newWindowDetails.id;
         // Open localhost as a new tab in the new window
         await chrome.tabs.create({
-          url: `http://localhost:3000/create-cv/${jobIdRef.current}`,
+          url: `http://localhost:3000/cv/${jobIdRef.current}`,
           windowId: newWindowId,
         });
       }
@@ -160,8 +169,8 @@ const Popup = () => {
           📝 Tailor CV
         </button>
       </div>
-      </div>
     </div>
+  </div>
   );
 };
 
