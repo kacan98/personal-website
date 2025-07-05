@@ -1,5 +1,4 @@
 import { OpenAI } from 'openai'
-import { log } from '../helper'
 import { AdjustSectionParams, AdjustSectionResponse } from './model'
 import { ADJUST_SECTION_CONFIG, createChatCompletionRequest } from '../shared/prompts'
 
@@ -34,11 +33,8 @@ export async function POST(req: Request): Promise<Response> {
         adjustedSection
       }
 
-      log('Section adjusted successfully')
       return Response.json(result)
     } catch (parseError) {
-      log('Failed to parse OpenAI response as JSON, returning original section:', response)
-      
       // If JSON parsing fails, return the original section
       const result: AdjustSectionResponse = {
         adjustedSection: body.section
@@ -48,7 +44,6 @@ export async function POST(req: Request): Promise<Response> {
     }
 
   } catch (error) {
-    log('Error adjusting section:', error)
     return Response.json(
       { error: 'Failed to adjust section' },
       { status: 500 }

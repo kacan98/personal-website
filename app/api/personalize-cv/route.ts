@@ -1,7 +1,6 @@
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { baseUrl } from '@/util'
 import { OpenAI } from 'openai'
-import { log } from '../helper'
 import { jobCvIntersectionAPIEndpointName } from '../job-cv-intersection/model'
 import { POST as POSTIntersection } from '../job-cv-intersection/route'
 import { positionSummaryAPIRoute } from '../position-summary/model'
@@ -27,9 +26,6 @@ export async function POST(req: Request): Promise<Response> {
     let newPositionSummary: string | undefined
     let companyName: string | undefined
     if (body.positionWeAreApplyingFor && !positionSummary) {
-      log(
-        '[personalize-cv] positionSummary not provided, fetching from /api/position-summary'
-      )
       const positionSummarizeParams: PositionSummarizeParams = {
         description: body.positionWeAreApplyingFor,
       }
@@ -42,7 +38,6 @@ export async function POST(req: Request): Promise<Response> {
           body: JSON.stringify(positionSummarizeParams),
         }
       ).then((res) => res.json())
-      log('[personalize-cv] positionSummary fetched from /api/position-summary')
       newPositionSummary = resultOfCall.summary
       positionSummary = newPositionSummary
       companyName = resultOfCall.companyName
@@ -62,11 +57,8 @@ export async function POST(req: Request): Promise<Response> {
 
       newJobIntersection = await newIntersection.json()
 
-      log(
-        '[personalize-cv] positionIntersection fetched from /api/job-cv-intersection')
     }
 
-    log('[personalize-cv] starting with upgrading the CV')
     const completion = await openai.beta.chat.completions.parse({
       model: 'gpt-4o',
       messages: [
@@ -97,8 +89,6 @@ export async function POST(req: Request): Promise<Response> {
         type: 'json_object',
       },
     })
-
-    log('[personalize-cv] CV upgraded successfully')
 
     if (completion.choices[0].message.content) {
       const cv: CVSettings = JSON.parse(completion.choices[0].message.content)

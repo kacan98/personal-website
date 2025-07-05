@@ -1,15 +1,13 @@
-import { MotivationalLetterParams } from '@/app/api/motivational-letter/motivational-letter.model'
+import { MotivationalLetterParams, MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 
 interface UseMotivationalLetterProps {
-  setLoading: (boolean: boolean) => void
   setsnackbarMessage: (message: string) => void
-  setMotivationalLetter: (motivationalLetter: string) => void
+  setMotivationalLetter: (motivationalLetter: MotivationalLetterResponse) => void
   reduxCvProps: CVSettings
 }
 
 export const useGetMotivationalLetter = ({
-  setLoading,
   setsnackbarMessage,
   reduxCvProps,
   setMotivationalLetter,
@@ -19,9 +17,10 @@ export const useGetMotivationalLetter = ({
     checked: string[],
     selectedLanguage: string
   ) => {
-    if (!positionDetails)
-      return setsnackbarMessage('Please provide position details')
-    setLoading(true)
+    if (!positionDetails){
+      throw new Error('Please provide position details')
+    }
+
     try {
       const params: MotivationalLetterParams = {
         candidate: {
@@ -43,13 +42,13 @@ export const useGetMotivationalLetter = ({
         throw new Error(`API Error: ${res.status} - ${errorText}`);
       }
 
-      const body = await res.text()
+      const body = await res.json()
       setMotivationalLetter(body)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       setsnackbarMessage(`Error getting a motivational letter: ${errorMessage}`)
+      throw error; // Re-throw to be caught by the parallel execution
     }
-    setLoading(false)
   }
   return { getMotivationalLetter }
 }

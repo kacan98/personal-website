@@ -37,7 +37,7 @@ export const useAdjustCvBasedOnPosition = ({
       throw new Error('Please provide position details');
     }
 
-    setLoading(true)
+    setLoading(true);
 
     const cvUpgradeParams: CvUpgradeParams = {
       cvBody: cvProps,
@@ -66,9 +66,10 @@ export const useAdjustCvBasedOnPosition = ({
       setsnackbarMessage('CV transformed')
     } catch (err: any) {
       setsnackbarMessage('Error transforming CV: ' + err.message)
+      throw err; // Re-throw to be caught by the parallel execution
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false)
   }, [
     cvProps,
     positionDetails,

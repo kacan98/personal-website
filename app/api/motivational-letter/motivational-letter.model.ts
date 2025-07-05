@@ -12,6 +12,17 @@ export const MotivationalLetterParams = z.object({
   jobDescription: z.string(),
   strongPoints: z.array(z.string()),
   language: z.string(),
+  // Optional fields for adjustment
+  currentLetter: z.object({
+    greeting: z.string().optional(),
+    opening: z.string().optional(),
+    whyThisRole: z.string().optional(),
+    keyStrengths: z.array(z.string()).optional(),
+    uniqueValue: z.string().optional(),
+    closing: z.string().optional(),
+    signature: z.string().optional(),
+  }).optional(),
+  adjustmentComments: z.string().optional(),
 })
 
 type ZodMotivationalLetterParams = z.infer<typeof MotivationalLetterParams>
@@ -21,19 +32,21 @@ export interface MotivationalLetterParams extends ZodMotivationalLetterParams {
 }
 
 export type MotivationalLetterResponse = {
-  letter: Array<{
-    type: 'title' | 'paragraph' | 'list'
-    content: string | string[]
-  }>
+  greeting: string
+  opening: string
+  whyThisRole: string
+  keyStrengths: string[]
+  uniqueValue: string
+  closing: string
+  signature: string
 }
 
-//TODO: Use to get a nicely formated response
-// const MotivationalLetterSchema = z.array(
-//   z.object({
-//     type: z.enum(['title', 'paragraph', 'list']),
-//     content: z.union([
-//       z.string(), // for title and paragraph
-//       z.array(z.string()), // for list items
-//     ]),
-//   })
-// )
+export const MotivationalLetterSchema = z.object({
+  greeting: z.string().describe("Professional greeting addressing the hiring manager"),
+  opening: z.string().describe("Brief, engaging opening paragraph showing genuine interest in the role"),
+  whyThisRole: z.string().describe("One paragraph explaining why this specific role/company appeals to you"),
+  keyStrengths: z.array(z.string()).describe("3-4 bullet points highlighting relevant skills and experiences that match the job requirements"),
+  uniqueValue: z.string().describe("A paragraph about what unique perspective or value you'd bring to the team"),
+  closing: z.string().describe("Professional closing paragraph with next steps"),
+  signature: z.string().describe("Professional sign-off")
+})

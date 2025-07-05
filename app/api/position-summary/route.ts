@@ -1,7 +1,6 @@
 import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod.mjs'
 import { z } from 'zod'
-import { log } from '../helper'
 
 const PositionSummarizeParams = z.object({
   description: z.string().min(20, 'Description too short'),
@@ -30,8 +29,6 @@ export async function POST(req: Request): Promise<Response> {
       apiKey: process.env.OPENAI_API_KEY,
     })
 
-    log('[position-summary] starting with summarizing the position')
-
     const completion = await openai.beta.chat.completions.parse({
       model: 'gpt-4o',
       messages: [
@@ -56,7 +53,6 @@ export async function POST(req: Request): Promise<Response> {
       ],
       response_format: zodResponseFormat(PositionSummarizeResponse, 'transformed_cv'),
     })
-    log('[position-summary] got completion', completion)
 
     const content = completion.choices[0].message.content
     if (!content) return new Response('No summary found', { status: 400 })

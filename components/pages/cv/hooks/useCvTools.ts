@@ -1,8 +1,10 @@
 import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/model'
+import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model'
 import { initCv } from '@/redux/slices/cv'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { useDispatch } from 'react-redux'
 import { useAdjustCvBasedOnPosition } from './useAdjustCvBasedOnPosition'
+import { useAdjustMotivationalLetter } from './useAdjustMotivationalLetter'
 import { useAdjustSection } from './useAdjustSection'
 import { useCvTranslation } from './useCvTranslation'
 import { useGetJobCvIntersection } from './useGetJobCvIntersection'
@@ -28,7 +30,7 @@ export const useCvTools = ({
   positionIntersection: JobCvIntersectionResponse | null
   setLoading: (loading: boolean) => void
   setsnackbarMessage: (message: string) => void
-  setMotivationalLetter: (motivationalLetter: string) => void
+  setMotivationalLetter: (motivationalLetter: MotivationalLetterResponse) => void
   setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
   setPositionSummary: (summary: string) => void
   setCompanyName: (companyName: string) => void
@@ -41,9 +43,12 @@ export const useCvTools = ({
   }
 
   const { getMotivationalLetter } = useGetMotivationalLetter({
-    setLoading,
     setsnackbarMessage,
     reduxCvProps,
+    setMotivationalLetter,
+  })
+
+  const { adjustMotivationalLetter } = useAdjustMotivationalLetter({
     setMotivationalLetter,
   })
   const { updatePositionIntersection } = useGetJobCvIntersection({
@@ -89,6 +94,7 @@ export const useCvTools = ({
 
   return {
     getMotivationalLetter,
+    adjustMotivationalLetter,
     updatePositionIntersection,
     getSummary: updateSummary,
     adjustCvBasedOnPosition,

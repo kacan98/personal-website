@@ -44,7 +44,6 @@ export const useAdjustSection = ({
       return result.adjustedSection as CvSection
 
     } catch (error) {
-      console.error('Error adjusting section:', error)
       setSnackbarMessage('Failed to adjust section. Please try again.')
       return null
     } finally {
