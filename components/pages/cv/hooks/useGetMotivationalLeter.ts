@@ -24,19 +24,30 @@ export const useGetMotivationalLetter = ({
     setLoading(true)
     try {
       const params: MotivationalLetterParams = {
-        candidate: reduxCvProps,
+        candidate: {
+          ...reduxCvProps,
+          on: reduxCvProps.on ?? true // Ensure on field is set
+        },
         jobDescription: positionDetails,
         strongPoints: checked,
         language: selectedLanguage,
       }
+
       const res = await fetch('/api/motivational-letter', {
         method: 'POST',
         body: JSON.stringify(params),
       })
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`API Error: ${res.status} - ${errorText}`);
+      }
+
       const body = await res.text()
       setMotivationalLetter(body)
-    } catch {
-      setsnackbarMessage('Error getting a motivational letter')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setsnackbarMessage(`Error getting a motivational letter: ${errorMessage}`)
     }
     setLoading(false)
   }

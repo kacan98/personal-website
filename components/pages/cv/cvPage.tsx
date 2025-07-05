@@ -44,6 +44,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [modifiedSections, setModifiedSections] = useState<Set<string>>(new Set());
   const [removedSubSections, setRemovedSubSections] = useState<Set<string>>(new Set());
   const [modifiedSubSections, setModifiedSubSections] = useState<Set<string>>(new Set());
+  const [cvAdjusted, setCvAdjusted] = useState(false);
   const { getMotivationalLetter,
     updatePositionIntersection,
     getSummary,
@@ -111,6 +112,12 @@ function CvPage({ jobDescription }: CvProps) {
       setShouldAdjustCv(false);
     }
   }, [positionDetails, shouldAdjustCv, adjustCvBasedOnPosition]);
+
+  useEffect(() => {
+    if (snackbarMessage === 'CV transformed') {
+      setCvAdjusted(true);
+    }
+  }, [snackbarMessage]);
 
   const handleLanguageChange = async (l: any) => {
     setLanguage(l.target.value);
@@ -198,8 +205,8 @@ function CvPage({ jobDescription }: CvProps) {
         sx={{ mb: 2 }} />
       }
 
-      {/* Fixed bottom-left job description indicator */}
-      {jobDescription && (
+      {/* Fixed bottom-left job description indicator - only show after CV is adjusted */}
+      {jobDescription && cvAdjusted && (
         <Box
           sx={{
             position: 'fixed',

@@ -27,25 +27,12 @@ export default function Page({ params }: PageProps) {
 
     window.addEventListener("message", handleMessage);
 
-    // Send a message to the content script with retry mechanism
-    const sendMessage = () => {
-      window.postMessage({ action: "GET_SAVED_TEXT", jobId }, "*");
-    };
+    // Send a message to the content script
+    window.postMessage({ action: "GET_SAVED_TEXT", jobId }, "*");
 
-    // Send immediately
-    sendMessage();
-    
-    // Retry after 100ms in case content script wasn't ready
-    const retryTimeout = setTimeout(sendMessage, 100);
-    
-    // Another retry after 500ms
-    const retryTimeout2 = setTimeout(sendMessage, 500);
-
-    // Cleanup the event listener and timeouts
+    // Cleanup the event listener
     return () => {
       window.removeEventListener("message", handleMessage);
-      clearTimeout(retryTimeout);
-      clearTimeout(retryTimeout2);
     };
   }, [jobId]);
 

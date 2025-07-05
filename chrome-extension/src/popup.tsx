@@ -89,6 +89,31 @@ const Popup = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [focusedButton, setFocusedButton] = useState<string | null>(null);
   const jobIdRef = useRef(`job-${Date.now()}`);
+
+  const openCVTool = (textToStore?: string) => {
+    const jobDescription = textToStore || pageText;
+    // Store the current job description content right before opening the CV tool
+    chrome.storage.local.set({ [jobIdRef.current]: jobDescription }, () => {
+      // Only open the CV tool after the storage operation completes
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        const currentTabUrl = tabs[0]?.url;
+        if (currentTabUrl) {
+          const newWindowDetails = await chrome.windows.create({
+            url: currentTabUrl,
+            type: "normal",
+          });
+
+          const newWindowId = newWindowDetails.id;
+          // Open localhost as a new tab in the new window
+          await chrome.tabs.create({
+            url: `http://localhost:3000/cv/${jobIdRef.current}`,
+            windowId: newWindowId,
+          });
+        }
+      });
+    });
+  };
+
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
@@ -99,16 +124,18 @@ const Popup = () => {
             return;
           }
 
-          const { text, isSelectedText } = response || {};
+          const { selectedText } = response || {};
 
-          if (text) {
-            setPageText(text);
+          if (selectedText) {
+            setPageText(selectedText);
           }
+
           setIsLoading(false);
 
           // Auto-open if there's selected text 
-          if (isSelectedText) {
-            openCVTool();
+          if (selectedText) {
+            // Use the text directly since state hasn't updated yet
+            openCVTool(selectedText);
           }
         });
       } else {
@@ -117,32 +144,10 @@ const Popup = () => {
     });
   }, []);
 
-  const openCVTool = () => {
-    // Store the current job description content right before opening the CV tool
-    chrome.storage.local.set({ [jobIdRef.current]: pageText });
-
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      const currentTabUrl = tabs[0]?.url;
-      if (currentTabUrl) {
-        const newWindowDetails = await chrome.windows.create({
-          url: currentTabUrl,
-          type: "normal",
-        });
-
-        const newWindowId = newWindowDetails.id;
-        // Open localhost as a new tab in the new window
-        await chrome.tabs.create({
-          url: `http://localhost:3000/cv/${jobIdRef.current}`,
-          windowId: newWindowId,
-        });
-      }
-    });
-  };
-
   return (<div style={styles.container}>
     <div style={styles.header}>
       <h1 style={styles.title}>CV Tailor</h1>
-      <p style={styles.subtitle}>Highlight job descriptions to tailor your CV</p>
+      <p style={styles.subtitle}>Automatically customize your CV for specific job postings using AI</p>
     </div>
     <div style={styles.content}>
       <textarea
@@ -156,17 +161,20 @@ const Popup = () => {
         disabled={isLoading} />
       <div style={styles.buttonContainer}>
         <button
-          onClick={openCVTool}
+          onClick={() => openCVTool()}
+          disabled={pageText.length < 10}
           style={{
             ...styles.button,
             ...styles.primaryButton,
             ...(focusedButton === 'tailor' ? styles.primaryButtonHover : {}),
-            width: "100%"
+            width: "100%",
+            opacity: pageText.length < 10 ? 0.5 : 1,
+            cursor: pageText.length < 10 ? 'not-allowed' : 'pointer'
           }}
           onMouseEnter={() => setFocusedButton('tailor')}
           onMouseLeave={() => setFocusedButton(null)}
         >
-          📝 Tailor CV
+          📝 Tailor CV {pageText.length < 10 && '(min 10 chars)'}
         </button>
       </div>
     </div>

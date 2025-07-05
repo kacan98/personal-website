@@ -32,7 +32,7 @@ export const useAdjustCvBasedOnPosition = ({
   setCompanyName,
   setPositionIntersection,
 }: AdjustCvBasedOnPositionProps) => {
-  const adjustCvBasedOnPosition = useCallback(async () => {
+  const adjustCvBasedOnPosition = useCallback(async () => {    
     if (!positionDetails) {
       throw new Error('Please provide position details');
     }
@@ -70,11 +70,16 @@ export const useAdjustCvBasedOnPosition = ({
 
     setLoading(false)
   }, [
+    cvProps,
+    positionDetails,
+    positionSummary,
+    positionIntersection,
     setLoading,
     setsnackbarMessage,
     updateCvInRedux,
     setPositionSummary,
     setCompanyName,
+    setPositionIntersection,
   ])
 
   return { adjustCvBasedOnPosition }
