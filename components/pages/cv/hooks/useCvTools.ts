@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useAdjustCvBasedOnPosition } from './useAdjustCvBasedOnPosition'
 import { useAdjustMotivationalLetter } from './useAdjustMotivationalLetter'
 import { useAdjustSection } from './useAdjustSection'
+import { useLetterTranslation } from './useLetterTranslation'
 import { useCvTranslation } from './useCvTranslation'
 import { useGetJobCvIntersection } from './useGetJobCvIntersection'
 import { useGetMotivationalLetter } from './useGetMotivationalLeter'
@@ -81,10 +82,16 @@ export const useCvTools = ({
     positionDetails,
     positionSummary,
   })
-  const { translateCv } = useCvTranslation({
+  const { translateCv, translateCvWithoutLoading } = useCvTranslation({
     setLoading,
     setsnackbarMessage,
     updateCvInRedux,
+  })
+
+  const { translateLetter, translateLetterWithoutLoading } = useLetterTranslation({
+    setLoading,
+    setsnackbarMessage,
+    setMotivationalLetter,
   })
 
   const { adjustSection } = useAdjustSection({
@@ -99,6 +106,9 @@ export const useCvTools = ({
     getSummary: updateSummary,
     adjustCvBasedOnPosition,
     translateCv,
+    translateCvWithoutLoading,
+    translateLetter,
+    translateLetterWithoutLoading,
     adjustSection,
   }
 }

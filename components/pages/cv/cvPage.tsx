@@ -60,7 +60,8 @@ function CvPage({ jobDescription }: CvProps) {
     updatePositionIntersection,
     getSummary,
     adjustCvBasedOnPosition,
-    translateCv,
+    translateCvWithoutLoading,
+    translateLetterWithoutLoading,
     adjustSection } = useCvTools({
       reduxCvProps,
       positionDetails,
@@ -119,7 +120,7 @@ function CvPage({ jobDescription }: CvProps) {
     if (letter.whyThisRole) text += letter.whyThisRole + '\n\n';
 
     if (letter.keyStrengths && letter.keyStrengths.length > 0) {
-      text += 'Key Strengths:\n' + letter.keyStrengths.map(strength => `• ${strength}`).join('\n') + '\n\n';
+      text += 'Why I am a good fit:\n' + letter.keyStrengths.map(strength => `• ${strength}`).join('\n') + '\n\n';
     }
 
     if (letter.uniqueValue) text += letter.uniqueValue + '\n\n';
@@ -480,6 +481,84 @@ function CvPage({ jobDescription }: CvProps) {
     }
   };
 
+  const handleTranslateBoth = async () => {
+    if (selectedLanguage === 'English') {
+      setsnackbarMessage('Please select a language to translate to');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const hasLetter = !!(motivationalLetter || editableMotivationalLetter);
+      let cvCompleted = false;
+      let letterCompleted = false;
+
+      const updateProgress = () => {
+        if (hasLetter) {
+          if (cvCompleted && letterCompleted) {
+            setCurrentOperation('Translation completed! ✓');
+          } else if (cvCompleted && !letterCompleted) {
+            setCurrentOperation('CV translated ✓ - Translating motivational letter...');
+          } else if (!cvCompleted && letterCompleted) {
+            setCurrentOperation('Motivational letter translated ✓ - Translating CV...');
+          } else {
+            setCurrentOperation('Translating CV and motivational letter...');
+          }
+        } else {
+          setCurrentOperation('Translating CV...');
+        }
+      };
+
+      updateProgress();
+
+      const promises = [];
+
+      // CV translation promise
+      const cvPromise = translateCvWithoutLoading({
+        cvProps: reduxCvProps,
+        selectedLanguage
+      }).then((result) => {
+        cvCompleted = true;
+        updateProgress();
+        return result;
+      });
+
+      promises.push(cvPromise);
+
+      // Letter translation promise (only if letter exists)
+      if (hasLetter) {
+        const letterToTranslate = editableMotivationalLetter || motivationalLetter;
+        if (letterToTranslate) {
+          const letterPromise = translateLetterWithoutLoading({
+            letter: letterToTranslate,
+            selectedLanguage
+          }).then((result) => {
+            letterCompleted = true;
+            updateProgress();
+            setEditableMotivationalLetter(result);
+            return result;
+          });
+
+          promises.push(letterPromise);
+        }
+      }
+
+      await Promise.all(promises);
+
+      if (hasLetter) {
+        setsnackbarMessage(`CV and motivational letter translated to ${selectedLanguage}`);
+      } else {
+        setsnackbarMessage(`CV translated to ${selectedLanguage}`);
+      }
+    } catch (error) {
+      setsnackbarMessage('Error during translation');
+    } finally {
+      setLoading(false);
+      setCurrentOperation('Discussing with AI...');
+    }
+  };
+
   return (
     <PageWrapper title={"Resume"} onTitleClicked={onTitleClicked}>
       {editable && (
@@ -631,7 +710,7 @@ function CvPage({ jobDescription }: CvProps) {
         />
       </Print>
 
-      {DEV && (
+      {DEV && !motivationalLetter && (
         <>
           <Box mb={2}>
             <CvLanguageSelectionComponent
@@ -641,11 +720,12 @@ function CvPage({ jobDescription }: CvProps) {
           </Box>
           <Button
             type="button"
-            onClick={() => translateCv({
-              cvProps: reduxCvProps,
-              selectedLanguage
-            })} sx={{ mt: 2, width: "100%" }} variant="outlined" >
-            Translate
+            onClick={handleTranslateBoth}
+            sx={{ mt: 2, width: "100%" }}
+            variant="outlined"
+            disabled={loading}
+          >
+            Translate CV
           </Button>
         </>
       )}
@@ -838,6 +918,28 @@ function CvPage({ jobDescription }: CvProps) {
                   sx={{ borderRadius: 2 }}
                 >
                   {isAdjustingLetter ? 'Adjusting Letter...' : 'Submit Feedback & Adjust'}
+                </Button>
+              </Box>
+
+              {/* Translation section */}
+              <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+                <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+                  Translation
+                </Typography>
+                <Box mb={2}>
+                  <CvLanguageSelectionComponent
+                    selectedLanguage={selectedLanguage}
+                    handleLanguageChange={handleLanguageChange}
+                  />
+                </Box>
+                <Button
+                  type="button"
+                  onClick={handleTranslateBoth}
+                  sx={{ width: "100%", borderRadius: 2 }}
+                  variant="outlined"
+                  disabled={loading}
+                >
+                  Translate CV & Motivational Letter
                 </Button>
               </Box>
             </Paper>

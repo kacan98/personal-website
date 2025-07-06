@@ -1,4 +1,4 @@
-import { CvTranslateParams } from '@/app/api/translate/route'
+import { CvTranslateParams } from '@/app/api/translate/cv/route'
 import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
 import { useCallback } from 'react'
 
@@ -25,7 +25,7 @@ export const useCvTranslation = ({
         return setsnackbarMessage('Please select a language to translate to')
       setLoading(true)
       try {
-        const res = await fetch('/api/translate', {
+        const res = await fetch('/api/translate/cv', {
           method: 'POST',
           body: JSON.stringify({
             targetLanguage: selectedLanguage,
@@ -34,13 +34,46 @@ export const useCvTranslation = ({
         })
         const result = await res.json()
         updateCvInRedux(JSON.parse(result))
+        setsnackbarMessage(`CV translated to ${selectedLanguage}`)
       } catch {
-        setsnackbarMessage('Error getting a intersection')
+        setsnackbarMessage('Error translating CV')
       }
       setLoading(false)
     },
     [setLoading, setsnackbarMessage, updateCvInRedux]
   )
 
-  return { translateCv }
+  // Version that doesn't manage loading state for batch operations
+  const translateCvWithoutLoading = useCallback(
+    async ({
+      cvProps,
+      selectedLanguage,
+    }: {
+      cvProps: CVSettings
+      selectedLanguage: string
+    }) => {
+      if (selectedLanguage === 'English')
+        throw new Error('Please select a language to translate to')
+
+      const res = await fetch('/api/translate/cv', {
+        method: 'POST',
+        body: JSON.stringify({
+          targetLanguage: selectedLanguage,
+          cv: cvProps,
+        } as CvTranslateParams),
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to translate CV')
+      }
+
+      const result = await res.json()
+      const translatedCv = JSON.parse(result)
+      updateCvInRedux(translatedCv)
+      return translatedCv
+    },
+    [updateCvInRedux]
+  )
+
+  return { translateCv, translateCvWithoutLoading }
 }
