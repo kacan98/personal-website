@@ -1,22 +1,26 @@
 import Hero from "@/components/home/Hero";
 import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
+import Timeline, { TimelineItem } from "@/components/home/Timeline";
+import CenteredSections, { CenteredSection } from "@/components/home/CenteredSections";
+import Contact from "@/components/home/Contact";
 import ContentContainer from "@/components/layout/ContentContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
-import { Box } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Typography } from "@mui/material";
+// import Grid2 from "@mui/material/Unstable_Grid2"; // Removed unused import
 
-const aboutMe = [
+const aboutMe: CenteredSection[] = [
   {
     header: "Web developer",
     content:
-      "I am a web develper, mainly with experience on the frontend side, but also with some backend experience. I love the challenge of brining a design to life and making it functional.",
+      "I am a web developer, mainly with experience on the frontend side, but also with some backend experience. I love the challenge of bringing a design to life and making it functional.",
+    visual: <ThreeDLaptop />
   },
   {
     header: "Unique user insights",
     content:
-      "I studied and worked in makreting before I found my true passion in coding. I love to combine my customer-centric approach with my technical skills to create the best possible solutions.",
+      "I studied and worked in marketing before I found my true passion in coding. I love to combine my customer-centric approach with my technical skills to create the best possible solutions.",
   },
   {
     header: "Fast learner",
@@ -28,6 +32,42 @@ const aboutMe = [
     content:
       "Apart from coding, I've spent countless hours designing graphics, animations, wireframes and mockups.",
   },
+];
+
+// Career timeline data extracted from CV
+const careerTimeline: TimelineItem[] = [
+  {
+    title: "Full Stack Developer – Dynamics 365 SCM",
+    company: "Dynaway",
+    period: "2024 - now",
+    description: [
+      "Developed backend services and APIs in X++, C#, and .NET for enterprise ERP software",
+      "Collaborated with frontend and infrastructure teams to deliver end-to-end solutions",
+      "Focused on performance improvements, debugging, and customer-specific features"
+    ]
+  },
+  {
+    title: "Frontend Web Developer",
+    company: "Dynaway", 
+    period: "2020 - 2024",
+    description: [
+      "Delivered new features and bug fixes in an Angular/Deno web application used by technicians",
+      "Consistently deliver — topping story points in team sprints despite being self-taught",
+      "Contributed highest number of story points in many sprints",
+      "Advocated for usability and design simplicity in feature discussions",
+      "Led daily and weekly Scrum meetings for a 5-person dev team as a Scrum Master"
+    ]
+  },
+  {
+    title: "Web and Business Development",
+    company: "Ankeri Media",
+    period: "2019-2020", 
+    description: [
+      "Created the company's website and led branding and outreach campaigns",
+      "Booked 50+ meetings and secured new clients via cold outreach",
+      "Balanced marketing and tech responsibilities in a startup environment"
+    ]
+  }
 ];
 
 // Example technologies array for the TechList component
@@ -47,68 +87,51 @@ export default async function App() {
       <ContentContainer fullWidth>
         <Hero firstName="Karel" lastName="Čančara" tagLine="Software Developer" />
       </ContentContainer>
-      <Box>
+      <Box sx={{ py: { xs: 4, md: 6 } }}>
         <TechList
           technologies={technologies}
         />
       </Box>
-      <SocialIcons direction={"column"} />
+      <Box sx={{ py: { xs: 2, md: 4 } }}>
+        <SocialIcons direction={"column"} />
+      </Box>
       {isKarelsPortfolio && (
         <>
-          <ContentContainer fullWidth>
-            <Grid2
-              container
-              width="100%"
-              color="text.primary"
-              spacing={2}
-              pt={4}
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Grid2 lg={3} xs={12}>
-                {aboutMe.slice(0, 2).map(({ header, content }) => {
-                  return (
-                    <Box key={header}>
-                      <h1>{header}</h1>
-                      <p>{content}</p>
-                    </Box>
-                  );
-                })}
-              </Grid2>
-              <Grid2
-                lg={6}
-                xs={12}
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  zIndex: 5,
-                  position: "relative",
-                }}
-              >
-                <ThreeDLaptop />
-              </Grid2>
-              <Grid2 lg={3} xs={12}>
-                {aboutMe.slice(2, 4).map(({ header, content }) => {
-                  return (
-                    <Box key={header}>
-                      <h1>{header}</h1>
-                      <p>{content}</p>
-                    </Box>
-                  );
-                })}
-              </Grid2>
-            </Grid2>
-          </ContentContainer>
+          {/* About Me - Centered Sections */}
+          <CenteredSections 
+            sections={aboutMe}
+          />
+
+          {/* Career Timeline */}
+          <Timeline 
+            items={careerTimeline}
+            title="Career Journey"
+          />
         </>
       )}
+
+      {/* Contact Section - Full Width Edge to Edge */}
+      <Contact />
+
       <ContentContainer fullWidth>
         <Box
           sx={{
-            color: "text.primary",
-            textAlign: "center",
+            py: { xs: 4, md: 6 },
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            mt: { xs: 6, md: 10 }
           }}
         >
-          © Karel Čančara {new Date().getFullYear()}
+          <Typography
+            variant="body2"
+            sx={{
+              color: "rgba(255, 255, 255, 0.6)",
+              textAlign: "center",
+              fontSize: '0.9rem',
+              fontWeight: 300,
+            }}
+          >
+            © Karel Čančara {new Date().getFullYear()}
+          </Typography>
         </Box>
       </ContentContainer>
     </>

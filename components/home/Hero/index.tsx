@@ -176,7 +176,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
               mt: 1.5
             }}
           >
-            Loading 3D experience... {Math.round(loadingProgress)}%
+            Loading Portfolio experience... {Math.round(loadingProgress)}%
           </Typography>
         </LoadingOverlay>
       )}

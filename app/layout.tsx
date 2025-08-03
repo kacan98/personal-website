@@ -90,6 +90,7 @@ export default async function RootLayout({
                   position: "relative",
                   minHeight: "100vh",
                   backgroundColor: "#0f172a",
+                  overflowX: "hidden",
                 }}
               >
                 <BackgroundEffect />

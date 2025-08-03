@@ -2,6 +2,10 @@ a{
     text-decoration: none;
     color: inherit
 }
+
+html, body {
+    overflow-x: hidden;
+}
 :root {
     /* Define font family variables */
     --font-open-sans: 'Open Sans', sans-serif;
