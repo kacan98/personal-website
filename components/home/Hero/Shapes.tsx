@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, styled } from "@mui/material";
-import { BakeShadows, ContactShadows, Environment, Float, Preload } from "@react-three/drei";
+import { ContactShadows, Environment, Float } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { gsap } from "gsap";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -29,7 +29,7 @@ const StyledCanvas = styled(Canvas)({
   zIndex: 0,
 });
 
-// Custom progress tracking for inline geometries and materials
+// Optimized progress tracking - realistic but fast
 function ProgressTracker({ 
   onProgressChange, 
   onLoadingComplete 
@@ -42,27 +42,27 @@ function ProgressTracker({
   useEffect(() => {
     if (hasCompleted) return;
     
-    // Immediate start with faster progression
-    let currentProgress = 10; // Start at 10% immediately
+    // Start immediately for responsive feel
+    let currentProgress = 15;
     onProgressChange(currentProgress);
     
     const interval = setInterval(() => {
       if (currentProgress < 100) {
-        // More consistent increments for smoother experience
-        const increment = currentProgress < 70 ? 12 : 8;
+        // Smart progression - fast start, slower end for realism
+        const increment = currentProgress < 50 ? 20 : currentProgress < 85 ? 15 : 10;
         currentProgress = Math.min(100, currentProgress + increment);
         onProgressChange(currentProgress);
         
         if (currentProgress >= 100) {
           setHasCompleted(true);
           clearInterval(interval);
-          // Immediate completion for snappy feel
+          // Small delay for smooth transition
           setTimeout(() => {
             onLoadingComplete?.();
-          }, 100);
+          }, 150);
         }
       }
-    }, 80); // Slightly faster interval
+    }, 60); // Balanced interval
     
     return () => clearInterval(interval);
   }, [onProgressChange, onLoadingComplete, hasCompleted]);
@@ -130,19 +130,25 @@ export function Shapes({
   return (
     <CanvasContainer ref={containerRef}>
       <StyledCanvas
-        shadows
         gl={{ 
-          antialias: false,
+          antialias: true, // Enable for better visual quality
           powerPreference: "high-performance",
-          alpha: true, // Enable transparency
-          stencil: false
+          alpha: true,
+          stencil: false,
+          depth: true,
+          logarithmicDepthBuffer: false
         }}
         onCreated={({ gl }) => {
-          gl.setClearColor(0x000000, 0); // Transparent background
+          gl.setClearColor(0x000000, 0);
+          gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          // Enable optimizations
+          gl.outputColorSpace = THREE.SRGBColorSpace;
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.2;
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         camera={{ position: [0, 0, 25], fov: 30, near: 1, far: 40 }}
-        frameloop="demand" // On-demand rendering for performance
+        frameloop="demand"
       >
         <Suspense fallback={null}>
           <ProgressTracker 
@@ -151,18 +157,24 @@ export function Shapes({
           />
           <PerformanceOptimizer />
           <Geometries mousePosition={mousePosition} />
+          {/* Optimized beautiful lighting */}
+          {/* eslint-disable-next-line react/no-unknown-property */}
+          <ambientLight intensity={0.4} />
+          {/* eslint-disable-next-line react/no-unknown-property */}
+          <directionalLight position={[10, 10, 5]} intensity={1.0} />
+          {/* eslint-disable-next-line react/no-unknown-property */}
+          <pointLight position={[-10, -10, -10]} intensity={0.4} color="#f59e0b" />
+          {/* Lightweight shadows for depth */}
           <ContactShadows
             position={[0, -4.5, 0]}
-            opacity={0.65}
+            opacity={0.4}
             scale={40}
-            blur={1.5}
-            far={9}
-            resolution={256}
+            blur={2}
+            far={8}
+            resolution={128} // Lower resolution for performance
             color="#000000"
           />
-          <Environment preset="studio" />
-          <BakeShadows />
-          <Preload all />
+          <Environment preset="studio" /> {/* Fixed unknown React property error */}
         </Suspense>
       </StyledCanvas>
     </CanvasContainer>
@@ -172,33 +184,32 @@ export function Shapes({
 function Geometries({ mousePosition }: {
   mousePosition: { x: number; y: number; };
 }) {
-  // Optimized geometries - reduced complexity for better performance
+  // Original beautiful geometries with moderate optimization
   const geometries = useMemo(() => [
     {
       position: [-1.2, -1, 2] as [number, number, number],
       r: 0.5,
-      geometry: new THREE.TorusGeometry(1.0, 0.4, 16, 24), // Reduced segments: 20,36 -> 16,24
+      geometry: new THREE.TorusGeometry(1.0, 0.4, 20, 36), // Good detail but not excessive
     },
     {
       position: [1.5, -.3, 1.5] as [number, number, number],
       r: 0.5,
-      geometry: new THREE.ConeGeometry(1.2, 2.0, 8), // Increased segments for smoother look
+      geometry: new THREE.ConeGeometry(1.2, 2.0, 12), // Smooth cone
     },
     {
-      // Middle position - largest shape
       position: [0, 0, -1] as [number, number, number],
       r: 0.8,
-      geometry: new THREE.DodecahedronGeometry(2.5), // Keep this complex one as it's the centerpiece
+      geometry: new THREE.DodecahedronGeometry(2.5), // Beautiful centerpiece
     },
     {
       position: [-1.7, 1.2, -1] as [number, number, number],
       r: 0.6,
-      geometry: new THREE.TorusKnotGeometry(.5, .3, 32, 25, 2, 3), // Reduced segments: 64,50 -> 32,25
+      geometry: new THREE.TorusKnotGeometry(.5, .3, 48, 32, 2, 3), // Complex knot
     },
     {
       position: [1.2, 1.7, -2] as [number, number, number],
       r: 0.6,
-      geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Keep simple
+      geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Keep it as the original box
     },
   ], []);
   // Use our custom hook for sound effects
@@ -214,18 +225,18 @@ function Geometries({ mousePosition }: {
 
   const { playRandomSound } = useSoundEffects(soundPaths);
 
-  // Optimized materials - reduced count and complexity for better performance
+  // Beautiful materials - optimized but stunning
   const materials = useMemo(() => [
-    // Rainbow/Iridescent Material - keeping this one since it's cool
+    // Rainbow/Iridescent Material - always beautiful
     new THREE.MeshNormalMaterial(),
-    // Simplified Physical Materials - reduced complexity but kept visual appeal
+    // Beautiful MeshPhysicalMaterial but optimized
     new THREE.MeshPhysicalMaterial({
       roughness: 0.1,
       metalness: 0.8,
       color: 0x9c27b0, // Bright purple
       clearcoat: 0.8,
       emissive: 0x340137,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
     new THREE.MeshPhysicalMaterial({
       roughness: 0.1,
@@ -233,7 +244,7 @@ function Geometries({ mousePosition }: {
       color: 0x00e5ff, // Cyan
       clearcoat: 0.8,
       emissive: 0x004d57,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
     new THREE.MeshPhysicalMaterial({
       color: 0xff4081, // Hot Pink
@@ -241,7 +252,7 @@ function Geometries({ mousePosition }: {
       metalness: 0.6,
       clearcoat: 0.8,
       emissive: 0x4a0024,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
     new THREE.MeshPhysicalMaterial({
       color: 0xffff00, // Neon yellow
@@ -249,7 +260,7 @@ function Geometries({ mousePosition }: {
       metalness: 0.7,
       clearcoat: 0.8,
       emissive: 0x6b6b00,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
     new THREE.MeshPhysicalMaterial({
       color: 0xff6500, // Vivid Orange
@@ -257,7 +268,7 @@ function Geometries({ mousePosition }: {
       metalness: 0.7,
       clearcoat: 0.8,
       emissive: 0x4a1f00,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
     new THREE.MeshPhysicalMaterial({
       color: 0x4169e1, // Royal Blue
@@ -265,7 +276,7 @@ function Geometries({ mousePosition }: {
       metalness: 0.8,
       clearcoat: 0.8,
       emissive: 0x1a2a5e,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
     new THREE.MeshPhysicalMaterial({
       color: 0x32CD32, // Lime green
@@ -273,7 +284,7 @@ function Geometries({ mousePosition }: {
       metalness: 0.6,
       clearcoat: 0.8,
       emissive: 0x2e4016,
-      emissiveIntensity: 1.5,
+      emissiveIntensity: 1.2,
     }),
   ], []);
   return geometries.map(({ position, r, geometry }) => (
@@ -304,6 +315,8 @@ function Geometry({ r, position, geometry, playSound, materials, mousePosition }
   const [currentMaterial, setCurrentMaterial] = useState<THREE.Material>();
   const initialPosition = useRef([...position]); // Create a copy of the position array
   const { invalidate } = useThree(); // For on-demand rendering
+  
+  // Remove progressive loading transition effects
   
   // Initialize material only once
   useEffect(() => {

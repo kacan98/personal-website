@@ -6,6 +6,7 @@ import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
 import CvPage from "@/components/pages/cv/cvPage";
 import GalleryPage from "@/components/pages/galery/galleryPage";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
+import ReduxProvider from "@/components/providers/ReduxProvider";
 import {
   getCvSettings,
   getGalleries,
@@ -83,8 +84,9 @@ export default async function RootLayout({
       <body>
         <CssBaseline />
         <AppRouterCacheProvider>
-          <StoreProvider cvSettings={cvSettings}>
-            <CustomThemeProvider styles={styles}>
+          <ReduxProvider>
+            <StoreProvider cvSettings={cvSettings}>
+              <CustomThemeProvider styles={styles}>
               <div
                 style={{
                   position: "relative",
@@ -121,8 +123,9 @@ export default async function RootLayout({
                   {children}
                 </Suspense>
               </div>
-            </CustomThemeProvider>
-          </StoreProvider>
+              </CustomThemeProvider>
+            </StoreProvider>
+          </ReduxProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

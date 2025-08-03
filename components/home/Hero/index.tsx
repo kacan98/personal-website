@@ -1,8 +1,15 @@
 "use client";
-import { Box, GlobalStyles, Grid, Typography, styled } from "@mui/material";
+import { Box, Grid, Typography, styled } from "@mui/material";
 import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Shapes } from "./Shapes";
+import dynamic from "next/dynamic";
+import ShapesSkeleton from "./ShapesSkeleton";
+
+// Dynamic import with no SSR for better performance
+const Shapes = dynamic(() => import("./Shapes").then(mod => ({ default: mod.Shapes })), {
+  ssr: false,
+  loading: () => null, // We handle loading with our skeleton
+});
 
 interface HeroProps {
   firstName: string;
@@ -52,33 +59,29 @@ const NameHeading = styled(Typography)(({
   letterSpacing: '-0.05em',
 }));
 
-// Loading overlay styled component
-const LoadingOverlay = styled(Box)({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: '#0f172a',
-  zIndex: 9999,
-  transition: 'opacity 0.4s ease-out',
-});
+// Remove LoadingOverlay - we'll use inline skeleton instead
 
 /**
  * Component for "Hero" Slices.
  */
 export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element => {
   const component = useRef(null);
-  const [loadingProgress, setLoadingProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [startLoading3D, setStartLoading3D] = useState(false);
 
-  // Handle real 3D loading progress - ensure it only goes forward
-  const handleProgressChange = useCallback((progress: number) => {
-    setLoadingProgress(prev => Math.max(prev, progress)); // Only allow progress to increase
+  // Start loading 3D shapes immediately but with minimal skeleton display
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setStartLoading3D(true);
+    }, 200); // Reduced delay for faster perceived performance
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handle real 3D loading progress - placeholder for future use
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleProgressChange = useCallback((_progress: number) => {
+    // Progress tracking removed for now
   }, []);
 
   // Handle real 3D loading completion
@@ -134,61 +137,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
   };
 
   return (
-    <>
-      {/* Apply global style to prevent scrolling during loading */}
-      {loading && (
-        <GlobalStyles
-          styles={{
-            body: {
-              overflow: 'hidden'
-            }
-          }}
-        />
-      )}
-
-      {loading && (
-        <LoadingOverlay>
-          <Box sx={{ width: '60%', maxWidth: '400px', mb: 2 }}>
-            <Box
-              sx={{
-                height: '8px',
-                width: '100%',
-                bgcolor: 'rgba(245, 158, 11, 0.2)',
-                borderRadius: '4px',
-                overflow: 'hidden'
-              }}
-            >
-              <Box
-                sx={{
-                  height: '100%',
-                  width: `${Math.max(loadingProgress, 10)}%`, // Minimum 10% for visual feedback
-                  background: 'linear-gradient(to right, #f59e0b, #fde68a, #f59e0b)',
-                  borderRadius: '4px',
-                  transition: 'width 0.3s ease'
-                }}
-              />
-            </Box>
-          </Box>
-          <Typography
-            sx={{
-              color: '#cbd5e1',
-              letterSpacing: '0.1em',
-              mt: 1.5
-            }}
-          >
-            Loading Portfolio experience... {Math.round(loadingProgress)}%
-          </Typography>
-        </LoadingOverlay>
-      )}
-
-      <Box
-        ref={component}
-        sx={{
-          opacity: loading ? 0 : 1,
-          transition: 'opacity 0.5s ease',
-          visibility: loading ? 'hidden' : 'visible'
-        }}
-      >
+    <Box ref={component}>
         <Grid
           container
           sx={{
@@ -216,16 +165,42 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
           </Grid>
           <Grid item xs={12} md={6} sx={{
             display: 'flex',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            position: 'relative'
           }}>
-            <Shapes 
-              onLoadingComplete={handleShapesLoaded}
-              onProgressChange={handleProgressChange}
-            />
+            {/* Show skeleton while loading */}
+            <Box
+              sx={{
+                position: loading ? 'static' : 'absolute',
+                opacity: loading ? 1 : 0,
+                transition: 'opacity 0.5s ease',
+                zIndex: loading ? 1 : 0,
+                width: '100%'
+              }}
+            >
+              <ShapesSkeleton />
+            </Box>
+            
+            {/* Show 3D shapes when loaded - only render after startLoading3D is true */}
+            {startLoading3D && (
+              <Box
+                sx={{
+                  position: loading ? 'absolute' : 'static',
+                  opacity: loading ? 0 : 1,
+                  transition: 'opacity 0.8s ease',
+                  zIndex: loading ? 0 : 1,
+                  width: '100%'
+                }}
+              >
+                <Shapes 
+                  onLoadingComplete={handleShapesLoaded}
+                  onProgressChange={handleProgressChange}
+                />
+              </Box>
+            )}
           </Grid>
         </Grid>
-      </Box>
-    </>
+    </Box>
   );
 };
 

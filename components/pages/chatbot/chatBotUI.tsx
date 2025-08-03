@@ -1,5 +1,6 @@
 "use client";
-import { Box, Button, List, TextField } from "@mui/material";
+import { Box, Button, List, TextField, IconButton, Tooltip } from "@mui/material";
+import { RestartAlt as RestartAltIcon } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import { ChatCompletionStream } from "openai/lib/ChatCompletionStream";
 import {
@@ -7,8 +8,12 @@ import {
   ChatPOSTBody,
 } from "@/app/api/chat/chatAPI.model";
 import Message from "@/components/pages/chatbot/message";
+import { useAppDispatch } from "@/store";
+import { clearChat } from "@/store/slices/chatbotSlice";
 
 const ChatBotUI = () => {
+  const dispatch = useAppDispatch();
+  
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
   const [input, setInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -91,6 +96,18 @@ const ChatBotUI = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleStartOver = () => {
+    // Clear Redux state
+    dispatch(clearChat());
+    // Clear local state
+    setMessages([]);
+    setInput("");
+    setLoading(true);
+    setMessageBeingReceived(null);
+    // Clear localStorage
+    localStorage.removeItem("chatMessages");
+  };
+
   return (
     <Box
       sx={{
@@ -102,6 +119,40 @@ const ChatBotUI = () => {
         overflow: "hidden",
       }}
     >
+      {/* Header with start over button */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          p: 2,
+          borderBottom: "1px solid gray",
+          backgroundColor: "rgba(255, 255, 255, 0.02)",
+        }}
+      >
+        <Box sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.9rem' }}>
+          Chat with Karel AI
+        </Box>
+        <Tooltip title="Start Over" placement="left">
+          <IconButton
+            onClick={handleStartOver}
+            disabled={loading && messages.length === 0}
+            size="small"
+            sx={{
+              color: 'rgba(245, 158, 11, 0.8)',
+              '&:hover': {
+                color: '#f59e0b',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              },
+              '&:disabled': {
+                color: 'rgba(255, 255, 255, 0.3)',
+              },
+            }}
+          >
+            <RestartAltIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      </Box>
       <List
         sx={{
           flexGrow: 1,
@@ -126,6 +177,7 @@ const ChatBotUI = () => {
           display: "flex",
           padding: "10px",
           borderTop: "1px solid gray",
+          gap: 1,
         }}
       >
         <TextField
@@ -133,22 +185,42 @@ const ChatBotUI = () => {
           variant="outlined"
           size="small"
           fullWidth
+          placeholder="Ask me anything about Karel..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               handleSend();
             }
           }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: 'rgba(245, 158, 11, 0.5)',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#f59e0b',
+              },
+            },
+          }}
         />
         <Button
-          disabled={loading || input === ""}
+          disabled={loading || input.trim() === ""}
           variant="contained"
           onClick={handleSend}
-          sx={{ ml: 1 }}
+          sx={{
+            minWidth: '80px',
+            backgroundColor: '#f59e0b',
+            '&:hover': {
+              backgroundColor: '#d97706',
+            },
+            '&:disabled': {
+              backgroundColor: 'rgba(255, 255, 255, 0.12)',
+            },
+          }}
         >
-          Send
+          {loading ? "..." : "Send"}
         </Button>
       </Box>
     </Box>
