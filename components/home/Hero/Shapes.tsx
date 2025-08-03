@@ -157,24 +157,19 @@ export function Shapes({
           />
           <PerformanceOptimizer />
           <Geometries mousePosition={mousePosition} />
-          {/* Optimized beautiful lighting */}
-          {/* eslint-disable-next-line react/no-unknown-property */}
           <ambientLight intensity={0.4} />
-          {/* eslint-disable-next-line react/no-unknown-property */}
           <directionalLight position={[10, 10, 5]} intensity={1.0} />
-          {/* eslint-disable-next-line react/no-unknown-property */}
           <pointLight position={[-10, -10, -10]} intensity={0.4} color="#f59e0b" />
-          {/* Lightweight shadows for depth */}
           <ContactShadows
             position={[0, -4.5, 0]}
             opacity={0.4}
             scale={40}
             blur={2}
             far={8}
-            resolution={128} // Lower resolution for performance
+            resolution={128}
             color="#000000"
           />
-          <Environment preset="studio" /> {/* Fixed unknown React property error */}
+          <Environment preset="studio" />
         </Suspense>
       </StyledCanvas>
     </CanvasContainer>
@@ -417,8 +412,8 @@ function Geometry({ r, position, geometry, playSound, materials, mousePosition }
       <Float speed={5 * r} rotationIntensity={6 * r} floatIntensity={5 * r} ref={floatRef}>
         <mesh
         ref={meshRef}
-        geometry={geometry} // eslint-disable-line react/no-unknown-property
-        material={currentMaterial} // eslint-disable-line react/no-unknown-property
+        geometry={geometry}
+        material={currentMaterial}
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}

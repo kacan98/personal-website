@@ -28,13 +28,14 @@ const nextConfig = {
         path: false,
       };
       
-      // Optimize Three.js imports
+      // Optimize Three.js imports and prevent multiple instances
       config.resolve.alias = {
         ...config.resolve.alias,
+        'three': 'three',
         'three/examples/jsm': 'three/examples/jsm',
       };
       
-      // Split chunks for better caching
+      // Split chunks to ensure single Three.js instance
       config.optimization.splitChunks = {
         ...config.optimization.splitChunks,
         cacheGroups: {
@@ -43,7 +44,8 @@ const nextConfig = {
             name: 'three',
             test: /[\\/]node_modules[\\/](three|@react-three)[\\/]/,
             chunks: 'all',
-            priority: 20,
+            priority: 30,
+            enforce: true, // Force this chunk to be created
           },
         },
       };

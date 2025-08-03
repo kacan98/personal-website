@@ -30,6 +30,7 @@
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
-    "react-hooks/exhaustive-deps": "off"
+    "react-hooks/exhaustive-deps": "off",
+    "react/no-unknown-property": ["error", { "ignore": ["intensity", "position", "color", "geometry", "material", "args"] }]
   }
 }
