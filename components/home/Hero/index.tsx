@@ -1,7 +1,7 @@
 "use client";
 import { Box, GlobalStyles, Grid, Typography, styled } from "@mui/material";
 import gsap from "gsap";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Shapes } from "./Shapes";
 
 interface HeroProps {
@@ -73,31 +73,18 @@ const LoadingOverlay = styled(Box)({
  */
 export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element => {
   const component = useRef(null);
-  const [showShapes, setShowShapes] = useState(false);
-  const [loadingProgress, setLoadingProgress] = useState(25); // Start at 10% to show initial loading
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Simple loading simulation
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  // Handle real 3D loading progress - ensure it only goes forward
+  const handleProgressChange = useCallback((progress: number) => {
+    setLoadingProgress(prev => Math.max(prev, progress)); // Only allow progress to increase
+  }, []);
 
-    if (loading) {
-      interval = setInterval(() => {
-        setLoadingProgress(prev => {
-          const next = prev + 50;
-          if (next >= 100) {
-            clearInterval(interval);
-            // Once loading reaches 100%, wait a bit and hide the loader
-            setTimeout(() => setLoading(false), 100);
-            return 100;
-          }
-          return next;
-        });
-      }, 50);
-    }
-
-    return () => clearInterval(interval);
-  }, [loading]);  // Animation effect that runs after loading is complete
+  // Handle real 3D loading completion
+  const handleShapesLoaded = useCallback(() => {
+    setLoading(false);
+  }, []);  // Animation effect that runs after loading is complete
   useEffect(() => {
     if (loading || !component.current) return;
 
@@ -127,8 +114,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
           ease: "power2.out",
         },
         "-=0.2"
-      )
-      .call(() => setShowShapes(true));
+    );
 
     return () => {
       tl.kill();
@@ -166,13 +152,22 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
             <Box
               sx={{
                 height: '8px',
-                width: `${loadingProgress}%`,
-                bgcolor: '#f59e0b',
+                width: '100%',
+                bgcolor: 'rgba(245, 158, 11, 0.2)',
                 borderRadius: '4px',
-                background: 'linear-gradient(to right, #f59e0b, #fde68a, #f59e0b)',
-                transition: 'width 0.3s ease'
+                overflow: 'hidden'
               }}
-            />
+            >
+              <Box
+                sx={{
+                  height: '100%',
+                  width: `${Math.max(loadingProgress, 10)}%`, // Minimum 10% for visual feedback
+                  background: 'linear-gradient(to right, #f59e0b, #fde68a, #f59e0b)',
+                  borderRadius: '4px',
+                  transition: 'width 0.3s ease'
+                }}
+              />
+            </Box>
           </Box>
           <Typography
             sx={{
@@ -181,7 +176,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
               mt: 1.5
             }}
           >
-            Preparing portfolio experience...
+            Loading 3D experience... {Math.round(loadingProgress)}%
           </Typography>
         </LoadingOverlay>
       )}
@@ -223,7 +218,10 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
             display: 'flex',
             justifyContent: 'center'
           }}>
-            {showShapes && <Shapes />}
+            <Shapes 
+              onLoadingComplete={handleShapesLoaded}
+              onProgressChange={handleProgressChange}
+            />
           </Grid>
         </Grid>
       </Box>
