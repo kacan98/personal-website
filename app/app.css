@@ -6,6 +6,38 @@ a{
 html, body {
     overflow-x: hidden;
 }
+
+/* Print version styling - white background, black text */
+@media print {
+    body, html {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    .MuiTypography-root,
+    .MuiTypography-h1,
+    .MuiTypography-h2, 
+    .MuiTypography-h3,
+    .MuiTypography-h4,
+    .MuiTypography-h5,
+    .MuiTypography-h6,
+    .MuiTypography-body1,
+    .MuiTypography-body2,
+    .MuiTypography-subtitle1,
+    .MuiTypography-subtitle2,
+    .MuiTypography-caption {
+        color: black !important;
+        background-color: transparent !important;
+    }
+    
+    /* Ensure containers have white backgrounds when printing */
+    .MuiPaper-root,
+    .MuiBox-root,
+    .MuiContainer-root {
+        background-color: white !important;
+        color: black !important;
+    }
+}
 :root {
     /* Define font family variables */
     --font-open-sans: 'Open Sans', sans-serif;

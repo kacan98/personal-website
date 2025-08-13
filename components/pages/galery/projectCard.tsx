@@ -3,29 +3,29 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import { Project } from "@/sanity/schemaTypes/project";
 import { SUPPORTED_ICONS } from "@/components/icon";
 import SanityPicture from "@/components/sanityPicture";
-import Tilt from 'react-parallax-tilt';
 
 export const ProjectCard = ({ title, description, image, links }: Project) => {
 
   return (
-    <Tilt gyroscope={true} perspective={1000}>
-      <Card
-        sx={{
-          width: 350,
-          maxWidth: "78vw",
-          minHeight: 400,
-          m: 2,
-          p: 2,
-          borderRadius: 3,
-          borderColor: "divider",
-          "transform-style": "preserve-3d",
-        }}
-        variant="outlined"
-      >
-        <CardContent sx={{
-          transform: 'translateZ(600px)',
-        }}>
-          <Grid2
+    <Card
+      sx={{
+        width: 350,
+        maxWidth: "78vw",
+        minHeight: 400,
+        m: 2,
+        p: 2,
+        borderRadius: 3,
+        borderColor: "divider",
+        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: 3,
+        }
+      }}
+      variant="outlined"
+    >
+      <CardContent>
+        <Grid2
             container
             justifyContent="center"
             alignItems="center"
@@ -66,7 +66,6 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
             </Grid2>
           </Grid2>
         </CardContent>
-      </Card>
-    </Tilt>
+    </Card>
   );
 };

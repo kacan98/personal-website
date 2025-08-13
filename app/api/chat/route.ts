@@ -1,53 +1,109 @@
 import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
-import { getCvSettings } from "@/sanity/sanity-utils";
+import { getCvSettings, getProjects } from "@/sanity/sanity-utils";
 import OpenAI from "openai";
 
-type ChatCompletionMessageParam =
-  OpenAI.Chat.Completions.ChatCompletionMessageParam;
+export const runtime = 'edge';
 
 export async function POST(req: Request) {
-  const cvSettings = await getCvSettings();
-  const { chatHistory } = (await req.json()) as ChatPOSTBody;
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+  try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
-  chatHistory.unshift({
-    role: "user",
-    content: `
-    You are this person with this experience:
-      ${JSON.stringify(cvSettings)}
-      You are talking to a potential customer or employer visiting your portfolio website.
-      Be friendly and paint yourself in the best possible light.
-      Be brief.
-      Do NOT answer things unrelated to this topic.
-      Do not lie.
-      If you are unsure about something, say so.
-      If you are asked about technology that is not listed in your CV, admit it.
-      Start by asking what they would like to know about you.`,
-  });
+    const body = await req.json();
+    const { chatHistory } = body as ChatPOSTBody;
 
-  if (chatHistory.length > 1) {
-    const stayOnTopic: ChatCompletionMessageParam = {
-      role: "user",
-      content:
-        "Remember to stay on topic and do not answer unrelated questions",
-    };
-    //add it as the second last message
-    chatHistory.splice(chatHistory.length - 1, 0, stayOnTopic);
+    const [cvSettings, projects] = await Promise.all([
+      getCvSettings(),
+      getProjects()
+    ]);
+
+    // Build input string for Responses API
+    let input = `You are Karel Čančara. Here is your CV/experience: ${JSON.stringify(cvSettings)}. 
+
+Here are your portfolio projects: ${JSON.stringify(projects.map(p => ({
+      title: p.title,
+      description: p.description,
+      tags: p.tags,
+      links: p.links
+    })))}. 
+
+You are talking to potential employers or clients on your portfolio website. Be friendly, professional, and highlight your best qualities. You can discuss both your CV experience and specific projects you've worked on.
+
+IMPORTANT: Keep ALL responses very short (1-2 sentences max). Be concise and to the point. Only answer questions related to your professional background, skills, and projects.\n\n`;
+
+    // Add chat history if it exists and has content
+    if (chatHistory && Array.isArray(chatHistory)) {
+      for (const msg of chatHistory) {
+        if (msg.content && typeof msg.content === 'string' && msg.content.trim() && (msg.role === 'user' || msg.role === 'assistant')) {
+          const role = msg.role === 'user' ? 'User' : 'Assistant';
+          input += `${role}: ${msg.content.trim()}\n`;
+        }
+      }
+    }
+
+    // If there's no chat history, provide a welcoming introduction
+    if (!chatHistory || chatHistory.length === 0) {
+      input += "Please introduce yourself as Karel AI and provide a brief, friendly welcome message that explains you can help with questions about Karel's professional background, experience, and skills. Keep it concise and welcoming.\nAssistant:";
+    }
+
+    const completion = await openai.responses.create({
+      model: 'gpt-5-nano',
+      input: input,
+      reasoning: {
+        effort: "minimal" // For fastest response
+      },
+      text: {
+        verbosity: "low"
+      },
+      stream: true,
+    });
+
+    // Create a readable stream for Responses API
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder();
+        
+        try {
+          for await (const chunk of completion) {
+            // For Responses API, handle different chunk formats
+            let content = '';
+            const chunkData = chunk as any; // Type assertion for flexibility with different API response formats
+            
+            if (chunkData.delta?.content) {
+              content = String(chunkData.delta.content);
+            } else if (chunkData.content) {
+              content = String(chunkData.content);
+            } else if (chunkData.text) {
+              content = String(chunkData.text);
+            }
+            
+            if (content) {
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
+            }
+          }
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+        } catch (error) {
+          console.error('Streaming error:', error);
+          controller.error(error);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
+  } catch (error) {
+    console.error("Chat API error:", error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
-
-  const stream = openai.beta.chat.completions.stream({
-    model: 'gpt-5',
-    messages: chatHistory,
-    max_completion_tokens: 1000,
-  })
-
-  return new Response(stream.toReadableStream(), {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-    },
-  });
 }

@@ -108,6 +108,15 @@ export function getTheme({
           ...baseTheme.palette?.primary,
           main: "#000000",
         },
+        background: {
+          default: "#ffffff",
+          paper: "#ffffff",
+        },
+        text: {
+          primary: "#000000",
+          secondary: "rgba(0, 0, 0, 0.7)",
+          disabled: "rgba(0, 0, 0, 0.5)",
+        },
       },
     });
   }
@@ -120,6 +129,21 @@ export function getTheme({
       primary: {
         ...baseTheme.palette?.primary,
         main: "#fff",
+      },
+      text: {
+        primary: "#ffffff",
+        secondary: "rgba(255, 255, 255, 0.7)",
+        disabled: "rgba(255, 255, 255, 0.5)",
+      },
+    },
+    components: {
+      // Override MUI Typography to use white text by default
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff",
+          },
+        },
       },
     },
   });

@@ -50,7 +50,15 @@ export const useAdjustCvBasedOnPosition = ({
       const res = await fetch(personalizeCvAPIEndpointName, {
         method: 'POST',
         body: JSON.stringify(cvUpgradeParams),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`API Error: ${res.status} - ${errorText}`);
+      }
 
       const transformedCv: CvUpgradeResponse = await res.json()
       const { cv, newPositionSummary, companyName, newJobIntersection } = transformedCv

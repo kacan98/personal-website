@@ -1,10 +1,7 @@
 import "@/app/app.css";
 import BackgroundEffect from "@/components/layout/BackgroundEffect";
+import Footer from "@/components/layout/Footer";
 import NavBar from "@/components/menu/navBar";
-import About from "@/components/pages/about/about";
-import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
-import CvPage from "@/components/pages/cv/cvPage";
-import GalleryPage from "@/components/pages/galery/galleryPage";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
 import ReduxProvider from "@/components/providers/ReduxProvider";
 import {
@@ -25,12 +22,6 @@ import StoreProvider from "./StoreProvider";
 
 export let metadata: Metadata = {};
 
-const aboutMeText = `Karel Čančara is a full-stack developer specializing in frontend development with comprehensive backend expertise. With a unique background combining marketing and software engineering, he builds user-centric solutions using TypeScript, Angular, React, and C#.
-
-Self-taught and continuously learning, Karel contributes to enterprise software development across the full technology stack. He brings curiosity, user advocacy, and collaborative skills to every project.
-
-Open to challenging opportunities and continuous professional growth.`;
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -45,54 +36,53 @@ export default async function RootLayout({
     description: "Portfolio",
   };
 
-  const modals: { name: string; modal: React.ReactNode }[] = [];
-  modals.push(
-    ...galleries.map((gallery) => ({
-      name: gallery.title,
-      modal: <GalleryPage {...gallery} />,
-    }))
-  );
+  // Build navigation links - always include basic links
+  const navLinks: { name: string; href: string }[] = [
+    {
+      name: "About",
+      href: "/about",
+    }
+  ];
+  
+  // Add gallery links
+  if (galleries && galleries.length > 0) {
+    navLinks.push(
+      ...galleries.map((gallery) => ({
+        name: gallery.title,
+        href: `/gallery/${gallery.title.toLowerCase().replace(/\s+/g, '-')}`,
+      }))
+    );
+  }
 
   const { chatbot } = settings?.specialPages || {};
 
   if (chatbot) {
-    modals.push({
+    navLinks.push({
       name: "Chatbot",
-      modal: <ChatbotPage />,
+      href: "/chatbot",
     });
   }
 
-  if (cvSettings.on) {
-    modals.push({
+  if (cvSettings?.on) {
+    navLinks.push({
       name: "Resume",
-      modal: <CvPage />,
+      href: "/resume",
     });
   }
 
-  modals.push({
-    name: "About",
-    modal: (
-      <About
-        heading={"About me"}
-        bodyContent={aboutMeText}
-        buttonText="Shoot me a message"
-        buttonHref="mailto:karel.cancara@gmail.com"
-      />
-    ),
-  }); return (
-    <html lang="en">
-      <body>
+  console.log("Layout navLinks:", navLinks); return (
+    <html lang="en" style={{ height: '100%' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#0f172a', minHeight: '100vh', height: '100%' }}>
         <CssBaseline />
         <AppRouterCacheProvider>
           <ReduxProvider>
             <StoreProvider cvSettings={cvSettings}>
               <CustomThemeProvider styles={styles}>
-              <div
-                style={{
-                  position: "relative",
+              <Box
+                sx={{
                   minHeight: "100vh",
                   backgroundColor: "#0f172a",
-                  overflowX: "hidden",
+                  position: "relative",
                 }}
               >
                 <BackgroundEffect />
@@ -119,10 +109,19 @@ export default async function RootLayout({
                     />
                   </Box>
                 }>
-                  <NavBar modals={modals} />
-                  {children}
+                  <NavBar navLinks={navLinks} />
+                  <Box
+                    component="main"
+                    sx={{
+                      minHeight: "calc(100vh - 64px)", // Subtract navbar height
+                      pb: 4,
+                    }}
+                  >
+                    {children}
+                  </Box>
+                  <Footer />
                 </Suspense>
-              </div>
+              </Box>
               </CustomThemeProvider>
             </StoreProvider>
           </ReduxProvider>

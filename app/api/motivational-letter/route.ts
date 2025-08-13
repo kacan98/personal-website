@@ -81,8 +81,8 @@ Use this as a loose guide, but let the letter flow naturally—no strict section
 
 The goal is to sound like you're chatting with someone, not drafting a formal letter.`;
 
-    const response = await openai.beta.chat.completions.parse({
-      model: 'gpt-5',
+    const response = await openai.chat.completions.parse({
+      model: 'gpt-5-mini',
       messages: [
         {
           role: 'system',

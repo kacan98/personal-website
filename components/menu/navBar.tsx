@@ -6,113 +6,63 @@ import {
   Button,
   Drawer,
   IconButton,
-  Modal,
-  Slide,
   Toolbar,
   Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
-  ReactNode,
-  useCallback,
   useEffect,
   useState
 } from "react";
-import BackgroundEffect from "../layout/BackgroundEffect";
 
-type TopBarProps = {
-  modals: {
-    name: string;
-    modal: ReactNode;
-  }[];
+type NavLink = {
+  name: string;
+  href: string;
 };
 
-const NavBar = ({ modals }: TopBarProps) => {
-  const router = useRouter();
+type TopBarProps = {
+  navLinks: NavLink[];
+};
+
+const NavBar = ({ navLinks }: TopBarProps) => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const modalOpenName = searchParams.get("modalOpen");
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  // Add local state for immediate modal handling
-  const [localModalOpen, setLocalModalOpen] = useState<string | null>(modalOpenName);
-  // Mobile menu state
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const weAreInSanityStudio = pathname.startsWith("/studio");
   const weAreHome = pathname === "/";
-
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
-  const createQueryString = useCallback(
-    (name: string, value?: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (!value) {
-        params.delete(name);
-      } else {
-        params.set(name, value);
-      }
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-  // Effect to sync URL state with local state
+  
+  // Handle client-side mounting to prevent hydration issues
   useEffect(() => {
-    // Update local state when URL changes
-    if (modalOpenName !== localModalOpen) {
-      setLocalModalOpen(modalOpenName);
-    }
-  }, [modalOpenName]);
-
-  function handleModalOpen(name: string) {
-    setLocalModalOpen(name);
-    setMobileMenuOpen(false);
-    router.push(pathname + "?" + createQueryString("modalOpen", name));
-  }
-
-  function handleModalClose() {
-    setLocalModalOpen(null);
-    router.push(pathname + "?" + createQueryString("modalOpen"));
-  }
+    setMounted(true);
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  const handleMobileNavigation = (path: string) => {
-    setMobileMenuOpen(false);
-    router.push(path);
-  };
+  if (weAreInSanityStudio) return null;
 
-  if (weAreInSanityStudio) return <></>;  // Mobile Navigation Drawer
+  // Mobile Navigation Drawer
   const mobileDrawer = (
     <Drawer
       anchor="top"
       open={mobileMenuOpen}
       onClose={() => setMobileMenuOpen(false)}
-      SlideProps={{
-        // Override the default Slide transition with a Fade
-        style: {
-          transition: 'opacity 500ms cubic-bezier(0.4, 0, 0.2, 1)'
-        },
-        timeout: 500,
-      }}
       PaperProps={{
         sx: {
           height: '100vh',
-          background: 'rgba(59,130,246,0.08)', // Even more subtle blue for a barely-there effect
-          backdropFilter: 'blur(12px)', // More blur for subtlety
+          background: 'rgba(59,130,246,0.08)',
+          backdropFilter: 'blur(12px)',
           display: 'flex',
           flexDirection: 'column',
-          zIndex: 1310, // Higher than modals (1300) and navbar (1301)
         }
-      }}
-      sx={{
-        zIndex: 1310, // Also set on the Drawer itself to ensure proper stacking
       }}
     >
       <Box
@@ -123,7 +73,6 @@ const NavBar = ({ modals }: TopBarProps) => {
           position: 'relative',
         }}
       >
-        {/* Close button */}
         <IconButton
           onClick={() => setMobileMenuOpen(false)}
           sx={{
@@ -137,7 +86,6 @@ const NavBar = ({ modals }: TopBarProps) => {
           <Close />
         </IconButton>
 
-        {/* Navigation items */}
         <Box
           sx={{
             flex: 1,
@@ -150,84 +98,73 @@ const NavBar = ({ modals }: TopBarProps) => {
           }}
         >
           {!weAreHome && (
-            <Button
-              onClick={() => handleMobileNavigation('/')}
-              size="large"
-              sx={{
-                fontSize: '1.5rem',
-                fontWeight: 600,
-                minHeight: 60,
-                color: 'primary.main',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                }
-              }}
-            >
-              Home
-            </Button>
+            <Link href="/" passHref>
+              <Button
+                onClick={() => setMobileMenuOpen(false)}
+                size="large"
+                sx={{
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
+                  minHeight: 60,
+                  color: pathname === '/' ? 'secondary.main' : 'primary.main',
+                }}
+              >
+                Home
+              </Button>
+            </Link>
           )}
 
-          {modals.map(({ name }) => (
-            <Button
-              key={name}
-              onClick={() => handleModalOpen(name)}
-              size="large"
-              sx={{
-                fontSize: '1.5rem',
-                fontWeight: 600,
-                minHeight: 60,
-                color: 'primary.main',
-                '&:hover': {
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                }
-              }}
-            >
-              {name}
-            </Button>
+          {navLinks.map(({ name, href }) => (
+            <Link key={name} href={href} passHref>
+              <Button
+                onClick={() => setMobileMenuOpen(false)}
+                size="large"
+                sx={{
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
+                  minHeight: 60,
+                  color: pathname === href ? 'secondary.main' : 'primary.main',
+                }}
+              >
+                {name}
+              </Button>
+            </Link>
           ))}
         </Box>
       </Box>
     </Drawer>
-  ); return (
+  );
+
+  return (
     <>
-      {/* Background element for navbar - matches main layout background */}
-      <Box
+      {/* Fixed Navbar */}
+      <AppBar
+        position="static"
+        color="transparent"
+        elevation={0}
         sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          minHeight: { xs: 56, md: 93 }, // Match navbar height exactly
-          zIndex: 1300, // Below navbar (1301) but above page content
-        }}
-      />      <AppBar
-        position="sticky"
-        color="transparent" sx={{
-          m: 0,
-          //so that it shows up above the modals (zIndex 1300 in MUI)
-          zIndex: 1301,
+          flexShrink: 0,
           backdropFilter: 'blur(10px)',
-          backgroundColor: 'rgba(15, 23, 42, 0.3)', // More transparent background
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)', // Subtle border
+          backgroundColor: 'rgba(15, 23, 42, 0.8)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         }}
       >
         <Toolbar sx={{ minHeight: { xs: 56, md: 64 } }}>
           {/* Mobile Layout */}
-          {isMobile ? (
+          {mounted && isMobile ? (
             <>
               {!weAreHome && (
-                <IconButton
-                  size="large"
-                  onClick={() => router.push("/")}
-                  color="inherit"
-                  sx={{ mr: 1 }}
-                >
-                  <Home color="primary" />
-                </IconButton>
+                <Link href="/" passHref>
+                  <IconButton
+                    size="large"
+                    color="inherit"
+                    sx={{ mr: 1 }}
+                  >
+                    <Home color={pathname === '/' ? 'secondary' : 'primary'} />
+                  </IconButton>
+                </Link>
               )}
-
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-
               <IconButton
                 size="large"
                 onClick={toggleMobileMenu}
@@ -236,94 +173,49 @@ const NavBar = ({ modals }: TopBarProps) => {
                 <MenuIcon color="primary" />
               </IconButton>
             </>
-          ) : (
+          ) : mounted ? (
             /* Desktop Layout */
             <>
               {!weAreHome && (
-                <IconButton
-                  size="large"
-                  onClick={() => router.push("/")}
-                  color="inherit"
-                >
-                  <Home color="primary" />
-                </IconButton>
+                <Link href="/" passHref>
+                  <IconButton
+                    size="large"
+                    color="inherit"
+                  >
+                    <Home color={pathname === '/' ? 'secondary' : 'primary'} />
+                  </IconButton>
+                </Link>
               )}
-              {modals.map(({ name }) => (
-                <Button
-                  key={name}
-                  onClick={() => handleModalOpen(name)}
-                  size="large"
-                  sx={{
-                    fontSize: '1.2rem',
-                    fontWeight: 700,
-                    minHeight: 60,
-                    color: 'primary.main',
-                    my: 2,
-                    display: "block",
-                    '&:hover': {
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                    }
-                  }}
-                >
-                  {name}
-                </Button>
+              {navLinks.map(({ name, href }) => (
+                <Link key={name} href={href} passHref>
+                  <Button
+                    size="large"
+                    sx={{
+                      fontSize: '1.2rem',
+                      fontWeight: 700,
+                      minHeight: 60,
+                      color: pathname === href ? 'secondary.main' : 'primary.main',
+                      my: 2,
+                      display: "block",
+                    }}
+                  >
+                    {name}
+                  </Button>
+                </Link>
               ))}
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
             </>
+          ) : (
+            // Fallback during hydration
+            <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
           )}
         </Toolbar>
-      </AppBar>      {/* Mobile Drawer */}
-      {isMobile && mobileDrawer}
-      {modals.map(({ name, modal }) => (
-        <Modal
-          key={name}
-          open={localModalOpen === name}
-          onClose={handleModalClose}
-          closeAfterTransition
-          container={() => document.body} // Force rendering in body
-        >
-          <Slide direction="up" in={localModalOpen === name} timeout={800} mountOnEnter>
-            <Box
-              sx={{
-                position: 'relative',
-                top: isMobile ? '56px' : '92px',
-                left: 0,
-                right: 0,
-                height: `calc(100vh - ${isMobile ? '56px' : '92px'})`,
-                width: '100vw',
-                overflow: "auto",
-                color: "text.primary",
-                backgroundColor: '#0f172a',
-              }}
-            >              <BackgroundEffect containInParent={true}></BackgroundEffect>              {/* Close button for modals - positioned within the sliding content */}
-              <IconButton
-                onClick={handleModalClose}
-                sx={{
-                  position: "sticky",
-                  top: 16,
-                  left: "calc(100% - 72px)", // Position from left to achieve right alignment
-                  float: "right",
-                  margin: "16px",
-                  padding: "16px",
-                  zIndex: 1320, // Higher than mobile menu (1310), navbar (1301), and modals (1300)
-                  color: "text.primary",
-                  backgroundColor: 'rgba(15, 23, 42, 0.6)', // Semi-transparent background for better visibility
-                  backdropFilter: 'blur(10px)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                  }
-                }}
-                size={"large"}
-                aria-label="close"
-              >
-                <Close fontSize={"large"} />
-              </IconButton>
-              {modal}
-            </Box>
-          </Slide>
-        </Modal >
-      ))}
+      </AppBar>
+      
+      {/* Mobile Drawer */}
+      {mounted && isMobile && mobileDrawer}
     </>
   );
 };
+
 export default NavBar;

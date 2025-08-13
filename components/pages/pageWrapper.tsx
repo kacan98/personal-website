@@ -30,7 +30,9 @@ function PageWrapper({
           fontSize: { xs: "4rem", md: "5rem" }
         }} onClick={onTitleClicked}>{title}</Typography>
         {description && (
-          <Typography variant="body1">{description}</Typography>
+          <Typography variant="body1" color="text.primary" sx={{ mt: 2 }}>
+            {description}
+          </Typography>
         )}
       </Box>
       {children}
