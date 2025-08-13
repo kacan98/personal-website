@@ -20,7 +20,15 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import StoreProvider from "./StoreProvider";
 
-export let metadata: Metadata = {};
+export async function generateMetadata(): Promise<Metadata> {
+  // Could be dynamic but I am lazy.
+  // const settings = await getSettings();
+  
+  return {
+    title: "Karel Čančara - AI-Enhanced Full-Stack Developer",
+    description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 200+ companies.",
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -31,10 +39,6 @@ export default async function RootLayout({
   const settings = await getSettings();
   const galleries = await getGalleries();
   const cvSettings = await getCvSettings();
-  metadata = settings?.metadata || {
-    title: "Karel Čančara - AI-Enhanced Full-Stack Developer",
-    description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 200+ companies.",
-  };
 
   // Build navigation links - always include basic links
   const navLinks: { name: string; href: string }[] = [
