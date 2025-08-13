@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Skeleton, styled } from "@mui/material";
+import { Box, styled } from "@mui/material";
 
 const SkeletonContainer = styled(Box)(({ theme }) => ({
   aspectRatio: '1 / 1',
@@ -54,7 +54,12 @@ const PulsingShape = styled(Box)(() => ({
 
 export default function ShapesSkeleton() {
   return (
-    <SkeletonContainer>
+    <SkeletonContainer
+      sx={{
+        filter: 'blur(2px)',
+        opacity: 0.3,
+      }}
+    >
       {/* Central large shape */}
       <FloatingShape
         sx={{
@@ -108,45 +113,32 @@ export default function ShapesSkeleton() {
         }}
       />
       
-      {/* Progress indicator */}
+      {/* Central Loading Indicator */}
       <Box
         sx={{
           position: 'absolute',
-          bottom: '10%',
+          top: '50%',
           left: '50%',
-          transform: 'translateX(-50%)',
+          transform: 'translate(-50%, -50%)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 1,
+          gap: 2,
+          zIndex: 2,
         }}
       >
-        <Skeleton
-          variant="rectangular"
-          width={200}
-          height={4}
+        <Box
           sx={{
-            borderRadius: 2,
-            background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.4) 50%, rgba(245, 158, 11, 0.2) 100%)',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 2s infinite',
-            '@keyframes shimmer': {
-              '0%': {
-                backgroundPosition: '-200% 0',
-              },
-              '100%': {
-                backgroundPosition: '200% 0',
-              },
+            width: 40,
+            height: 40,
+            border: '3px solid rgba(245, 158, 11, 0.2)',
+            borderTop: '3px solid rgba(245, 158, 11, 0.8)',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            '@keyframes spin': {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' },
             },
-          }}
-        />
-        <Skeleton
-          variant="text"
-          width={180}
-          height={20}
-          sx={{
-            fontSize: '0.875rem',
-            backgroundColor: 'rgba(203, 213, 225, 0.1)',
           }}
         />
       </Box>

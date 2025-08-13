@@ -32,8 +32,8 @@ export default async function RootLayout({
   const galleries = await getGalleries();
   const cvSettings = await getCvSettings();
   metadata = settings?.metadata || {
-    title: "Portfolio",
-    description: "Portfolio",
+    title: "Karel Čančara - AI-Enhanced Full-Stack Developer",
+    description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 200+ companies.",
   };
 
   // Build navigation links - always include basic links
