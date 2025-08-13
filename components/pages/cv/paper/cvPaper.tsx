@@ -35,6 +35,8 @@ export function CvPaper({
   onRemoveSection,
   onRestoreSection,
   onSectionAdjusted,
+  removedSubSections = new Set(),
+  modifiedSubSections = new Set(),
   onRemoveSubSection,
   onRestoreSubSection,
   onSubSectionAdjusted
@@ -68,6 +70,11 @@ export function CvPaper({
             const isRemoved = removedSections.has(sectionKey);
             const isModified = modifiedSections.has(sectionKey);
 
+            // Skip removed sections in print version
+            if (isPrintVersion && isRemoved) {
+              return null;
+            }
+
             return (
               <Box key={index} mb={2}>
                 <CvSectionComponent
@@ -87,6 +94,8 @@ export function CvPaper({
                   onRemoveSubSection={onRemoveSubSection}
                   onRestoreSubSection={onRestoreSubSection}
                   onSubSectionAdjusted={onSubSectionAdjusted}
+                  removedSubSections={removedSubSections}
+                  modifiedSubSections={modifiedSubSections}
                 />
               </Box>
             );
@@ -98,6 +107,11 @@ export function CvPaper({
           const sectionKey = getSectionKey('mainColumn', index);
           const isRemoved = removedSections.has(sectionKey);
           const isModified = modifiedSections.has(sectionKey);
+
+          // Skip removed sections in print version
+          if (isPrintVersion && isRemoved) {
+            return null;
+          }
 
           return (
             <Paper key={index} sx={{ p: 2, mb: 2 }}>              <CvSectionComponent
@@ -117,6 +131,8 @@ export function CvPaper({
               onRemoveSubSection={onRemoveSubSection}
               onRestoreSubSection={onRestoreSubSection}
               onSubSectionAdjusted={onSubSectionAdjusted}
+              removedSubSections={removedSubSections}
+              modifiedSubSections={modifiedSubSections}
             />
             </Paper>
           );

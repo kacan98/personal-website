@@ -87,7 +87,7 @@ export default async function App() {
       <ContentContainer fullWidth>
         <Hero firstName="Karel" lastName="Čančara" tagLine="Software Developer" />
       </ContentContainer>
-      <Box sx={{ py: { xs: 4, md: 6 } }}>
+      <Box sx={{ py: { xs: 1, md: 2 } }}>
         <TechList
           technologies={technologies}
         />

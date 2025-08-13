@@ -32,39 +32,37 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // create as many GSAP animations and/or ScrollTriggers here as you want...
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          pin: true, // pin the trigger element while active
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1, // Reduced from 4 to 1 for smoother response
-          anticipatePin: 1, // Helps with smoother pin initialization
+      // Simple scroll-based animation without pinning or sticking
+      gsap.set(".tech-row", {
+        x: (index) => {
+          // Set initial positions
+          const isMobile = window.innerWidth < 768;
+          const baseRange = isMobile ? 200 : 400;
+          const direction = index % 2 === 0 ? 1 : -1;
+          return direction * gsap.utils.random(baseRange * 0.5, baseRange);
         },
       });
 
-      tl.fromTo(
-        ".tech-row",
-        {
-          x: (index) => {
-            return index % 2 === 0
-              ? gsap.utils.random(400, 300)
-              : gsap.utils.random(-400, -300);
-          },
-          force3D: true, // Force 3D transforms for hardware acceleration
+      // Create continuous scroll-based movement
+      gsap.to(".tech-row", {
+        x: (index) => {
+          // Move to opposite positions as we scroll
+          const isMobile = window.innerWidth < 768;
+          const baseRange = isMobile ? 200 : 400;
+          const direction = index % 2 === 0 ? -1 : 1;
+          return direction * gsap.utils.random(baseRange * 0.5, baseRange);
         },
-        {
-          x: (index) => {
-            return index % 2 === 0
-              ? gsap.utils.random(-400, -300)
-              : gsap.utils.random(400, 300);
-          },
-          ease: "power2.inOut", // Smoother easing function
-          force3D: true, // Force 3D transforms for hardware acceleration
+        ease: "none",
+        scrollTrigger: {
+          trigger: component.current,
+          start: "top bottom", // Start when component enters viewport
+          end: "bottom top",   // End when component leaves viewport
+          scrub: 1, // Smooth scroll-tied animation
+          // NO pinning - this was causing the sticky behavior
         },
-      );
+      });
     }, component);
-    return () => ctx.revert(); // cleanup!
+    return () => ctx.revert();
   }, []);
   return (
     <Box
@@ -72,8 +70,9 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
       ref={component}
       sx={{
         overflow: "hidden",
-        py: 4,
-        willChange: "transform", // Add GPU acceleration hint
+        py: { xs: 2, md: 4 },
+        width: "100%",
+        // Remove any positioning that could cause sticking
       }}
     >
       <Box
@@ -98,53 +97,71 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
             {title}
           </Typography>
         )}
-      </Box>      {technologies.map(({ name, color }, index) => (
-        <Box
-          key={index}
-          className="tech-row"
-          sx={{
-            mb: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
-            color: "text.secondary",
-            willChange: "transform", // Add GPU acceleration hint
-            transform: "translateZ(0)", // Force GPU acceleration
-          }}
-          aria-label={name || ""}
-        >
-          {Array.from({ length: 15 }, (_, itemIndex) => (
-            <React.Fragment key={itemIndex}>
-              <Typography
-                className="tech-item"
-                sx={{
-                  fontSize: { xs: "3rem", md: "5rem", lg: "6rem" },
-                  fontWeight: 900,
-                  textTransform: "uppercase",
-                  letterSpacing: "-0.05em",
-                  color: itemIndex === 7 && color ? color : "inherit",
-                  opacity: itemIndex === 7 ? 1 : 0.1,
-                  textShadow: "0 0 1px currentColor",
-                  WebkitTextStroke: "0.5px currentColor",
-                }}
-              >
-                {name}
-              </Typography>              <Box
-                component="span"
-                sx={{
-                  fontSize: { xs: "1.5rem", md: "2rem" },
-                  display: "flex",
-                  alignItems: "center",
-                  opacity: 0.1, // All dots should be low opacity
-                }}
-              >
-                <MdCircle />
-              </Box>
-            </React.Fragment>
-          ))}
-        </Box>
-      ))}
+      </Box>      {technologies.map(({ name, color }, index) => {
+        // Calculate the center index dynamically based on array length
+        const totalItems = 15;
+        const centerIndex = Math.floor(totalItems / 2); // This will be 7 for 15 items
+        
+        return (
+          <Box
+            key={index}
+            className="tech-row"
+            sx={{
+              mb: { xs: 1, md: 2 },
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: { xs: 1, md: 2 },
+              color: "text.secondary",
+              width: "100%",
+              // Let GSAP handle the transform
+            }}
+            aria-label={name || ""}
+          >
+            {Array.from({ length: totalItems }, (_, itemIndex) => (
+              <React.Fragment key={itemIndex}>
+                <Typography
+                  className="tech-item"
+                  sx={{
+                    fontSize: { xs: "2.5rem", sm: "3.5rem", md: "5rem", lg: "6rem" },
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    letterSpacing: "-0.05em",
+                    color: itemIndex === centerIndex && color ? color : "inherit",
+                    opacity: itemIndex === centerIndex ? 1 : 0.1,
+                    textShadow: "0 0 1px currentColor",
+                    WebkitTextStroke: "0.5px currentColor",
+                    // Ensure the highlighted word is more prominent and centered
+                    ...(itemIndex === centerIndex && {
+                      position: "relative",
+                      zIndex: 1,
+                      filter: "brightness(1.2)",
+                      textShadow: `0 0 20px ${color || "currentColor"}`,
+                    }),
+                    // Ensure text doesn't break and stays on one line
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                  }}
+                >
+                  {name}
+                </Typography>
+                <Box
+                  component="span"
+                  sx={{
+                    fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
+                    display: "flex",
+                    alignItems: "center",
+                    opacity: 0.1,
+                    flexShrink: 0,
+                  }}
+                >
+                  <MdCircle />
+                </Box>
+              </React.Fragment>
+            ))}
+          </Box>
+        );
+      })}
     </Box>
   );
 };

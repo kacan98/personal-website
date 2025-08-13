@@ -12,7 +12,7 @@ import {
   Tooltip,
   alpha
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CvBulletPoint } from "./bulletPoint";
 import { CvSubSectionComponent } from "./cvSubSectionComponent";
 
@@ -33,6 +33,8 @@ export function CvSectionComponent({
   onRemoveSubSection,
   onRestoreSubSection,
   onSubSectionAdjusted,
+  removedSubSections,
+  modifiedSubSections,
 }: {
   editable?: boolean;
   sectionIndex: number;
@@ -50,16 +52,25 @@ export function CvSectionComponent({
   onRemoveSubSection?: (subSectionKey: string) => void;
   onRestoreSubSection?: (subSectionKey: string) => void;
   onSubSectionAdjusted?: (subSectionKey: string) => void;
+    removedSubSections?: Set<string>;
+    modifiedSubSections?: Set<string>;
 }) {
   const { title, subtitles, paragraphs, bulletPoints, subSections } = section;
   const [isHovered, setIsHovered] = useState(false);
   const [isAdjusting, setIsAdjusting] = useState(false);
+  const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
   const dispatch = useAppDispatch();
   const reduxCv = useAppSelector((state) => state.cv);
 
-  const SuperEditableText = ({ query, ...props }: EditableTextProps) => {
-    return <EditableText {...props} query={[sideOrMain, sectionIndex, ...query]} editable={editable} />;
-  };
+  const SuperEditableText = useCallback(({ query, ...props }: EditableTextProps) => {
+    return <EditableText 
+      {...props} 
+      query={[sideOrMain, sectionIndex, ...query]} 
+      editable={editable} 
+      onEditStart={() => setIsAnyTextBeingEdited(true)}
+      onEditEnd={() => setIsAnyTextBeingEdited(false)}
+    />;
+  }, [sideOrMain, sectionIndex, editable, setIsAnyTextBeingEdited]);
 
   const handleAdjustSection = async () => {
     if (!adjustSection || !positionDetails || !sectionKey) return;
@@ -103,20 +114,14 @@ export function CvSectionComponent({
 
   // Determine when to show hover actions
   const canShowHoverActions = editable && !isPrintVersion && (positionDetails || isRemoved);
-  const shouldShowHoverEffect = isHovered && canShowHoverActions;
+  const shouldShowHoverEffect = isHovered && canShowHoverActions && !isAnyTextBeingEdited;
   const showActions = shouldShowHoverEffect && !isAdjusting;
 
   return (
     <Box
       textAlign={"left"}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={(e: React.MouseEvent) => {
-        // Don't hide hover state if user is interacting with an input
-        const target = e.relatedTarget as HTMLElement;
-        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' ||
-          target.closest('.MuiTextField-root') || target.closest('input') || target.closest('textarea'))) {
-          return;
-        }
+      onMouseLeave={() => {
         setIsHovered(false);
       }}
       sx={{
@@ -243,25 +248,36 @@ export function CvSectionComponent({
           if (!point.text) return <></>
           return (<CvBulletPoint bulletPoint={point} key={idx} editable={editable} baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', idx]} isPrintVersion={isPrintVersion} />)
         }
-        )}      {subSections && (subSections.map((subSection, index) => (
-          <CvSubSectionComponent
-            key={index}
-            subSection={subSection}
-            subSectionIndex={index}
-            sectionIndex={sectionIndex}
-            sideOrMain={sideOrMain}
-            editable={editable}
-            isPrintVersion={isPrintVersion}
-            positionDetails={positionDetails}
-            adjustSection={adjustSection}
-            subSectionKey={`${sectionKey}-sub-${index}`}
-            isRemoved={false}
-            isModified={false}
-            onRemoveSubSection={onRemoveSubSection}
-            onRestoreSubSection={onRestoreSubSection}
-            onSubSectionAdjusted={onSubSectionAdjusted}
-          />
-        )))}
+        )}      {subSections && (subSections.map((subSection, index) => {
+          const subKey = `${sectionKey}-sub-${index}`;
+          const isSubRemoved = onRemoveSubSection && removedSubSections?.has(subKey);
+          const isSubModified = onSubSectionAdjusted && modifiedSubSections?.has(subKey);
+
+          // Skip removed subsections in print version
+          if (isPrintVersion && isSubRemoved) {
+            return null;
+          }
+
+          return (
+            <CvSubSectionComponent
+              key={index}
+              subSection={subSection}
+              subSectionIndex={index}
+              sectionIndex={sectionIndex}
+              sideOrMain={sideOrMain}
+              editable={editable}
+              isPrintVersion={isPrintVersion}
+              positionDetails={positionDetails}
+              adjustSection={adjustSection}
+              subSectionKey={subKey}
+              isRemoved={isSubRemoved || false}
+              isModified={isSubModified || false}
+              onRemoveSubSection={onRemoveSubSection}
+              onRestoreSubSection={onRestoreSubSection}
+              onSubSectionAdjusted={onSubSectionAdjusted}
+            />
+          );
+        }))}
     </Box>
   );
 }

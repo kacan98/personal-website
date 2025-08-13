@@ -10,7 +10,7 @@ import {
   Tooltip,
   alpha
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CvBulletPoint } from "./bulletPoint";
 
 export function CvSubSectionComponent({
@@ -46,10 +46,17 @@ export function CvSubSectionComponent({
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isAdjusting, setIsAdjusting] = useState(false);
+  const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
 
-  const SuperEditableText = ({ query, ...props }: EditableTextProps) => {
-    return <EditableText {...props} query={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, ...query]} editable={editable} />;
-  };
+  const SuperEditableText = useCallback(({ query, ...props }: EditableTextProps) => {
+    return <EditableText 
+      {...props} 
+      query={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, ...query]} 
+      editable={editable}
+      onEditStart={() => setIsAnyTextBeingEdited(true)}
+      onEditEnd={() => setIsAnyTextBeingEdited(false)}
+    />;
+  }, [sideOrMain, sectionIndex, subSectionIndex, editable, setIsAnyTextBeingEdited]);
 
   const handleAdjustSubSection = async () => {
     if (!adjustSection || !positionDetails || !subSectionKey) return;
@@ -89,7 +96,7 @@ export function CvSubSectionComponent({
 
   // Determine when to show hover actions
   const canShowHoverActions = editable && !isPrintVersion && (positionDetails || isRemoved);
-  const shouldShowHoverEffect = isHovered && canShowHoverActions;
+  const shouldShowHoverEffect = isHovered && canShowHoverActions && !isAnyTextBeingEdited;
   const showActions = shouldShowHoverEffect && !isAdjusting;
 
   return (
@@ -97,7 +104,9 @@ export function CvSubSectionComponent({
       key={subSectionIndex} 
       mb={2}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+      }}
       sx={{
         position: 'relative',
         backgroundColor: isRemoved ? alpha('#ff0000', 0.1) : (shouldShowHoverEffect ? alpha('#1976d2', 0.05) : 'transparent'),

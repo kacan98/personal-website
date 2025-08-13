@@ -185,7 +185,7 @@ const ChatBotUI = () => {
           variant="outlined"
           size="small"
           fullWidth
-          placeholder="Ask me anything about Karel..."
+          placeholder="Ask about my experience and skills..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {

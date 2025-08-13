@@ -38,9 +38,9 @@ export async function POST(req: Request) {
   }
 
   const stream = openai.beta.chat.completions.stream({
-    model: 'gpt-4o',
+    model: 'gpt-5',
     messages: chatHistory,
-    max_tokens: 1000,
+    max_completion_tokens: 1000,
   })
 
   return new Response(stream.toReadableStream(), {

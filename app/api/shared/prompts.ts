@@ -112,6 +112,6 @@ export function createChatCompletionRequest(config: PromptConfig, params: any) {
       { role: 'user' as const, content: config.userPromptTemplate(params) },
     ],
     temperature: config.temperature,
-    max_tokens: config.maxTokens,
+    max_completion_tokens: config.maxTokens,
   };
 }

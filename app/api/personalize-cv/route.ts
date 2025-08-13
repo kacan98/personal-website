@@ -60,7 +60,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const completion = await openai.beta.chat.completions.parse({
-      model: 'gpt-4o',
+      model: 'gpt-5',
       messages: [
         {
           role: 'user',
@@ -77,6 +77,7 @@ export async function POST(req: Request): Promise<Response> {
           The candidate is applying for a position: ${body.positionWeAreApplyingFor}.
           
           Improve the CV. Don't lie, but make it cusomized for the position.
+          Do not mention the name of the company in the CV.
           `,
         },
         {
@@ -84,7 +85,6 @@ export async function POST(req: Request): Promise<Response> {
           content: 'Please make sure to keep it in the json format.',
         },
       ],
-      max_tokens: 2500,
       response_format: {
         type: 'json_object',
       },

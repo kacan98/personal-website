@@ -30,7 +30,7 @@ export async function POST(req: Request): Promise<Response> {
     })
 
     const completion = await openai.beta.chat.completions.parse({
-      model: 'gpt-4o',
+      model: 'gpt-5',
       messages: [
         {
           role: 'user',

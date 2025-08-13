@@ -25,11 +25,11 @@ import StoreProvider from "./StoreProvider";
 
 export let metadata: Metadata = {};
 
-const aboutMeText = `Hi, I’m Karel — a full stack developer with a frontend focus, growing backend experience, and a background in marketing. I work mainly with TypeScript, Angular, React, and C#, and I enjoy building products that make sense to real users.
+const aboutMeText = `Karel Čančara is a full-stack developer specializing in frontend development with comprehensive backend expertise. With a unique background combining marketing and software engineering, he builds user-centric solutions using TypeScript, Angular, React, and C#.
 
-I got into development by teaching myself how things work and haven’t stopped since. These days, I work across the stack on enterprise software and contribute to both frontend and backend codebases. I’m known for being curious, user-focused, and easy to work with.
+Self-taught and continuously learning, Karel contributes to enterprise software development across the full technology stack. He brings curiosity, user advocacy, and collaborative skills to every project.
 
-Always open to new challenges and chances to learn something new.`;
+Open to challenging opportunities and continuous professional growth.`;
 
 export default async function RootLayout({
   children,

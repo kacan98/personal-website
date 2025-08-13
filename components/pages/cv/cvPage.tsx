@@ -692,7 +692,11 @@ function CvPage({ jobDescription }: CvProps) {
         </Box>
       )}
 
-      <Print printComponent={<CvPaper isPrintVersion />} fontSize={fontSize} fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
+      <Print printComponent={<CvPaper 
+          isPrintVersion 
+          removedSections={removedSections}
+          removedSubSections={removedSubSections}
+        />} fontSize={fontSize} fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}>
         <CvPaper
           editable={editable}
           positionDetails={positionDetails}
