@@ -23,13 +23,13 @@ export default function Loading() {
       setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
     }, 400);
 
-    // Animate progress bar
+    // Simple progress animation
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) return 0;
-        return prev + Math.random() * 15;
+        if (prev >= 100) return 100;
+        return prev + Math.random() * 3;
       });
-    }, 200);
+    }, 100);
 
     return () => {
       clearInterval(messageInterval);
@@ -48,6 +48,7 @@ export default function Loading() {
         backgroundColor: "#0f172a",
         color: "white",
         position: "relative",
+        opacity: 1,
       }}
     >
       {/* Windows 11-style loading */}
@@ -191,15 +192,15 @@ export default function Loading() {
         {/* Windows 11 style progress bar */}
         <LinearProgress
           variant="determinate"
-          value={Math.min(progress, 95)} // Never show 100% to avoid jarring completion
+          value={Math.round(progress)} // Always show actual progress including 100%
           sx={{
             height: 4,
             borderRadius: 2,
             backgroundColor: "rgba(120, 120, 120, 0.3)",
             "& .MuiLinearProgress-bar": {
-              backgroundColor: "#00d4ff", // Windows accent blue
+              backgroundColor: "secondary.main", // Use theme gold color
               borderRadius: 2,
-              transition: "transform 0.4s ease",
+              transition: "transform 0.2s ease",
             },
           }}
         />
@@ -215,7 +216,7 @@ export default function Loading() {
             fontSize: "13px",
           }}
         >
-          {Math.min(Math.round(progress), 95)}% complete
+          {Math.round(progress)}% complete
         </Typography>
       </Box>
     </Box>

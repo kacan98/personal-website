@@ -250,7 +250,7 @@ const ChatBotUI = () => {
               '&:hover': {
                 color: 'secondary.main',
                 opacity: 1,
-                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)', // Keep specific transparency
               },
             }}
           >

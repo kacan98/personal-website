@@ -48,6 +48,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   };
 
   if (weAreInSanityStudio) return null;
+  
 
   // Mobile Navigation Drawer
   const mobileDrawer = (

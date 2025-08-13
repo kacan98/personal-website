@@ -15,7 +15,7 @@ function SplineLoader() {
     >
       <CircularProgress 
         sx={{ 
-          color: '#f59e0b' 
+          color: 'secondary.main' 
         }} 
       />
     </Box>

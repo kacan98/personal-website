@@ -101,7 +101,7 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
                   variant="body2" 
                   component="span"
                   sx={{ 
-                    color: '#fbbf24',
+                    color: 'secondary.light',
                     fontWeight: 500,
                     fontSize: '0.85rem'
                   }}
@@ -128,7 +128,7 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
                       content: '"•"',
                       position: 'absolute',
                       left: 0,
-                      color: '#f59e0b',
+                      color: 'secondary.main',
                       fontWeight: 'bold'
                     }
                   }}

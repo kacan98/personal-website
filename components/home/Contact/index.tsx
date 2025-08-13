@@ -173,7 +173,7 @@ export default function Contact({
                 }}>
                   <Box sx={{ 
                     mb: 2,
-                    color: '#f59e0b',
+                    color: 'secondary.main',
                     '& svg': {
                       fontSize: '2.5rem'
                     }
@@ -211,7 +211,7 @@ export default function Contact({
                     variant="body1" 
                     component="div"
                     sx={{ 
-                      color: '#fbbf24',
+                      color: 'secondary.light',
                       fontWeight: 500,
                       fontSize: { xs: '0.9rem', md: '1rem' },
                       wordBreak: 'break-word'

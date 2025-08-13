@@ -130,6 +130,11 @@ export function getTheme({
         ...baseTheme.palette?.primary,
         main: "#fff",
       },
+      secondary: {
+        main: "#f59e0b",
+        dark: "#d97706", 
+        light: "#fbbf24",
+      },
       text: {
         primary: "#ffffff",
         secondary: "rgba(255, 255, 255, 0.7)",

@@ -12,25 +12,25 @@ import { Box, Typography } from "@mui/material";
 
 const aboutMe: CenteredSection[] = [
   {
-    header: "Web developer",
+    header: "Full-Stack Developer",
     content:
-      "I am a web developer, mainly with experience on the frontend side, but also with some backend experience. I love the challenge of bringing a design to life and making it functional.",
+      "Building enterprise solutions used by 200+ companies. Achieved 10x performance improvement in data transfer between backend and frontend. Experienced with TypeScript, .NET, X++, and cloud technologies.",
     visual: <ThreeDLaptop />
   },
   {
-    header: "Unique user insights",
+    header: "AI-Enhanced Development",
     content:
-      "I studied and worked in marketing before I found my true passion in coding. I love to combine my customer-centric approach with my technical skills to create the best possible solutions.",
+      "Use AI coding assistants daily for 2-3x development speed gains. Always evaluating new tools for productivity improvements. Comfortable juggling multiple projects and maintaining code quality.",
   },
   {
-    header: "Fast learner",
+    header: "Problem Solver Who Ships",
     content:
-      "I'm always learning new technologies. I'm no stranger to diving into the unknown.",
+      "When I tackle a problem, I don't stop until it's solved. Known for staying late to fix critical issues and consistently delivering top story points in sprints.",
   },
   {
-    header: "Passionate about design",
+    header: "Business-Minded Engineer",
     content:
-      "Apart from coding, I've spent countless hours designing graphics, animations, wireframes and mockups.",
+      "Marketing background gives me unique insights into user needs. I don't just write code—I build solutions that drive business value and enhance user experience.",
   },
 ];
 
@@ -73,19 +73,24 @@ const careerTimeline: TimelineItem[] = [
 // Example technologies array for the TechList component
 const technologies = [
   { name: "TypeScript", color: "#3178C6" },
-  { name: "Node.js", color: "#339933" },
-  { name: "Angular", color: "#DD0031" },
   { name: "React", color: "#61DAFB" },
+  { name: "Angular", color: "#DD0031" },
   { name: "Next.js", color: "#000000" },
   { name: "C#", color: "#239120" },
-  { name: ".NET", color: "#F7DF1E" },
+  { name: ".NET", color: "#512BD4" },
+  { name: "X++", color: "#0078D4" },
+  { name: "Node.js", color: "#339933" },
+  { name: "PostgreSQL", color: "#336791" },
+  { name: "Azure", color: "#0089D0" },
+  { name: "AI/ML", color: "#FF6B6B" },
+  { name: "Drizzle", color: "#C5F74F" },
 ];
 
 export default async function App() {
   return (
     <>
       <ContentContainer fullWidth>
-        <Hero firstName="Karel" lastName="Čančara" tagLine="Software Developer" />
+        <Hero firstName="Karel" lastName="Čančara" tagLine="AI-Enhanced Full-Stack Developer" />
       </ContentContainer>
       <Box sx={{ py: { xs: 1, md: 2 } }}>
         <TechList
