@@ -1,13 +1,13 @@
+import CenteredSections, { CenteredSection } from "@/components/home/CenteredSections";
+import Contact from "@/components/home/Contact";
 import Hero from "@/components/home/Hero";
 import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
-import CenteredSections, { CenteredSection } from "@/components/home/CenteredSections";
-import Contact from "@/components/home/Contact";
 import ContentContainer from "@/components/layout/ContentContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 // import Grid2 from "@mui/material/Unstable_Grid2"; // Removed unused import
 
 const aboutMe: CenteredSection[] = [
@@ -117,28 +117,6 @@ export default async function App() {
 
       {/* Contact Section - Full Width Edge to Edge */}
       <Contact />
-
-      <ContentContainer fullWidth>
-        <Box
-          sx={{
-            py: { xs: 4, md: 6 },
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            mt: { xs: 6, md: 10 }
-          }}
-        >
-          <Typography
-            variant="body2"
-            sx={{
-              color: "rgba(255, 255, 255, 0.6)",
-              textAlign: "center",
-              fontSize: '0.9rem',
-              fontWeight: 300,
-            }}
-          >
-            © Karel Čančara {new Date().getFullYear()}
-          </Typography>
-        </Box>
-      </ContentContainer>
     </>
   );
 }
