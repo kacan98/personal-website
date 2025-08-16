@@ -14,23 +14,23 @@ const aboutMe: CenteredSection[] = [
   {
     header: "Full-Stack Developer",
     content:
-      "Building enterprise solutions used by 200+ companies. Achieved 10x performance improvement in data transfer between backend and frontend. Experienced with TypeScript, .NET, X++, and cloud technologies.",
+      "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy.",
     visual: <ThreeDLaptop />
   },
   {
-    header: "AI-Enhanced Development",
+    header: "AI-Enhanced Development", 
     content:
-      "Use AI coding assistants daily for 2-3x development speed gains. Always evaluating new tools for productivity improvements. Comfortable juggling multiple projects and maintaining code quality.",
+      "I use AI coding tools every day because they help me write code faster and catch mistakes I'd miss. Always trying out new tools to see if they make my life easier.",
   },
   {
-    header: "Problem Solver Who Ships",
+    header: "Problem Solver",
     content:
-      "When I tackle a problem, I don't stop until it's solved. Known for staying late to fix critical issues and consistently delivering top story points in sprints.",
+      "I like figuring out why things break and fixing them. Most of my day is spent debugging, building features, and making sure stuff actually works.",
   },
   {
-    header: "Business-Minded Engineer",
+    header: "User-Focused",
     content:
-      "Marketing background gives me unique insights into user needs. I don't just write code—I build solutions that drive business value and enhance user experience.",
+      "I used to do marketing, so I think about who's actually going to use the stuff I build. I try to make software that doesn't make people want to throw their computer out the window.",
   },
 ];
 
@@ -52,9 +52,8 @@ const careerTimeline: TimelineItem[] = [
     period: "2020 - 2024",
     description: [
       "Delivered new features and bug fixes in an Angular/Deno web application used by technicians",
-      "Consistently deliver — topping story points in team sprints despite being self-taught",
-      "Contributed highest number of story points in many sprints",
-      "Advocated for usability and design simplicity in feature discussions",
+      "Consistently delivered features on schedule as a self-taught developer",
+      "Advocated for usability and design simplicity in feature discussions", 
       "Led daily and weekly Scrum meetings for a 5-person dev team as a Scrum Master"
     ]
   },

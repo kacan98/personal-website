@@ -3,7 +3,7 @@
 import { Box, Typography, Button, Card, CardContent } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { Email, LinkedIn, GitHub, Language } from "@mui/icons-material";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { motion } from "motion/react";
 
 interface ContactItem {
   icon: React.ReactNode;
@@ -28,56 +28,31 @@ export default function Contact({
       label: "Email",
       value: "karel.cancara@gmail.com", 
       href: "mailto:karel.cancara@gmail.com",
-      description: "Drop me a line"
+      description: "Best way to reach me"
     },
     {
       icon: <LinkedIn />,
       label: "LinkedIn",
       value: "linkedin.com/in/kcancara",
       href: "https://www.linkedin.com/in/kcancara",
-      description: "Let's connect"
+      description: "Professional network"
     },
     {
       icon: <GitHub />,
       label: "GitHub",
       value: "github.com/kacan98",
       href: "https://github.com/kacan98",
-      description: "Check out my code"
+      description: "Code and projects"
     },
     {
       icon: <Language />,
       label: "Portfolio",
       value: "kcancara.vercel.app",
       href: "https://kcancara.vercel.app/",
-      description: "Explore my work"
+      description: "See my work"
     }
   ]
 }: ContactProps) {
-  const { ref: headerRef } = useScrollReveal({
-    y: 20,
-    opacity: 0.4,
-    duration: 0.6,
-    delay: 0,
-    threshold: 0.05
-  });
-
-  const { ref: cardsRef } = useScrollReveal({
-    y: 15,
-    opacity: 0.4,
-    duration: 0.5,
-    stagger: 0.1,
-    threshold: 0.05
-  });
-
-  const { ref: ctaRef } = useScrollReveal({
-    y: 15,
-    opacity: 0.4,
-    scale: 0.98,
-    duration: 0.6,
-    delay: 0.1,
-    threshold: 0.05
-  });
-
   return (
     <Box sx={{ 
       py: { xs: 8, md: 12 },
@@ -106,151 +81,173 @@ export default function Contact({
         px: { xs: 2, md: 4 }
       }}>
         {/* Header Section */}
-        <Box ref={headerRef} sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
-          <Typography 
-            variant="h2" 
-            component="h2"
-            sx={{ 
-              mb: 3,
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-              fontSize: { xs: '3rem', md: '4rem' }
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography 
-            variant="h5" 
-            component="div"
-            sx={{ 
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontWeight: 300,
-              maxWidth: '600px',
-              mx: 'auto',
-              fontSize: { xs: '1.2rem', md: '1.5rem' }
-            }}
-          >
-            {subtitle}
-          </Typography>
-        </Box>
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true, margin: "-50px" }}
+        >
+          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+            <Typography 
+              variant="h2" 
+              component="h2"
+              sx={{ 
+                mb: 3,
+                fontWeight: 800,
+                background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                fontSize: { xs: '3rem', md: '4rem' }
+              }}
+            >
+              {title}
+            </Typography>
+            <Typography 
+              variant="h5" 
+              component="div"
+              sx={{ 
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontWeight: 300,
+                maxWidth: '600px',
+                mx: 'auto',
+                fontSize: { xs: '1.2rem', md: '1.5rem' }
+              }}
+            >
+              {subtitle}
+            </Typography>
+          </Box>
+        </motion.div>
 
         {/* Contact Cards */}
-        <Grid2 ref={cardsRef} container spacing={{ xs: 3, md: 4 }} justifyContent="center">
-          {contactItems.map((item) => (
+        <Grid2 container spacing={{ xs: 3, md: 4 }} justifyContent="center">
+          {contactItems.map((item, index) => (
             <Grid2 key={item.label} xs={12} sm={6} md={3}>
-              <Card 
-                component="a"
-                href={item.href}
-                target={item.href.startsWith('http') ? '_blank' : undefined}
-                rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                sx={{
-                  height: '100%',
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
-                  backdropFilter: 'blur(20px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: 3,
-                  transition: 'all 0.4s ease',
-                  textDecoration: 'none',
-                  display: 'block',
-                  '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
-                    background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)',
-                    borderColor: 'rgba(245, 158, 11, 0.4)',
-                  }
-                }}
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                style={{ height: '100%' }}
               >
-                <CardContent sx={{ 
-                  p: { xs: 3, md: 4 },
-                  textAlign: 'center',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center'
-                }}>
-                  <Box sx={{ 
-                    mb: 2,
-                    color: 'secondary.main',
-                    '& svg': {
-                      fontSize: '2.5rem'
+                <Card 
+                  component="a"
+                  href={item.href}
+                  target={item.href.startsWith('http') ? '_blank' : undefined}
+                  rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  sx={{
+                    height: '100%',
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: 3,
+                    transition: 'all 0.4s ease',
+                    textDecoration: 'none',
+                    display: 'block',
+                    '&:hover': {
+                      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)',
+                      borderColor: 'rgba(245, 158, 11, 0.4)',
                     }
+                  }}
+                >
+                  <CardContent sx={{ 
+                    p: { xs: 3, md: 4 },
+                    textAlign: 'center',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center'
                   }}>
-                    {item.icon}
-                  </Box>
-                  
-                  <Typography 
-                    variant="h6" 
-                    sx={{ 
-                      mb: 1,
-                      fontWeight: 600,
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      fontSize: { xs: '1.1rem', md: '1.25rem' }
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                  
-                  {item.description && (
+                    <Box sx={{ 
+                      mb: 2,
+                      color: 'secondary.main',
+                      '& svg': {
+                        fontSize: '2.5rem'
+                      }
+                    }}>
+                      {item.icon}
+                    </Box>
+                    
                     <Typography 
-                      variant="body2" 
-                      component="div"
+                      variant="h6" 
                       sx={{ 
-                        mb: 2,
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        fontSize: '0.9rem'
+                        mb: 1,
+                        fontWeight: 600,
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: { xs: '1.1rem', md: '1.25rem' }
                       }}
                     >
-                      {item.description}
+                      {item.label}
                     </Typography>
-                  )}
-                  
-                  <Typography 
-                    variant="body1" 
-                    component="div"
-                    sx={{ 
-                      color: 'secondary.light',
-                      fontWeight: 500,
-                      fontSize: { xs: '0.9rem', md: '1rem' },
-                      wordBreak: 'break-word'
-                    }}
-                  >
-                    {item.value}
-                  </Typography>
-                </CardContent>
-              </Card>
+                    
+                    {item.description && (
+                      <Typography 
+                        variant="body2" 
+                        component="div"
+                        sx={{ 
+                          mb: 2,
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        {item.description}
+                      </Typography>
+                    )}
+                    
+                    <Typography 
+                      variant="body1" 
+                      component="div"
+                      sx={{ 
+                        color: 'secondary.light',
+                        fontWeight: 500,
+                        fontSize: { xs: '0.9rem', md: '1rem' },
+                        wordBreak: 'break-word'
+                      }}
+                    >
+                      {item.value}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </Grid2>
           ))}
         </Grid2>
 
         {/* Call to Action */}
-        <Box ref={ctaRef} sx={{ textAlign: 'center', mt: { xs: 6, md: 8 } }}>
-          <Button
-            component="a"
-            href="mailto:karel.cancara@gmail.com"
-            variant="contained"
-            size="large"
-            sx={{
-              px: { xs: 4, md: 6 },
-              py: { xs: 1.5, md: 2 },
-              fontSize: { xs: '1.1rem', md: '1.25rem' },
-              fontWeight: 600,
-              borderRadius: 3,
-              background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-              boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 12px 40px rgba(245, 158, 11, 0.4)',
-              }
-            }}
-          >
-            Send me an email
-          </Button>
-        </Box>
+        <motion.div
+          initial={{ y: 20, opacity: 0, scale: 0.98 }}
+          whileInView={{ y: 0, opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true, margin: "-50px" }}
+        >
+          <Box sx={{ textAlign: 'center', mt: { xs: 6, md: 8 } }}>
+            <Button
+              component="a"
+              href="mailto:karel.cancara@gmail.com"
+              variant="contained"
+              size="large"
+              sx={{
+                px: { xs: 4, md: 6 },
+                py: { xs: 1.5, md: 2 },
+                fontSize: { xs: '1.1rem', md: '1.25rem' },
+                fontWeight: 600,
+                borderRadius: 3,
+                background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+                boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 12px 40px rgba(245, 158, 11, 0.4)',
+                }
+              }}
+            >
+              Send me an email
+            </Button>
+          </Box>
+        </motion.div>
       </Box>
     </Box>
   );

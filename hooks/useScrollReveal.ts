@@ -1,18 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
+import { useRef, useState, useEffect } from 'react';
 
 interface UseScrollRevealOptions {
   threshold?: number;
   rootMargin?: string;
   triggerOnce?: boolean;
-  delay?: number;
-  duration?: number;
-  y?: number;
-  opacity?: number;
-  scale?: number;
-  stagger?: number;
 }
 
 export function useScrollReveal(options: UseScrollRevealOptions = {}) {
@@ -20,12 +13,6 @@ export function useScrollReveal(options: UseScrollRevealOptions = {}) {
     threshold = 0.1,
     rootMargin = '0px 0px -50px 0px',
     triggerOnce = true,
-    delay = 0,
-    duration = 0.8,
-    y = 50,
-    opacity = 0,
-    scale = 1,
-    stagger = 0
   } = options;
 
   const ref = useRef<HTMLElement>(null);
@@ -35,52 +22,16 @@ export function useScrollReveal(options: UseScrollRevealOptions = {}) {
     const element = ref.current;
     if (!element) return;
 
-    const targets = element.children.length > 0 ? element.children : element;
-    let hasAnimated = false;
-
-    // Set initial state immediately - no delay
-    gsap.set(targets, {
-      y,
-      opacity,
-      scale,
-      clearProps: "transform,opacity" // Clear any previous transforms
-    });
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          hasAnimated = true;
+        if (entry.isIntersecting) {
           setIsVisible(true);
           
-          // Animate in immediately
-          if (element.children.length > 0 && stagger > 0) {
-            // Stagger animation for children
-            gsap.to(element.children, {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration,
-              delay,
-              stagger,
-              ease: "power2.out",
-              overwrite: true // Prevent conflicting animations
-            });
-          } else {
-            // Single element animation
-            gsap.to(element, {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration,
-              delay,
-              ease: "power2.out",
-              overwrite: true // Prevent conflicting animations
-            });
-          }
-
           if (triggerOnce) {
             observer.unobserve(element);
           }
+        } else if (!triggerOnce) {
+          setIsVisible(false);
         }
       },
       { threshold, rootMargin }
@@ -91,48 +42,41 @@ export function useScrollReveal(options: UseScrollRevealOptions = {}) {
     return () => {
       observer.disconnect();
     };
-  }, [threshold, rootMargin, triggerOnce, delay, duration, y, opacity, scale, stagger]);
+  }, [threshold, rootMargin, triggerOnce]);
 
   return { ref, isVisible };
 }
 
-// Predefined animation presets
+// Predefined animation presets for use with motion components
 export const scrollRevealPresets = {
   fadeUp: {
-    y: 50,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power2.out"
+    initial: { y: 50, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    transition: { duration: 0.8, ease: "easeOut" }
   },
   fadeDown: {
-    y: -50,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power2.out"
+    initial: { y: -50, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    transition: { duration: 0.8, ease: "easeOut" }
   },
   fadeLeft: {
-    x: -50,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power2.out"
+    initial: { x: -50, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    transition: { duration: 0.8, ease: "easeOut" }
   },
   fadeRight: {
-    x: 50,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power2.out"
+    initial: { x: 50, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    transition: { duration: 0.8, ease: "easeOut" }
   },
   scaleUp: {
-    scale: 0.8,
-    opacity: 0,
-    duration: 0.8,
-    ease: "back.out(1.7)"
+    initial: { scale: 0.8, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }
   },
   staggerCards: {
-    y: 30,
-    opacity: 0,
-    duration: 0.6,
-    stagger: 0.1,
-    ease: "power2.out"
+    initial: { y: 30, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    transition: { duration: 0.6, staggerChildren: 0.1, ease: "easeOut" }
   }
 };

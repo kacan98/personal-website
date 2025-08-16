@@ -1,78 +1,30 @@
 "use client";
 
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useState } from "react";
 import { MdCircle } from "react-icons/md";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Box, Typography } from "@mui/material";
+import { motion } from "motion/react";
 
-gsap.registerPlugin(ScrollTrigger);
-
-/**
- * Technology item interface
- */
 export interface TechItem {
   name: string;
   color?: string;
 }
 
-/**
- * Props for `TechList`.
- */
 export type TechListProps = {
   title?: string;
   technologies: TechItem[];
 };
 
-/**
- * Component for "TechList" Slices.
- */
 const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
-  const component = useRef(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      // Simple scroll-based animation without pinning or sticking
-      gsap.set(".tech-row", {
-        x: (index) => {
-          // Set initial positions
-          const isMobile = window.innerWidth < 768;
-          const baseRange = isMobile ? 200 : 400;
-          const direction = index % 2 === 0 ? 1 : -1;
-          return direction * gsap.utils.random(baseRange * 0.5, baseRange);
-        },
-      });
-
-      // Create continuous scroll-based movement
-      gsap.to(".tech-row", {
-        x: (index) => {
-          // Move to opposite positions as we scroll
-          const isMobile = window.innerWidth < 768;
-          const baseRange = isMobile ? 200 : 400;
-          const direction = index % 2 === 0 ? -1 : 1;
-          return direction * gsap.utils.random(baseRange * 0.5, baseRange);
-        },
-        ease: "none",
-        scrollTrigger: {
-          trigger: component.current,
-          start: "top bottom", // Start when component enters viewport
-          end: "bottom top",   // End when component leaves viewport
-          scrub: 1, // Smooth scroll-tied animation
-          // NO pinning - this was causing the sticky behavior
-        },
-      });
-    }, component);
-    return () => ctx.revert();
-  }, []);
   return (
     <Box
       component="section"
-      ref={component}
       sx={{
         overflow: "hidden",
         py: { xs: 2, md: 4 },
         width: "100%",
-        // Remove any positioning that could cause sticking
       }}
     >
       <Box
@@ -84,82 +36,159 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
         }}
       >
         {title && (
-          <Typography
-            variant="h2"
-            component="h2"
-            sx={{
-              fontSize: { xs: "2rem", md: "3rem" },
-              fontWeight: 700,
-              mb: 4,
-              textAlign: "center",
-            }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
           >
-            {title}
-          </Typography>
+            <Typography
+              variant="h2"
+              component="h2"
+              sx={{
+                fontSize: { xs: "2rem", md: "3rem" },
+                fontWeight: 700,
+                mb: 4,
+                textAlign: "center",
+              }}
+            >
+              {title}
+            </Typography>
+          </motion.div>
         )}
-      </Box>      {technologies.map(({ name, color }, index) => {
-        // Calculate the center index dynamically based on array length
-        const totalItems = 15;
-        const centerIndex = Math.floor(totalItems / 2); // This will be 7 for 15 items
+      </Box>
+
+      {technologies.map(({ name, color }, index) => {
+        const totalItems = 5; // Show only 5 items total
+        const centerIndex = 2; // Middle item is always highlighted
+        const direction = index % 2 === 0 ? 1 : -1;
+        
+        // Calculate move distance based on screen width to go edge to edge
+        const moveDistance = typeof window !== 'undefined' ? window.innerWidth / 3 : 400;
         
         return (
-          <Box
+          <motion.div
             key={index}
-            className="tech-row"
-            sx={{
-              mb: { xs: 1, md: 2 },
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: { xs: 1, md: 2 },
-              color: "text.secondary",
-              width: "100%",
-              // Let GSAP handle the transform
+            initial={{ x: -direction * moveDistance, opacity: 0 }}
+            animate={{ 
+              x: [
+                -direction * moveDistance,
+                direction * moveDistance,
+                -direction * moveDistance
+              ],
             }}
-            aria-label={name || ""}
+            whileInView={{ opacity: 1 }}
+            transition={{ 
+              x: {
+                duration: 15,
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.5, 1],
+              },
+              opacity: {
+                duration: 0.5,
+                delay: index * 0.1
+              }
+            }}
+            viewport={{ once: true, margin: "-100px" }}
           >
-            {Array.from({ length: totalItems }, (_, itemIndex) => (
-              <React.Fragment key={itemIndex}>
-                <Typography
-                  className="tech-item"
-                  sx={{
-                    fontSize: { xs: "2.5rem", sm: "3.5rem", md: "5rem", lg: "6rem" },
-                    fontWeight: 900,
-                    textTransform: "uppercase",
-                    letterSpacing: "-0.05em",
-                    color: itemIndex === centerIndex && color ? color : "inherit",
-                    opacity: itemIndex === centerIndex ? 1 : 0.1,
-                    textShadow: "0 0 1px currentColor",
-                    WebkitTextStroke: "0.5px currentColor",
-                    // Ensure the highlighted word is more prominent and centered
-                    ...(itemIndex === centerIndex && {
-                      position: "relative",
-                      zIndex: 1,
-                      filter: "brightness(1.2)",
-                      textShadow: `0 0 20px ${color || "currentColor"}`,
-                    }),
-                    // Ensure text doesn't break and stays on one line
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                  }}
-                >
-                  {name}
-                </Typography>
-                <Box
-                  component="span"
-                  sx={{
-                    fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
-                    display: "flex",
-                    alignItems: "center",
-                    opacity: 0.1,
-                    flexShrink: 0,
-                  }}
-                >
-                  <MdCircle />
-                </Box>
-              </React.Fragment>
-            ))}
-          </Box>
+            <Box
+              sx={{
+                mb: { xs: 1, md: 2 },
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: { xs: 1, md: 2 },
+                color: "text.secondary",
+                width: "100%",
+                position: "relative",
+                minHeight: { xs: "4rem", sm: "5rem", md: "7rem", lg: "8rem" },
+              }}
+              aria-label={name || ""}
+            >
+              {Array.from({ length: totalItems }, (_, itemIndex) => {
+                const isCenter = itemIndex === centerIndex;
+                
+                return (
+                  <React.Fragment key={itemIndex}>
+                    <motion.div
+                      onHoverStart={() => isCenter && setHoveredIndex(index)}
+                      onHoverEnd={() => setHoveredIndex(null)}
+                      whileHover={isCenter ? { 
+                        scale: 1.1,
+                        rotate: [0, -5, 5, 0],
+                        transition: { duration: 0.3 }
+                      } : {}}
+                      whileTap={isCenter ? { scale: 0.95 } : {}}
+                      style={{ 
+                        cursor: isCenter ? 'pointer' : 'default',
+                        position: isCenter ? 'sticky' : 'relative',
+                        left: isCenter ? '50%' : 'auto',
+                        transform: isCenter ? 'translateX(-50%)' : 'none',
+                        zIndex: isCenter ? 10 : 1,
+                      }}
+                    >
+                      <Typography
+                        className="tech-item"
+                        sx={{
+                          fontSize: { 
+                            xs: isCenter ? "3rem" : "2.5rem", 
+                            sm: isCenter ? "4rem" : "3.5rem", 
+                            md: isCenter ? "5.5rem" : "5rem", 
+                            lg: isCenter ? "6.5rem" : "6rem" 
+                          },
+                          fontWeight: 900,
+                          textTransform: "uppercase",
+                          letterSpacing: "-0.05em",
+                          color: isCenter && color ? color : "inherit",
+                          opacity: isCenter ? 1 : 0.1,
+                          textShadow: "0 0 1px currentColor",
+                          WebkitTextStroke: "0.5px currentColor",
+                          ...(isCenter && {
+                            position: "relative",
+                            zIndex: 10,
+                            filter: hoveredIndex === index ? "brightness(1.5)" : "brightness(1.2)",
+                            textShadow: hoveredIndex === index 
+                              ? `0 0 40px ${color || "currentColor"}, 0 0 80px ${color || "currentColor"}`
+                              : `0 0 20px ${color || "currentColor"}`,
+                            transition: "all 0.3s ease",
+                          }),
+                          whiteSpace: "nowrap",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {name}
+                      </Typography>
+                    </motion.div>
+                    <motion.div
+                      animate={isCenter || itemIndex === centerIndex - 1 ? {
+                        rotate: 360,
+                      } : {}}
+                      transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
+                          display: "flex",
+                          alignItems: "center",
+                          opacity: isCenter || itemIndex === centerIndex - 1 ? 0.3 : 0.1,
+                          flexShrink: 0,
+                          color: isCenter || itemIndex === centerIndex - 1 ? color : "inherit",
+                        }}
+                      >
+                        <MdCircle />
+                      </Box>
+                    </motion.div>
+                  </React.Fragment>
+                );
+              })}
+            </Box>
+          </motion.div>
         );
       })}
     </Box>
