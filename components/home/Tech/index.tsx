@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { MdCircle } from "react-icons/md";
 import { Box, Typography } from "@mui/material";
 import { motion } from "motion/react";
@@ -16,7 +16,6 @@ export type TechListProps = {
 };
 
 const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <Box
@@ -80,9 +79,9 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
             }}
             transition={{ 
               x: {
-                duration: 15,
+                duration: 25,
                 repeat: Infinity,
-                ease: "easeInOut",
+                ease: "linear",
                 times: [0, 0.5, 1],
               },
               opacity: {
@@ -111,16 +110,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                 return (
                   <React.Fragment key={itemIndex}>
                     <motion.div
-                      onHoverStart={() => isCenter && setHoveredIndex(index)}
-                      onHoverEnd={() => setHoveredIndex(null)}
-                      whileHover={isCenter ? { 
-                        scale: 1.1,
-                        rotate: [0, -5, 5, 0],
-                        transition: { duration: 0.3 }
-                      } : {}}
-                      whileTap={isCenter ? { scale: 0.95 } : {}}
                       style={{ 
-                        cursor: isCenter ? 'pointer' : 'default',
                         position: 'relative',
                         zIndex: isCenter ? 10 : 1,
                       }}
@@ -144,11 +134,8 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                           ...(isCenter && {
                             position: "relative",
                             zIndex: 10,
-                            filter: hoveredIndex === index ? "brightness(1.5)" : "brightness(1.2)",
-                            textShadow: hoveredIndex === index 
-                              ? `0 0 40px ${color || "currentColor"}, 0 0 80px ${color || "currentColor"}`
-                              : `0 0 20px ${color || "currentColor"}`,
-                            transition: "all 0.3s ease",
+                            filter: "brightness(1.2)",
+                            textShadow: `0 0 20px ${color || "currentColor"}`,
                           }),
                           whiteSpace: "nowrap",
                           flexShrink: 0,
