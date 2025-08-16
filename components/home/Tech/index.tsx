@@ -59,25 +59,25 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
       </Box>
 
       {technologies.map(({ name, color }, index) => {
-        const totalItems = 5; // Show only 5 items total
-        const centerIndex = 2; // Middle item is always highlighted
+        const totalItems = 15; // Show many repeated items
+        const centerIndex = Math.floor(totalItems / 2); // Middle item is always highlighted
         const direction = index % 2 === 0 ? 1 : -1;
         
         // Calculate move distance based on screen width to go edge to edge
-        const moveDistance = typeof window !== 'undefined' ? window.innerWidth / 3 : 400;
+        const moveDistance = 400;
         
         return (
           <motion.div
             key={index}
-            initial={{ x: -direction * moveDistance, opacity: 0 }}
+            initial={{ x: -direction * moveDistance, opacity: 1 }}
             animate={{ 
               x: [
                 -direction * moveDistance,
                 direction * moveDistance,
                 -direction * moveDistance
               ],
+              opacity: 1
             }}
-            whileInView={{ opacity: 1 }}
             transition={{ 
               x: {
                 duration: 15,
@@ -90,7 +90,6 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                 delay: index * 0.1
               }
             }}
-            viewport={{ once: true, margin: "-100px" }}
           >
             <Box
               sx={{
@@ -122,9 +121,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                       whileTap={isCenter ? { scale: 0.95 } : {}}
                       style={{ 
                         cursor: isCenter ? 'pointer' : 'default',
-                        position: isCenter ? 'sticky' : 'relative',
-                        left: isCenter ? '50%' : 'auto',
-                        transform: isCenter ? 'translateX(-50%)' : 'none',
+                        position: 'relative',
                         zIndex: isCenter ? 10 : 1,
                       }}
                     >
@@ -140,7 +137,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                           fontWeight: 900,
                           textTransform: "uppercase",
                           letterSpacing: "-0.05em",
-                          color: isCenter && color ? color : "inherit",
+                          color: isCenter ? (color || "inherit") : "inherit",
                           opacity: isCenter ? 1 : 0.1,
                           textShadow: "0 0 1px currentColor",
                           WebkitTextStroke: "0.5px currentColor",
@@ -178,7 +175,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                           alignItems: "center",
                           opacity: isCenter || itemIndex === centerIndex - 1 ? 0.3 : 0.1,
                           flexShrink: 0,
-                          color: isCenter || itemIndex === centerIndex - 1 ? color : "inherit",
+                          color: "inherit",
                         }}
                       >
                         <MdCircle />
