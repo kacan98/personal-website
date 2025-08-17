@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdCircle } from "react-icons/md";
 import { Box, Typography } from "@mui/material";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 export interface TechItem {
   name: string;
@@ -16,9 +16,33 @@ export type TechListProps = {
 };
 
 const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+
+  // Intersection Observer to only animate when visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <Box
+      ref={containerRef}
       component="section"
       sx={{
         overflow: "hidden",
@@ -57,40 +81,37 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
         )}
       </Box>
 
-      {technologies.map(({ name, color }, index) => {
-        const totalItems = 15; // Show many repeated items
-        const centerIndex = Math.floor(totalItems / 2); // Middle item is always highlighted
-        const direction = index % 2 === 0 ? 1 : -1;
-        
-        // Calculate move distance based on screen width to go edge to edge
-        const moveDistance = 400;
-        
-        return (
-          <motion.div
-            key={index}
-            initial={{ x: -direction * moveDistance, opacity: 1 }}
-            animate={{ 
-              x: [
-                -direction * moveDistance,
-                direction * moveDistance,
-                -direction * moveDistance
-              ],
-              opacity: 1
-            }}
-            transition={{ 
-              x: {
-                duration: 25,
-                repeat: Infinity,
-                ease: "linear",
-                times: [0, 0.5, 1],
-              },
-              opacity: {
-                duration: 0.5,
-                delay: index * 0.1
-              }
-            }}
-          >
+      <Box
+        sx={{
+          // CSS animations defined here - smaller range to keep center visible
+          '@keyframes slideLeft': {
+            '0%': { transform: 'translateX(150px)' },
+            '25%': { transform: 'translateX(0px)' },
+            '50%': { transform: 'translateX(-150px)' },
+            '75%': { transform: 'translateX(0px)' },
+            '100%': { transform: 'translateX(150px)' },
+          },
+          '@keyframes slideRight': {
+            '0%': { transform: 'translateX(-150px)' },
+            '25%': { transform: 'translateX(0px)' },
+            '50%': { transform: 'translateX(150px)' },
+            '75%': { transform: 'translateX(0px)' },
+            '100%': { transform: 'translateX(-150px)' },
+          },
+          '@keyframes rotate': {
+            from: { transform: 'rotate(0deg)' },
+            to: { transform: 'rotate(360deg)' },
+          },
+        }}
+      >
+        {technologies.map(({ name, color }, index) => {
+          const totalItems = 15;
+          const centerIndex = Math.floor(totalItems / 2);
+          const direction = index % 2 === 0 ? 'slideRight' : 'slideLeft';
+          
+          return (
             <Box
+              key={index}
               sx={{
                 mb: { xs: 1, md: 2 },
                 display: "flex",
@@ -101,6 +122,13 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                 width: "100%",
                 position: "relative",
                 minHeight: { xs: "4rem", sm: "5rem", md: "7rem", lg: "8rem" },
+                // Only animate when visible and user hasn't requested reduced motion
+                ...(isVisible && !prefersReducedMotion && {
+                  animation: `${direction} 25s ease-in-out infinite`,
+                  animationDelay: `${index * 0.1}s`,
+                }),
+                // Pause animation when not visible
+                animationPlayState: isVisible ? 'running' : 'paused',
               }}
               aria-label={name || ""}
             >
@@ -109,8 +137,8 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                 
                 return (
                   <React.Fragment key={itemIndex}>
-                    <motion.div
-                      style={{ 
+                    <Box
+                      sx={{
                         position: 'relative',
                         zIndex: isCenter ? 10 : 1,
                       }}
@@ -143,38 +171,31 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                       >
                         {name}
                       </Typography>
-                    </motion.div>
-                    <motion.div
-                      animate={isCenter || itemIndex === centerIndex - 1 ? {
-                        rotate: 360,
-                      } : {}}
-                      transition={{
-                        duration: 10,
-                        repeat: Infinity,
-                        ease: "linear",
+                    </Box>
+                    <Box
+                      component="span"
+                      sx={{
+                        fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
+                        display: "flex",
+                        alignItems: "center",
+                        opacity: isCenter || itemIndex === centerIndex - 1 ? 0.3 : 0.1,
+                        flexShrink: 0,
+                        color: "inherit",
+                        // CSS animation for rotation instead of Framer Motion
+                        ...(isVisible && !prefersReducedMotion && (isCenter || itemIndex === centerIndex - 1) && {
+                          animation: 'rotate 10s linear infinite',
+                        }),
                       }}
                     >
-                      <Box
-                        component="span"
-                        sx={{
-                          fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
-                          display: "flex",
-                          alignItems: "center",
-                          opacity: isCenter || itemIndex === centerIndex - 1 ? 0.3 : 0.1,
-                          flexShrink: 0,
-                          color: "inherit",
-                        }}
-                      >
-                        <MdCircle />
-                      </Box>
-                    </motion.div>
+                      <MdCircle />
+                    </Box>
                   </React.Fragment>
                 );
               })}
             </Box>
-          </motion.div>
-        );
-      })}
+          );
+        })}
+      </Box>
     </Box>
   );
 };
