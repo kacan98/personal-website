@@ -1,6 +1,7 @@
 "use client";
 import { Box, Grid, Typography, styled } from "@mui/material";
 import { useRef } from "react";
+import { BRAND_COLORS } from "@/app/colors";
 import StaticShapes from "./StaticShapes";
 
 interface HeroProps {
@@ -33,7 +34,7 @@ const LastNameContainer = styled(Typography)(({
 
 const JobTitle = styled(Typography)({
   display: 'block',
-  background: 'linear-gradient(to right top, #f59e0b, #fde68a, #f59e0b)',
+  background: `linear-gradient(to right top, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary})`,
   backgroundClip: 'text',
   WebkitBackgroundClip: 'text',
   color: 'transparent',

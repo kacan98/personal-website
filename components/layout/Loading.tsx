@@ -1,15 +1,17 @@
 "use client";
 import { Box, Typography, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
+import { BRAND_COLORS } from "@/app/colors";
 
 const loadingMessages = [
-  "Initializing system...",
-  "Loading components...",
-  "Fetching data...",
-  "Rendering interface...",
-  "Compiling assets...",
-  "Mounting components...",
+  "Initializing portfolio system...",
+  "Loading React components...",
+  "Fetching project data...",
+  "Rendering user interface...",
+  "Compiling TypeScript assets...",
+  "Mounting UI components...",
   "Optimizing performance...",
+  "Finalizing experience...",
   "Almost ready..."
 ];
 
@@ -54,13 +56,15 @@ export default function Loading() {
       {/* Windows 11-style loading */}
       <Box
         sx={{
-          border: "1px solid rgba(120, 120, 120, 0.3)",
           borderRadius: "8px",
           p: 4,
-          minWidth: 400,
-          backgroundColor: "rgba(32, 32, 32, 0.95)",
+          minWidth: { xs: '90vw', sm: 500 },
+          maxWidth: '600px',
+          background: `linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)`,
           backdropFilter: "blur(20px)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(${BRAND_COLORS.primaryRgb}, 0.1)`,
+          border: `1px solid rgba(${BRAND_COLORS.primaryRgb}, 0.2)`,
+          transition: 'all 0.3s ease',
         }}
       >
         {/* Windows 11 header */}
@@ -74,16 +78,26 @@ export default function Loading() {
             borderBottom: "1px solid rgba(120, 120, 120, 0.2)",
           }}
         >
-          <Typography
-            variant="body2"
-            sx={{
-              color: "rgba(255, 255, 255, 0.9)",
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              fontWeight: 500,
-            }}
-          >
-            Windows PowerShell
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{
+              width: '12px',
+              height: '12px',
+              borderRadius: '50%',
+              background: BRAND_COLORS.primary,
+              boxShadow: `0 0 8px rgba(${BRAND_COLORS.primaryRgb}, 0.5)`
+            }} />
+            <Typography
+              variant="body2"
+              sx={{
+                color: "rgba(255, 255, 255, 0.9)",
+                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontWeight: 600,
+                fontSize: '15px'
+              }}
+            >
+              Karel&apos;s Portfolio Terminal
+            </Typography>
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -157,7 +171,7 @@ export default function Loading() {
               fontSize: "14px",
             }}
           >
-            PS C:\Users\Karel\Portfolio&gt;
+            C:\Users\Karel\Portfolio&gt;
           </Typography>
         </Box>
 
@@ -166,7 +180,7 @@ export default function Loading() {
           variant="body1"
           sx={{
             fontFamily: "Consolas, monospace",
-            color: "#00d4ff", // Windows blue accent color
+            color: BRAND_COLORS.primary,
             mb: 3,
             minHeight: "1.5em",
             fontSize: "16px",
@@ -198,26 +212,38 @@ export default function Loading() {
             borderRadius: 2,
             backgroundColor: "rgba(120, 120, 120, 0.3)",
             "& .MuiLinearProgress-bar": {
-              backgroundColor: "secondary.main", // Use theme gold color
+              background: `linear-gradient(90deg, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary})`,
               borderRadius: 2,
               transition: "transform 0.2s ease",
+              boxShadow: `0 0 8px rgba(${BRAND_COLORS.primaryRgb}, 0.3)`,
             },
           }}
         />
 
-        {/* Loading percentage */}
-        <Typography
-          variant="body2"
-          sx={{
-            textAlign: "right",
-            mt: 2,
-            fontFamily: "Consolas, monospace",
-            color: "rgba(255, 255, 255, 0.7)",
-            fontSize: "13px",
-          }}
-        >
-          {Math.round(progress)}% complete
-        </Typography>
+        {/* Loading percentage and stats */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontFamily: "Consolas, monospace",
+              color: "rgba(255, 255, 255, 0.6)",
+              fontSize: "12px",
+            }}
+          >
+            Loading assets...
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              fontFamily: "Consolas, monospace",
+              color: BRAND_COLORS.secondary,
+              fontSize: "13px",
+              fontWeight: 600
+            }}
+          >
+            {Math.round(progress)}%
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

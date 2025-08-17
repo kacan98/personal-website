@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Box } from "@mui/material";
 import { motion, useReducedMotion } from "motion/react";
+import { BRAND_COLORS } from "@/app/colors";
 
 const StaticShapes = () => {
   const [clickedShape, setClickedShape] = useState<string | null>(null);
@@ -34,7 +35,7 @@ const StaticShapes = () => {
           cursor: 'default',
         }}
         animate={prefersReducedMotion ? {} : {
-          rotateZ: 360,
+          rotateZ: -360,
         }}
         transition={{
           rotateZ: {
@@ -50,13 +51,13 @@ const StaticShapes = () => {
             width: '100%',
             height: '100%',
             background: `
-              conic-gradient(from 45deg, #ff4081, #ff6500, #e91e63, #ff1744, #ff4081),
-              radial-gradient(circle at 35% 35%, rgba(255, 64, 129, 1), rgba(74, 0, 36, 0.8))
+              conic-gradient(from 45deg, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary}),
+              radial-gradient(circle at 35% 35%, rgba(${BRAND_COLORS.primaryRgb}, 1), rgba(${BRAND_COLORS.secondaryRgb}, 0.8))
             `,
             clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
             borderRadius: '15px',
-            border: '3px solid rgba(255, 64, 129, 0.6)',
-            boxShadow: '0 0 20px rgba(255, 64, 129, 0.5)',
+            border: `3px solid rgba(${BRAND_COLORS.primaryRgb}, 0.6)`,
+            boxShadow: `0 0 25px rgba(${BRAND_COLORS.primaryRgb}, 0.6)`,
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -64,7 +65,7 @@ const StaticShapes = () => {
               left: '15%',
               width: '70%',
               height: '70%',
-              background: 'radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.8), rgba(255,100,180,0.4) 40%, transparent 70%)',
+              background: `radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.8), rgba(${BRAND_COLORS.primaryRgb},0.4) 40%, transparent 70%)`,
               clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
             },
           }}
@@ -115,7 +116,7 @@ function EllipticalOrbitingShape({
   startAngle,
   component: ShapeComponent,
   onClick,
-  isClicked,
+  isClicked: _isClicked,
 }: {
   size: number;
   startAngle: number;
@@ -137,7 +138,7 @@ function EllipticalOrbitingShape({
     
     for (let i = 0; i <= pathPoints; i++) {
       const angle = ((startAngle + (i * 360) / pathPoints) * Math.PI) / 180;
-      const x = Math.round(Math.cos(angle) * horizontalRadius * 1000) / 1000;
+      const x = Math.round(-Math.cos(angle) * horizontalRadius * 1000) / 1000;
       const y = Math.round(-Math.sin(angle) * verticalRadius * 1000) / 1000;
       
       // Use negative sine for front/back depth (bottom = front/biggest, top = back/smallest)
@@ -154,7 +155,7 @@ function EllipticalOrbitingShape({
   
   // Round initial values to avoid hydration mismatches
   const initialAngle = (startAngle * Math.PI) / 180;
-  const initialX = Math.round((Math.cos(initialAngle) * 160 - size/2) * 1000) / 1000;
+  const initialX = Math.round((-Math.cos(initialAngle) * 160 - size/2) * 1000) / 1000;
   const initialY = Math.round((-Math.sin(initialAngle) * 80 - size/2) * 1000) / 1000;
   // Use negative sine for proper 3D depth calculation  
   const initialDepth = Math.round(-Math.sin(initialAngle) * 1000) / 1000;
@@ -224,7 +225,7 @@ function EllipticalOrbitingShape({
           x: initialX,
           y: initialY,
           scale: initialScale,
-          opacity: initialDepth > 0 ? 1 : 0,
+          opacity: initialDepth >= 0 ? 1 : 0,
         }}
         style={{
           position: 'absolute',
@@ -239,7 +240,7 @@ function EllipticalOrbitingShape({
           x: positions.map(p => p.x - size/2),
           y: positions.map(p => p.y - size/2),
           scale: scales,
-          opacity: depths.map(d => d > 0 ? 1 : 0),
+          opacity: depths.map(d => d >= 0 ? 1 : 0),
         }}
         transition={{
           duration: 25,
@@ -260,7 +261,7 @@ function TorusShape({ size }: { size: number }) {
   
   return (
     <motion.div
-      animate={prefersReducedMotion ? {} : { rotateZ: 360 }}
+      animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
       transition={{
         duration: 20,
         repeat: Infinity,
@@ -276,9 +277,9 @@ function TorusShape({ size }: { size: number }) {
           width: '100%',
           height: '100%',
           borderRadius: '50%',
-          background: `linear-gradient(135deg, #9c27b0, #e91e63)`,
-          boxShadow: `0 0 20px rgba(156, 39, 176, 0.5)`,
-          border: '2px solid rgba(156, 39, 176, 0.4)',
+          background: `linear-gradient(135deg, #3178C6, #1d4ed8)`,
+          boxShadow: `0 0 25px rgba(49, 120, 198, 0.6)`,
+          border: '2px solid rgba(49, 120, 198, 0.4)',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -287,7 +288,7 @@ function TorusShape({ size }: { size: number }) {
             width: '50%',
             height: '50%',
             borderRadius: '50%',
-            background: 'rgba(52, 1, 55, 0.4)',
+            background: 'rgba(49, 120, 198, 0.4)',
           },
         }}
       />
@@ -300,7 +301,7 @@ function KnotShape({ size }: { size: number }) {
   
   return (
     <motion.div
-      animate={prefersReducedMotion ? {} : { rotateZ: 360 }}
+      animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
       transition={{
         duration: 12,
         repeat: Infinity,
@@ -315,10 +316,10 @@ function KnotShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, #ffff00, #ffc107)`,
+          background: `linear-gradient(135deg, #C5F74F, #a3e635)`,
           borderRadius: '40% 60% 65% 35% / 30% 45% 55% 70%',
-          boxShadow: `0 0 25px rgba(255, 255, 0, 0.5)`,
-          border: '2px solid rgba(255, 255, 0, 0.15)',
+          boxShadow: `0 0 25px rgba(197, 247, 79, 0.6)`,
+          border: '2px solid rgba(197, 247, 79, 0.4)',
         }}
       />
     </motion.div>
@@ -330,7 +331,7 @@ function BoxShape({ size }: { size: number }) {
   
   return (
     <motion.div
-      animate={prefersReducedMotion ? {} : { rotateZ: 360 }}
+      animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
       transition={{
         duration: 18,
         repeat: Infinity,
@@ -345,10 +346,10 @@ function BoxShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, #4169e1, #1e90ff)`,
+          background: `linear-gradient(135deg, #339933, #22c55e)`,
           borderRadius: '8px',
-          boxShadow: `0 0 25px rgba(65, 105, 225, 0.5)`,
-          border: '2px solid rgba(65, 105, 225, 0.15)',
+          boxShadow: `0 0 25px rgba(51, 153, 51, 0.6)`,
+          border: '2px solid rgba(51, 153, 51, 0.4)',
         }}
       />
     </motion.div>
@@ -379,11 +380,11 @@ function HeartShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, #ff1493, #ff69b4)`,
+          background: `linear-gradient(135deg, #DD0031, #b91c3c)`,
           clipPath: 'polygon(50% 85%, 15% 45%, 15% 25%, 35% 15%, 50% 25%, 65% 15%, 85% 25%, 85% 45%)',
           borderRadius: '20px 20px 0 0',
-          boxShadow: `0 0 20px rgba(255, 20, 147, 0.5)`,
-          border: '2px solid rgba(255, 20, 147, 0.4)',
+          border: '2px solid rgba(221, 0, 49, 0.4)',
+          filter: 'drop-shadow(0 0 25px rgba(221, 0, 49, 0.6))',
         }}
       />
     </motion.div>
@@ -395,7 +396,7 @@ function CrossShape({ size }: { size: number }) {
   
   return (
     <motion.div
-      animate={prefersReducedMotion ? {} : { rotateZ: 360 }}
+      animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
       transition={{
         duration: 10,
         repeat: Infinity,
@@ -422,9 +423,9 @@ function CrossShape({ size }: { size: number }) {
             left: '35%',
             width: '30%',
             height: '100%',
-            background: `linear-gradient(180deg, #fc466b, #3f5efb)`,
+            background: `linear-gradient(180deg, #512BD4, #7c3aed)`,
             borderRadius: '15px',
-            boxShadow: `0 0 20px rgba(252, 70, 107, 0.5)`,
+            boxShadow: `0 0 25px rgba(81, 43, 212, 0.6)`,
           }}
         />
         {/* Horizontal bar */}
@@ -435,9 +436,9 @@ function CrossShape({ size }: { size: number }) {
             left: '0%',
             width: '100%',
             height: '30%',
-            background: `linear-gradient(90deg, #fc466b, #3f5efb)`,
+            background: `linear-gradient(90deg, #512BD4, #7c3aed)`,
             borderRadius: '15px',
-            boxShadow: `0 0 20px rgba(252, 70, 107, 0.5)`,
+            boxShadow: `0 0 25px rgba(81, 43, 212, 0.6)`,
           }}
         />
       </Box>

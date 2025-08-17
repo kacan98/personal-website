@@ -3,6 +3,7 @@ import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
 import { Theme } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { ThemeOptions } from "@mui/material/styles/createTheme";
+import { BRAND_COLORS } from "./colors";
 
 const getBaseTheme = (fontSize:number): ThemeOptions => {
   // createTheme somehow breaks at least fonts below,
@@ -131,9 +132,9 @@ export function getTheme({
         main: "#fff",
       },
       secondary: {
-        main: "#f59e0b",
-        dark: "#d97706", 
-        light: "#fbbf24",
+        main: BRAND_COLORS.primary,
+        dark: BRAND_COLORS.dark, 
+        light: BRAND_COLORS.secondary,
       },
       text: {
         primary: "#ffffff",
