@@ -144,23 +144,24 @@ function EllipticalOrbitingShape({
     
     for (let i = 0; i <= pathPoints; i++) {
       const angle = ((startAngle + (i * 360) / pathPoints) * Math.PI) / 180;
-      const x = Math.cos(angle) * horizontalRadius;
-      const y = Math.sin(angle) * verticalRadius;
-      const depth = Math.sin(angle);
+      const x = Math.round(Math.cos(angle) * horizontalRadius * 1000) / 1000;
+      const y = Math.round(Math.sin(angle) * verticalRadius * 1000) / 1000;
+      const depth = Math.round(Math.sin(angle) * 1000) / 1000;
       
       positions.push({ x, y });
-      scales.push(1 + depth * 0.3);
+      scales.push(Math.round((1 + depth * 0.3) * 1000) / 1000);
       depths.push(depth);
     }
     
     return { positions, scales, depths };
   }, [startAngle]);
   
+  // Round initial values to avoid hydration mismatches
   const initialAngle = (startAngle * Math.PI) / 180;
-  const initialX = Math.cos(initialAngle) * 160 - size/2;
-  const initialY = Math.sin(initialAngle) * 80 - size/2;
-  const initialDepth = Math.sin(initialAngle);
-  const initialScale = 1 + initialDepth * 0.3;
+  const initialX = Math.round((Math.cos(initialAngle) * 160 - size/2) * 1000) / 1000;
+  const initialY = Math.round((Math.sin(initialAngle) * 80 - size/2) * 1000) / 1000;
+  const initialDepth = Math.round(Math.sin(initialAngle) * 1000) / 1000;
+  const initialScale = Math.round((1 + initialDepth * 0.3) * 1000) / 1000;
 
   if (prefersReducedMotion) {
     // Static version for reduced motion
