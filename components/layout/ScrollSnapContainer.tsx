@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 export default function ScrollSnapContainer({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
   const [currentSection, setCurrentSection] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,7 +48,7 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
       
       return () => clearTimeout(retryTimeout);
     }
-  }, [children]);
+  }, [children, isMobile]);
 
   // Scroll to a specific section
   const scrollToSection = useCallback((index: number) => {
@@ -66,8 +69,8 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
 
   // Handle wheel events
   const handleWheel = useCallback((e: WheelEvent) => {
-    // Don't do anything if sections aren't loaded yet
-    if (sectionsRef.current.length === 0) {
+    // Don't do anything on mobile or if sections aren't loaded yet
+    if (isMobile || sectionsRef.current.length === 0) {
       return;
     }
     
@@ -125,11 +128,11 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
     if (nextSection >= 0 && nextSection < sectionsRef.current.length) {
       scrollToSection(nextSection);
     }
-  }, [currentSection, isScrolling, scrollToSection]);
+  }, [currentSection, isScrolling, scrollToSection, isMobile]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (isScrolling) return;
+    if (isMobile || isScrolling) return;
     
     if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
       e.preventDefault();
@@ -150,15 +153,16 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
       e.preventDefault();
       scrollToSection(sectionsRef.current.length - 1);
     }
-  }, [currentSection, isScrolling, scrollToSection]);
+  }, [currentSection, isScrolling, scrollToSection, isMobile]);
 
   // Handle touch events for mobile
   const handleTouchStart = useCallback((e: TouchEvent) => {
+    if (isMobile) return;
     touchStartY.current = e.touches[0].clientY;
-  }, []);
+  }, [isMobile]);
 
   const handleTouchEnd = useCallback((e: TouchEvent) => {
-    if (isScrolling) return;
+    if (isMobile || isScrolling) return;
     
     const touchEndY = e.changedTouches[0].clientY;
     const diff = touchStartY.current - touchEndY;
@@ -171,14 +175,17 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
         scrollToSection(nextSection);
       }
     }
-  }, [currentSection, isScrolling, scrollToSection]);
+  }, [currentSection, isScrolling, scrollToSection, isMobile]);
 
   // Set up event listeners
   useEffect(() => {
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    // Only add event listeners on desktop
+    if (!isMobile) {
+      window.addEventListener('wheel', handleWheel, { passive: false });
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('touchstart', handleTouchStart, { passive: true });
+      window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
     
     return () => {
       window.removeEventListener('wheel', handleWheel);
@@ -186,10 +193,13 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [handleWheel, handleKeyDown, handleTouchStart, handleTouchEnd]);
+  }, [handleWheel, handleKeyDown, handleTouchStart, handleTouchEnd, isMobile]);
 
   // Update current section based on scroll position (for scrollbar dragging)
   useEffect(() => {
+    // Only track scroll position on desktop
+    if (isMobile) return;
+    
     let scrollTimeout: NodeJS.Timeout;
     
     const handleScroll = () => {
@@ -230,7 +240,7 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
       window.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
-  }, [currentSection, isScrolling]);
+  }, [currentSection, isScrolling, isMobile]);
 
   return (
     <Box ref={containerRef} sx={{ position: 'relative' }}>
