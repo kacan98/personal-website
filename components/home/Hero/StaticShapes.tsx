@@ -31,26 +31,19 @@ const StaticShapes = () => {
           top: 'calc(50% - 80px)',
           left: 'calc(50% - 80px)',
           zIndex: 5,
-          cursor: 'pointer',
+          cursor: 'default',
         }}
         animate={prefersReducedMotion ? {} : {
           rotateZ: 360,
-          scale: clickedShape === 'dodecahedron' ? [1, 1.3, 1] : 1,
         }}
         transition={{
           rotateZ: {
             duration: 30, // Slower rotation
             repeat: Infinity,
             ease: "linear",
-          },
-          scale: {
-            duration: 0.5,
-            ease: "easeOut",
           }
         }}
         onClick={() => handleShapeClick('dodecahedron')}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.98 }}
       >
         <Box
           sx={{
@@ -79,35 +72,35 @@ const StaticShapes = () => {
       </motion.div>
 
       <EllipticalOrbitingShape 
-        size={80} 
+        size={70} 
         startAngle={0}
         component={TorusShape}
         onClick={() => handleShapeClick('torus')}
         isClicked={clickedShape === 'torus'}
       />
       <EllipticalOrbitingShape 
-        size={75} 
+        size={65} 
         startAngle={72}
         component={HeartShape}
         onClick={() => handleShapeClick('heart')}
         isClicked={clickedShape === 'heart'}
       />
       <EllipticalOrbitingShape 
-        size={85} 
+        size={51} 
         startAngle={144}
         component={KnotShape}
         onClick={() => handleShapeClick('knot')}
         isClicked={clickedShape === 'knot'}
       />
       <EllipticalOrbitingShape 
-        size={70} 
+        size={60} 
         startAngle={216}
         component={BoxShape}
         onClick={() => handleShapeClick('box')}
         isClicked={clickedShape === 'box'}
       />
       <EllipticalOrbitingShape 
-        size={65} 
+        size={75} 
         startAngle={288}
         component={CrossShape}
         onClick={() => handleShapeClick('cross')}
@@ -145,11 +138,14 @@ function EllipticalOrbitingShape({
     for (let i = 0; i <= pathPoints; i++) {
       const angle = ((startAngle + (i * 360) / pathPoints) * Math.PI) / 180;
       const x = Math.round(Math.cos(angle) * horizontalRadius * 1000) / 1000;
-      const y = Math.round(Math.sin(angle) * verticalRadius * 1000) / 1000;
-      const depth = Math.round(Math.sin(angle) * 1000) / 1000;
+      const y = Math.round(-Math.sin(angle) * verticalRadius * 1000) / 1000;
+      
+      // Use negative sine for front/back depth (bottom = front/biggest, top = back/smallest)
+      // -sin(90°) = -1 (top/back), -sin(270°) = 1 (bottom/front)
+      const depth = Math.round(-Math.sin(angle) * 1000) / 1000;
       
       positions.push({ x, y });
-      scales.push(Math.round((1 + depth * 0.3) * 1000) / 1000);
+      scales.push(Math.round((1 + depth * 0.48) * 1000) / 1000);
       depths.push(depth);
     }
     
@@ -159,9 +155,10 @@ function EllipticalOrbitingShape({
   // Round initial values to avoid hydration mismatches
   const initialAngle = (startAngle * Math.PI) / 180;
   const initialX = Math.round((Math.cos(initialAngle) * 160 - size/2) * 1000) / 1000;
-  const initialY = Math.round((Math.sin(initialAngle) * 80 - size/2) * 1000) / 1000;
-  const initialDepth = Math.round(Math.sin(initialAngle) * 1000) / 1000;
-  const initialScale = Math.round((1 + initialDepth * 0.3) * 1000) / 1000;
+  const initialY = Math.round((-Math.sin(initialAngle) * 80 - size/2) * 1000) / 1000;
+  // Use negative sine for proper 3D depth calculation  
+  const initialDepth = Math.round(-Math.sin(initialAngle) * 1000) / 1000;
+  const initialScale = Math.round((1 + initialDepth * 0.48) * 1000) / 1000;
 
   if (prefersReducedMotion) {
     // Static version for reduced motion
@@ -177,11 +174,9 @@ function EllipticalOrbitingShape({
           y: initialY,
           scale: initialScale,
           zIndex: initialDepth > 0 ? 10 : 1,
-          cursor: 'pointer',
+          cursor: 'default',
         }}
         onClick={onClick}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
       >
         <ShapeComponent size={size} />
       </motion.div>
@@ -190,7 +185,7 @@ function EllipticalOrbitingShape({
 
   return (
     <>
-      {/* Back layer - behind center */}
+      {/* Back layer - behind center (top/smaller) */}
       <motion.div
         initial={{
           x: initialX,
@@ -205,12 +200,12 @@ function EllipticalOrbitingShape({
           width: `${size}px`,
           height: `${size}px`,
           zIndex: 1,
-          cursor: 'pointer',
+          cursor: 'default',
         }}
         animate={{
           x: positions.map(p => p.x - size/2),
           y: positions.map(p => p.y - size/2),
-          scale: isClicked ? scales.map(s => s * 1.5) : scales,
+          scale: scales,
           opacity: depths.map(d => d <= 0 ? 1 : 0),
         }}
         transition={{
@@ -219,13 +214,11 @@ function EllipticalOrbitingShape({
           ease: "linear",
         }}
         onClick={onClick}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
       >
         <ShapeComponent size={size} />
       </motion.div>
       
-      {/* Front layer - in front of center */}
+      {/* Front layer - in front of center (bottom/bigger) */}
       <motion.div
         initial={{
           x: initialX,
@@ -240,12 +233,12 @@ function EllipticalOrbitingShape({
           width: `${size}px`,
           height: `${size}px`,
           zIndex: 10,
-          cursor: 'pointer',
+          cursor: 'default',
         }}
         animate={{
           x: positions.map(p => p.x - size/2),
           y: positions.map(p => p.y - size/2),
-          scale: isClicked ? scales.map(s => s * 1.5) : scales,
+          scale: scales,
           opacity: depths.map(d => d > 0 ? 1 : 0),
         }}
         transition={{
@@ -254,8 +247,6 @@ function EllipticalOrbitingShape({
           ease: "linear",
         }}
         onClick={onClick}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
       >
         <ShapeComponent size={size} />
       </motion.div>

@@ -10,7 +10,8 @@
       "Bash(npx tsc:*)",
       "Bash(rm:*)",
       "Bash(dir:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)"
     ],
     "deny": []
   }
