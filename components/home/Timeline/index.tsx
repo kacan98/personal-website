@@ -2,6 +2,7 @@
 
 import { Box, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
+import { useState, useEffect, useRef } from "react";
 
 export interface TimelineItem {
   title: string;
@@ -16,14 +17,45 @@ interface TimelineProps {
   title?: string;
 }
 
-// Individual timeline item component to avoid hooks in callbacks
+// Individual timeline item component with slide-in animation
 function TimelineItemComponent({ item, index }: { item: TimelineItem; index: number }) {
+  const [isRevealed, setIsRevealed] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isRevealed) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isRevealed) {
+          setIsRevealed(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (itemRef.current) {
+      observer.observe(itemRef.current);
+    }
+
+    return () => {
+      if (itemRef.current) {
+        observer.unobserve(itemRef.current);
+      }
+    };
+  }, [isRevealed]);
+
   return (
     <Box 
+      ref={itemRef}
       sx={{ 
         position: 'relative',
         mb: { xs: 6, md: 8 },
-        pl: { xs: 6, md: 0 }
+        pl: { xs: 6, md: 0 },
+        opacity: isRevealed ? 1 : 0,
+        transform: isRevealed ? 'translateY(0)' : 'translateY(50px)',
+        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+        transitionDelay: `${index * 0.2}s`,
       }}>
       {/* Timeline dot */}
       <Box sx={{
@@ -150,8 +182,10 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
           </Box>
         </Grid2>
         
+        {/* Hide this column on mobile (xs), only show on md+ */}
         <Grid2 xs={12} md={6} sx={{ 
-          order: { xs: 2, md: index % 2 === 0 ? 2 : 1 }
+          order: { xs: 2, md: index % 2 === 0 ? 2 : 1 },
+          display: { xs: 'none', md: 'block' } // Hide on mobile
         }}>
           <Box sx={{ 
             height: '250px',
@@ -187,28 +221,63 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
 }
 
 export default function Timeline({ items, title }: TimelineProps) {
+  const [isTitleRevealed, setIsTitleRevealed] = useState(false);
+  const titleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isTitleRevealed) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isTitleRevealed) {
+          setIsTitleRevealed(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (titleRef.current) {
+      observer.observe(titleRef.current);
+    }
+
+    return () => {
+      if (titleRef.current) {
+        observer.unobserve(titleRef.current);
+      }
+    };
+  }, [isTitleRevealed]);
+
   return (
-    <Box sx={{ py: { xs: 4, md: 6 } }}>
+    <Box sx={{ 
+      py: { xs: 6, md: 8 }, // Increased margins above and below
+      mt: { xs: 4, md: 6 },  // Additional top margin
+      mb: { xs: 4, md: 6 }   // Additional bottom margin
+    }}>
       {title && (
-        <Typography 
-          variant="h3" 
-          sx={{ 
-            textAlign: 'center', 
-            mb: 6, 
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            fontSize: { xs: '2rem', md: '3rem' }
-          }}
-        >
-          {title}
-        </Typography>
+        <Box ref={titleRef}>
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              textAlign: 'center', 
+              mb: 6, 
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              fontSize: { xs: '2rem', md: '3rem' },
+              opacity: isTitleRevealed ? 1 : 0,
+              transform: isTitleRevealed ? 'translateY(0)' : 'translateY(30px)',
+              transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
       )}
       
       <Box sx={{ position: 'relative', maxWidth: '1000px', mx: 'auto' }}>
-        {/* Timeline line */}
+        {/* Timeline line - hide on mobile where right column is hidden */}
         <Box sx={{
           position: 'absolute',
           left: { xs: '20px', md: '50%' },

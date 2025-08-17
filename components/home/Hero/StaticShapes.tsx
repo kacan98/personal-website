@@ -49,8 +49,8 @@ const StaticShapes = () => {
           }
         }}
         onClick={() => handleShapeClick('dodecahedron')}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.98 }}
       >
         <Box
           sx={{
@@ -79,35 +79,35 @@ const StaticShapes = () => {
       </motion.div>
 
       <EllipticalOrbitingShape 
-        size={100} 
+        size={80} 
         startAngle={0}
         component={TorusShape}
         onClick={() => handleShapeClick('torus')}
         isClicked={clickedShape === 'torus'}
       />
       <EllipticalOrbitingShape 
-        size={95} 
+        size={75} 
         startAngle={72}
         component={HeartShape}
         onClick={() => handleShapeClick('heart')}
         isClicked={clickedShape === 'heart'}
       />
       <EllipticalOrbitingShape 
-        size={105} 
+        size={85} 
         startAngle={144}
         component={KnotShape}
         onClick={() => handleShapeClick('knot')}
         isClicked={clickedShape === 'knot'}
       />
       <EllipticalOrbitingShape 
-        size={90} 
+        size={70} 
         startAngle={216}
         component={BoxShape}
         onClick={() => handleShapeClick('box')}
         isClicked={clickedShape === 'box'}
       />
       <EllipticalOrbitingShape 
-        size={85} 
+        size={65} 
         startAngle={288}
         component={CrossShape}
         onClick={() => handleShapeClick('cross')}

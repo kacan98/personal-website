@@ -16,15 +16,19 @@ export type TechListProps = {
 };
 
 const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Intersection Observer to only animate when visible
+  // Reveal and start animation once when component comes into view
   useEffect(() => {
+    if (isRevealed) return;
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        if (entry.isIntersecting && !isRevealed) {
+          setIsRevealed(true);
+        }
       },
       { threshold: 0.1 }
     );
@@ -38,7 +42,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
         observer.unobserve(containerRef.current);
       }
     };
-  }, []);
+  }, [isRevealed]);
 
   return (
     <Box
@@ -122,13 +126,15 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                 width: "100%",
                 position: "relative",
                 minHeight: { xs: "4rem", sm: "5rem", md: "7rem", lg: "8rem" },
-                // Only animate when visible and user hasn't requested reduced motion
-                ...(isVisible && !prefersReducedMotion && {
+                // Hidden until revealed, then always animate
+                opacity: isRevealed ? 1 : 0,
+                transition: 'opacity 0.6s ease-in-out',
+                transitionDelay: `${index * 0.1}s`,
+                // Always animate once revealed (unless reduced motion)
+                ...(isRevealed && !prefersReducedMotion && {
                   animation: `${direction} 25s ease-in-out infinite`,
                   animationDelay: `${index * 0.1}s`,
                 }),
-                // Pause animation when not visible
-                animationPlayState: isVisible ? 'running' : 'paused',
               }}
               aria-label={name || ""}
             >
@@ -182,7 +188,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                         flexShrink: 0,
                         color: "inherit",
                         // CSS animation for rotation instead of Framer Motion
-                        ...(isVisible && !prefersReducedMotion && (isCenter || itemIndex === centerIndex - 1) && {
+                        ...(isRevealed && !prefersReducedMotion && (isCenter || itemIndex === centerIndex - 1) && {
                           animation: 'rotate 10s linear infinite',
                         }),
                       }}

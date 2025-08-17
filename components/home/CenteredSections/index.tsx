@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Typography } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
 
 export interface CenteredSection {
   header: string;
@@ -13,10 +14,37 @@ interface CenteredSectionsProps {
   title?: string;
 }
 
-// Individual section component to avoid hooks in callbacks
-function CenteredSectionItem({ section }: { section: CenteredSection; index: number }) {
+// Individual section component with slide-in animation
+function CenteredSectionItem({ section, index }: { section: CenteredSection; index: number }) {
+  const [isRevealed, setIsRevealed] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isRevealed) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isRevealed) {
+          setIsRevealed(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, [isRevealed]);
+
   return (
     <Box 
+      ref={sectionRef}
       sx={{ 
         minHeight: '100vh', 
         display: 'flex', 
@@ -28,7 +56,11 @@ function CenteredSectionItem({ section }: { section: CenteredSection; index: num
       <Box sx={{ 
         textAlign: 'center', 
         maxWidth: '800px',
-        px: { xs: 2, md: 0 }
+        px: { xs: 2, md: 0 },
+        opacity: isRevealed ? 1 : 0,
+        transform: isRevealed ? 'translateY(0)' : 'translateY(50px)',
+        transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
+        transitionDelay: `${index * 0.2}s`,
       }}>
         <Typography 
           variant="h2" 
@@ -78,24 +110,55 @@ function CenteredSectionItem({ section }: { section: CenteredSection; index: num
 }
 
 export default function CenteredSections({ sections, title }: CenteredSectionsProps) {
+  const [isTitleRevealed, setIsTitleRevealed] = useState(false);
+  const titleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isTitleRevealed) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isTitleRevealed) {
+          setIsTitleRevealed(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (titleRef.current) {
+      observer.observe(titleRef.current);
+    }
+
+    return () => {
+      if (titleRef.current) {
+        observer.unobserve(titleRef.current);
+      }
+    };
+  }, [isTitleRevealed]);
+
   return (
     <Box sx={{ py: { xs: 4, md: 6 } }}>
       {title && (
-        <Typography 
-          variant="h3" 
-          sx={{ 
-            textAlign: 'center', 
-            mb: 6, 
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            fontSize: { xs: '2rem', md: '3rem' }
-          }}
-        >
-          {title}
-        </Typography>
+        <Box ref={titleRef}>
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              textAlign: 'center', 
+              mb: 6, 
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              fontSize: { xs: '2rem', md: '3rem' },
+              opacity: isTitleRevealed ? 1 : 0,
+              transform: isTitleRevealed ? 'translateY(0)' : 'translateY(30px)',
+              transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
       )}
       
       {sections.map((section, index) => (

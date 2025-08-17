@@ -91,11 +91,6 @@ export default async function App() {
       <ContentContainer fullWidth>
         <Hero firstName="Karel" lastName="Čančara" tagLine="AI-Enhanced Full-Stack Developer" />
       </ContentContainer>
-      <Box sx={{ py: { xs: 1, md: 2 } }}>
-        <TechList
-          technologies={technologies}
-        />
-      </Box>
       <Box sx={{ py: { xs: 2, md: 4 } }}>
         <SocialIcons direction={"column"} />
       </Box>
@@ -105,6 +100,13 @@ export default async function App() {
           <CenteredSections 
             sections={aboutMe}
           />
+
+          {/* Technologies */}
+          <Box sx={{ py: { xs: 1, md: 2 } }}>
+            <TechList
+              technologies={technologies}
+            />
+          </Box>
 
           {/* Career Timeline */}
           <Timeline 
