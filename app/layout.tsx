@@ -197,7 +197,8 @@ export default async function RootLayout({
                   <Box
                     component="main"
                     sx={{
-                      minHeight: "calc(100vh - 64px)", // Subtract navbar height
+                      minHeight: "100vh",
+                      pt: { xs: '56px', md: '64px' }, // Add top padding for fixed navbar
                       pb: 4,
                     }}
                   >

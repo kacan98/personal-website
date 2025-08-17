@@ -10,17 +10,13 @@ interface HeroProps {
   tagLine: string;
 }
 
-const NameLetter = styled('span')({
-  display: 'inline-block',
-  willChange: 'transform, opacity',
-});
-
 const FirstNameContainer = styled(Typography)(({
   display: 'block',
   letterSpacing: '0.001em',
   color: '#64748b',
   marginBottom: '0.7rem',
-  fontSize: 'clamp(2rem, 100%, 20vw)',
+  fontSize: 'clamp(2rem, 8vw, 5rem)',
+  fontDisplay: 'swap', // Improve font loading performance
 }));
 
 const LastNameContainer = styled(Typography)(({
@@ -29,7 +25,8 @@ const LastNameContainer = styled(Typography)(({
   marginTop: '16px',
   letterSpacing: '0.001em',
   whiteSpace: 'nowrap',
-  fontSize: 'clamp(3rem, 100%, 20vw)'
+  fontSize: 'clamp(3rem, 10vw, 6rem)',
+  fontDisplay: 'swap', // Improve font loading performance
 }));
 
 const JobTitle = styled(Typography)({
@@ -41,7 +38,8 @@ const JobTitle = styled(Typography)({
   textTransform: 'uppercase',
   letterSpacing: '0.2em',
   fontWeight: 700,
-  willChange: 'transform, opacity',
+  contain: 'layout style',
+  minHeight: '2.5rem', // Prevent layout shift
 });
 
 const NameHeading = styled(Typography)(({
@@ -49,21 +47,16 @@ const NameHeading = styled(Typography)(({
   fontWeight: 800,
   lineHeight: 0.9,
   letterSpacing: '-0.05em',
+  contain: 'layout style',
+  minHeight: '8rem', // Prevent layout shift for large text
 }));
 
 export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element => {
   const component = useRef(null);
 
-  const renderLetters = (name: string, key: string) => {
-    if (!name) return;
-    return name.split("").map((letter, index) => (
-      <NameLetter
-        key={index}
-        className={`name-animation name-animation-${key}-${index}`}
-      >
-        {letter === " " ? "\u00A0" : letter}
-      </NameLetter>
-    ));
+  // Simplified rendering for better LCP performance
+  const renderOptimizedText = (name: string) => {
+    return name;
   };
 
   return (
@@ -77,13 +70,13 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
           }}
         >
           <Grid item xs={12} md={6}>
-            <Box sx={{ data: { speed: 0.2 } }}>
+            <Box className="hero-text" sx={{ data: { speed: 0.2 } }}>
               <NameHeading variant="h1" aria-label={firstName + " " + lastName}>
-                <FirstNameContainer variant="inherit">
-                  {renderLetters(firstName, "first")}
+                <FirstNameContainer className="name-container" variant="inherit">
+                  {renderOptimizedText(firstName)}
                 </FirstNameContainer>
-                <LastNameContainer variant="inherit">
-                  {renderLetters(lastName, "last")}
+                <LastNameContainer className="name-container" variant="inherit">
+                  {renderOptimizedText(lastName)}
                 </LastNameContainer>
               </NameHeading>
               <JobTitle className="job-title" variant="h2" sx={{

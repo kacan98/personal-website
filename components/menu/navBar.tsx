@@ -140,13 +140,13 @@ const NavBar = ({ navLinks }: TopBarProps) => {
     <>
       {/* Fixed Navbar */}
       <AppBar
-        position="static"
+        position="fixed"
         color="transparent"
         elevation={0}
         sx={{
           flexShrink: 0,
           backdropFilter: 'blur(10px)',
-          backgroundColor: 'rgba(15, 23, 42, 0.8)',
+          backgroundColor: 'rgba(15, 23, 42, 0.9)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         }}
       >

@@ -114,16 +114,25 @@ export function Shapes({
   }, [isLoaded, onLoadingComplete]);
 
   useEffect(() => {
+    let rafId: number;
+    
     const handleMouseMove = (event: any) => {
-      // Normalize mouse position values between -1 and 1
-      const x = (event.clientX / window.innerWidth) * 2 - 1;
-      const y = -(event.clientY / window.innerHeight) * 2 + 1;
-      setMousePosition({ x, y });
+      // Throttle mouse movement using RAF for better performance
+      if (rafId) return;
+      
+      rafId = requestAnimationFrame(() => {
+        // Normalize mouse position values between -1 and 1
+        const x = (event.clientX / window.innerWidth) * 2 - 1;
+        const y = -(event.clientY / window.innerHeight) * 2 + 1;
+        setMousePosition({ x, y });
+        rafId = 0;
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -149,6 +158,7 @@ export function Shapes({
         dpr={[1, 2]}
         camera={{ position: [0, 0, 25], fov: 30, near: 1, far: 40 }}
         frameloop="demand"
+        performance={{ min: 0.8 }}
       >
         <Suspense fallback={null}>
           <ProgressTracker 
@@ -162,11 +172,11 @@ export function Shapes({
           <pointLight position={[-10, -10, -10]} intensity={0.4} color="#f59e0b" />
           <ContactShadows
             position={[0, -4.5, 0]}
-            opacity={0.4}
-            scale={40}
-            blur={2}
-            far={8}
-            resolution={128}
+            opacity={0.3}
+            scale={30}
+            blur={1.5}
+            far={6}
+            resolution={64}
             color="#000000"
           />
           <Environment preset="studio" />
@@ -179,43 +189,39 @@ export function Shapes({
 function Geometries({ mousePosition }: {
   mousePosition: { x: number; y: number; };
 }) {
-  // Original beautiful geometries with moderate optimization
+  // Optimized geometries for better performance
   const geometries = useMemo(() => [
     {
       position: [-1.2, -1, 2] as [number, number, number],
       r: 0.5,
-      geometry: new THREE.TorusGeometry(1.0, 0.4, 20, 36), // Good detail but not excessive
+      geometry: new THREE.TorusGeometry(1.0, 0.4, 16, 24), // Reduced segments
     },
     {
       position: [1.5, -.3, 1.5] as [number, number, number],
       r: 0.5,
-      geometry: new THREE.ConeGeometry(1.2, 2.0, 12), // Smooth cone
+      geometry: new THREE.ConeGeometry(1.2, 2.0, 8), // Reduced segments
     },
     {
       position: [0, 0, -1] as [number, number, number],
       r: 0.8,
-      geometry: new THREE.DodecahedronGeometry(2.5), // Beautiful centerpiece
+      geometry: new THREE.DodecahedronGeometry(2.5), // Keep centerpiece detailed
     },
     {
       position: [-1.7, 1.2, -1] as [number, number, number],
       r: 0.6,
-      geometry: new THREE.TorusKnotGeometry(.5, .3, 48, 32, 2, 3), // Complex knot
+      geometry: new THREE.TorusKnotGeometry(.5, .3, 32, 24, 2, 3), // Reduced segments
     },
     {
       position: [1.2, 1.7, -2] as [number, number, number],
       r: 0.6,
-      geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Keep it as the original box
+      geometry: new THREE.BoxGeometry(1.5, 1.5, 1.5), // Box is already optimized
     },
   ], []);
-  // Use our custom hook for sound effects
+  // Reduced sound files for better performance
   const soundPaths = [
     getPublicAssetUrl("sounds/hit1.ogg"),
-    getPublicAssetUrl("sounds/hit2.ogg"),
     getPublicAssetUrl("sounds/hit3.ogg"),
-    getPublicAssetUrl("sounds/hit4.ogg"),
     getPublicAssetUrl("sounds/hit6.ogg"),
-    getPublicAssetUrl("sounds/hit7.ogg"),
-    getPublicAssetUrl("sounds/hit8.ogg"),
   ];
 
   const { playRandomSound } = useSoundEffects(soundPaths);
@@ -378,25 +384,21 @@ function Geometry({ r, position, geometry, playSound, materials, mousePosition }
       }
     });
     return () => ctx.revert();
-  }, []);  // Apply subtle movement based on mouse position with performance optimization
+  }, []);
   useFrame(({ invalidate }) => {
     if (!isVisible || !groupRef.current || !mousePosition) return;
 
-    // Detect if this is the middle (largest) shape
     const isMiddleShape = initialPosition.current[0] === 0 && initialPosition.current[1] === 0;
-    const movementFactor = isMiddleShape ? 0.8 : 0.5; // More movement for middle shape
+    const movementFactor = isMiddleShape ? 0.6 : 0.3;
 
-    // Apply slight position offset based on mouse position
     const targetX = initialPosition.current[0] + mousePosition.x * movementFactor;
     const targetY = initialPosition.current[1] + mousePosition.y * movementFactor;
 
-    // Smooth lerping for more natural movement using our custom lerp function
-    const newX = lerp(groupRef.current.position.x, targetX, 0.07);
-    const newY = lerp(groupRef.current.position.y, targetY, 0.07);
-    const newZ = lerp(groupRef.current.position.z, initialPosition.current[2], 0.07);
+    const newX = lerp(groupRef.current.position.x, targetX, 0.04);
+    const newY = lerp(groupRef.current.position.y, targetY, 0.04);
+    const newZ = lerp(groupRef.current.position.z, initialPosition.current[2], 0.04);
 
-    // Only update position and invalidate if there's actual movement
-    const threshold = 0.001;
+    const threshold = 0.01;
     if (
       Math.abs(newX - groupRef.current.position.x) > threshold ||
       Math.abs(newY - groupRef.current.position.y) > threshold ||

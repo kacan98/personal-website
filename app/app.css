@@ -3,7 +3,12 @@ a{
     color: inherit
 }
 
-html, body {
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth; /* Keep smooth scrolling */
+}
+
+body {
     overflow-x: hidden;
 }
 
@@ -39,11 +44,32 @@ html, body {
     }
 }
 :root {
-    /* Define font family variables */
-    --font-open-sans: 'Open Sans', sans-serif;
-    --font-cormorant-garamond: 'Cormorant Garamond', serif;
-    --font-yeseva-one: 'Yeseva One', cursive;
-    --font-urbanist: 'Urbanist', sans-serif;
+    /* Define font family variables with system font fallbacks for faster LCP */
+    --font-open-sans: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-cormorant-garamond: 'Cormorant Garamond', Georgia, Times, serif;
+    --font-yeseva-one: 'Yeseva One', cursive, fantasy;
+    --font-urbanist: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Font display optimization for better LCP */
+@font-face {
+    font-family: 'Open Sans';
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Cormorant Garamond';
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Yeseva One';
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Urbanist';
+    font-display: swap;
 }
 /* Optimize animations for reduced motion preference */
 @media (prefers-reduced-motion: reduce) {

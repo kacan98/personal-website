@@ -1,38 +1,111 @@
-import CenteredSections, { CenteredSection } from "@/components/home/CenteredSections";
+// import CenteredSectionItem, { CenteredSection } from "@/components/home/CenteredSections/CenteredSectionItem";
 import Contact from "@/components/home/Contact";
 import Hero from "@/components/home/Hero";
 import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
+import ScrollSnapContainer from "@/components/layout/ScrollSnapContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 // import Grid2 from "@mui/material/Unstable_Grid2"; // Removed unused import
 
-const aboutMe: CenteredSection[] = [
-  {
+interface AboutSection {
+  header: string;
+  content: string;
+  visual?: React.ReactNode;
+}
+
+// Simple inline component for about sections
+function AboutSectionItem({ section, id }: { section: AboutSection; id: string }) {
+  return (
+    <Box 
+      id={id}
+      sx={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        py: { xs: 6, md: 10 },
+        scrollSnapAlign: 'start',
+      }}
+    >
+      <Box sx={{ 
+        textAlign: 'center', 
+        maxWidth: '800px',
+        px: { xs: 2, md: 0 },
+      }}>
+        <Typography 
+          variant="h2" 
+          component="h2"
+          sx={{ 
+            mb: 4,
+            fontWeight: 800,
+            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent',
+            fontSize: { xs: '3rem', md: '4rem' }
+          }}
+        >
+          {section.header}
+        </Typography>
+        
+        {section.visual && (
+          <Box sx={{ 
+            mb: 4, 
+            height: { xs: '250px', md: '300px' },
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            {section.visual}
+          </Box>
+        )}
+        
+        <Typography 
+          variant="h5" 
+          component="div"
+          sx={{ 
+            color: 'rgba(255, 255, 255, 0.9)',
+            lineHeight: 1.8,
+            fontSize: { xs: '1.2rem', md: '1.5rem' },
+            fontWeight: 300,
+            maxWidth: '600px',
+            mx: 'auto'
+          }}
+        >
+          {section.content}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+const aboutMe: Record<string, AboutSection> = {
+  fullStack: {
     header: "Full-Stack Developer",
     content:
       "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy.",
     visual: <ThreeDLaptop />
   },
-  {
+  aiEnhanced: {
     header: "AI-Enhanced Development", 
     content:
       "I use AI coding tools every day because they help me write code faster and catch mistakes I'd miss. Always trying out new tools to see if they make my life easier.",
   },
-  {
+  problemSolver: {
     header: "Problem Solver",
     content:
       "I like figuring out why things break and fixing them. Most of my day is spent debugging, building features, and making sure stuff actually works.",
   },
-  {
+  userFocused: {
     header: "User-Focused",
     content:
       "I used to do marketing, so I think about who's actually going to use the stuff I build. I try to make software that doesn't make people want to throw their computer out the window.",
   },
-];
+};
 
 // Career timeline data extracted from CV
 const careerTimeline: TimelineItem[] = [
@@ -88,36 +161,49 @@ const technologies = [
 export default async function App() {
   return (
     <>
-      <ContentContainer fullWidth>
-        <Hero firstName="Karel" lastName="Čančara" tagLine="AI-Enhanced Full-Stack Developer" />
-      </ContentContainer>
-      <Box sx={{ py: { xs: 2, md: 4 } }}>
-        <SocialIcons direction={"column"} />
+      {/* Hero Section - normal scrolling */}
+      <Box id="hero" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
+        <ContentContainer fullWidth>
+          <Hero firstName="Karel" lastName="Čančara" tagLine="AI-Enhanced Full-Stack Developer" />
+        </ContentContainer>
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, py: { xs: 2, md: 4 } }}>
+          <SocialIcons direction={"column"} />
+        </Box>
       </Box>
+      
       {isKarelsPortfolio && (
         <>
-          {/* About Me - Centered Sections */}
-          <CenteredSections 
-            sections={aboutMe}
-          />
+          {/* About Me - Scroll snap only for these 4 sections */}
+          <ScrollSnapContainer>
+            <AboutSectionItem section={aboutMe.fullStack} id="about-fullstack" />
+            <AboutSectionItem section={aboutMe.aiEnhanced} id="about-ai" />
+            <AboutSectionItem section={aboutMe.problemSolver} id="about-problem" />
+            <AboutSectionItem section={aboutMe.userFocused} id="about-user" />
+          </ScrollSnapContainer>
 
-          {/* Technologies */}
-          <Box sx={{ py: { xs: 1, md: 2 } }}>
+          {/* Technologies - normal scrolling */}
+          <Box id="technologies" sx={{ py: { xs: 1, md: 2 }, minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
             <TechList
               technologies={technologies}
             />
           </Box>
 
-          {/* Career Timeline */}
-          <Timeline 
-            items={careerTimeline}
-            title="Career Journey"
-          />
+          {/* Career Timeline - normal scrolling */}
+          <Box id="timeline" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+            <ContentContainer>
+              <Timeline 
+                items={careerTimeline}
+                title="Career Journey"
+              />
+            </ContentContainer>
+          </Box>
         </>
       )}
 
-      {/* Contact Section - Full Width Edge to Edge */}
-      <Contact />
+      {/* Contact Section - normal scrolling */}
+      <Box id="contact" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+        <Contact />
+      </Box>
     </>
   );
 }

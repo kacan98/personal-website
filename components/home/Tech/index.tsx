@@ -87,20 +87,20 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
 
       <Box
         sx={{
-          // CSS animations defined here - smaller range to keep center visible
+          // Optimized CSS animations with smaller range and GPU acceleration
           '@keyframes slideLeft': {
-            '0%': { transform: 'translateX(150px)' },
-            '25%': { transform: 'translateX(0px)' },
-            '50%': { transform: 'translateX(-150px)' },
-            '75%': { transform: 'translateX(0px)' },
-            '100%': { transform: 'translateX(150px)' },
+            '0%': { transform: 'translate3d(100px, 0, 0)' },
+            '25%': { transform: 'translate3d(0px, 0, 0)' },
+            '50%': { transform: 'translate3d(-100px, 0, 0)' },
+            '75%': { transform: 'translate3d(0px, 0, 0)' },
+            '100%': { transform: 'translate3d(100px, 0, 0)' },
           },
           '@keyframes slideRight': {
-            '0%': { transform: 'translateX(-150px)' },
-            '25%': { transform: 'translateX(0px)' },
-            '50%': { transform: 'translateX(150px)' },
-            '75%': { transform: 'translateX(0px)' },
-            '100%': { transform: 'translateX(-150px)' },
+            '0%': { transform: 'translate3d(-100px, 0, 0)' },
+            '25%': { transform: 'translate3d(0px, 0, 0)' },
+            '50%': { transform: 'translate3d(100px, 0, 0)' },
+            '75%': { transform: 'translate3d(0px, 0, 0)' },
+            '100%': { transform: 'translate3d(-100px, 0, 0)' },
           },
           '@keyframes rotate': {
             from: { transform: 'rotate(0deg)' },
@@ -109,7 +109,7 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
         }}
       >
         {technologies.map(({ name, color }, index) => {
-          const totalItems = 15;
+          const totalItems = 9; // Reduced from 15 to 9 for better performance
           const centerIndex = Math.floor(totalItems / 2);
           const direction = index % 2 === 0 ? 'slideRight' : 'slideLeft';
           
@@ -125,14 +125,14 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
                 color: "text.secondary",
                 width: "100%",
                 position: "relative",
-                minHeight: { xs: "4rem", sm: "5rem", md: "7rem", lg: "8rem" },
+                minHeight: { xs: "3rem", sm: "4rem", md: "5rem", lg: "6rem" }, // Reduced heights
                 // Hidden until revealed, then always animate
                 opacity: isRevealed ? 1 : 0,
                 transition: 'opacity 0.6s ease-in-out',
                 transitionDelay: `${index * 0.1}s`,
-                // Always animate once revealed (unless reduced motion)
+                // Slower animation for better performance and reduced motion
                 ...(isRevealed && !prefersReducedMotion && {
-                  animation: `${direction} 25s ease-in-out infinite`,
+                  animation: `${direction} 35s ease-in-out infinite`, // Slower from 25s to 35s
                   animationDelay: `${index * 0.1}s`,
                 }),
               }}
