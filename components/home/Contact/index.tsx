@@ -56,7 +56,6 @@ export default function Contact({
   return (
     <Box sx={{ 
       py: { xs: 8, md: 12 },
-      background: 'rgba(255, 255, 255, 0.02)',
       position: 'relative',
       overflow: 'hidden',
       width: '100vw',
