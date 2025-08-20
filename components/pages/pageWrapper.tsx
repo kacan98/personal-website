@@ -21,7 +21,7 @@ function PageWrapper({
     <Container
       maxWidth={containerMaxWidth}
       sx={{
-        margin: "100px auto",
+        margin: "100px auto 50px auto",
         textAlign: "center",
       }}
     >

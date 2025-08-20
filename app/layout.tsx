@@ -77,7 +77,7 @@ export default async function RootLayout({
 
   console.log("Layout navLinks:", navLinks); return (
     <html lang="en" style={{ height: '100%' }}>
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#0f172a', minHeight: '100vh', height: '100%' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#0f172a', minHeight: '100vh' }}>
         <CssBaseline />
         <AppRouterCacheProvider>
           <ReduxProvider>
@@ -88,6 +88,8 @@ export default async function RootLayout({
                   minHeight: "100vh",
                   backgroundColor: "#0f172a",
                   position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
                 <BackgroundEffect />
@@ -197,9 +199,8 @@ export default async function RootLayout({
                   <Box
                     component="main"
                     sx={{
-                      minHeight: "100vh",
+                      flex: 1,
                       pt: { xs: '56px', md: '64px' }, // Add top padding for fixed navbar
-                      pb: 4,
                     }}
                   >
                     {children}

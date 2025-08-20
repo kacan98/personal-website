@@ -58,11 +58,13 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
       <Box
         sx={{
           position: "absolute",
-          right: 99999,
+          top: -99999,
+          left: -99999,
           width: 905,
           padding: 3,
           margin: 3,
-
+          overflow: "hidden",
+          visibility: "hidden",
         }}
       >
         <Box

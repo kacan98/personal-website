@@ -11,8 +11,13 @@
       "Bash(rm:*)",
       "Bash(dir:*)",
       "WebSearch",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:blog.gitbutler.com)",
+      "WebFetch(domain:www.ksred.com)",
+      "WebFetch(domain:github.com)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }
