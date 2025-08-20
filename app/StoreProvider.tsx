@@ -10,12 +10,12 @@ export default function StoreProvider({
     cvSettings
 }: {
     children: React.ReactNode
-    cvSettings: CVSettings
+    cvSettings: CVSettings | undefined
 }) {
-    const storeRef = useRef<AppStore>()
+    const storeRef = useRef<AppStore | undefined>(undefined)
     if (!storeRef.current) {
         // Create the store instance the first time this renders
-        storeRef.current = makeStore(cvSettings)
+        storeRef.current = makeStore(cvSettings || {} as CVSettings)
     }
 
     return <Provider store={storeRef.current}>{children}</Provider>

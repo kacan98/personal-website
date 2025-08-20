@@ -3,9 +3,9 @@ import { getGalleries } from "@/sanity/sanity-utils";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateStaticParams() {
@@ -17,9 +17,10 @@ export async function generateStaticParams() {
 }
 
 export default async function GalleryRoute({ params }: Props) {
+  const { slug } = await params;
   const galleries = await getGalleries();
   const gallery = galleries.find(
-    (g) => g.title.toLowerCase().replace(/\s+/g, '-') === params.slug
+    (g) => g.title.toLowerCase().replace(/\s+/g, '-') === slug
   );
 
   if (!gallery) {

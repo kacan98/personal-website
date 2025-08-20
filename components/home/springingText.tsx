@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { a, useTrail } from "@react-spring/web";
+import { animated, useTrail } from "@react-spring/web";
 import { Typography } from "@mui/material";
 
 type AnimatedTextProps = {
@@ -56,7 +56,7 @@ const AnimatedText = ({ texts }: AnimatedTextProps) => {
   return (
     <div>
       {trail.map(({ x, ...rest }, index) => (
-        <a.span
+        <animated.span
           key={index}
           style={{
             ...rest,
@@ -67,7 +67,7 @@ const AnimatedText = ({ texts }: AnimatedTextProps) => {
           <Typography variant={"h5"}>
             {chars[index] === " " ? "\u00A0" : chars[index]}
           </Typography>
-        </a.span>
+        </animated.span>
       ))}
     </div>
   );

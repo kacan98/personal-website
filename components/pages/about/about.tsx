@@ -3,7 +3,7 @@ import { usePicture } from "@/hooks/usePicture";
 import { getCVPicture } from "@/sanity/sanity-utils";
 import { Avatar, Box, Button } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { ReactNode, useRef, useEffect } from "react";
+import React, { ReactNode, useRef, useEffect } from "react";
 import gsap from "gsap";
 import PageWrapper from "../pageWrapper";
 

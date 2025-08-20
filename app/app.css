@@ -5,7 +5,6 @@ a{
 
 html {
     overflow-x: hidden;
-    scroll-behavior: smooth; /* Keep smooth scrolling */
 }
 
 body {

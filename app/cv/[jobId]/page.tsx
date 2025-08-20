@@ -2,18 +2,18 @@
 import CvPage from "@/components/pages/cv/cvPage";
 import BackgroundEffect from "@/components/layout/BackgroundEffect";
 import { Box } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     jobId: string;
-  };
+  }>;
 };
 
 //This route is used for the chrome extension
 // It will receive a jobId and fetch the saved text
 export default function Page({ params }: PageProps) {
-  const { jobId } = params;
+  const { jobId } = use(params);
 
   const [pageText, setPageText] = React.useState("");
 

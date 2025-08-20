@@ -28,14 +28,16 @@ type SanityPictureProps =
 
 function SanityPicture({ sanityImage, alt, ...props }: SanityPictureProps) {
   const imageProps = useNextSanityImage(sanityClient, sanityImage, {
-    imageBuilder: (builder) => {
-      if (!props?.fill) {
-        if (props.width) {
-          builder.width(props.width);
-        }
-        if (props.height) {
-          builder.height(props.height);
-        }
+    imageBuilder: (builder, options) => {
+      // Always use the width from options if available (fixes Next.js 15 warning)
+      if (options.width !== null && options.width !== undefined) {
+        builder.width(options.width);
+      } else if (!props?.fill && props.width) {
+        builder.width(props.width);
+      }
+      
+      if (!props?.fill && props.height) {
+        builder.height(props.height);
       }
 
       if (props.fitMode) {

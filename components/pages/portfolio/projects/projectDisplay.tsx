@@ -4,7 +4,7 @@ import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { Project } from "@/sanity/schemaTypes/project";
 import { Box } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import { a, useTransition } from "@react-spring/web";
+import { animated, useTransition } from "@react-spring/web";
 import { useState } from "react";
 
 type ProjectDisplayProps = {
@@ -59,9 +59,9 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
         alignItems={"center"}
       >
         {transitions((props, project) => (
-          <a.div style={props}>
+          <animated.div style={props}>
             <ProjectCard key={project.title} {...project} />
-          </a.div>
+          </animated.div>
         ))}
       </Grid2>
     </Box>

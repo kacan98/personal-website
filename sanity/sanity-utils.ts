@@ -8,32 +8,19 @@ import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
 import { Image } from "sanity";
 
 export const getProjects = async (): Promise<Project[]> => {
-  return sanityClient.fetch(
-    `*[_type == "project"]`,
-    {},
-    {
-      cache: "no-cache",
-    },
-  );
+  return sanityClient.fetch(`*[_type == "project"]`);
 };
 
 export const getProjectsByRefs = async (refs: string[]): Promise<Project[]> => {
   return sanityClient.fetch(
     `*[_type == "project" && _id in $refs]`,
-    { refs },
-    {
-      cache: "no-cache",
-    },
+    { refs }
   );
 };
 
 export const getGalleries = async (): Promise<Gallery[]> => {
   return sanityClient.fetch(
     `*[_type == "gallery"]`,
-    {},
-    {
-      cache: "no-cache",
-    },
   );
 };
 
@@ -41,20 +28,12 @@ export const getGalleries = async (): Promise<Gallery[]> => {
 export const getSettings = async (): Promise<Settings | undefined> => {
   return sanityClient.fetch(
     `*[_type == "settings"][0]`,
-    {},
-    {
-      cache: "no-cache",
-    },
   );
 };
 
 export const getSocials = async (): Promise<Link[]> => {
   return sanityClient.fetch(
     `*[_type == "settings"][0].social`,
-    {},
-    {
-      cache: "no-cache",
-    },
   );
 };
 
@@ -66,7 +45,6 @@ export const getProjectBySlug = async (
     `*[_type == "project" && relatedPage.slug.current == $slug][0]`,
     { slug },
     {
-      cache: "no-cache",
     },
   );
 };
@@ -74,29 +52,17 @@ export const getProjectBySlug = async (
 export const getCvSettings = async (): Promise<CVSettings> => {
   return sanityClient.fetch(
     `*[_type == "cvSettings"][0]`,
-    {},
-    {
-      cache: "no-cache",
-    },
   );
 };
 
 export const getStyles = async (): Promise<StylesSettings | undefined> => {
   return sanityClient.fetch(
     `*[_type == "stylesSettings"][0]`,
-    {},
-    {
-      cache: "no-cache",
-    },
   );
 };
 
 export const getCVPicture = async (): Promise<Image> => {
   return sanityClient.fetch(
     `*[_type == "cvSettings"][0].profilePicture`,
-    {},
-    {
-      cache: "no-cache",
-    },
   );
 };
