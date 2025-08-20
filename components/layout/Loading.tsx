@@ -1,7 +1,7 @@
 "use client";
 import { Box, Typography, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
-import { BRAND_COLORS } from "@/app/colors";
+import { BRAND_COLORS, BACKGROUND_COLORS } from "@/app/colors";
 
 const loadingMessages = [
   "Initializing portfolio system...",
@@ -29,9 +29,9 @@ export default function Loading() {
     const progressInterval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) return 100;
-        return prev + Math.random() * 3;
+        return Math.min(100, prev + Math.random() * 2.5);
       });
-    }, 100);
+    }, 120);
 
     return () => {
       clearInterval(messageInterval);
@@ -47,7 +47,7 @@ export default function Loading() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        backgroundColor: "#0f172a",
+        backgroundColor: BACKGROUND_COLORS.primary,
         color: "white",
         position: "relative",
         opacity: 1,
@@ -56,14 +56,14 @@ export default function Loading() {
       {/* Windows 11-style loading */}
       <Box
         sx={{
-          borderRadius: "8px",
+          borderRadius: 3,
           p: 4,
           minWidth: { xs: '90vw', sm: 500 },
           maxWidth: '600px',
-          background: `linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)`,
+          background: `linear-gradient(135deg, ${BACKGROUND_COLORS.surface} 0%, ${BACKGROUND_COLORS.primary} 100%)`,
           backdropFilter: "blur(20px)",
-          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(${BRAND_COLORS.primaryRgb}, 0.1)`,
-          border: `1px solid rgba(${BRAND_COLORS.primaryRgb}, 0.2)`,
+          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(${BRAND_COLORS.primaryRgb}, 0.1)`,
+          border: `1px solid ${BRAND_COLORS.secondary}40`,
           transition: 'all 0.3s ease',
         }}
       >
@@ -75,7 +75,7 @@ export default function Loading() {
             justifyContent: "space-between",
             mb: 3,
             pb: 2,
-            borderBottom: "1px solid rgba(120, 120, 120, 0.2)",
+            borderBottom: `1px solid ${BRAND_COLORS.secondary}40`,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -89,7 +89,7 @@ export default function Loading() {
             <Typography
               variant="body2"
               sx={{
-                color: "rgba(255, 255, 255, 0.9)",
+                color: BRAND_COLORS.primary,
                 fontFamily: "system-ui, -apple-system, sans-serif",
                 fontWeight: 600,
                 fontSize: '15px'
@@ -110,10 +110,10 @@ export default function Loading() {
               sx={{
                 width: "14px",
                 height: "1px",
-                backgroundColor: "rgba(255, 255, 255, 0.6)",
+                backgroundColor: `${BRAND_COLORS.primary}99`,
                 cursor: "pointer",
                 "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                  backgroundColor: `${BRAND_COLORS.primary}CC`,
                 },
               }}
             />
@@ -122,10 +122,10 @@ export default function Loading() {
               sx={{
                 width: "12px",
                 height: "12px",
-                border: "1px solid rgba(255, 255, 255, 0.6)",
+                border: `1px solid ${BRAND_COLORS.primary}99`,
                 cursor: "pointer",
                 "&:hover": {
-                  borderColor: "rgba(255, 255, 255, 0.8)",
+                  borderColor: `${BRAND_COLORS.primary}CC`,
                 },
               }}
             />
@@ -141,7 +141,7 @@ export default function Loading() {
                   position: "absolute",
                   width: "12px",
                   height: "1px",
-                  backgroundColor: "rgba(255, 255, 255, 0.6)",
+                  backgroundColor: `${BRAND_COLORS.primary}99`,
                   top: "50%",
                   left: 0,
                 },
@@ -153,7 +153,7 @@ export default function Loading() {
                 },
                 "&:hover": {
                   "&:before, &:after": {
-                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    backgroundColor: `${BRAND_COLORS.primary}CC`,
                   },
                 },
               }}
@@ -166,7 +166,7 @@ export default function Loading() {
           <Typography
             variant="body2"
             sx={{
-              color: "rgba(255, 255, 255, 0.7)",
+              color: `${BRAND_COLORS.primary}B3`,
               fontFamily: "Consolas, monospace",
               fontSize: "14px",
             }}
@@ -195,7 +195,7 @@ export default function Loading() {
                 "0%, 50%": { opacity: 1 },
                 "51%, 100%": { opacity: 0 },
               },
-              color: "rgba(255, 255, 255, 0.8)",
+              color: `${BRAND_COLORS.primary}CC`,
               ml: 0.5,
             }}
           >
@@ -210,7 +210,7 @@ export default function Loading() {
           sx={{
             height: 4,
             borderRadius: 2,
-            backgroundColor: "rgba(120, 120, 120, 0.3)",
+            backgroundColor: `${BACKGROUND_COLORS.surface}40`,
             "& .MuiLinearProgress-bar": {
               background: `linear-gradient(90deg, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary})`,
               borderRadius: 2,
@@ -226,7 +226,7 @@ export default function Loading() {
             variant="body2"
             sx={{
               fontFamily: "Consolas, monospace",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: `${BRAND_COLORS.primary}99`,
               fontSize: "12px",
             }}
           >

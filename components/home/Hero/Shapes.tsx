@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, styled } from "@mui/material";
+import { BRAND_COLORS, BACKGROUND_COLORS } from "@/app/colors";
 import { ContactShadows, Environment, Float } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { gsap } from "gsap";
@@ -169,7 +170,7 @@ export function Shapes({
           <Geometries mousePosition={mousePosition} />
           <ambientLight intensity={0.4} />
           <directionalLight position={[10, 10, 5]} intensity={1.0} />
-          <pointLight position={[-10, -10, -10]} intensity={0.4} color="#f59e0b" />
+          <pointLight position={[-10, -10, -10]} intensity={0.4} color={BRAND_COLORS.accent} />
           <ContactShadows
             position={[0, -4.5, 0]}
             opacity={0.3}
@@ -177,7 +178,7 @@ export function Shapes({
             blur={1.5}
             far={6}
             resolution={64}
-            color="#000000"
+            color={BACKGROUND_COLORS.secondary}
           />
           <Environment preset="studio" />
         </Suspense>
@@ -226,66 +227,49 @@ function Geometries({ mousePosition }: {
 
   const { playRandomSound } = useSoundEffects(soundPaths);
 
-  // Beautiful materials - optimized but stunning
+  // Materials with accent color for main shape, metallic grays for others
   const materials = useMemo(() => [
-    // Rainbow/Iridescent Material - always beautiful
-    new THREE.MeshNormalMaterial(),
-    // Beautiful MeshPhysicalMaterial but optimized
+    // Main centerpiece - use accent color (electric violet)
     new THREE.MeshPhysicalMaterial({
       roughness: 0.1,
       metalness: 0.8,
-      color: 0x9c27b0, // Bright purple
+      color: BRAND_COLORS.accent, // Electric violet from brand colors
+      clearcoat: 0.9,
+      emissive: BRAND_COLORS.accent,
+      emissiveIntensity: 0.3,
+    }),
+    // Supporting shapes - metallic grays for sophistication
+    new THREE.MeshPhysicalMaterial({
+      roughness: 0.2,
+      metalness: 0.9,
+      color: 0xc0c0c0, // Silver metallic
       clearcoat: 0.8,
-      emissive: 0x340137,
-      emissiveIntensity: 1.2,
+      emissive: 0x404040,
+      emissiveIntensity: 0.2,
     }),
     new THREE.MeshPhysicalMaterial({
-      roughness: 0.1,
+      roughness: 0.15,
+      metalness: 0.85,
+      color: 0xe0e0e0, // Light platinum
+      clearcoat: 0.8,
+      emissive: 0x505050,
+      emissiveIntensity: 0.2,
+    }),
+    new THREE.MeshPhysicalMaterial({
+      roughness: 0.3,
       metalness: 0.7,
-      color: 0x00e5ff, // Cyan
-      clearcoat: 0.8,
-      emissive: 0x004d57,
-      emissiveIntensity: 1.2,
+      color: 0x808080, // Medium gray metallic
+      clearcoat: 0.7,
+      emissive: 0x303030,
+      emissiveIntensity: 0.2,
     }),
     new THREE.MeshPhysicalMaterial({
-      color: 0xff4081, // Hot Pink
       roughness: 0.1,
-      metalness: 0.6,
-      clearcoat: 0.8,
-      emissive: 0x4a0024,
-      emissiveIntensity: 1.2,
-    }),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xffff00, // Neon yellow
-      roughness: 0.1,
-      metalness: 0.7,
-      clearcoat: 0.8,
-      emissive: 0x6b6b00,
-      emissiveIntensity: 1.2,
-    }),
-    new THREE.MeshPhysicalMaterial({
-      color: 0xff6500, // Vivid Orange
-      roughness: 0.1,
-      metalness: 0.7,
-      clearcoat: 0.8,
-      emissive: 0x4a1f00,
-      emissiveIntensity: 1.2,
-    }),
-    new THREE.MeshPhysicalMaterial({
-      color: 0x4169e1, // Royal Blue
-      roughness: 0.1,
-      metalness: 0.8,
-      clearcoat: 0.8,
-      emissive: 0x1a2a5e,
-      emissiveIntensity: 1.2,
-    }),
-    new THREE.MeshPhysicalMaterial({
-      color: 0x32CD32, // Lime green
-      roughness: 0.1,
-      metalness: 0.6,
-      clearcoat: 0.8,
-      emissive: 0x2e4016,
-      emissiveIntensity: 1.2,
+      metalness: 0.95,
+      color: 0xd4d4d4, // Chrome-like
+      clearcoat: 1.0,
+      emissive: 0x606060,
+      emissiveIntensity: 0.15,
     }),
   ], []);
   return geometries.map(({ position, r, geometry }) => (

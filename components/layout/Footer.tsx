@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { BACKGROUND_COLORS } from "@/app/colors";
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
       sx={{
         py: 2,
         px: 2,
-        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backgroundColor: BACKGROUND_COLORS.surface + 'cc',
         backdropFilter: 'blur(10px)',
       }}
     >

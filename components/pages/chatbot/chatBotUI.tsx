@@ -6,6 +6,7 @@ import { clearChat } from "@/store/slices/chatbotSlice";
 import { DeleteSweep as DeleteSweepIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, List, TextField, Tooltip, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
+import { BRAND_COLORS, BACKGROUND_COLORS } from "@/app/colors";
 
 const ChatBotUI = () => {
   const dispatch = useAppDispatch();
@@ -134,10 +135,12 @@ const ChatBotUI = () => {
         flexDirection: "column",
         alignItems: "center", 
         justifyContent: "center", 
-        height: "60vh",
-        border: "1px solid rgba(120, 120, 120, 0.3)",
-        borderRadius: "10px",
-        backgroundColor: "rgba(32, 32, 32, 0.95)",
+        height: "70vh",
+        maxWidth: "800px",
+        mx: "auto",
+        border: `1px solid ${BRAND_COLORS.secondary}`,
+        borderRadius: 3,
+        backgroundColor: BACKGROUND_COLORS.surface,
         backdropFilter: "blur(10px)",
       }}>
         <Box sx={{
@@ -190,16 +193,18 @@ const ChatBotUI = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "60vh",
-        border: "1px solid rgba(244, 67, 54, 0.5)",
-        borderRadius: "10px",
-        backgroundColor: "rgba(244, 67, 54, 0.05)",
+        border: `1px solid ${BRAND_COLORS.accent}80`,
+        borderRadius: 3,
+        backgroundColor: `${BRAND_COLORS.accent}0D`,
+        maxWidth: "800px",
+        mx: "auto",
         p: 4,
         textAlign: "center",
       }}>
-        <Typography variant="h6" sx={{ color: "#ff6b6b", mb: 2 }}>
+        <Typography variant="h6" sx={{ color: BRAND_COLORS.accent, mb: 2 }}>
           ⚠️ Chat Error
         </Typography>
-        <Typography sx={{ color: "rgba(255, 255, 255, 0.8)", mb: 4 }}>
+        <Typography sx={{ color: `${BRAND_COLORS.primary}CC`, mb: 4 }}>
           {error}
         </Typography>
         <Button
@@ -207,8 +212,8 @@ const ChatBotUI = () => {
           onClick={handleClear}
           startIcon={<DeleteSweepIcon />}
           sx={{
-            backgroundColor: "#ff6b6b",
-            "&:hover": { backgroundColor: "#e55353" },
+            backgroundColor: BRAND_COLORS.accent,
+            "&:hover": { backgroundColor: `${BRAND_COLORS.accent}CC` },
           }}
         >
           Start New Chat
@@ -221,36 +226,36 @@ const ChatBotUI = () => {
     <Box sx={{
       display: "flex",
       flexDirection: "column",
-      height: "60vh",
-      border: "1px solid rgba(120, 120, 120, 0.3)",
-      borderRadius: "10px",
-      backgroundColor: "rgba(32, 32, 32, 0.95)",
+      height: "70vh",
+      maxWidth: "800px",
+      mx: "auto",
+      border: `1px solid ${BRAND_COLORS.secondary}`,
+      borderRadius: 3,
+      backgroundColor: BACKGROUND_COLORS.surface,
       overflow: "hidden",
+      boxShadow: `0 4px 24px rgba(0, 0, 0, 0.1)`,
     }}>
       {/* Header */}
       <Box sx={{
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         alignItems: "center",
-        p: 2,
-        borderBottom: "1px solid rgba(120, 120, 120, 0.3)",
-        backgroundColor: "rgba(255, 255, 255, 0.02)",
+        p: 1.5,
+        borderBottom: `1px solid ${BRAND_COLORS.secondary}`,
+        backgroundColor: `${BACKGROUND_COLORS.primary}40`,
       }}>
-        <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.9rem' }}>
-          Chat with Karel AI
-        </Typography>
         <Tooltip title="Clear Chat & Start New Conversation" placement="left">
           <IconButton
             onClick={handleClear}
             disabled={loading && messages.length === 0}
             size="small"
             sx={{
-              color: 'secondary.main',
+              color: BRAND_COLORS.secondary,
               opacity: 0.8,
               '&:hover': {
-                color: 'secondary.main',
+                color: BRAND_COLORS.secondary,
                 opacity: 1,
-                backgroundColor: 'rgba(245, 158, 11, 0.1)', // Keep specific transparency
+                backgroundColor: `${BRAND_COLORS.secondary}1A`,
               },
             }}
           >
@@ -294,7 +299,7 @@ const ChatBotUI = () => {
       <Box sx={{
         display: "flex",
         padding: "10px",
-        borderTop: "1px solid rgba(120, 120, 120, 0.3)",
+        borderTop: `1px solid ${BRAND_COLORS.secondary}`,
         gap: 1,
       }}>
         <TextField
@@ -313,8 +318,10 @@ const ChatBotUI = () => {
           }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              '&:hover fieldset': { borderColor: 'secondary.main' },
-              '&.Mui-focused fieldset': { borderColor: 'secondary.main' },
+              backgroundColor: `${BACKGROUND_COLORS.primary}40`,
+              '& fieldset': { borderColor: BRAND_COLORS.secondary },
+              '&:hover fieldset': { borderColor: BRAND_COLORS.secondary },
+              '&.Mui-focused fieldset': { borderColor: BRAND_COLORS.secondary },
             },
           }}
         />
@@ -324,9 +331,9 @@ const ChatBotUI = () => {
           onClick={handleSend}
           sx={{
             minWidth: '80px',
-            backgroundColor: 'secondary.main',
-            '&:hover': { backgroundColor: 'secondary.dark' },
-            '&:disabled': { backgroundColor: 'rgba(255, 255, 255, 0.12)' },
+            backgroundColor: BRAND_COLORS.secondary,
+            '&:hover': { backgroundColor: `${BRAND_COLORS.secondary}CC` },
+            '&:disabled': { backgroundColor: `${BRAND_COLORS.primary}20` },
           }}
         >
           {loading ? "..." : "Send"}

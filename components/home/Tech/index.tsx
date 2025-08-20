@@ -73,10 +73,11 @@ const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
               variant="h2"
               component="h2"
               sx={{
-                fontSize: { xs: "2rem", md: "3rem" },
-                fontWeight: 700,
+                fontSize: { xs: "2rem", md: "2.5rem" },
+                fontWeight: 600,
                 mb: 4,
                 textAlign: "center",
+                color: 'text.primary'
               }}
             >
               {title}

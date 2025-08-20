@@ -4,7 +4,7 @@ import Footer from "@/components/layout/Footer";
 import NavBar from "@/components/menu/navBar";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
 import ReduxProvider from "@/components/providers/ReduxProvider";
-import { BRAND_COLORS } from "./colors";
+import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 import {
   getCvSettings,
   getGalleries,
@@ -75,9 +75,9 @@ export default async function RootLayout({
     });
   }
 
-  console.log("Layout navLinks:", navLinks); return (
+  return (
     <html lang="en" style={{ height: '100%' }}>
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#0f172a', minHeight: '100vh' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: BACKGROUND_COLORS.secondary, minHeight: '100vh' }}>
         <CssBaseline />
         <AppRouterCacheProvider>
           <ReduxProvider>
@@ -86,7 +86,7 @@ export default async function RootLayout({
               <Box
                 sx={{
                   minHeight: "100vh",
-                  backgroundColor: "#0f172a",
+                  backgroundColor: BACKGROUND_COLORS.primary,
                   position: "relative",
                   display: "flex",
                   flexDirection: "column",
@@ -101,7 +101,7 @@ export default async function RootLayout({
                     left: 0,
                     width: '100%',
                     height: '100%',
-                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+                    background: `linear-gradient(135deg, ${BACKGROUND_COLORS.secondary} 0%, ${BACKGROUND_COLORS.primary} 50%, ${BACKGROUND_COLORS.secondary} 100%)`,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

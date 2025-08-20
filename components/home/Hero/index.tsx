@@ -12,43 +12,43 @@ interface HeroProps {
 
 const FirstNameContainer = styled(Typography)(({
   display: 'block',
-  letterSpacing: '0.001em',
-  color: '#64748b',
-  marginBottom: '0.7rem',
-  fontSize: 'clamp(2rem, 8vw, 5rem)',
-  fontDisplay: 'swap', // Improve font loading performance
+  letterSpacing: '-0.02em',
+  color: BRAND_COLORS.primary,
+  marginBottom: '0.5rem',
+  fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+  fontWeight: 600,
+  fontDisplay: 'swap',
 }));
 
 const LastNameContainer = styled(Typography)(({
   display: 'block',
-  color: '#cbd5e1',
-  marginTop: '16px',
-  letterSpacing: '0.001em',
-  whiteSpace: 'nowrap',
-  fontSize: 'clamp(3rem, 10vw, 6rem)',
-  fontDisplay: 'swap', // Improve font loading performance
+  color: BRAND_COLORS.primary,
+  marginTop: '0.5rem',
+  letterSpacing: '-0.02em',
+  fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+  fontWeight: 700,
+  fontDisplay: 'swap',
 }));
 
 const JobTitle = styled(Typography)({
   display: 'block',
-  background: `linear-gradient(to right top, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary})`,
-  backgroundClip: 'text',
-  WebkitBackgroundClip: 'text',
-  color: 'transparent',
-  textTransform: 'uppercase',
-  letterSpacing: '0.2em',
-  fontWeight: 700,
+  color: BRAND_COLORS.secondary,
+  textTransform: 'none',
+  letterSpacing: '0.02em',
+  fontWeight: 500,
+  fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+  marginTop: '1rem',
   contain: 'layout style',
-  minHeight: '2.5rem', // Prevent layout shift
+  minHeight: '2rem',
 });
 
 const NameHeading = styled(Typography)(({
-  marginBottom: '2rem',
-  fontWeight: 800,
-  lineHeight: 0.9,
-  letterSpacing: '-0.05em',
+  marginBottom: '1.5rem',
+  fontWeight: 700,
+  lineHeight: 1.1,
+  letterSpacing: '-0.02em',
   contain: 'layout style',
-  minHeight: '8rem', // Prevent layout shift for large text
+  minHeight: '6rem',
 }));
 
 export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element => {
@@ -79,9 +79,7 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
                   {renderOptimizedText(lastName)}
                 </LastNameContainer>
               </NameHeading>
-              <JobTitle className="job-title" variant="h2" sx={{
-                fontSize: { xs: '1.5rem', md: '2.25rem' }
-              }}>
+              <JobTitle className="job-title" variant="h3">
                 {tagLine}
               </JobTitle>
             </Box>

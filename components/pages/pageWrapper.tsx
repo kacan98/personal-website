@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
 import { Container } from "@mui/system";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 type PageWrapperProps = {
   children: React.ReactNode;
@@ -25,16 +25,12 @@ function PageWrapper({
         textAlign: "center",
       }}
     >
-      <Box m={4} mb={8}>
-        <Typography variant="h2" sx={{
-          fontSize: { xs: "4rem", md: "5rem" }
-        }} onClick={onTitleClicked}>{title}</Typography>
-        {description && (
-          <Typography variant="body1" color="text.primary" sx={{ mt: 2 }}>
-            {description}
-          </Typography>
-        )}
-      </Box>
+      <SectionHeader
+        title={title}
+        description={description}
+        size="large"
+        onClick={onTitleClicked}
+      />
       {children}
     </Container >
   );

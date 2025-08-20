@@ -1,9 +1,9 @@
 "use client";
 import { Close, Home, Menu as MenuIcon } from "@mui/icons-material";
+import { BRAND_COLORS } from "@/app/colors";
 import {
   AppBar,
   Box,
-  Button,
   Fade,
   IconButton,
   Modal,
@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -70,7 +71,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(15, 23, 42, 0.95)',
+            background: `rgba(${BRAND_COLORS.darkRgb}, 0.95)`,
             backdropFilter: 'blur(12px)',
             display: 'flex',
             flexDirection: 'column',
@@ -102,13 +103,13 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             {!weAreHome && (
               <Link href="/" passHref>
                 <Button
+                  variant="nav"
+                  isActive={pathname === '/'}
                   onClick={() => setMobileMenuOpen(false)}
-                  size="large"
                   sx={{
-                    fontSize: '1.5rem',
-                    fontWeight: 600,
-                    minHeight: 60,
-                    color: pathname === '/' ? 'secondary.main' : 'primary.main',
+                    fontSize: '1.2rem',
+                    minHeight: 48,
+                    borderRadius: '24px',
                   }}
                 >
                   Home
@@ -119,13 +120,13 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             {navLinks.map(({ name, href }) => (
               <Link key={name} href={href} passHref>
                 <Button
+                  variant="nav"
+                  isActive={pathname === href}
                   onClick={() => setMobileMenuOpen(false)}
-                  size="large"
                   sx={{
-                    fontSize: '1.5rem',
-                    fontWeight: 600,
-                    minHeight: 60,
-                    color: pathname === href ? 'secondary.main' : 'primary.main',
+                    fontSize: '1.2rem',
+                    minHeight: 48,
+                    borderRadius: '24px',
                   }}
                 >
                   {name}
@@ -147,12 +148,28 @@ const NavBar = ({ navLinks }: TopBarProps) => {
         elevation={0}
         sx={{
           flexShrink: 0,
-          backdropFilter: 'blur(10px)',
-          backgroundColor: 'rgba(15, 23, 42, 0.9)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(24px)',
+          backgroundColor: 'rgba(15, 15, 15, 0.85)',
+          borderBottom: 'none',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 48px)',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent)',
+          }
         }}
       >
-        <Toolbar sx={{ minHeight: { xs: 56, md: 64 } }}>
+        <Toolbar sx={{ 
+          minHeight: { xs: 56, md: 64 },
+          maxWidth: 'lg',
+          mx: 'auto',
+          width: '100%',
+          px: { xs: 2, md: 3 }
+        }}>
           {/* Mobile Layout */}
           {mounted && isMobile ? (
             <>
@@ -192,15 +209,9 @@ const NavBar = ({ navLinks }: TopBarProps) => {
               {navLinks.map(({ name, href }) => (
                 <Link key={name} href={href} passHref>
                   <Button
-                    size="large"
-                    sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 700,
-                      minHeight: 60,
-                      color: pathname === href ? 'secondary.main' : 'primary.main',
-                      my: 2,
-                      display: "block",
-                    }}
+                    variant="nav"
+                    isActive={pathname === href}
+                    sx={{ mx: 1 }}
                   >
                     {name}
                   </Button>
