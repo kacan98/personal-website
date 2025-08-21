@@ -1,6 +1,8 @@
 "use client";
 
-import { Box, Typography, Grid } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import { BRAND_COLORS, BRAND_GRADIENTS } from "@/app/colors";
 import { useState, useEffect, useRef } from "react";
 
 export interface TimelineItem {
@@ -63,7 +65,7 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
         top: '20px',
         width: '20px',
         height: '20px',
-        background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+        background: BRAND_GRADIENTS.primary,
         borderRadius: '50%',
         transform: { xs: 'none', md: 'translateX(-50%)' },
         zIndex: 2,
@@ -71,13 +73,10 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
       }} />
       <Grid container spacing={4} alignItems="center">
         <Grid
+          size={{ xs: 12, md: 6 }}
           sx={{ 
             order: { xs: 1, md: index % 2 === 0 ? 1 : 2 },
             textAlign: { xs: 'left', md: index % 2 === 0 ? 'right' : 'left' }
-          }}
-          size={{
-            xs: 12,
-            md: 6
           }}>
           <Box sx={{ 
             p: 4, 
@@ -97,7 +96,7 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
               sx={{ 
                 mb: 1,
                 fontWeight: 600,
-                background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+                background: BRAND_GRADIENTS.primary,
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 color: 'transparent',
@@ -127,9 +126,9 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
               <Box sx={{
                 px: 2,
                 py: 0.5,
-                background: 'rgba(245, 158, 11, 0.2)',
+                background: `rgba(${BRAND_COLORS.accentRgb}, 0.2)`,
                 borderRadius: 2,
-                border: '1px solid rgba(245, 158, 11, 0.3)',
+                border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.3)`,
                 display: 'inline-block'
               }}>
                 <Typography 
@@ -187,13 +186,10 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
         
         {/* Hide this column on mobile (xs), only show on md+ */}
         <Grid
+          size={{ xs: 12, md: 6 }}
           sx={{ 
             order: { xs: 2, md: index % 2 === 0 ? 2 : 1 },
             display: { xs: 'none', md: 'block' } // Hide on mobile
-          }}
-          size={{
-            xs: 12,
-            md: 6
           }}>
           <Box sx={{ 
             height: '250px',
@@ -264,16 +260,17 @@ export default function Timeline({ items, title }: TimelineProps) {
       {title && (
         <Box ref={titleRef}>
           <Typography 
-            variant="h3" 
+            variant="h2" 
+            component="h2"
             sx={{ 
               textAlign: 'center', 
               mb: 6, 
-              fontWeight: 700,
-              background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+              fontWeight: 600,
+              background: BRAND_GRADIENTS.primary,
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               color: 'transparent',
-              fontSize: { xs: '2rem', md: '3rem' },
+              fontSize: { xs: '2rem', md: '2.5rem' },
               opacity: isTitleRevealed ? 1 : 0,
               transform: isTitleRevealed ? 'translateY(0)' : 'translateY(30px)',
               transition: 'opacity 0.6s ease-out, transform 0.6s ease-out',
@@ -292,7 +289,7 @@ export default function Timeline({ items, title }: TimelineProps) {
           top: 0,
           bottom: 0,
           width: '2px',
-          background: 'linear-gradient(180deg, #f59e0b, #fbbf24)',
+          background: `linear-gradient(180deg, ${BRAND_COLORS.accent}, ${BRAND_COLORS.secondary})`,
           transform: { xs: 'none', md: 'translateX(-50%)' }
         }} />
         

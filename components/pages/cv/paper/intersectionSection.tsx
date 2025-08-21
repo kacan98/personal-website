@@ -193,7 +193,7 @@ const IntersectionSection = ({ positionIntersection, checked, handleChecked }: I
         }}>
             <List sx={{ py: 0 }}>
                 {positionIntersection.whatIsGood.map((good, idx) => (
-                    <ListItem key={idx} sx={{ py: 1, px: 0 }}>
+                    <ListItem key={idx} sx={{ py: 0, px: 0 }}>
                         <ListItemText
                             primary={
                                 <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>

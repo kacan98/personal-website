@@ -5,8 +5,7 @@ import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
-import ScrollSnapContainer from "@/components/layout/ScrollSnapContainer";
-import SplineWrapper from "@/components/spline/SplineWrapper";
+import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
 import { Box, Typography } from "@mui/material";
 // import Grid2 from "@mui/material/Unstable_Grid2"; // Removed unused import
@@ -41,12 +40,9 @@ function AboutSectionItem({ section, id }: { section: AboutSection; id: string }
           component="h2"
           sx={{ 
             mb: 4,
-            fontWeight: 800,
-            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            fontSize: { xs: '3rem', md: '4rem' }
+            fontWeight: 600,
+            color: 'text.primary',
+            fontSize: { xs: '2rem', md: '2.5rem' }
           }}
         >
           {section.header}
@@ -88,7 +84,7 @@ const aboutMe: Record<string, AboutSection> = {
     header: "Full-Stack Developer",
     content:
       "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy.",
-    visual: <SplineWrapper />
+    visual: <ThreeDLaptop />
   },
   aiEnhanced: {
     header: "AI-Enhanced Development", 
@@ -173,13 +169,13 @@ export default async function App() {
       
       {isKarelsPortfolio && (
         <>
-          {/* About Me - Scroll snap only for these 4 sections */}
-          <ScrollSnapContainer>
+          {/* About Me */}
+          <Box>
             <AboutSectionItem section={aboutMe.fullStack} id="about-fullstack" />
             <AboutSectionItem section={aboutMe.aiEnhanced} id="about-ai" />
             <AboutSectionItem section={aboutMe.problemSolver} id="about-problem" />
             <AboutSectionItem section={aboutMe.userFocused} id="about-user" />
-          </ScrollSnapContainer>
+          </Box>
 
           {/* Technologies - normal scrolling */}
           <Box id="technologies" sx={{ py: { xs: 1, md: 2 }, minHeight: '100vh', display: 'flex', alignItems: 'center' }}>

@@ -1,6 +1,10 @@
 "use client";
 
-import { Box, Typography, Button, Card, CardContent, Grid } from "@mui/material";
+import { Box, Typography, Card, CardContent } from "@mui/material";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Button from "@/components/ui/Button";
+import { BRAND_COLORS, BRAND_RGBA } from "@/app/colors";
+import Grid from "@mui/material/Grid";
 import { Email, LinkedIn, GitHub, Language } from "@mui/icons-material";
 import { motion } from "motion/react";
 
@@ -67,7 +71,7 @@ export default function Contact({
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'radial-gradient(circle at center, rgba(245, 158, 11, 0.05) 0%, transparent 70%)',
+        background: `radial-gradient(circle at center, rgba(${BRAND_COLORS.accentRgb}, 0.05) 0%, transparent 70%)`,
         zIndex: 0,
       }
     }}>
@@ -85,36 +89,10 @@ export default function Contact({
           transition={{ duration: 0.6 }}
           viewport={{ once: true, margin: "-50px" }}
         >
-          <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
-            <Typography 
-              variant="h2" 
-              component="h2"
-              sx={{ 
-                mb: 3,
-                fontWeight: 800,
-                background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                color: 'transparent',
-                fontSize: { xs: '3rem', md: '4rem' }
-              }}
-            >
-              {title}
-            </Typography>
-            <Typography 
-              variant="h5" 
-              component="div"
-              sx={{ 
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontWeight: 300,
-                maxWidth: '600px',
-                mx: 'auto',
-                fontSize: { xs: '1.2rem', md: '1.5rem' }
-              }}
-            >
-              {subtitle}
-            </Typography>
-          </Box>
+          <SectionHeader
+            title={title}
+            description={subtitle}
+          />
         </motion.div>
 
         {/* Contact Cards */}
@@ -145,8 +123,8 @@ export default function Contact({
                     display: 'block',
                     '&:hover': {
                       boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
-                      background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%)',
-                      borderColor: 'rgba(245, 158, 11, 0.4)',
+                      background: `linear-gradient(135deg, rgba(${BRAND_COLORS.accentRgb}, 0.2) 0%, rgba(${BRAND_COLORS.accentRgb}, 0.1) 100%)`,
+                      borderColor: BRAND_RGBA.accentBorder,
                     }
                   }}
                 >
@@ -224,22 +202,11 @@ export default function Contact({
             <Button
               component="a"
               href="mailto:karel.cancara@gmail.com"
-              variant="contained"
-              size="large"
+              variant="primary"
               sx={{
                 px: { xs: 4, md: 6 },
                 py: { xs: 1.5, md: 2 },
                 fontSize: { xs: '1.1rem', md: '1.25rem' },
-                fontWeight: 600,
-                borderRadius: 3,
-                background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-                boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 12px 40px rgba(245, 158, 11, 0.4)',
-                }
               }}
             >
               Send me an email

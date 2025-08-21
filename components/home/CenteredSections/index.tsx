@@ -72,12 +72,9 @@ export function CenteredSectionItem({ section, index: _index }: { section: Cente
           component="h2"
           sx={{ 
             mb: 4,
-            fontWeight: 800,
-            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-            fontSize: { xs: '3rem', md: '4rem' }
+            fontWeight: 600,
+            color: 'text.primary',
+            fontSize: { xs: '2rem', md: '2.5rem' }
           }}
         >
           {section.header}

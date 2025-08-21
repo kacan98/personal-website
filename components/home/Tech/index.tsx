@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { MdCircle } from "react-icons/md";
 import { Box, Typography } from "@mui/material";
 import { motion, useReducedMotion } from "motion/react";
 
@@ -17,10 +16,49 @@ export type TechListProps = {
 
 const TechList = ({ title, technologies }: TechListProps) => {
   const [isRevealed, setIsRevealed] = useState(false);
+  const [screenWidth, setScreenWidth] = useState(1200); // Default width
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Reveal and start animation once when component comes into view
+  // Track screen width changes
+  useEffect(() => {
+    const updateWidth = () => {
+      setScreenWidth(window.innerWidth);
+    };
+    
+    // Set initial width
+    updateWidth();
+    
+    // Add resize listener
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
+  // Calculate optimal item distribution based on screen width
+  const calculateItemLayout = (techName: string) => {
+    // Estimate text width based on font size and screen width
+    const baseFontSize = screenWidth < 600 ? 48 : screenWidth < 900 ? 64 : screenWidth < 1200 ? 80 : 96; // px
+    const estimatedTextWidth = techName.length * baseFontSize * 0.6; // Rough character width
+    const gap = screenWidth < 600 ? 16 : screenWidth < 900 ? 32 : 48; // Gap between items
+    const itemWidth = estimatedTextWidth + gap;
+    
+    // How many items fit on screen
+    const itemsOnScreen = Math.floor(screenWidth / itemWidth);
+    const totalItems = Math.max(12, itemsOnScreen * 3); // At least 12, or 3x screen capacity
+    
+    // Calculate spacing between highlighted items
+    // Want 1-2 highlighted items visible at once
+    const targetVisibleHighlights = screenWidth < 600 ? 1 : screenWidth < 1200 ? 1 : 2;
+    const highlightSpacing = Math.floor(totalItems / (targetVisibleHighlights * 2)); // Distribute evenly
+    
+    return {
+      totalItems,
+      highlightSpacing: Math.max(3, highlightSpacing), // At least every 3rd item
+      itemsOnScreen
+    };
+  };
+
+  // Reveal animation when component comes into view
   useEffect(() => {
     if (isRevealed) return;
     
@@ -50,19 +88,46 @@ const TechList = ({ title, technologies }: TechListProps) => {
       component="section"
       sx={{
         overflow: "hidden",
-        py: { xs: 2, md: 4 },
+        py: { xs: 4, md: 6 },
         width: "100%",
+        position: 'relative', // Add relative positioning for absolute gradients
       }}
     >
+      {/* Edge gradients - cover entire section including padding */}
       <Box
         sx={{
-          maxWidth: "lg",
-          mx: "auto",
-          px: 3,
-          mb: 4,
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          left: 0,
+          width: '80px',
+          background: 'linear-gradient(to right, rgba(15, 15, 15, 0.95), rgba(15, 15, 15, 0.7), rgba(15, 15, 15, 0))',
+          zIndex: 2,
+          pointerEvents: 'none',
         }}
-      >
-        {title && (
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          right: 0,
+          width: '80px',
+          background: 'linear-gradient(to left, rgba(15, 15, 15, 0.95), rgba(15, 15, 15, 0.7), rgba(15, 15, 15, 0))',
+          zIndex: 2,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {title && (
+        <Box
+          sx={{
+            maxWidth: "lg",
+            mx: "auto",
+            px: 3,
+            mb: { xs: 6, md: 8 },
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -73,134 +138,123 @@ const TechList = ({ title, technologies }: TechListProps) => {
               variant="h2"
               component="h2"
               sx={{
-                fontSize: { xs: "2rem", md: "3rem" },
-                fontWeight: 700,
+                fontSize: { xs: "2rem", md: "2.5rem" },
+                fontWeight: 600,
                 mb: 4,
                 textAlign: "center",
+                color: 'text.primary'
               }}
             >
               {title}
             </Typography>
           </motion.div>
-        )}
-      </Box>
+        </Box>
+      )}
 
+      {/* Multiple infinite scrolling rows */}
       <Box
         sx={{
-          // Optimized CSS animations with smaller range and GPU acceleration
-          '@keyframes slideLeft': {
-            '0%': { transform: 'translate3d(100px, 0, 0)' },
-            '25%': { transform: 'translate3d(0px, 0, 0)' },
-            '50%': { transform: 'translate3d(-100px, 0, 0)' },
-            '75%': { transform: 'translate3d(0px, 0, 0)' },
-            '100%': { transform: 'translate3d(100px, 0, 0)' },
-          },
-          '@keyframes slideRight': {
-            '0%': { transform: 'translate3d(-100px, 0, 0)' },
-            '25%': { transform: 'translate3d(0px, 0, 0)' },
-            '50%': { transform: 'translate3d(100px, 0, 0)' },
-            '75%': { transform: 'translate3d(0px, 0, 0)' },
-            '100%': { transform: 'translate3d(-100px, 0, 0)' },
-          },
-          '@keyframes rotate': {
-            from: { transform: 'rotate(0deg)' },
-            to: { transform: 'rotate(360deg)' },
-          },
+          width: '100%',
+          overflow: 'hidden',
+          position: 'relative',
         }}
       >
-        {technologies.map(({ name, color }, index) => {
-          const totalItems = 9; // Reduced from 15 to 9 for better performance
-          const centerIndex = Math.floor(totalItems / 2);
-          const direction = index % 2 === 0 ? 'slideRight' : 'slideLeft';
+        
+        <Box
+          sx={{
+            // Animations for left-to-right and right-to-left
+            '@keyframes scrollRTL': {
+              from: { transform: 'translateX(0%)' },
+              to: { transform: 'translateX(-50%)' }, // Move by half since we duplicate
+            },
+            '@keyframes scrollLTR': {
+              from: { transform: 'translateX(-50%)' },
+              to: { transform: 'translateX(0%)' }, // Move by half since we duplicate
+            },
+          }}
+        >
+        {technologies.map((tech, rowIndex) => {
+          const direction = rowIndex % 2 === 0 ? 'scrollRTL' : 'scrollLTR';
+          const duration = 60 + (rowIndex * 10); // Much slower - 60-120 seconds
+          
+          // Calculate layout based on current screen width and tech name
+          const layout = calculateItemLayout(tech.name);
+          const { totalItems, highlightSpacing } = layout;
+          
+          // Generate random starting offset for this row (consistent per row, different between rows)
+          const randomStartOffset = (rowIndex * 7 + 3) % highlightSpacing; // Pseudo-random but consistent
           
           return (
             <Box
-              key={index}
+              key={`row-${rowIndex}-${screenWidth}`} // Include screenWidth to force re-render on resize
               sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: { xs: 2, md: 4 }, // Reduced gap
+                width: 'fit-content',
                 mb: { xs: 1, md: 2 },
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: { xs: 1, md: 2 },
-                color: "text.secondary",
-                width: "100%",
-                position: "relative",
-                minHeight: { xs: "3rem", sm: "4rem", md: "5rem", lg: "6rem" }, // Reduced heights
-                // Hidden until revealed, then always animate
+                minHeight: { xs: '3rem', sm: '4rem', md: '5rem', lg: '6rem' }, // Reduced heights
                 opacity: isRevealed ? 1 : 0,
                 transition: 'opacity 0.6s ease-in-out',
-                transitionDelay: `${index * 0.1}s`,
-                // Slower animation for better performance and reduced motion
+                transitionDelay: `${rowIndex * 0.1}s`,
                 ...(isRevealed && !prefersReducedMotion && {
-                  animation: `${direction} 35s ease-in-out infinite`, // Slower from 25s to 35s
-                  animationDelay: `${index * 0.1}s`,
+                  animation: `${direction} ${duration}s linear infinite`,
                 }),
               }}
-              aria-label={name || ""}
             >
-              {Array.from({ length: totalItems }, (_, itemIndex) => {
-                const isCenter = itemIndex === centerIndex;
+              {/* Create duplicated items for seamless loop */}
+              {Array.from({ length: totalItems * 2 }, (_, itemIndex) => {
+                const actualIndex = itemIndex % totalItems;
+                // Highlight items based on calculated spacing with random offset
+                const isHighlighted = (actualIndex + randomStartOffset) % highlightSpacing === 0;
                 
                 return (
                   <React.Fragment key={itemIndex}>
-                    <Box
+                    <Typography
                       sx={{
-                        position: 'relative',
-                        zIndex: isCenter ? 10 : 1,
-                      }}
-                    >
-                      <Typography
-                        className="tech-item"
-                        sx={{
-                          fontSize: { 
-                            xs: isCenter ? "3rem" : "2.5rem", 
-                            sm: isCenter ? "4rem" : "3.5rem", 
-                            md: isCenter ? "5.5rem" : "5rem", 
-                            lg: isCenter ? "6.5rem" : "6rem" 
-                          },
-                          fontWeight: 900,
-                          textTransform: "uppercase",
-                          letterSpacing: "-0.05em",
-                          color: isCenter ? (color || "inherit") : "inherit",
-                          opacity: isCenter ? 1 : 0.1,
-                          textShadow: "0 0 1px currentColor",
-                          WebkitTextStroke: "0.5px currentColor",
-                          ...(isCenter && {
-                            position: "relative",
-                            zIndex: 10,
-                            filter: "brightness(1.2)",
-                            textShadow: `0 0 20px ${color || "currentColor"}`,
-                          }),
-                          whiteSpace: "nowrap",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {name}
-                      </Typography>
-                    </Box>
-                    <Box
-                      component="span"
-                      sx={{
-                        fontSize: { xs: "1rem", sm: "1.5rem", md: "2rem" },
-                        display: "flex",
-                        alignItems: "center",
-                        opacity: isCenter || itemIndex === centerIndex - 1 ? 0.3 : 0.1,
+                        fontSize: { 
+                          xs: isHighlighted ? '3rem' : '2.5rem',
+                          sm: isHighlighted ? '4rem' : '3.5rem',
+                          md: isHighlighted ? '5rem' : '4.5rem',
+                          lg: isHighlighted ? '6rem' : '5.5rem'
+                        },
+                        fontWeight: 900,
+                        textTransform: 'uppercase',
+                        letterSpacing: '-0.02em',
+                        color: isHighlighted ? (tech.color || 'text.primary') : 'text.secondary',
+                        opacity: isHighlighted ? 1 : 0.15,
+                        whiteSpace: 'nowrap',
                         flexShrink: 0,
-                        color: "inherit",
-                        // CSS animation for rotation instead of Framer Motion
-                        ...(isRevealed && !prefersReducedMotion && (isCenter || itemIndex === centerIndex - 1) && {
-                          animation: 'rotate 10s linear infinite',
+                        textShadow: isHighlighted ? `0 0 20px ${tech.color || 'currentColor'}60` : 'none',
+                        transition: 'all 0.3s ease',
+                        ...(isHighlighted && {
+                          filter: 'brightness(1.2)',
+                          position: 'relative',
+                          zIndex: 1,
                         }),
                       }}
                     >
-                      <MdCircle />
-                    </Box>
+                      {tech.name}
+                    </Typography>
+                    
+                    {/* Separator dot */}
+                    <Box
+                      sx={{
+                        width: { xs: '6px', md: '8px' },
+                        height: { xs: '6px', md: '8px' },
+                        borderRadius: '50%',
+                        backgroundColor: 'text.secondary',
+                        opacity: isHighlighted ? 0.5 : 0.1,
+                        flexShrink: 0,
+                      }}
+                    />
                   </React.Fragment>
                 );
               })}
             </Box>
           );
         })}
+        </Box>
       </Box>
     </Box>
   );

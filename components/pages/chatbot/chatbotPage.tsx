@@ -5,7 +5,7 @@ import ChatBotUI from "@/components/pages/chatbot/chatBotUI";
 export function ChatbotPage() {
   return (
     <PageWrapper
-      title={"Chatbot"}
+      title=""
       description="Interactive AI assistant with comprehensive knowledge about my professional background and expertise."
     >
       <ChatBotUI />

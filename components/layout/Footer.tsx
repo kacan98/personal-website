@@ -1,13 +1,14 @@
 import { Box, Typography } from "@mui/material";
+import { BACKGROUND_COLORS } from "@/app/colors";
 
 export default function Footer() {
   return (
     <Box
       component="footer"
       sx={{
-        py: 4,
+        py: 2,
         px: 2,
-        backgroundColor: 'rgba(15, 23, 42, 0.8)',
+        backgroundColor: BACKGROUND_COLORS.surface + 'cc',
         backdropFilter: 'blur(10px)',
       }}
     >

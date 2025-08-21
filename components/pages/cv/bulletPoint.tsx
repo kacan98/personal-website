@@ -17,7 +17,7 @@ export const CvBulletPoint = ({
 }) => {
     return (
         <>
-            <ListItem>
+            <ListItem sx={{ py: 0, px: 0 }}>
                 <ConditionalWrapper
                     condition={!!bulletPoint.url && (isPrintVersion || !editable)}
                     wrapper={(c) =>

@@ -1,16 +1,18 @@
 "use client";
 import { Close, Home, Menu as MenuIcon } from "@mui/icons-material";
+import { BRAND_COLORS } from "@/app/colors";
 import {
   AppBar,
   Box,
-  Button,
-  Drawer,
+  Fade,
   IconButton,
+  Modal,
   Toolbar,
   Typography,
   useMediaQuery,
   useTheme
 } from "@mui/material";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -50,90 +52,91 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   if (weAreInSanityStudio) return null;
   
 
-  // Mobile Navigation Drawer
-  const mobileDrawer = (
-    <Drawer
-      anchor="top"
+  // Mobile Navigation Modal
+  const mobileMenu = (
+    <Modal
       open={mobileMenuOpen}
       onClose={() => setMobileMenuOpen(false)}
-      PaperProps={{
-        sx: {
-          height: '100vh',
-          background: 'rgba(59,130,246,0.08)',
-          backdropFilter: 'blur(12px)',
-          display: 'flex',
-          flexDirection: 'column',
-        }
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      <Box
-        sx={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-        }}
-      >
-        <IconButton
-          onClick={() => setMobileMenuOpen(false)}
-          sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            zIndex: 1,
-            color: 'primary.main',
-          }}
-        >
-          <Close />
-        </IconButton>
-
+      <Fade in={mobileMenuOpen} timeout={300}>
         <Box
           sx={{
-            flex: 1,
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `rgba(${BRAND_COLORS.darkRgb}, 0.95)`,
+            backdropFilter: 'blur(12px)',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 4,
-            padding: 4,
+            outline: 'none',
           }}
         >
-          {!weAreHome && (
-            <Link href="/" passHref>
-              <Button
-                onClick={() => setMobileMenuOpen(false)}
-                size="large"
-                sx={{
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
-                  minHeight: 60,
-                  color: pathname === '/' ? 'secondary.main' : 'primary.main',
-                }}
-              >
-                Home
-              </Button>
-            </Link>
-          )}
+          <IconButton
+            onClick={() => setMobileMenuOpen(false)}
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              color: 'primary.main',
+            }}
+          >
+            <Close />
+          </IconButton>
 
-          {navLinks.map(({ name, href }) => (
-            <Link key={name} href={href} passHref>
-              <Button
-                onClick={() => setMobileMenuOpen(false)}
-                size="large"
-                sx={{
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
-                  minHeight: 60,
-                  color: pathname === href ? 'secondary.main' : 'primary.main',
-                }}
-              >
-                {name}
-              </Button>
-            </Link>
-          ))}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
+            {!weAreHome && (
+              <Link href="/" passHref>
+                <Button
+                  variant="nav"
+                  isActive={pathname === '/'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  sx={{
+                    fontSize: '1.2rem',
+                    minHeight: 48,
+                    borderRadius: '24px',
+                  }}
+                >
+                  Home
+                </Button>
+              </Link>
+            )}
+
+            {navLinks.map(({ name, href }) => (
+              <Link key={name} href={href} passHref>
+                <Button
+                  variant="nav"
+                  isActive={pathname === href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  sx={{
+                    fontSize: '1.2rem',
+                    minHeight: 48,
+                    borderRadius: '24px',
+                  }}
+                >
+                  {name}
+                </Button>
+              </Link>
+            ))}
+          </Box>
         </Box>
-      </Box>
-    </Drawer>
+      </Fade>
+    </Modal>
   );
 
   return (
@@ -145,12 +148,28 @@ const NavBar = ({ navLinks }: TopBarProps) => {
         elevation={0}
         sx={{
           flexShrink: 0,
-          backdropFilter: 'blur(10px)',
-          backgroundColor: 'rgba(15, 23, 42, 0.9)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(24px)',
+          backgroundColor: 'rgba(15, 15, 15, 0.85)',
+          borderBottom: 'none',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 'calc(100% - 48px)',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent)',
+          }
         }}
       >
-        <Toolbar sx={{ minHeight: { xs: 56, md: 64 } }}>
+        <Toolbar sx={{ 
+          minHeight: { xs: 56, md: 64 },
+          maxWidth: 'lg',
+          mx: 'auto',
+          width: '100%',
+          px: { xs: 2, md: 3 }
+        }}>
           {/* Mobile Layout */}
           {mounted && isMobile ? (
             <>
@@ -190,15 +209,9 @@ const NavBar = ({ navLinks }: TopBarProps) => {
               {navLinks.map(({ name, href }) => (
                 <Link key={name} href={href} passHref>
                   <Button
-                    size="large"
-                    sx={{
-                      fontSize: '1.2rem',
-                      fontWeight: 700,
-                      minHeight: 60,
-                      color: pathname === href ? 'secondary.main' : 'primary.main',
-                      my: 2,
-                      display: "block",
-                    }}
+                    variant="nav"
+                    isActive={pathname === href}
+                    sx={{ mx: 1 }}
                   >
                     {name}
                   </Button>
@@ -212,8 +225,9 @@ const NavBar = ({ navLinks }: TopBarProps) => {
           )}
         </Toolbar>
       </AppBar>
-      {/* Mobile Drawer */}
-      {mounted && isMobile && mobileDrawer}
+      
+      {/* Mobile Menu */}
+      {mounted && isMobile && mobileMenu}
     </>
   );
 };

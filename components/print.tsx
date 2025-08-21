@@ -42,18 +42,20 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
       <Box
         sx={{
           position: "absolute",
-          right: 99999,
+          top: -99999,
+          left: -99999,
           width: 905,
-          padding: 3,
-          margin: 3,
-
+          padding: 1,
+          margin: 1,
+          overflow: "hidden",
+          visibility: "hidden",
         }}
       >
         <Box
           ref={contentRef}
           sx={{
             width: 905,
-            padding: 3,
+            padding: 1,
           }}
         >
           <CustomThemeProvider {...customThemeProviderProps} forceMode="light">

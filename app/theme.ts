@@ -135,7 +135,7 @@ export function getTheme({
         main: "#fff",
       },
       secondary: {
-        main: BRAND_COLORS.primary,
+        main: BRAND_COLORS.accent,
         dark: BRAND_COLORS.dark, 
         light: BRAND_COLORS.secondary,
       },

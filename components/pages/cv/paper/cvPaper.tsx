@@ -48,13 +48,10 @@ export function CvPaper({
   };
 
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={0}>
       <Grid
-        size={{
-          xs: 12,
-          sm: 4
-        }}>
-        <Box display="flex" flexDirection="column" alignItems="left">
+        size={{ xs: 12, sm: 4 }}>
+        <Box display="flex" flexDirection="column" alignItems="left" sx={{ p: 2, pr: 3 }}>
           <Grid
             container
             alignItems="left"
@@ -79,7 +76,7 @@ export function CvPaper({
             }
 
             return (
-              <Box key={index} mb={2}>
+              <Box key={index} mb={1.5}>
                 <CvSectionComponent
                   sideOrMain="sideColumn"
                   sectionIndex={index}
@@ -106,11 +103,8 @@ export function CvPaper({
         </Box>
       </Grid>
       <Grid
-        textAlign="left"
-        size={{
-          xs: 12,
-          md: 8
-        }}>
+        size={{ xs: 12, md: 8 }}
+        sx={{ textAlign: "left" }}>
         {reduxCv.mainColumn?.map((section, index) => {
           const sectionKey = getSectionKey('mainColumn', index);
           const isRemoved = removedSections.has(sectionKey);

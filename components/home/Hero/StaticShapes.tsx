@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Box } from "@mui/material";
 import { motion, useReducedMotion } from "motion/react";
-import { BRAND_COLORS } from "@/app/colors";
+import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
 
 const StaticShapes = () => {
   const [clickedShape, setClickedShape] = useState<string | null>(null);
@@ -36,14 +36,21 @@ const StaticShapes = () => {
         }}
         animate={prefersReducedMotion ? {} : {
           rotateZ: -360,
+          scale: clickedShape === 'dodecahedron' ? 1.1 : 1,
         }}
         transition={{
           rotateZ: {
-            duration: 30, // Slower rotation
+            duration: 25,
             repeat: Infinity,
             ease: "linear",
+          },
+          scale: {
+            duration: 0.3,
+            ease: "backOut",
           }
         }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => handleShapeClick('dodecahedron')}
       >
         <Box
@@ -51,13 +58,13 @@ const StaticShapes = () => {
             width: '100%',
             height: '100%',
             background: `
-              conic-gradient(from 45deg, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary}),
-              radial-gradient(circle at 35% 35%, rgba(${BRAND_COLORS.primaryRgb}, 1), rgba(${BRAND_COLORS.secondaryRgb}, 0.8))
+              conic-gradient(from 45deg, ${BRAND_COLORS.accent}, ${BRAND_COLORS.accent}, ${BRAND_COLORS.accent}, ${BRAND_COLORS.accent}, ${BRAND_COLORS.accent}),
+              radial-gradient(circle at 35% 35%, rgba(${BRAND_COLORS.accentRgb}, 1), rgba(${BRAND_COLORS.accentRgb}, 0.8))
             `,
             clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
             borderRadius: '15px',
-            border: `3px solid rgba(${BRAND_COLORS.primaryRgb}, 0.6)`,
-            boxShadow: `0 0 25px rgba(${BRAND_COLORS.primaryRgb}, 0.6)`,
+            border: `3px solid rgba(${BRAND_COLORS.accentRgb}, 0.6)`,
+            boxShadow: `0 0 25px rgba(${BRAND_COLORS.accentRgb}, 0.6)`,
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -65,7 +72,7 @@ const StaticShapes = () => {
               left: '15%',
               width: '70%',
               height: '70%',
-              background: `radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.8), rgba(${BRAND_COLORS.primaryRgb},0.4) 40%, transparent 70%)`,
+              background: `radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.8), rgba(${BRAND_COLORS.accentRgb},0.4) 40%, transparent 70%)`,
               clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
             },
           }}
@@ -261,11 +268,11 @@ function TorusShape({ size }: { size: number }) {
   
   return (
     <motion.div
-      animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
-      transition={{
-        duration: 20,
-        repeat: Infinity,
-        ease: "linear",
+      animate={prefersReducedMotion ? {} : {}}
+      transition={{}}
+      whileHover={{ 
+        scale: 1.2,
+        rotateX: 15,
       }}
       style={{
         width: `${size}px`,
@@ -277,9 +284,11 @@ function TorusShape({ size }: { size: number }) {
           width: '100%',
           height: '100%',
           borderRadius: '50%',
-          background: `linear-gradient(135deg, #3178C6, #1d4ed8)`,
-          boxShadow: `0 0 25px rgba(49, 120, 198, 0.6)`,
-          border: '2px solid rgba(49, 120, 198, 0.4)',
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.teal}, ${SHAPE_COLORS.steel})`,
+          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.tealRgb}, 0.4)`,
+          border: `2px solid rgba(${SHAPE_COLORS.tealRgb}, 0.3)`,
+          position: 'relative',
+          overflow: 'hidden',
           '&::before': {
             content: '""',
             position: 'absolute',
@@ -288,7 +297,17 @@ function TorusShape({ size }: { size: number }) {
             width: '50%',
             height: '50%',
             borderRadius: '50%',
-            background: 'rgba(49, 120, 198, 0.4)',
+            background: `rgba(${SHAPE_COLORS.tealRgb}, 0.3)`,
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: '10%',
+            left: '10%',
+            width: '30%',
+            height: '30%',
+            borderRadius: '50%',
+            background: `rgba(255, 255, 255, 0.4)`,
           },
         }}
       />
@@ -316,10 +335,10 @@ function KnotShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, #C5F74F, #a3e635)`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.platinum})`,
           borderRadius: '40% 60% 65% 35% / 30% 45% 55% 70%',
-          boxShadow: `0 0 25px rgba(197, 247, 79, 0.6)`,
-          border: '2px solid rgba(197, 247, 79, 0.4)',
+          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
+          border: `2px solid rgba(${SHAPE_COLORS.lavenderRgb}, 0.3)`,
         }}
       />
     </motion.div>
@@ -346,10 +365,10 @@ function BoxShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, #339933, #22c55e)`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.gold}, ${SHAPE_COLORS.copper})`,
           borderRadius: '8px',
-          boxShadow: `0 0 25px rgba(51, 153, 51, 0.6)`,
-          border: '2px solid rgba(51, 153, 51, 0.4)',
+          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
+          border: `2px solid rgba(${SHAPE_COLORS.goldRgb}, 0.3)`,
         }}
       />
     </motion.div>
@@ -380,11 +399,11 @@ function HeartShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, #DD0031, #b91c3c)`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.coral}, ${SHAPE_COLORS.rose})`,
           clipPath: 'polygon(50% 85%, 15% 45%, 15% 25%, 35% 15%, 50% 25%, 65% 15%, 85% 25%, 85% 45%)',
           borderRadius: '20px 20px 0 0',
-          border: '2px solid rgba(221, 0, 49, 0.4)',
-          filter: 'drop-shadow(0 0 25px rgba(221, 0, 49, 0.6))',
+          border: `2px solid rgba(${SHAPE_COLORS.coralRgb}, 0.3)`,
+          filter: `drop-shadow(0 0 25px rgba(${SHAPE_COLORS.coralRgb}, 0.4))`,
         }}
       />
     </motion.div>
@@ -423,9 +442,9 @@ function CrossShape({ size }: { size: number }) {
             left: '35%',
             width: '30%',
             height: '100%',
-            background: `linear-gradient(180deg, #512BD4, #7c3aed)`,
+            background: `linear-gradient(180deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.platinum})`,
             borderRadius: '15px',
-            boxShadow: `0 0 25px rgba(81, 43, 212, 0.6)`,
+            boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
           }}
         />
         {/* Horizontal bar */}
@@ -436,9 +455,9 @@ function CrossShape({ size }: { size: number }) {
             left: '0%',
             width: '100%',
             height: '30%',
-            background: `linear-gradient(90deg, #512BD4, #7c3aed)`,
+            background: `linear-gradient(90deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.platinum})`,
             borderRadius: '15px',
-            boxShadow: `0 0 25px rgba(81, 43, 212, 0.6)`,
+            boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
           }}
         />
       </Box>
