@@ -77,8 +77,6 @@ export default async function RootLayout({
 
   return (
     <html lang="en" data-scroll-behavior="smooth" style={{ height: '100%' }}>
-      <head>
-      </head>
       <body style={{ margin: 0, padding: 0, backgroundColor: '#0f172a', minHeight: '100vh', height: '100%' }}>
         <CssBaseline />
         <AppRouterCacheProvider>

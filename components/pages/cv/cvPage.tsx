@@ -606,7 +606,7 @@ function CvPage({ jobDescription }: CvProps) {
         min={9}
         max={20}
         value={fontSize}
-        onChange={(_: any, newValue: number) => setFontSize(newValue)}
+        onChange={(_: Event, newValue: number | number[]) => setFontSize(Array.isArray(newValue) ? newValue[0] : newValue)}
         valueLabelDisplay="auto"
         aria-label="font size"
         defaultValue={12}

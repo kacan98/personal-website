@@ -7,9 +7,9 @@ import BlockContent from "@/components/blockContent";
 import { notFound } from "next/navigation";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     projectSlug: string;
-  };
+  }>;
 };
 
 // Doesn't seem to work in production :(
@@ -24,7 +24,8 @@ type PageProps = {
 // }
 
 export default async function Page({ params }: PageProps) {
-  const project = await getProjectBySlug(params.projectSlug);
+  const { projectSlug } = await params;
+  const project = await getProjectBySlug(projectSlug);
   if (!project) return notFound();
 
   return (

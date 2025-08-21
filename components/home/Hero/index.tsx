@@ -1,6 +1,6 @@
 "use client";
 import { Box, Grid, Typography, styled } from "@mui/material";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { BRAND_COLORS } from "@/app/colors";
 import StaticShapes from "./StaticShapes";
 
