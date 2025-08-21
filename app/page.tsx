@@ -5,7 +5,6 @@ import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
-import ScrollSnapContainer from "@/components/layout/ScrollSnapContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
 import { Box, Typography } from "@mui/material";
@@ -170,13 +169,13 @@ export default async function App() {
       
       {isKarelsPortfolio && (
         <>
-          {/* About Me - Scroll snap only for these 4 sections */}
-          <ScrollSnapContainer>
+          {/* About Me */}
+          <Box>
             <AboutSectionItem section={aboutMe.fullStack} id="about-fullstack" />
             <AboutSectionItem section={aboutMe.aiEnhanced} id="about-ai" />
             <AboutSectionItem section={aboutMe.problemSolver} id="about-problem" />
             <AboutSectionItem section={aboutMe.userFocused} id="about-user" />
-          </ScrollSnapContainer>
+          </Box>
 
           {/* Technologies - normal scrolling */}
           <Box id="technologies" sx={{ py: { xs: 1, md: 2 }, minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
