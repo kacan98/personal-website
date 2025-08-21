@@ -1,6 +1,6 @@
 import React from "react";
 import PageWrapper from "@/components/pages/pageWrapper";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Grid } from "@mui/material";
 import { Gallery } from "@/sanity/schemaTypes/gallery";
 import { getProjectsByRefs } from "@/sanity/sanity-utils";
 import GalleryComponent from "@/components/pages/galery/galleryComponent";
@@ -11,7 +11,7 @@ async function GalleryPage(gallery: Gallery) {
   );
   return (
     <PageWrapper title={gallery.title} containerMaxWidth="lg">
-      <Grid2
+      <Grid
         container
         justifyContent="center"
         alignItems={"center"}
@@ -22,7 +22,7 @@ async function GalleryPage(gallery: Gallery) {
           projects={projects}
           filteringIsEnabled={!!gallery.filteringIsEnabled}
         />
-      </Grid2>
+      </Grid>
     </PageWrapper>
   );
 }

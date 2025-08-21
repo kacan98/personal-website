@@ -1,0 +1,1 @@
+I would like to have a look at the parts that are in in home and... come up with ideas for some super simple placeholders for pictures. Because we have a laptop animation and it looks inconsistant. So investigate what kinda simple image that represents the title we could put there?

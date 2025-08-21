@@ -1,7 +1,6 @@
 "use client";
 
-import { Box, Typography, Button, Card, CardContent } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Typography, Button, Card, CardContent, Grid } from "@mui/material";
 import { Email, LinkedIn, GitHub, Language } from "@mui/icons-material";
 import { motion } from "motion/react";
 
@@ -119,9 +118,9 @@ export default function Contact({
         </motion.div>
 
         {/* Contact Cards */}
-        <Grid2 container spacing={{ xs: 3, md: 4 }} justifyContent="center">
+        <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="center">
           {contactItems.map((item, index) => (
-            <Grid2 key={item.label} xs={12} sm={6} md={3}>
+            <Grid key={item.label} size={{ xs: 12, sm: 6, md: 3 }}>
               <motion.div
                 initial={{ y: 30, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
@@ -210,9 +209,9 @@ export default function Contact({
                   </CardContent>
                 </Card>
               </motion.div>
-            </Grid2>
+            </Grid>
           ))}
-        </Grid2>
+        </Grid>
 
         {/* Call to Action */}
         <motion.div

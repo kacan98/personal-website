@@ -11,7 +11,12 @@
       "Bash(rm:*)",
       "Bash(dir:*)",
       "WebSearch",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:nextjs.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:mui.com)",
+      "Bash(npx next:*)",
+      "Bash(powershell:*)"
     ],
     "deny": []
   }

@@ -15,7 +15,7 @@ interface CenteredSectionsProps {
 }
 
 // Individual section component with slide-in animation
-export function CenteredSectionItem({ section, index }: { section: CenteredSection; index: number }) {
+export function CenteredSectionItem({ section, index: _index }: { section: CenteredSection; index: number }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
 

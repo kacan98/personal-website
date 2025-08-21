@@ -208,7 +208,7 @@ export default function ScrollSnapContainer({ children }: { children: React.Reac
       // Debounce scroll detection to avoid conflicts
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
-        const scrollY = window.scrollY;
+        const _scrollY = window.scrollY;
         const windowHeight = window.innerHeight;
         
         // Find which section is most visible

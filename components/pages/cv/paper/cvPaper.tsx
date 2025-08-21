@@ -3,8 +3,7 @@ import { usePicture } from "@/hooks/usePicture";
 import { useAppSelector } from "@/redux/hooks";
 import { getCVPicture } from "@/sanity/sanity-utils";
 import { CvSection } from "@/sanity/schemaTypes/singletons/cvSettings";
-import { Avatar, Box, Paper } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Avatar, Box, Grid, Paper } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
 
 
@@ -49,10 +48,14 @@ export function CvPaper({
   };
 
   return (
-    <Grid2 container spacing={2}>
-      <Grid2 xs={12} sm={4}>
+    <Grid container spacing={2}>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 4
+        }}>
         <Box display="flex" flexDirection="column" alignItems="left">
-          <Grid2
+          <Grid
             container
             alignItems="left"
             direction="column"
@@ -64,7 +67,7 @@ export function CvPaper({
             />}
             <EditableText query={["name"]} editable={editable} variant="h4" component="div" text={reduxCv.name} />
             <EditableText query={["subtitle"]} editable={editable} variant="body1" pb={2} text={reduxCv.subtitle} />
-          </Grid2>
+          </Grid>
           {reduxCv.sideColumn?.map((section, index) => {
             const sectionKey = getSectionKey('sideColumn', index);
             const isRemoved = removedSections.has(sectionKey);
@@ -101,8 +104,13 @@ export function CvPaper({
             );
           })}
         </Box>
-      </Grid2>
-      <Grid2 xs={12} md={8} textAlign="left">
+      </Grid>
+      <Grid
+        textAlign="left"
+        size={{
+          xs: 12,
+          md: 8
+        }}>
         {reduxCv.mainColumn?.map((section, index) => {
           const sectionKey = getSectionKey('mainColumn', index);
           const isRemoved = removedSections.has(sectionKey);
@@ -137,9 +145,8 @@ export function CvPaper({
             </Paper>
           );
         })}
-      </Grid2>
-    </Grid2>
-
+      </Grid>
+    </Grid>
   );
 }
 

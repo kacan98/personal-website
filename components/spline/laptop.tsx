@@ -1,4 +1,6 @@
-import Spline from '@splinetool/react-spline/next';
+'use client';
+
+import Spline from '@splinetool/react-spline';
 import { Suspense } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 

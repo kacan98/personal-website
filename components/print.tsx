@@ -1,7 +1,7 @@
 "use client";
 import { Box, Button } from "@mui/material";
 import React, { ReactNode, useRef } from "react";
-import { ReactToPrint } from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import CustomThemeProvider, { CustomThemeProviderProps } from "./theme/customThemeProvider";
 
 interface ExportProps {
@@ -12,33 +12,12 @@ interface ExportProps {
 }
 
 export const Print: React.FC<ExportProps> = ({ children, printComponent, fileName, fontSize }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  const reactToPrintTrigger = React.useCallback(() => {
-    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
-    // to the root node of the returned component as it will be overwritten.
-
-    // Bad: the `onClick` here will be overwritten by `react-to-print`
-    // return <button onClick={() => alert('This will not work')}>Print this out!</button>;
-
-    // Good
-    return (
-      <Button
-        variant="contained"
-        color="info"
-        fullWidth
-        sx={{
-          mt: 3,
-        }}
-      >
-        Print
-      </Button>
-    );
-  }, []);
-
-  const reactToPrintContent = React.useCallback(() => {
-    return ref.current;
-  }, [ref.current]);
+  const handlePrint = useReactToPrint({
+    contentRef,
+    documentTitle: fileName || "download",
+  });
 
   const customThemeProviderProps: Partial<CustomThemeProviderProps> = {
     forceSmallerBreakpoints: true,
@@ -49,12 +28,17 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
   return (
     <CustomThemeProvider {...customThemeProviderProps}>
       <>{children}</>
-      <ReactToPrint
-        content={reactToPrintContent}
-        documentTitle={fileName ? fileName : "download"}
-        removeAfterPrint
-        trigger={reactToPrintTrigger}
-      ></ReactToPrint>
+      <Button
+        variant="contained"
+        color="info"
+        fullWidth
+        sx={{
+          mt: 3,
+        }}
+        onClick={handlePrint}
+      >
+        Print
+      </Button>
       <Box
         sx={{
           position: "absolute",
@@ -66,7 +50,7 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
         }}
       >
         <Box
-          ref={ref}
+          ref={contentRef}
           sx={{
             width: 905,
             padding: 3,

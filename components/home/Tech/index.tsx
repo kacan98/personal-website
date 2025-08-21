@@ -15,7 +15,7 @@ export type TechListProps = {
   technologies: TechItem[];
 };
 
-const TechList = ({ title, technologies }: TechListProps): JSX.Element => {
+const TechList = ({ title, technologies }: TechListProps) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();

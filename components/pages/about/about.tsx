@@ -1,9 +1,8 @@
 "use client"
 import { usePicture } from "@/hooks/usePicture";
 import { getCVPicture } from "@/sanity/sanity-utils";
-import { Avatar, Box, Button } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
-import { ReactNode, useRef, useEffect } from "react";
+import { Avatar, Box, Button, Grid } from "@mui/material";
+import React, { ReactNode, useRef, useEffect } from "react";
 import gsap from "gsap";
 import PageWrapper from "../pageWrapper";
 
@@ -22,7 +21,7 @@ export const About = ({
     buttonText,
     buttonHref,
     onButtonClick
-}: AboutProps): JSX.Element => {
+}: AboutProps) => {
     const { imageUrl } = usePicture(getCVPicture);
     const avatarRef = useRef<HTMLDivElement>(null); useEffect(() => {
         const avatarElement = avatarRef.current;
@@ -103,14 +102,18 @@ export const About = ({
                     margin: "0 auto",
                 }}
             >
-                <Grid2
+                <Grid
                     container
                     spacing={{ xs: 3, md: 4 }}
                     sx={{
                         gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" }
                     }}
                 >
-                    <Grid2 xs={12} md={8}>
+                    <Grid
+                        size={{
+                            xs: 12,
+                            md: 8
+                        }}>
                         <Box
                             sx={{
                                 color: "text.primary",
@@ -190,10 +193,8 @@ export const About = ({
                                 </Button>
                             </Box>
                         )}
-                    </Grid2>                    {imageUrl && (
-                        <Grid2
-                            xs={12}
-                            md={4}
+                    </Grid>                    {imageUrl && (
+                        <Grid
                             sx={{
                                 display: "flex",
                                 justifyContent: { xs: "center", md: "flex-start" },
@@ -201,7 +202,10 @@ export const About = ({
                                 order: { xs: -1, md: 0 },
                                 perspective: "1000px"
                             }}
-                        >                            <Box
+                            size={{
+                                xs: 12,
+                                md: 4
+                            }}>                            <Box
                             ref={avatarRef}
                             sx={{
                                 position: "relative",
@@ -250,9 +254,9 @@ export const About = ({
                                     />
                                 </Box>
                             </Box>
-                        </Grid2>
+                        </Grid>
                     )}
-                </Grid2>
+                </Grid>
             </Box>
         </PageWrapper>
     );

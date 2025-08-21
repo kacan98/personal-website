@@ -17,41 +17,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['@mui/material', '@mui/icons-material', '@react-three/fiber', '@react-three/drei', 'three'],
-  },
-  webpack: (config, { isServer }) => {
-    // Optimize three.js and related packages
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
-      };
-      
-      // Optimize Three.js imports and prevent multiple instances
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'three': 'three',
-        'three/examples/jsm': 'three/examples/jsm',
-      };
-      
-      // Split chunks to ensure single Three.js instance
-      config.optimization.splitChunks = {
-        ...config.optimization.splitChunks,
-        cacheGroups: {
-          ...config.optimization.splitChunks?.cacheGroups,
-          three: {
-            name: 'three',
-            test: /[\\/]node_modules[\\/](three|@react-three)[\\/]/,
-            chunks: 'all',
-            priority: 30,
-            enforce: true, // Force this chunk to be created
-          },
-        },
-      };
-    }
-    
-    return config;
+    optimizePackageImports: ['@mui/material', '@mui/icons-material'],
   },
 };
 

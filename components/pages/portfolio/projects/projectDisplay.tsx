@@ -2,9 +2,8 @@
 import { ProjectCard } from "@/components/pages/galery/projectCard";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { Project } from "@/sanity/schemaTypes/project";
-import { Box } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
-import { a, useTransition } from "@react-spring/web";
+import { Box, Grid } from "@mui/material";
+import { animated, useTransition } from "@react-spring/web";
 import { useState } from "react";
 
 type ProjectDisplayProps = {
@@ -52,18 +51,18 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
         />
       </Box>
 
-      <Grid2
+      <Grid
         container
         spacing={2}
         justifyContent={"center"}
         alignItems={"center"}
       >
         {transitions((props, project) => (
-          <a.div style={props}>
+          <animated.div style={props}>
             <ProjectCard key={project.title} {...project} />
-          </a.div>
+          </animated.div>
         ))}
-      </Grid2>
+      </Grid>
     </Box>
   );
 };

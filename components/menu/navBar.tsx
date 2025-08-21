@@ -176,7 +176,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             </>
           ) : mounted ? (
             /* Desktop Layout */
-            <>
+            (<>
               {!weAreHome && (
                 <Link href="/" passHref>
                   <IconButton
@@ -205,14 +205,13 @@ const NavBar = ({ navLinks }: TopBarProps) => {
                 </Link>
               ))}
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-            </>
+            </>)
           ) : (
             // Fallback during hydration
-            <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+            (<Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>)
           )}
         </Toolbar>
       </AppBar>
-      
       {/* Mobile Drawer */}
       {mounted && isMobile && mobileDrawer}
     </>

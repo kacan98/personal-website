@@ -36,10 +36,13 @@ const JobTitle = styled(Typography)({
   WebkitBackgroundClip: 'text',
   color: 'transparent',
   textTransform: 'uppercase',
-  letterSpacing: '0.2em',
+  letterSpacing: '0.1em', // Reduced for better wrapping
   fontWeight: 700,
   contain: 'layout style',
   minHeight: '2.5rem', // Prevent layout shift
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  whiteSpace: 'normal',
 });
 
 const NameHeading = styled(Typography)(({
@@ -51,7 +54,7 @@ const NameHeading = styled(Typography)(({
   minHeight: '8rem', // Prevent layout shift for large text
 }));
 
-export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element => {
+export const Hero = ({ firstName, lastName, tagLine }: HeroProps) => {
   const component = useRef(null);
 
   // Simplified rendering for better LCP performance
@@ -63,13 +66,14 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
     <Box ref={component}>
         <Grid
           container
+          spacing={2}
           sx={{
             minHeight: '70vh',
             alignItems: 'center',
-            flexDirection: { l: 'column-reverse', xl: 'row' }
+            flexDirection: { xs: 'column', md: 'row' }
           }}
         >
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Box className="hero-text" sx={{ data: { speed: 0.2 } }}>
               <NameHeading variant="h1" aria-label={firstName + " " + lastName}>
                 <FirstNameContainer className="name-container" variant="inherit">
@@ -80,13 +84,18 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps): JSX.Element =
                 </LastNameContainer>
               </NameHeading>
               <JobTitle className="job-title" variant="h2" sx={{
-                fontSize: { xs: '1.5rem', md: '2.25rem' }
+                fontSize: { xs: '1.5rem', md: '2.25rem' },
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word',
+                hyphens: 'auto',
+                maxWidth: '100%',
+                whiteSpace: 'normal'
               }}>
                 {tagLine}
               </JobTitle>
             </Box>
           </Grid>
-          <Grid item xs={12} md={6} sx={{
+          <Grid size={{ xs: 12, md: 6 }} sx={{
             display: 'flex',
             justifyContent: 'center',
             position: 'relative'

@@ -1,7 +1,6 @@
 "use client";
 
-import { Box, Typography } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Typography, Grid } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
 
 export interface TimelineItem {
@@ -70,12 +69,16 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
         zIndex: 2,
         boxShadow: '0 0 0 4px rgba(15, 23, 42, 1)'
       }} />
-      
-      <Grid2 container spacing={4} alignItems="center">
-        <Grid2 xs={12} md={6} sx={{ 
-          order: { xs: 1, md: index % 2 === 0 ? 1 : 2 },
-          textAlign: { xs: 'left', md: index % 2 === 0 ? 'right' : 'left' }
-        }}>
+      <Grid container spacing={4} alignItems="center">
+        <Grid
+          sx={{ 
+            order: { xs: 1, md: index % 2 === 0 ? 1 : 2 },
+            textAlign: { xs: 'left', md: index % 2 === 0 ? 'right' : 'left' }
+          }}
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Box sx={{ 
             p: 4, 
             background: 'rgba(255, 255, 255, 0.05)',
@@ -180,13 +183,18 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
               ))}
             </Box>
           </Box>
-        </Grid2>
+        </Grid>
         
         {/* Hide this column on mobile (xs), only show on md+ */}
-        <Grid2 xs={12} md={6} sx={{ 
-          order: { xs: 2, md: index % 2 === 0 ? 2 : 1 },
-          display: { xs: 'none', md: 'block' } // Hide on mobile
-        }}>
+        <Grid
+          sx={{ 
+            order: { xs: 2, md: index % 2 === 0 ? 2 : 1 },
+            display: { xs: 'none', md: 'block' } // Hide on mobile
+          }}
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <Box sx={{ 
             height: '250px',
             background: `rgba(${(index + 1) * 60 + 100}, ${200 - index * 30}, ${255 - index * 40}, 0.1)`,
@@ -214,8 +222,8 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
               </Box>
             )}
           </Box>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

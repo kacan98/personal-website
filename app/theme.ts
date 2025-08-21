@@ -1,8 +1,7 @@
-"use client";
 import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
 import { Theme } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
-import { ThemeOptions } from "@mui/material/styles/createTheme";
+import { ThemeOptions } from "@mui/material/styles";
 import { BRAND_COLORS } from "./colors";
 
 const getBaseTheme = (fontSize:number): ThemeOptions => {
@@ -10,7 +9,7 @@ const getBaseTheme = (fontSize:number): ThemeOptions => {
   // so modify and set below instead
   return {
     typography: {
-      fontFamily: "system-ui, sans-serif",
+      fontFamily: '"Open Sans", "Urbanist", "Cormorant Garamond", "Yeseva One", system-ui, sans-serif',
       fontSize,
 
       h1: {
@@ -57,10 +56,12 @@ export function getTheme({
 }): Theme {
   const baseTheme = getBaseTheme(fontSize);
 
-  baseTheme.typography = {
-    ...baseTheme.typography,
-    fontFamily: styles?.font,
-  };
+  if (baseTheme.typography && typeof baseTheme.typography === 'object') {
+    baseTheme.typography = {
+      ...baseTheme.typography,
+      fontFamily: styles?.font || (baseTheme.typography as any).fontFamily,
+    };
+  }
 
   if (printFontSizes) {
     baseTheme.typography = {
@@ -99,7 +100,9 @@ export function getTheme({
     };
   }
 
-  if (styles?.theme === "light" || forceMode === "light") {
+  const isDarkTheme = !(styles?.theme === "light" || forceMode === "light");
+  
+  if (!isDarkTheme) {
     return createTheme({
       ...baseTheme,
       palette: {

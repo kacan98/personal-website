@@ -20,7 +20,7 @@ import { EarthGlobeIcon } from "@sanity/icons";
 export const SUPPORTED_ICONS: {
   [key: string]: {
     name: string;
-    component: () => JSX.Element;
+    component: () => React.ReactElement;
   };
 } = {
   gitHub: {

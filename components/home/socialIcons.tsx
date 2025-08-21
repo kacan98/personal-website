@@ -27,7 +27,7 @@ const SocialIcons = async ({ direction }: SocialProps) => {
               title={title}
               arrow
             >
-              <Grid item>
+              <Grid>
                 <IconButton href={url} target="_blank">
                   {SUPPORTED_ICONS[iconName]?.component()}
                 </IconButton>

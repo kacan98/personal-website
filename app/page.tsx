@@ -6,7 +6,7 @@ import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
 import ScrollSnapContainer from "@/components/layout/ScrollSnapContainer";
-import ThreeDLaptop from "@/components/spline/laptop";
+import SplineWrapper from "@/components/spline/SplineWrapper";
 import { isKarelsPortfolio } from "@/globalVars";
 import { Box, Typography } from "@mui/material";
 // import Grid2 from "@mui/material/Unstable_Grid2"; // Removed unused import
@@ -88,7 +88,7 @@ const aboutMe: Record<string, AboutSection> = {
     header: "Full-Stack Developer",
     content:
       "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy.",
-    visual: <ThreeDLaptop />
+    visual: <SplineWrapper />
   },
   aiEnhanced: {
     header: "AI-Enhanced Development", 

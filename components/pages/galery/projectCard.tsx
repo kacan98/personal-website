@@ -1,5 +1,4 @@
-import { Box, Card, CardContent, IconButton, Typography } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Card, CardContent, Grid, IconButton, Typography } from "@mui/material";
 import { Project } from "@/sanity/schemaTypes/project";
 import { SUPPORTED_ICONS } from "@/components/icon";
 import SanityPicture from "@/components/sanityPicture";
@@ -25,7 +24,7 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
       variant="outlined"
     >
       <CardContent>
-        <Grid2
+        <Grid
             container
             justifyContent="center"
             alignItems="center"
@@ -56,15 +55,15 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
             </Box>
             <Typography variant="h5">{title}</Typography>
             <Typography variant="body2">{description}</Typography>
-            <Grid2 container alignItems="center" justifyContent="center">
+            <Grid container alignItems="center" justifyContent="center">
               {links &&
                 links.map(({ url, iconName }) => (
                   <IconButton key={iconName} href={url} target="_blank">
                     {SUPPORTED_ICONS[iconName]?.component()}
                   </IconButton>
                 ))}
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
         </CardContent>
     </Card>
   );
