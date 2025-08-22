@@ -40,6 +40,10 @@ export default async function RootLayout({
   const settings = await getSettings();
   const galleries = await getGalleries();
   const cvSettings = await getCvSettings();
+  
+  // Sanitize data to avoid passing functions to client components
+  const sanitizedCvSettings = cvSettings ? JSON.parse(JSON.stringify(cvSettings)) : undefined;
+  const sanitizedStyles = styles ? JSON.parse(JSON.stringify(styles)) : undefined;
 
   // Build navigation links - always include basic links
   const navLinks: { name: string; href: string }[] = [
@@ -81,8 +85,8 @@ export default async function RootLayout({
         <CssBaseline />
         <AppRouterCacheProvider>
           <ReduxProvider>
-            <StoreProvider cvSettings={cvSettings}>
-              <CustomThemeProvider styles={styles}>
+            <StoreProvider cvSettings={sanitizedCvSettings}>
+              <CustomThemeProvider styles={sanitizedStyles}>
               <Box
                 sx={{
                   minHeight: "100vh",

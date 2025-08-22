@@ -18,6 +18,7 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['@mui/material', '@mui/icons-material'],
+    // ppr: 'incremental', // TODO: Enable when upgrading to Next.js canary
   },
 };
 

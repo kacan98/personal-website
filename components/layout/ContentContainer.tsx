@@ -1,6 +1,7 @@
 "use client";
 import { Box, Container, ContainerProps } from "@mui/material";
 import { ReactNode } from "react";
+import { SPACING } from "@/app/spacing";
 
 interface ContentContainerProps extends Omit<ContainerProps, 'children'> {
   children: ReactNode;
@@ -18,7 +19,7 @@ const ContentContainer = ({
   fullWidth = false,
   background,
   padding = 4,
-  maxWidth = "lg",
+  maxWidth = SPACING.maxWidth,
   ...props
 }: ContentContainerProps) => {
   // If fullWidth is true, we render a full-width background Box with a contained content Container
@@ -28,10 +29,14 @@ const ContentContainer = ({
         sx={{
           width: "100%",
           backgroundColor: background,
-          padding: padding,
+          p: padding,
         }}
       >
-        <Container maxWidth={maxWidth} {...props}>
+        <Container 
+          maxWidth={maxWidth} 
+          sx={{ px: SPACING.containerPadding } as any}
+          {...props}
+        >
           {children}
         </Container>
       </Box>
@@ -43,9 +48,10 @@ const ContentContainer = ({
     <Container 
       maxWidth={maxWidth} 
       sx={{ 
-        padding: padding,
+        px: SPACING.containerPadding,
+        py: padding,
         backgroundColor: background,
-      }}
+      } as any}
       {...props}
     >
       {children}

@@ -8,11 +8,8 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
   return (
     <Card
       sx={{
-        width: 350,
-        maxWidth: "78vw",
-        height: 520,
-        m: 2,
-        p: 2,
+        width: "100%",
+        height: 480,
         borderRadius: 3,
         borderColor: "divider",
         display: "flex",

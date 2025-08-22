@@ -76,7 +76,7 @@ export function CvPaper({
             }
 
             return (
-              <Box key={index} mb={1.5}>
+              <Box key={index} mb={2.5}>
                 <CvSectionComponent
                   sideOrMain="sideColumn"
                   sectionIndex={index}
@@ -116,7 +116,7 @@ export function CvPaper({
           }
 
           return (
-            <Paper key={index} sx={{ p: 2, mb: 2 }}>              <CvSectionComponent
+            <Paper key={index} sx={{ p: 2, mb: 3 }}>              <CvSectionComponent
               sideOrMain="mainColumn"
               sectionIndex={index}
               section={section}

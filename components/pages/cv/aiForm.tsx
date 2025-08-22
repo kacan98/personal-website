@@ -38,6 +38,7 @@ export const AiForm = ({
     return (
         <Box>
             <TextField
+                id="job-description-input"
                 multiline
                 maxRows={15}
                 label="Enter a job description here"
@@ -59,6 +60,7 @@ export const AiForm = ({
                     </Button>
                     {positionSummary && (
                         <TextField
+                            id="position-summary-input"
                             sx={{ mt: 2 }}
                             multiline
                             fullWidth

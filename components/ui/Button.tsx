@@ -15,7 +15,7 @@ interface ButtonProps extends Omit<MuiButtonProps, 'variant'> {
 const StyledButton = styled(MuiButton)<{ 
   customvariant: CustomButtonVariant; 
   isactive?: string;
-}>(({ theme, customvariant, isactive }) => {
+}>(({ customvariant, isactive }) => {
   const baseStyles = {
     borderRadius: '12px',
     fontWeight: 500,

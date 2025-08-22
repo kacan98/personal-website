@@ -1,6 +1,7 @@
 import React from "react";
 import { Container } from "@mui/system";
 import SectionHeader from "@/components/ui/SectionHeader";
+import { SPACING, getPageSx, getContainerSx } from "@/app/spacing";
 
 type PageWrapperProps = {
   children: React.ReactNode;
@@ -19,9 +20,10 @@ function PageWrapper({
 }: PageWrapperProps) {
   return (
     <Container
-      maxWidth={containerMaxWidth}
+      maxWidth={containerMaxWidth || SPACING.maxWidth}
       sx={{
-        margin: "100px auto 50px auto",
+        ...getPageSx(),
+        ...getContainerSx(),
         textAlign: "center",
       }}
     >

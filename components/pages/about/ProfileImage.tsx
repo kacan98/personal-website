@@ -1,14 +1,14 @@
-"use client";
 import { Box, Avatar } from "@mui/material";
-import { usePicture } from "@/hooks/usePicture";
 import { getCVPicture } from "@/sanity/sanity-utils";
+import imageUrlBuilder from "@sanity/image-url";
+import { sanityClient } from "@/sanity/lib/sanityClient";
 
-export default function ProfileImage() {
-    const { imageUrl } = usePicture(getCVPicture);
+export default async function ProfileImage() {
+    const image = await getCVPicture();
+    const imageUrl = image ? imageUrlBuilder(sanityClient).image(image).url() : null;
 
     return (
         <Box
-            suppressHydrationWarning
             sx={{
                 width: "100%",
                 aspectRatio: "1",

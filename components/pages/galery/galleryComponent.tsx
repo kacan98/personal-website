@@ -2,7 +2,7 @@
 import { ProjectCard } from "@/components/pages/galery/projectCard";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { Project } from "@/sanity/schemaTypes/project";
-import { Box, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { animated, useTransition } from "@react-spring/web";
 import Link from "next/link";
 import { useState } from "react";
@@ -61,14 +61,14 @@ export const GalleryComponent = ({
       )}
       <Grid
         container
-        spacing={2}
+        spacing={3}
         justifyContent={"center"}
-        alignItems={"center"}
+        alignItems={"stretch"}
       >
         {transitions((props, project) => {
           const card = <ProjectCard {...project} />;
           return (
-            <Box key={project.title}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.title}>
               <animated.div style={props}>
                 {project.relatedPage?.slug ? (
                   <Link href={`/project/${project.relatedPage.slug.current}`}>
@@ -78,7 +78,7 @@ export const GalleryComponent = ({
                   card
                 )}
               </animated.div>
-            </Box>
+            </Grid>
           );
         })}
       </Grid>

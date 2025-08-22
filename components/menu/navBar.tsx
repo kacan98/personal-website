@@ -1,6 +1,7 @@
 "use client";
 import { Close, Home, Menu as MenuIcon } from "@mui/icons-material";
 import { BRAND_COLORS } from "@/app/colors";
+import { getContainerSx } from "@/app/spacing";
 import {
   AppBar,
   Box,
@@ -165,10 +166,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
       >
         <Toolbar sx={{ 
           minHeight: { xs: 56, md: 64 },
-          maxWidth: 'lg',
-          mx: 'auto',
-          width: '100%',
-          px: { xs: 2, md: 3 }
+          ...getContainerSx()
         }}>
           {/* Mobile Layout */}
           {mounted && isMobile ? (

@@ -7,7 +7,9 @@ import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
 import ThreeDLaptop from "@/components/spline/laptop";
 import { isKarelsPortfolio } from "@/globalVars";
+import { SPACING } from "@/app/spacing";
 import { Box, Typography } from "@mui/material";
+import { AutoAwesome, Psychology, Group } from "@mui/icons-material";
 // import Grid2 from "@mui/material/Unstable_Grid2"; // Removed unused import
 
 interface AboutSection {
@@ -33,7 +35,7 @@ function AboutSectionItem({ section, id }: { section: AboutSection; id: string }
       <Box sx={{ 
         textAlign: 'center', 
         maxWidth: '800px',
-        px: { xs: 2, md: 0 },
+        px: SPACING.containerPadding,
       }}>
         <Typography 
           variant="h2" 
@@ -90,16 +92,43 @@ const aboutMe: Record<string, AboutSection> = {
     header: "AI-Enhanced Development", 
     content:
       "I use AI coding tools every day because they help me write code faster and catch mistakes I'd miss. Always trying out new tools to see if they make my life easier.",
+    visual: (
+      <AutoAwesome 
+        sx={{ 
+          fontSize: { xs: '80px', md: '120px' },
+          color: '#a855f7',
+          filter: 'drop-shadow(0 4px 8px rgba(168, 85, 247, 0.3))'
+        }} 
+      />
+    )
   },
   problemSolver: {
     header: "Problem Solver",
     content:
       "I like figuring out why things break and fixing them. Most of my day is spent debugging, building features, and making sure stuff actually works.",
+    visual: (
+      <Psychology 
+        sx={{ 
+          fontSize: { xs: '80px', md: '120px' },
+          color: '#06b6d4',
+          filter: 'drop-shadow(0 4px 8px rgba(6, 182, 212, 0.3))'
+        }} 
+      />
+    )
   },
   userFocused: {
     header: "User-Focused",
     content:
       "I used to do marketing, so I think about who's actually going to use the stuff I build. I try to make software that doesn't make people want to throw their computer out the window.",
+    visual: (
+      <Group 
+        sx={{ 
+          fontSize: { xs: '80px', md: '120px' },
+          color: '#10b981',
+          filter: 'drop-shadow(0 4px 8px rgba(16, 185, 129, 0.3))'
+        }} 
+      />
+    )
   },
 };
 
