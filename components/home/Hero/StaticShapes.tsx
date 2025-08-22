@@ -365,10 +365,10 @@ function BoxShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, ${SHAPE_COLORS.gold}, ${SHAPE_COLORS.copper})`,
+          background: `linear-gradient(135deg, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.accent})`,
           borderRadius: '8px',
-          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
-          border: `2px solid rgba(${SHAPE_COLORS.goldRgb}, 0.3)`,
+          boxShadow: `0 0 25px rgba(${BRAND_COLORS.secondaryRgb}, 0.4)`,
+          border: `2px solid rgba(${BRAND_COLORS.secondaryRgb}, 0.3)`,
         }}
       />
     </motion.div>

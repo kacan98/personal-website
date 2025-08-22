@@ -61,7 +61,7 @@ export default function Message({ chatRole, text }: MessageProps) {
                     mb: 1,
                     backgroundColor: 'rgba(255, 255, 255, 0.1)',
                     '&::after': {
-                      background: 'linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.1), transparent)',
+                      background: 'linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.1), transparent)',
                     },
                   }}
                 />

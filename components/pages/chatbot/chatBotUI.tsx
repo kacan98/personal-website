@@ -331,8 +331,8 @@ const ChatBotUI = () => {
           onClick={handleSend}
           sx={{
             minWidth: '80px',
-            backgroundColor: BRAND_COLORS.secondary,
-            '&:hover': { backgroundColor: `${BRAND_COLORS.secondary}CC` },
+            backgroundColor: BRAND_COLORS.accent,
+            '&:hover': { backgroundColor: `${BRAND_COLORS.accent}CC` },
             '&:disabled': { backgroundColor: `${BRAND_COLORS.primary}20` },
           }}
         >

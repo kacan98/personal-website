@@ -11,6 +11,10 @@ interface Props {
 export async function generateStaticParams() {
   const galleries = await getGalleries();
   
+  if (!galleries || !Array.isArray(galleries)) {
+    return [];
+  }
+  
   return galleries.map((gallery) => ({
     slug: gallery.title.toLowerCase().replace(/\s+/g, '-'),
   }));
@@ -19,6 +23,11 @@ export async function generateStaticParams() {
 export default async function GalleryRoute({ params }: Props) {
   const { slug } = await params;
   const galleries = await getGalleries();
+  
+  if (!galleries || !Array.isArray(galleries)) {
+    notFound();
+  }
+  
   const gallery = galleries.find(
     (g) => g.title.toLowerCase().replace(/\s+/g, '-') === slug
   );
