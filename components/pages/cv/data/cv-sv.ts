@@ -3,25 +3,24 @@ import { CVSettings } from '@/types';
 export const cvSv: CVSettings = {
   on: true,
   name: "Karel Čančara",
-  subtitle: "Full Stack Utvecklare",
+  subtitle: "Full Stack Utvecklare | TypeScript, Angular, React, .NET",
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
       title: "Profil",
       paragraphs: [
-        "Detaljorienterad och användarfokuserad full stack utvecklare med stark frontend-grund och växande backend-erfarenhet. Skicklig i TypeScript, Angular, React, Node.js och C# med praktisk erfarenhet av Microsoft Dynamics (X++/C#). Känd för en proaktiv inställning, starka kommunikationsfärdigheter och en solid track record av att leverera funktioner i komplexa företagssystem.\n\n",
-        "Jag övergick till utveckling från en marknadsföringsbakgrund, vilket ger mig en unik förmåga att tänka från användarens perspektiv, bidra till produktriktning och samarbeta mellan avdelningar. Jag lär mig snabbt, tar ägarskap och levererar konsekvent — toppar ofta story points i team sprints trots att jag är självlärd.",
-        "Nu söker jag att växa i en hybrid eller on-site full stack roll runt Köpenhamn, helst i en modern tech stack med backend exponering för C#/.NET eller Node.js."
+        "Full Stack Utvecklare med 4+ års erfarenhet av att bygga webbapplikationer och företagslösningar. Bevisad track record av att leverera högimpaktfunktioner och betydande prestandaförbättringar.\n\n",
+        "Övergick till utveckling från marknadsföring, vilket ger ett unikt användarfokuserat perspektiv och tvärfunktionella samarbetsförmågor. Snabb inlärning och konsekvent leverans — ofta högst story points i teamsprints trots självlärd bakgrund."
       ]
     },
     {
       title: "Arbetslivserfarenhet",
       subSections: [
         {
-          title: "Full Stack Utvecklare – Dynamics 365 SCM",
+          title: "Microsoft Dynamics 365 Finance and Operations Developer",
           subtitles: {
             left: "Dynaway",
-            right: "2024 - nu"
+            right: "Nov 2024 - Nuvarande"
           },
           paragraphs: [
             "- Utvecklade backend-tjänster och API:er i X++, C# och .NET för företags-ERP-programvara. Integrerade med Microsoft Graph.",
@@ -34,7 +33,7 @@ export const cvSv: CVSettings = {
           title: "Frontend Webbutvecklare",
           subtitles: {
             left: "Dynaway",
-            right: "2020 - 2024"
+            right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
             "- Levererade nya funktioner och buggfixar i en Angular/Deno-webbapplikation som används av tekniker\n",
@@ -44,15 +43,28 @@ export const cvSv: CVSettings = {
           ]
         },
         {
-          title: "Webb- och Affärsutveckling",
+          title: "Webbutvecklare inom Marknadsföring",
           subtitles: {
-            left: "Ankeri Media",
-            right: "2019-2020"
+            left: "Dynaway",
+            right: "Nov 2020 - Jul 2022"
           },
           paragraphs: [
-            "- Skapade företagets webbplats och ledde varumärkes- och uppsökningskampanjer",
-            "- Bokade 50+ möten och säkrade nya kunder via kall uppsökning",
-            "- Balanserade marknadsförings- och tekniska ansvarsområden i en startup-miljö"
+            "- Utökade företagets webbplats med anpassade moduler och omskrev förstasidan för att bättre kommunicera värdeproposition",
+            "- Samarbetade med team över avdelningar för att förstå affärsbehov och översätta dem till webblösningar",
+            "- Designade kundinföringsguider och automatiserade e-postarbetsflöden i HubSpot för att förbättra leadgenerering",
+            "- Etablerade videokultur för företaget och skapade produktdemonstrationsinnehåll som stödde försäljning och marknadsföring"
+          ]
+        },
+        {
+          title: "Medgrundare",
+          subtitles: {
+            left: "AnkeriMedia",
+            right: "Nov 2019 - Jul 2020"
+          },
+          paragraphs: [
+            "- Medgrundade marknadsföringstjänster startup inriktat på tjeckiska fastighetsbyråer",
+            "- Byggde företagets webbplats, skapade marknadsföringsmaterial och genomförde direkt uppsökning till potentiella kunder",
+            "- Säkrade framgångsrikt 50+ möten med beslutsfattare och stängde 5 betalande kunder"
           ]
         }
       ]
@@ -127,29 +139,31 @@ export const cvSv: CVSettings = {
       ]
     },
     {
-      title: "Projekt",
-      subtitles: {
-        left: "...som jag har arbetat med på fritiden (bland andra)"
-      },
+      title: "Personliga Projekt",
       bulletPoints: [
         {
           iconName: "gitHub",
-          text: "Köp vs Hyra Kalkylator (React, MUI, Redux)",
+          text: "Fastighetsinvesteringskalkylator - React/Redux finansiellt analysverktyg",
           url: "https://kacan98.github.io/buying-vs-renting/"
         },
         {
           iconName: "gitHub",
-          text: "Portfolio (Next.js/React + Markdown)",
-          url: "https://github.com/kacan98/my-porfolio"
-        },
-        {
-          iconName: "gitHub",
-          text: "Recensionsapp (Angular +.NET + SQL)",
+          text: "Recensionsapp - Enkel rating app med databaslagring (Angular/.NET/Azure)",
           url: "https://github.com/kacan98/r8tit"
         },
         {
           iconName: "gitHub",
-          text: "Gemensam Födelsedag Kalkylator (Angular + Ionic)",
+          text: "Tjeckien Reseguide - Astro-baserad reseguide",
+          url: "https://czech-guide.vercel.app/en/"
+        },
+        {
+          iconName: "gitHub",
+          text: "Portfolio Webbplats - Next.js portfolio med AI-integration",
+          url: "https://github.com/kacan98/my-porfolio"
+        },
+        {
+          iconName: "gitHub",
+          text: "Gemensam Födelsedag Kalkylator - Förutsäger när folk delar födelsedagar i grupper",
           url: "https://kacan98.github.io/common-age-calculator/"
         }
       ]

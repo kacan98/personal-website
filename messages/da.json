@@ -6,7 +6,7 @@
     "cv": "CV",
     "resume": "CV",
     "gallery": "Galleri",
-    "chatbot": "Chat"
+    "chatbot": "Snak"
   },
   "common": {
     "loading": "Indlæser...",
@@ -49,7 +49,7 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "AI-Forstærket Full-Stack Udvikler"
+      "tagline": "Full-Stack Udvikler"
     },
     "about": {
       "fullStack": {

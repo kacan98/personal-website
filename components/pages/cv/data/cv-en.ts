@@ -3,56 +3,66 @@ import { CVSettings } from '@/types';
 export const cvConfigEn: CVSettings = {
   on: true,
   name: "Karel Čančara",
-  subtitle: "Full Stack Developer",
+  subtitle: "Full Stack Developer | TypeScript, Angular, React, .NET",
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
       title: "Profile",
       paragraphs: [
-        "Detail-oriented and user-focused full stack developer with a strong frontend foundation and growing backend experience. Adept in TypeScript, Angular, React, Node.js, and C#, with hands-on experience in Microsoft Dynamics (X++/C#). Known for a proactive mindset, strong communication skills, and a solid track record of delivering features in complex enterprise systems.\n\n",
-        "I transitioned into development from a marketing background, bringing a unique ability to think from the user's perspective, contribute to product direction, and collaborate across departments. I learn fast, take ownership, and consistently deliver — topping story points in team sprints despite being self-taught.",
-        "Now looking to grow in a hybrid or on-site full stack role around Copenhagen, ideally in a modern tech stack with backend exposure to C#/.NET or Node.js."
+        "Full Stack Developer with 4+ years experience building web applications and enterprise solutions. Proven track record of delivering high-impact features and significant performance improvements.\n\n",
+        "Transitioned from marketing to development, bringing user-focused perspective and cross-functional collaboration skills. Top performer in development teams with expertise in TypeScript, Angular, React, and .NET."
       ]
     },
     {
       title: "Work Experience",
       subSections: [
         {
-          title: "Full Stack Developer – Dynamics 365 SCM",
+          title: "Microsoft Dynamics 365 Finance and Operations Developer",
           subtitles: {
             left: "Dynaway",
-            right: "2024 - now"
+            right: "Nov 2024 - Present"
           },
           paragraphs: [
-            "- Developed backend services and APIs in X++, C#, and .NET for enterprise ERP software. Integrated with Microsoft Graph.",
-            "- Collaborated with frontend and infrastructure teams to deliver end-to-end solutions\n",
-            "- Focused on performance improvements, debugging, and customer-specific features",
-            "10x increased the speed of data transfer between frontend and backend "
+            "- Develop full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients",
+            "- Build backend services and APIs using .NET, X++, and C# while collaborating with frontend teams",
+            "- Achieved 10x performance improvement in data transfer between frontend and backend systems"
           ]
         },
         {
           title: "Frontend Web Developer",
           subtitles: {
             left: "Dynaway",
-            right: "2020 - 2024"
+            right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
-            "- Delivered new features and bug fixes in an Angular/Deno web application used by technicians\n",
-            "- Contributed highest number of story points in many sprints",
-            "- Advocated for usability and design simplicity in feature discussions\n",
-            "- Led daily and weekly Scrum meetings for a 5-person dev team as a Scrum Master."
+            "- Built TypeScript and Angular web applications for mobile app used by thousands of technicians",
+            "- Consistently delivered highest story points in team sprints while enhancing CI/CD pipelines",
+            "- Served as Scrum Master for 5-person development team"
           ]
         },
         {
-          title: "Web and Business Development",
+          title: "Web Developer in Marketing",
           subtitles: {
-            left: "Ankeri Media",
-            right: "2019-2020"
+            left: "Dynaway",
+            right: "Nov 2020 - Jul 2022"
           },
           paragraphs: [
-            "- Created the company's website and led branding and outreach campaigns",
-            "- Booked 50+ meetings and secured new clients via cold outreach",
-            "- Balanced marketing and tech responsibilities in a startup environment"
+            "- Extended company website with custom modules and rewrote front page for better value communication",
+            "- Collaborated across departments to translate business needs into web solutions",
+            "- Designed customer onboarding guides and automated email workflows in HubSpot",
+            "- Created product demonstration videos supporting sales and marketing efforts"
+          ]
+        },
+        {
+          title: "Co-Founder",
+          subtitles: {
+            left: "AnkeriMedia",
+            right: "Nov 2019 - Jul 2020"
+          },
+          paragraphs: [
+            "- Co-founded marketing services startup targeting Czech real estate agencies",
+            "- Built company website, created marketing materials, and conducted direct outreach to potential clients",
+            "- Successfully secured 50+ meetings with decision-makers and closed 5 paying customers"
           ]
         }
       ]
@@ -127,29 +137,31 @@ export const cvConfigEn: CVSettings = {
       ]
     },
     {
-      title: "Projects",
-      subtitles: {
-        left: "...that I've worked on in my free time (among others)"
-      },
+      title: "Personal Projects",
       bulletPoints: [
         {
           iconName: "gitHub",
-          text: "Buying vs Renting Calculator (React, MUI, Redux)",
+          text: "Property Investment Calculator - React/Redux financial analysis tool",
           url: "https://kacan98.github.io/buying-vs-renting/"
         },
         {
           iconName: "gitHub",
-          text: "Portfolio (Next.js/React + Markdown)",
-          url: "https://github.com/kacan98/my-porfolio"
-        },
-        {
-          iconName: "gitHub",
-          text: "Reviewing App (Angular +.NET + SQL)",
+          text: "Review App - Simple rating app with database storage (Angular/.NET/Azure)",
           url: "https://github.com/kacan98/r8tit"
         },
         {
           iconName: "gitHub",
-          text: "Common Birthday Calculator (Angular + Ionic)",
+          text: "Czech Republic Travel Guide - Astro-based travel guide",
+          url: "https://czech-guide.vercel.app/en/"
+        },
+        {
+          iconName: "gitHub",
+          text: "Portfolio Website - Next.js portfolio with AI integration",
+          url: "https://github.com/kacan98/my-porfolio"
+        },
+        {
+          iconName: "gitHub",
+          text: "Common Birthday Calculator - Predicts when people share birthdays in groups",
           url: "https://kacan98.github.io/common-age-calculator/"
         }
       ]

@@ -113,7 +113,11 @@ export function CvSubSectionComponent({
         transition: 'all 0.2s ease-in-out',
         '&:hover': canShowHoverActions ? {
           boxShadow: 1,
-        } : {}
+        } : {},
+        '@media print': {
+          pageBreakInside: 'avoid',
+          breakInside: 'avoid'
+        }
       }}
     >
       {/* Action buttons */}

@@ -3,7 +3,7 @@ import { usePicture } from "@/hooks/usePicture";
 import { useAppSelector } from "@/redux/hooks";
 import { getCVPicture } from "@/data-utils";
 import { CvSection } from "@/types";
-import { Avatar, Box, Grid, Paper, useMediaQuery } from "@mui/material";
+import { Avatar, Box, Grid, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
 import { useLocale } from 'next-intl';
 
@@ -132,19 +132,20 @@ export function CvPaper({
         </Box>
       </Grid>
       <Grid size={isResumeDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
-        {reduxCv.mainColumn?.map((section, index) => {
-          const sectionKey = getSectionKey('mainColumn', index);
-          const isRemoved = removedSections.has(sectionKey);
-          const isModified = modifiedSections.has(sectionKey);
+        <Box sx={{ p: 2 }}>
+          {reduxCv.mainColumn?.map((section, index) => {
+            const sectionKey = getSectionKey('mainColumn', index);
+            const isRemoved = removedSections.has(sectionKey);
+            const isModified = modifiedSections.has(sectionKey);
 
-          // Skip removed sections in print version
-          if (isPrintVersion && isRemoved) {
-            return null;
-          }
+            // Skip removed sections in print version
+            if (isPrintVersion && isRemoved) {
+              return null;
+            }
 
-          return (
-            <Paper key={index} sx={{ p: 2, mb: 3 }}>
+            return (
               <CvSectionComponent
+                key={index}
                 sideOrMain="mainColumn"
                 sectionIndex={index}
                 section={section}
@@ -164,9 +165,9 @@ export function CvPaper({
                 removedSubSections={removedSubSections}
                 modifiedSubSections={modifiedSubSections}
               />
-            </Paper>
-          );
-        })}
+            );
+          })}
+        </Box>
       </Grid>
     </Grid>
   );

@@ -3,25 +3,24 @@ import { CVSettings } from '@/types';
 export const cvConfigDa: CVSettings = {
   on: true,
   name: "Karel Čančara",
-  subtitle: "Full Stack Udvikler",
+  subtitle: "Full Stack Udvikler | TypeScript, Angular, React, .NET",
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
       title: "Profil",
       paragraphs: [
-        "Detaljeorienteret og brugerfokuseret full stack udvikler med et stærkt frontend-fundament og voksende backend-erfaring. Dygtig i TypeScript, Angular, React, Node.js og C# med praktisk erfaring i Microsoft Dynamics (X++/C#). Kendt for en proaktiv tilgang, stærke kommunikationsfærdigheder og en solid track record med at levere funktioner i komplekse virksomhedssystemer.\n\n",
-        "Jeg er skiftet til udvikling fra en marketingbaggrund, hvilket giver mig en unik evne til at tænke fra brugerens perspektiv, bidrage til produktretning og samarbejde på tværs af afdelinger. Jeg lærer hurtigt, tager ansvar og leverer konsistent — topper ofte story points i team sprints på trods af at være selvlært.",
-        "Nu søger jeg at vokse i en hybrid eller on-site full stack rolle omkring København, ideelt set i en moderne tech stack med backend eksponering til C#/.NET eller Node.js."
+        "Full Stack Udvikler med 4+ års erfaring med at bygge webapplikationer og virksomhedsløsninger. Dokumenteret track record med at levere funktioner med stor indvirkning og betydelige ydeevneforbedringer.\n\n",
+        "Skiftet til udvikling fra marketing, hvilket giver en unik bruger-fokuseret tilgang og tværfaglige samarbejdsevner. Hurtig læring og konsistent levering — ofte med højest story points i teamsprints trods selvlært baggrund."
       ]
     },
     {
       title: "Arbejdserfaring",
       subSections: [
         {
-          title: "Full Stack Udvikler – Dynamics 365 SCM",
+          title: "Microsoft Dynamics 365 Finance and Operations Developer",
           subtitles: {
             left: "Dynaway",
-            right: "2024 - nu"
+            right: "Nov 2024 - Nu"
           },
           paragraphs: [
             "- Udviklede backend-tjenester og API'er i X++, C# og .NET til virksomheds-ERP-software. Integrerede med Microsoft Graph.",
@@ -34,7 +33,7 @@ export const cvConfigDa: CVSettings = {
           title: "Frontend Webudvikler",
           subtitles: {
             left: "Dynaway",
-            right: "2020 - 2024"
+            right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
             "- Leverede nye funktioner og fejlrettelser i en Angular/Deno-webapplikation brugt af teknikere\n",
@@ -44,15 +43,28 @@ export const cvConfigDa: CVSettings = {
           ]
         },
         {
-          title: "Web- og Forretningsudvikling",
+          title: "Webudvikler i Marketing",
           subtitles: {
-            left: "Ankeri Media",
-            right: "2019-2020"
+            left: "Dynaway",
+            right: "Nov 2020 - Jul 2022"
           },
           paragraphs: [
-            "- Skabte virksomhedens hjemmeside og ledede branding- og opsøgningskampagner",
-            "- Bookede 50+ møder og sikrede nye kunder via kold opsøgning",
-            "- Balancerede marketing- og tekniske ansvar i et startup-miljø"
+            "- Udvidede virksomhedens hjemmeside med brugerdefinerede moduler og omskrev forsiden for bedre at kommunikere værdiproposition",
+            "- Samarbejdede med teams på tværs af afdelinger for at forstå forretningsbehov og oversætte dem til webløsninger",
+            "- Designede kundeintroduktionsguider og automatiserede e-mail-workflows i HubSpot for at forbedre lead generation",
+            "- Etablerede videokultur for virksomheden og skabte produktdemonstrationsindhold til støtte for salg og marketing"
+          ]
+        },
+        {
+          title: "Medstifter",
+          subtitles: {
+            left: "AnkeriMedia",
+            right: "Nov 2019 - Jul 2020"
+          },
+          paragraphs: [
+            "- Medstiftede marketing-tjenester startup med fokus på tjekkiske ejendomsbureauer",
+            "- Byggede virksomhedens hjemmeside, skabte marketingmaterialer og udførte direkte opsøgning til potentielle kunder",
+            "- Sikrede succesfuldt 50+ møder med beslutningstagere og lukkede 5 betalende kunder"
           ]
         }
       ]
@@ -127,29 +139,31 @@ export const cvConfigDa: CVSettings = {
       ]
     },
     {
-      title: "Projekter",
-      subtitles: {
-        left: "...som jeg har arbejdet på i min fritid (blandt andre)"
-      },
+      title: "Personlige Projekter",
       bulletPoints: [
         {
           iconName: "gitHub",
-          text: "Køb vs Leje Calculator (React, MUI, Redux)",
+          text: "Ejendomsinvesteringscalculator - React/Redux finansiel analyseværktøj",
           url: "https://kacan98.github.io/buying-vs-renting/"
         },
         {
           iconName: "gitHub",
-          text: "Portfolio (Next.js/React + Markdown)",
-          url: "https://github.com/kacan98/my-porfolio"
-        },
-        {
-          iconName: "gitHub",
-          text: "Anmeldelsesapp (Angular +.NET + SQL)",
+          text: "Anmeldelsesapp - Simpel rating app med database lagring (Angular/.NET/Azure)",
           url: "https://github.com/kacan98/r8tit"
         },
         {
           iconName: "gitHub",
-          text: "Fælles Fødselsdag Calculator (Angular + Ionic)",
+          text: "Tjekkiet Rejseguide - Astro-baseret rejseguide",
+          url: "https://czech-guide.vercel.app/en/"
+        },
+        {
+          iconName: "gitHub",
+          text: "Portfolio Hjemmeside - Next.js portfolio med AI integration",
+          url: "https://github.com/kacan98/my-porfolio"
+        },
+        {
+          iconName: "gitHub",
+          text: "Fælles Fødselsdag Calculator - Forudsiger når folk deler fødselsdage i grupper",
           url: "https://kacan98.github.io/common-age-calculator/"
         }
       ]

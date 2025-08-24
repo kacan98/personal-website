@@ -6,13 +6,13 @@
     "cv": "CV",
     "resume": "CV",
     "gallery": "Galleri",
-    "chatbot": "Chatt"
+    "chatbot": "Chatta"
   },
   "common": {
     "loading": "Laddar...",
     "error": "Fel",
     "notFound": "Sidan hittades inte",
-    "backToHome": "Tillbaka till hem",
+    "backToHome": "Tillbaka till startsidan",
     "print": "Skriv ut",
     "download": "Ladda ner",
     "edit": "Redigera",
@@ -49,7 +49,7 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "AI-Förstärkt Full-Stack Utvecklare"
+      "tagline": "Full-Stack Utvecklare"
     },
     "about": {
       "fullStack": {
