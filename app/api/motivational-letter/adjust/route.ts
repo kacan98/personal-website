@@ -2,6 +2,8 @@ import OpenAI from "openai"
 import { zodResponseFormat } from "openai/helpers/zod"
 import { MotivationalLetterSchema } from "../motivational-letter.model"
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   try {
     const body = await req.json()

@@ -10,7 +10,8 @@
     "type-check": "tsc --noEmit",
     "prepare": "husky",
     "validate-md": "remark data/ --use remark-lint-frontmatter-schema",
-    "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch"
+    "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch",
+    "analyze": "ANALYZE=true npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -51,6 +52,7 @@
     "zod": "^3.25.56"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.5.0",
     "@types/node": "^20.19.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",

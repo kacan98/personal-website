@@ -2,6 +2,8 @@ import { OpenAI } from 'openai'
 import { AdjustSectionParams, AdjustSectionResponse } from './model'
 import { ADJUST_SECTION_CONFIG, createChatCompletionRequest } from '../shared/prompts'
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   try {
     const body: AdjustSectionParams = await req.json()

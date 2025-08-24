@@ -2,6 +2,8 @@ import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod.mjs'
 import { JobCvIntersectionParams, JobCVIntersectionResponse } from './model'
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   const body: JobCvIntersectionParams = await req.json()
 

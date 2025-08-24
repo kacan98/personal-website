@@ -8,6 +8,8 @@ export type LetterTranslateParams = {
   letter: MotivationalLetterResponse
 }
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   const body: LetterTranslateParams = await req.json()
 

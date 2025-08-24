@@ -3,7 +3,7 @@ import { getCvSettings } from "@/data-utils";
 import projectsSimple from "@/data/projects-simple.json";
 import OpenAI from "openai";
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {

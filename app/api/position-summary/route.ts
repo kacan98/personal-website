@@ -18,6 +18,8 @@ export type PositionSummarizeResponse = z.infer<
   typeof PositionSummarizeResponse
 >
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   try {
     const body: PositionSummarizeParams = await req.json()

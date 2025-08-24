@@ -6,7 +6,7 @@
     "cv": "CV",
     "resume": "CV",
     "gallery": "Galleri",
-    "chatbot": "Snak"
+    "chatbot": "Chat"
   },
   "common": {
     "loading": "Indlæser...",
@@ -49,16 +49,16 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Udvikler"
+      "tagline": "Full-Stack Developer"
     },
     "about": {
       "fullStack": {
-        "header": "Full-Stack Udvikler",
+        "header": "Full-Stack Developer",
         "content": "Jeg arbejder med virksomhedssoftware, som hundredvis af firmaer bruger dagligt. Jeg skriver kode i TypeScript, .NET og X++, og prøver at gøre tingene hurtigere og mindre buggy."
       },
       "aiEnhanced": {
-        "header": "AI-Forstærket Udvikling",
-        "content": "Jeg bruger AI-kodeværktøjer hver dag, fordi de hjælper mig med at skrive kode hurtigere og fange fejl, jeg ville gå glip af. Prøver altid nye værktøjer for at se, om de gør mit liv lettere."
+        "header": "AI-Enhanced Development",
+        "content": "Jeg bruger AI coding tools hver dag, fordi de hjælper mig med at skrive kode hurtigere og fange fejl, jeg ville gå glip af. Prøver altid nye værktøjer for at se, om de gør mit liv lettere."
       },
       "problemSolver": {
         "header": "Problemløser",
@@ -73,24 +73,24 @@
       "title": "Karriererejse",
       "jobs": {
         "fullStackDeveloper": {
-          "title": "Full Stack Udvikler – Dynamics 365 SCM",
+          "title": "Full Stack Developer – Dynamics 365 SCM",
           "company": "Dynaway",
           "period": "2024 - nu",
           "description": {
-            "0": "Udviklede backend-tjenester og API'er i X++, C# og .NET til virksomheds-ERP-software",
-            "1": "Samarbejdede med frontend- og infrastrukturteams for at levere end-to-end-løsninger",
+            "0": "Udviklede backend services og API'er i X++, C# og .NET til virksomheds-ERP-software",
+            "1": "Samarbejdede med frontend og infrastruktur teams for at levere end-to-end-løsninger",
             "2": "Fokuserede på præstationsforbedringer, debugging og kundespecifikke funktioner"
           }
         },
         "frontendDeveloper": {
-          "title": "Frontend Webudvikler",
+          "title": "Frontend Web Developer",
           "company": "Dynaway",
           "period": "2020 - 2024",
           "description": {
-            "0": "Leverede nye funktioner og fejlrettelser i en Angular/Deno-webapplikation brugt af teknikere",
+            "0": "Leverede nye features og bug fixes i en Angular/Deno web application brugt af teknikere",
             "1": "Leverede konsistent funktioner til tiden som selvlært udvikler",
             "2": "Tog til orde for brugervenlighed og designsimplicitet i funktionsdiskussioner",
-            "3": "Ledede daglige og ugentlige Scrum-møder for et 5-personers udviklingshold som Scrum Master"
+            "3": "Ledede daglige og ugentlige Scrum meetings for et 5-personers dev team som Scrum Master"
           }
         },
         "webBusinessDeveloper": {
@@ -145,9 +145,9 @@
   "chatbot": {
     "placeholder": "Spørg om min erfaring og færdigheder...",
     "sendButton": "Send",
-    "clearTooltip": "Ryd Chat & Start Ny Samtale",
+    "clearTooltip": "Clear Chat & Start Ny Samtale",
     "startNewChat": "Start Ny Chat",
-    "chatError": "Chat Fejl",
+    "chatError": "Chat Error",
     "initializing": "Initialiserer Karel AI...",
     "sending": "..."
   }

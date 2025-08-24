@@ -10,6 +10,8 @@ import {
 } from '../position-summary/route'
 import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   try {
     const body: CvUpgradeParams = await req.json()

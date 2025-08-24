@@ -6,6 +6,8 @@ export type CvTranslateParams = {
   cv: CVSettings
 }
 
+export const runtime = 'nodejs';
+
 export async function POST(req: Request): Promise<Response> {
   const body: CvTranslateParams = await req.json()
 
