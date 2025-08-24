@@ -560,7 +560,7 @@ function CvPage({ jobDescription }: CvProps) {
   };
 
   return (
-    <PageWrapper title={"Resume"} onTitleClicked={onTitleClicked}>
+    <PageWrapper title={"Resume"} onTitleClicked={onTitleClicked} containerMaxWidth="md">
       {editable && (
         <>
           <Typography variant="h2" mb={2}>

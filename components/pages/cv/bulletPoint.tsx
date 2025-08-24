@@ -17,7 +17,7 @@ export const CvBulletPoint = ({
 }) => {
     return (
         <>
-            <ListItem sx={{ py: 0, px: 0 }}>
+            <ListItem sx={{ pt: 0, pb: 1, px: 0 }}>
                 <ConditionalWrapper
                     condition={!!bulletPoint.url && (isPrintVersion || !editable)}
                     wrapper={(c) =>
@@ -31,11 +31,20 @@ export const CvBulletPoint = ({
                     }
                 >
                     <Grid container spacing={2} alignItems="center" wrap={"nowrap"}>
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
                             {SUPPORTED_ICONS[bulletPoint.iconName]?.component()}
                         </ListItemIcon>
 
-                        <ListItemText><EditableText query={[...baseQuery ,'text']} text={bulletPoint.text} editable={editable} /></ListItemText>
+                        <ListItemText 
+                            sx={{ 
+                                wordBreak: 'break-word',
+                                overflowWrap: 'break-word',
+                                hyphens: 'auto',
+                                m: 0
+                            }}
+                        >
+                            <EditableText query={[...baseQuery ,'text']} text={bulletPoint.text} editable={editable} />
+                        </ListItemText>
                     </Grid>
                 </ConditionalWrapper>
             </ListItem>

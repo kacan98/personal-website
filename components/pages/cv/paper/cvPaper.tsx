@@ -3,7 +3,7 @@ import { usePicture } from "@/hooks/usePicture";
 import { useAppSelector } from "@/redux/hooks";
 import { getCVPicture } from "@/sanity/sanity-utils";
 import { CvSection } from "@/sanity/schemaTypes/singletons/cvSettings";
-import { Avatar, Box, Grid, Paper } from "@mui/material";
+import { Avatar, Box, Grid, Paper, useMediaQuery, useTheme } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
 
 
@@ -42,6 +42,9 @@ export function CvPaper({
 }: CvPaperProps) {
   const reduxCv = useAppSelector((state) => state.cv);
   const { imageUrl } = usePicture(getCVPicture);
+  const theme = useTheme();
+  // Custom breakpoint at 800px - we'll call it "resume breakpoint"
+  const isResumeDesktop = useMediaQuery('(min-width:700px)');
 
   const getSectionKey = (columnType: 'mainColumn' | 'sideColumn', index: number) => {
     return `${columnType}-${index}`;
@@ -50,7 +53,7 @@ export function CvPaper({
   return (
     <Grid container spacing={0}>
       <Grid
-        size={{ xs: 12, sm: 4 }}>
+        size={isResumeDesktop ? 4 : 12}>
         <Box display="flex" flexDirection="column" alignItems="left" sx={{ p: 2, pr: 3 }}>
           <Grid
             container
@@ -103,7 +106,7 @@ export function CvPaper({
         </Box>
       </Grid>
       <Grid
-        size={{ xs: 12, md: 8 }}
+        size={isResumeDesktop ? 8 : 12}
         sx={{ textAlign: "left" }}>
         {reduxCv.mainColumn?.map((section, index) => {
           const sectionKey = getSectionKey('mainColumn', index);
