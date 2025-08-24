@@ -36,7 +36,7 @@ export const cvConfigDa: CVSettings = {
             right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
-            "- Leverede nye funktioner og fejlrettelser i en Angular/Deno-webapplikation brugt af teknikere\n",
+            "- Byggede TypeScript og Angular webapplikationer der betjener 200+ virksomheder",
             "- Bidrog med det højeste antal story points i mange sprints",
             "- Tog til orde for brugervenlighed og designsimplicitet i funktionsdiskussioner\n",
             "- Ledede daglige og ugentlige Scrum-møder for et 5-personers udviklingshold som Scrum Master."

@@ -35,7 +35,7 @@ export const cvConfigEn: CVSettings = {
             right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
-            "- Built TypeScript and Angular web applications for mobile app used by thousands of technicians",
+            "- Built TypeScript and Angular web applications serving 200+ companies",
             "- Consistently delivered highest story points in team sprints while enhancing CI/CD pipelines",
             "- Served as Scrum Master for 5-person development team"
           ]
