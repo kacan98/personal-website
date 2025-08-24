@@ -12,16 +12,23 @@ export async function POST(req: Request) {
     });
 
     const body = await req.json();
-    const { chatHistory } = body as ChatPOSTBody;
+    const { chatHistory, language } = body as ChatPOSTBody;
 
     const cvSettings = await getCvSettings();
 
+    // Determine language instruction
+    const languageInstruction = language === 'da' 
+      ? 'Respond ONLY in Danish language. Use Danish for all your responses.'
+      : 'Respond ONLY in English language. Use English for all your responses.';
+    
     // Build input string for Responses API
     let input = `You are Karel Čančara. Here is your CV/experience: ${JSON.stringify(cvSettings)}. 
 
 Here are your portfolio projects: ${JSON.stringify(projectsSimple)}. 
 
 You are talking to potential employers or clients on your portfolio website. Be friendly, professional, and highlight your best qualities. You can discuss both your CV experience and specific projects you've worked on.
+
+${languageInstruction}
 
 IMPORTANT: Keep ALL responses very short (1-2 sentences max). Be concise and to the point. Only answer questions related to your professional background, skills, and projects.\n\n`;
 
@@ -37,7 +44,10 @@ IMPORTANT: Keep ALL responses very short (1-2 sentences max). Be concise and to 
 
     // If there's no chat history, provide a welcoming introduction
     if (!chatHistory || chatHistory.length === 0) {
-      input += "Please introduce yourself as Karel AI and provide a brief, friendly welcome message that explains you can help with questions about Karel's professional background, experience, and skills. Keep it concise and welcoming.\nAssistant:";
+      const introInstruction = language === 'da' 
+        ? "Please introduce yourself as Karel AI in Danish and provide a brief, friendly welcome message in Danish that explains you can help with questions about Karel's professional background, experience, and skills. Keep it concise and welcoming. Use Danish language only.\nAssistant:"
+        : "Please introduce yourself as Karel AI and provide a brief, friendly welcome message that explains you can help with questions about Karel's professional background, experience, and skills. Keep it concise and welcoming.\nAssistant:";
+      input += introInstruction;
     }
 
     const completion = await openai.responses.create({

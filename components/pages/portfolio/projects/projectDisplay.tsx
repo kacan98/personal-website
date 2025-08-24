@@ -5,26 +5,28 @@ import { Project } from "@/types";
 import { Box, Grid } from "@mui/material";
 import { animated, useTransition } from "@react-spring/web";
 import { useState } from "react";
+import { useTranslations } from 'next-intl';
 
 type ProjectDisplayProps = {
   projects: Project[];
 };
 
 const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
-  const [selectedTag, setSelectedTag] = useState<string>("All");
+  const t = useTranslations('projects');
+  const [selectedTag, setSelectedTag] = useState<string>(t('allProjects'));
 
   const uniqueTags = Array.from(
     new Set(projects.flatMap((project) => project.tags)),
   )
     .sort()
-    //I accidentally added an empty string to the tags array in sanity studio
-    //So make sure it does not happen to others
+    //Filter out any empty strings from tags array
     .filter((tag) => !!tag);
 
-  uniqueTags.unshift("All");
+  uniqueTags.unshift(t('allProjects'));
 
+  const allProjectsText = t('allProjects');
   const filteredProjects =
-    selectedTag && selectedTag !== "All"
+    selectedTag && selectedTag !== allProjectsText
       ? projects.filter((project) => project.tags.includes(selectedTag))
       : projects;
 
@@ -53,14 +55,16 @@ const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
 
       <Grid
         container
-        spacing={2}
+        spacing={3}
         justifyContent={"center"}
-        alignItems={"center"}
+        alignItems={"stretch"}
       >
         {transitions((props, project) => (
-          <animated.div style={props}>
-            <ProjectCard key={project.title} {...project} />
-          </animated.div>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.title}>
+            <animated.div style={props}>
+              <ProjectCard {...project} />
+            </animated.div>
+          </Grid>
         ))}
       </Grid>
     </Box>

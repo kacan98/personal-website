@@ -7,6 +7,7 @@ import { BRAND_COLORS, BRAND_RGBA } from "@/app/colors";
 import Grid from "@mui/material/Grid";
 import { Email, LinkedIn, GitHub, Language } from "@mui/icons-material";
 import { motion } from "motion/react";
+import { useTranslations } from 'next-intl';
 
 interface ContactItem {
   icon: React.ReactNode;
@@ -23,39 +24,42 @@ interface ContactProps {
 }
 
 export default function Contact({ 
-  title = "Let's get in touch",
-  subtitle = "Ready to work together? I'd love to hear from you.",
-  contactItems = [
+  title,
+  subtitle,
+  contactItems
+}: ContactProps) {
+  const t = useTranslations('contact');
+  
+  const defaultContactItems = [
     {
       icon: <Email />,
-      label: "Email",
+      label: t('email.label'),
       value: "karel.cancara@gmail.com", 
       href: "mailto:karel.cancara@gmail.com",
-      description: "Best way to reach me"
+      description: t('email.description')
     },
     {
       icon: <LinkedIn />,
-      label: "LinkedIn",
+      label: t('linkedin.label'),
       value: "linkedin.com/in/kcancara",
       href: "https://www.linkedin.com/in/kcancara",
-      description: "Professional network"
+      description: t('linkedin.description')
     },
     {
       icon: <GitHub />,
-      label: "GitHub",
+      label: t('github.label'),
       value: "github.com/kacan98",
       href: "https://github.com/kacan98",
-      description: "Code and projects"
+      description: t('github.description')
     },
     {
       icon: <Language />,
-      label: "Portfolio",
+      label: t('portfolio.label'),
       value: "kcancara.vercel.app",
       href: "https://kcancara.vercel.app/",
-      description: "See my work"
+      description: t('portfolio.description')
     }
-  ]
-}: ContactProps) {
+  ];
   return (
     <Box sx={{ 
       py: { xs: 8, md: 12 },
@@ -90,14 +94,14 @@ export default function Contact({
           viewport={{ once: true, margin: "-50px" }}
         >
           <SectionHeader
-            title={title}
-            description={subtitle}
+            title={title || t('title')}
+            description={subtitle || t('subtitle')}
           />
         </motion.div>
 
         {/* Contact Cards */}
         <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="center">
-          {contactItems.map((item, index) => (
+          {(contactItems || defaultContactItems).map((item, index) => (
             <Grid key={item.label} size={{ xs: 12, sm: 6, md: 3 }}>
               <motion.div
                 initial={{ y: 30, opacity: 0 }}
@@ -209,7 +213,7 @@ export default function Contact({
                 fontSize: { xs: '1.1rem', md: '1.25rem' },
               }}
             >
-              Send me an email
+              {t('sendEmail')}
             </Button>
           </Box>
         </motion.div>

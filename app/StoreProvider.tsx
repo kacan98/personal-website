@@ -1,22 +1,21 @@
 'use client'
 import { CVSettings } from "@/types";
-import { useRef } from 'react';
+import { useMemo } from 'react';
 import { Provider } from 'react-redux';
-import { AppStore, makeStore } from '../redux/store';
+import { makeStore } from '../redux/store';
 
 
 export default function StoreProvider({
     children,
-    cvSettings
+    cvConfig
 }: {
     children: React.ReactNode
-    cvSettings: CVSettings | undefined
+    cvConfig: CVSettings | undefined
 }) {
-    const storeRef = useRef<AppStore | undefined>(undefined)
-    if (!storeRef.current) {
-        // Create the store instance the first time this renders
-        storeRef.current = makeStore(cvSettings || {} as CVSettings)
-    }
+    // Create a new store whenever cvConfig changes (for language switching)
+    const store = useMemo(() => {
+        return makeStore(cvConfig || {} as CVSettings);
+    }, [cvConfig]);
 
-    return <Provider store={storeRef.current}>{children}</Provider>
+    return <Provider store={store}>{children}</Provider>
 }

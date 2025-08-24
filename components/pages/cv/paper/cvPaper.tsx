@@ -5,6 +5,7 @@ import { getCVPicture } from "@/data-utils";
 import { CvSection } from "@/types";
 import { Avatar, Box, Grid, Paper, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
+import { useLocale } from 'next-intl';
 
 
 type CvPaperProps = {
@@ -40,8 +41,9 @@ export function CvPaper({
   onRestoreSubSection,
   onSubSectionAdjusted
 }: CvPaperProps) {
+  const locale = useLocale();
   const reduxCv = useAppSelector((state) => state.cv);
-  const { imageUrl } = usePicture(getCVPicture);
+  const { imageUrl } = usePicture(() => getCVPicture(locale));
   // Custom breakpoint at 800px - we'll call it "resume breakpoint"
   // For print version, always use desktop layout regardless of media query
   const mediaQueryResult = useMediaQuery('(min-width:700px)');

@@ -14,8 +14,10 @@ import {
   useTheme
 } from "@mui/material";
 import Button from "@/components/ui/Button";
+import LanguageSelector from "@/components/ui/LanguageSelector";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations, useLocale } from 'next-intl';
 import {
   useEffect,
   useState
@@ -34,12 +36,13 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const t = useTranslations('navigation');
+  const locale = useLocale();
   
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const weAreInSanityStudio = pathname.startsWith("/studio");
-  const weAreHome = pathname === "/";
+  const weAreHome = pathname === "/" || pathname === `/${locale}`;
   
   // Handle client-side mounting to prevent hydration issues
   useEffect(() => {
@@ -49,8 +52,6 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
-
-  if (weAreInSanityStudio) return null;
   
 
   // Mobile Navigation Modal
@@ -102,10 +103,10 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             }}
           >
             {!weAreHome && (
-              <Link href="/" passHref>
+              <Link href={`/${locale}`} passHref>
                 <Button
                   variant="nav"
-                  isActive={pathname === '/'}
+                  isActive={weAreHome}
                   onClick={() => setMobileMenuOpen(false)}
                   sx={{
                     fontSize: '1.2rem',
@@ -113,7 +114,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
                     borderRadius: '24px',
                   }}
                 >
-                  Home
+                  {t('home')}
                 </Button>
               </Link>
             )}
@@ -183,6 +184,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
                 </Link>
               )}
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+              <LanguageSelector />
               <IconButton
                 size="large"
                 onClick={toggleMobileMenu}
@@ -195,12 +197,12 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             /* Desktop Layout */
             (<>
               {!weAreHome && (
-                <Link href="/" passHref>
+                <Link href={`/${locale}`} passHref>
                   <IconButton
                     size="large"
                     color="inherit"
                   >
-                    <Home color={pathname === '/' ? 'secondary' : 'primary'} />
+                    <Home color={weAreHome ? 'secondary' : 'primary'} />
                   </IconButton>
                 </Link>
               )}
@@ -216,6 +218,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
                 </Link>
               ))}
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+              <LanguageSelector />
             </>)
           ) : (
             // Fallback during hydration

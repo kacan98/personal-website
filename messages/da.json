@@ -1,0 +1,153 @@
+{
+  "navigation": {
+    "home": "Hjem",
+    "about": "Om mig",
+    "projects": "Projekter", 
+    "cv": "CV",
+    "resume": "CV",
+    "gallery": "Galleri",
+    "chatbot": "Chat"
+  },
+  "common": {
+    "loading": "Indlæser...",
+    "error": "Fejl",
+    "notFound": "Siden blev ikke fundet",
+    "backToHome": "Tilbage til forsiden",
+    "print": "Udskriv",
+    "download": "Download",
+    "edit": "Rediger",
+    "save": "Gem",
+    "cancel": "Annuller"
+  },
+  "about": {
+    "title": "Om mig",
+    "content": "Jeg er Karel, en udvikler der skriver kode til arbejde og for sjov. Jeg laver mest frontend, men jeg er også komfortabel med backend. Jeg lærte mig selv at kode efter at have arbejdet med marketing i et stykke tid, så jeg tænker meget på brugeroplevelsessiden af tingene.\n\nJeg arbejder mest med TypeScript, Angular, React og C#. Jeg kan godt lide at finde ud af, hvordan ting fungerer og få dem til at fungere bedre. Når jeg ikke koder, læser jeg normalt om ny teknologi eller prøver at ødelægge noget bare for at se, om jeg kan reparere det.\n\nJeg er altid klar på interessante projekter eller bare at snakke om kode.",
+    "contactButton": "Skriv til mig",
+    "linkedinButton": "Tilføj mig på LinkedIn"
+  },
+  "cv": {
+    "title": "CV",
+    "pageTitle": "CV",
+    "editMode": "Nu kan du redigere",
+    "editWarning": "Men vær forsigtig. Dette er kun muligt for at justere noget (eller transformere med AI) lokalt på din maskine, før du sender det til potentielle arbejdsgivere. Ændringerne bliver ikke gemt på nogen måde.",
+    "translateCV": "Oversæt CV",
+    "motivationalLetter": "Motivationsbrev",
+    "getMotivationalLetter": "Få Motivationsbrev",
+    "regenerateMotivationalLetter": "Generer Motivationsbrev igen",
+    "translating": "Oversætter...",
+    "loading": "Indlæser...",
+    "discussingWithAI": "Diskuterer med AI..."
+  },
+  "projects": {
+    "title": "Projekter",
+    "allProjects": "Alle"
+  },
+  "language": {
+    "english": "English",
+    "danish": "Dansk"
+  },
+  "homepage": {
+    "hero": {
+      "tagline": "AI-Forstærket Full-Stack Udvikler"
+    },
+    "about": {
+      "fullStack": {
+        "header": "Full-Stack Udvikler",
+        "content": "Jeg arbejder med virksomhedssoftware, som hundredvis af firmaer bruger dagligt. Jeg skriver kode i TypeScript, .NET og X++, og prøver at gøre tingene hurtigere og mindre buggy."
+      },
+      "aiEnhanced": {
+        "header": "AI-Forstærket Udvikling",
+        "content": "Jeg bruger AI-kodeværktøjer hver dag, fordi de hjælper mig med at skrive kode hurtigere og fange fejl, jeg ville gå glip af. Prøver altid nye værktøjer for at se, om de gør mit liv lettere."
+      },
+      "problemSolver": {
+        "header": "Problemløser",
+        "content": "Jeg kan godt lide at finde ud af, hvorfor ting går i stykker og reparere dem. Det meste af min dag går med at debugge, bygge funktioner og sikre, at tingene rent faktisk virker."
+      },
+      "userFocused": {
+        "header": "Brugerfokuseret",
+        "content": "Jeg plejede at lave marketing, så jeg tænker på, hvem der rent faktisk skal bruge det, jeg bygger. Jeg prøver at lave software, der ikke får folk til at ville smide deres computer ud af vinduet."
+      }
+    },
+    "timeline": {
+      "title": "Karriererejse",
+      "jobs": {
+        "fullStackDeveloper": {
+          "title": "Full Stack Udvikler – Dynamics 365 SCM",
+          "company": "Dynaway",
+          "period": "2024 - nu",
+          "description": {
+            "0": "Udviklede backend-tjenester og API'er i X++, C# og .NET til virksomheds-ERP-software",
+            "1": "Samarbejdede med frontend- og infrastrukturteams for at levere end-to-end-løsninger",
+            "2": "Fokuserede på præstationsforbedringer, debugging og kundespecifikke funktioner"
+          }
+        },
+        "frontendDeveloper": {
+          "title": "Frontend Webudvikler",
+          "company": "Dynaway",
+          "period": "2020 - 2024",
+          "description": {
+            "0": "Leverede nye funktioner og fejlrettelser i en Angular/Deno-webapplikation brugt af teknikere",
+            "1": "Leverede konsistent funktioner til tiden som selvlært udvikler",
+            "2": "Tog til orde for brugervenlighed og designsimplicitet i funktionsdiskussioner",
+            "3": "Ledede daglige og ugentlige Scrum-møder for et 5-personers udviklingshold som Scrum Master"
+          }
+        },
+        "webBusinessDeveloper": {
+          "title": "Web- og Forretningsudvikling",
+          "company": "Ankeri Media",
+          "period": "2019-2020",
+          "description": {
+            "0": "Skabte virksomhedens hjemmeside og ledede branding- og opsøgningskampagner",
+            "1": "Bookede 50+ møder og sikrede nye kunder via kold opsøgning",
+            "2": "Balancerede marketing- og tekniske ansvar i et startup-miljø"
+          }
+        }
+      }
+    }
+  },
+  "contact": {
+    "title": "Lad os komme i kontakt",
+    "subtitle": "Klar til at arbejde sammen? Jeg vil gerne høre fra dig.",
+    "email": {
+      "label": "Email",
+      "description": "Bedste måde at nå mig"
+    },
+    "linkedin": {
+      "label": "LinkedIn", 
+      "description": "Professionelt netværk"
+    },
+    "github": {
+      "label": "GitHub",
+      "description": "Kode og projekter"
+    },
+    "portfolio": {
+      "label": "Portfolio",
+      "description": "Se mit arbejde"
+    },
+    "sendEmail": "Send mig en email"
+  },
+  "loading": {
+    "messages": [
+      "Initialiserer porteføljesystem...",
+      "Indlæser React komponenter...",
+      "Henter projektdata...",
+      "Renderer brugerflade...",
+      "Kompilerer TypeScript aktiver...",
+      "Monterer UI komponenter...",
+      "Optimerer performance...",
+      "Færdiggør oplevelse...",
+      "Næsten klar..."
+    ],
+    "terminal": "Karels Portfolio Terminal",
+    "loadingAssets": "Indlæser aktiver..."
+  },
+  "chatbot": {
+    "placeholder": "Spørg om min erfaring og færdigheder...",
+    "sendButton": "Send",
+    "clearTooltip": "Ryd Chat & Start Ny Samtale",
+    "startNewChat": "Start Ny Chat",
+    "chatError": "Chat Fejl",
+    "initializing": "Initialiserer Karel AI...",
+    "sending": "..."
+  }
+}

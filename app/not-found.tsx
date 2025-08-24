@@ -26,14 +26,14 @@ export default function NotFound() {
       >
         404
       </Typography>
-      <Typography variant="h4" sx={{ mb: 2 }}>
+      <Typography variant="h4" sx={{ mb: 2, color: 'white' }}>
         Page Not Found
       </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', maxWidth: 600 }}>
+      <Typography variant="body1" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.7)', maxWidth: 600 }}>
         The page you&apos;re looking for doesn&apos;t exist or has been moved. 
         Let&apos;s get you back on track.
       </Typography>
-      <Link href="/" passHref>
+      <Link href="/en" passHref>
         <Button
           variant="contained"
           sx={{

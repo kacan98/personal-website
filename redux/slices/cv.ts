@@ -30,6 +30,16 @@ export const cvSlice = createSlice({
       state.subtitle = action.payload.subtitle
       state.mainColumn = action.payload.mainColumn
       state.sideColumn = action.payload.sideColumn
+      state.profilePicture = action.payload.profilePicture
+    },
+    switchLanguage: (
+      state,
+      action: {
+        payload: CVSettings
+      }
+    ) => {
+      // Completely replace the CV data with new language data
+      return action.payload;
     },
     updateCv: (state, action: UpdateSectionAction) => {
       const { query, newValue } = action.payload
@@ -44,4 +54,4 @@ export const cvSlice = createSlice({
 })
 
 export default cvSlice
-export const { initCv, updateCv } = cvSlice.actions
+export const { initCv, switchLanguage, updateCv } = cvSlice.actions

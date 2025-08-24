@@ -12,4 +12,5 @@ export type ChatCompletionMessageParam =
 
 export type ChatPOSTBody = {
   chatHistory: ChatCompletionMessageParam[];
+  language?: string;
 };

@@ -22,8 +22,7 @@ export const GalleryComponent = ({
     new Set(projects.flatMap((project) => project.tags.map((tag) => tag.trim().toLowerCase()))),
   )
     .sort()
-    //I accidentally added an empty string to the tags array in sanity studio
-    //So make sure it does not happen to others
+    //Filter out any empty strings from tags array
     .filter((tag) => !!tag);
 
   //Has to be above filtering projects

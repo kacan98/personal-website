@@ -2,20 +2,33 @@
 import { Box, Typography, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "@/app/colors";
+import { useTranslations } from 'next-intl';
 
-const loadingMessages = [
-  "Initializing portfolio system...",
-  "Loading React components...",
-  "Fetching project data...",
-  "Rendering user interface...",
-  "Compiling TypeScript assets...",
-  "Mounting UI components...",
-  "Optimizing performance...",
-  "Finalizing experience...",
-  "Almost ready..."
-];
+interface LoadingProps {
+  messages?: string[];
+  terminal?: string;
+  loadingAssets?: string;
+}
 
-export default function Loading() {
+export default function Loading({ 
+  messages,
+  terminal,
+  loadingAssets
+}: LoadingProps = {}) {
+  const t = useTranslations('loading');
+  
+  const loadingMessages = messages || [
+    t('messages.0'),
+    t('messages.1'), 
+    t('messages.2'),
+    t('messages.3'),
+    t('messages.4'),
+    t('messages.5'),
+    t('messages.6'),
+    t('messages.7'),
+    t('messages.8')
+  ];
+
   const [messageIndex, setMessageIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -95,7 +108,7 @@ export default function Loading() {
                 fontSize: '15px'
               }}
             >
-              Karel&apos;s Portfolio Terminal
+              {terminal || t('terminal')}
             </Typography>
           </Box>
           <Box
@@ -230,7 +243,7 @@ export default function Loading() {
               fontSize: "12px",
             }}
           >
-            Loading assets...
+            {loadingAssets || t('loadingAssets')}
           </Typography>
           <Typography
             variant="body2"

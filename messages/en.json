@@ -1,0 +1,153 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "projects": "Projects", 
+    "cv": "CV",
+    "resume": "Resume",
+    "gallery": "Gallery",
+    "chatbot": "Chat"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "notFound": "Page not found",
+    "backToHome": "Back to Home",
+    "print": "Print",
+    "download": "Download",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "about": {
+    "title": "About me",
+    "content": "I'm Karel, a developer who writes code for work and fun. I mostly do frontend stuff but I'm comfortable with backend too. I taught myself to code after doing marketing for a while, so I think a lot about the user experience side of things.\n\nI work with TypeScript, Angular, React, and C# mostly. I like figuring out how things work and making them work better. When I'm not coding, I'm usually reading about new tech or trying to break something just to see if I can fix it.\n\nAlways up for interesting projects or just chatting about code.",
+    "contactButton": "Shoot me a message",
+    "linkedinButton": "Add me on LinkedIn"
+  },
+  "cv": {
+    "title": "Resume",
+    "pageTitle": "Resume",
+    "editMode": "Now you can edit",
+    "editWarning": "But be careful. This is possible just to tweak something (or transform with AI) locally on your machine before sending it to potential employers. The changes won't be saved in any way.",
+    "translateCV": "Translate CV",
+    "motivationalLetter": "Motivational Letter",
+    "getMotivationalLetter": "Get Motivational Letter",
+    "regenerateMotivationalLetter": "Regenerate Motivational Letter",
+    "translating": "Translating...",
+    "loading": "Loading...",
+    "discussingWithAI": "Discussing with AI..."
+  },
+  "projects": {
+    "title": "Projects",
+    "allProjects": "All"
+  },
+  "language": {
+    "english": "English",
+    "danish": "Dansk"
+  },
+  "homepage": {
+    "hero": {
+      "tagline": "AI-Enhanced Full-Stack Developer"
+    },
+    "about": {
+      "fullStack": {
+        "header": "Full-Stack Developer",
+        "content": "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy."
+      },
+      "aiEnhanced": {
+        "header": "AI-Enhanced Development",
+        "content": "I use AI coding tools every day because they help me write code faster and catch mistakes I'd miss. Always trying out new tools to see if they make my life easier."
+      },
+      "problemSolver": {
+        "header": "Problem Solver",
+        "content": "I like figuring out why things break and fixing them. Most of my day is spent debugging, building features, and making sure stuff actually works."
+      },
+      "userFocused": {
+        "header": "User-Focused",
+        "content": "I used to do marketing, so I think about who's actually going to use the stuff I build. I try to make software that doesn't make people want to throw their computer out the window."
+      }
+    },
+    "timeline": {
+      "title": "Career Journey",
+      "jobs": {
+        "fullStackDeveloper": {
+          "title": "Full Stack Developer – Dynamics 365 SCM",
+          "company": "Dynaway",
+          "period": "2024 - now",
+          "description": {
+            "0": "Developed backend services and APIs in X++, C#, and .NET for enterprise ERP software",
+            "1": "Collaborated with frontend and infrastructure teams to deliver end-to-end solutions",
+            "2": "Focused on performance improvements, debugging, and customer-specific features"
+          }
+        },
+        "frontendDeveloper": {
+          "title": "Frontend Web Developer",
+          "company": "Dynaway",
+          "period": "2020 - 2024", 
+          "description": {
+            "0": "Delivered new features and bug fixes in an Angular/Deno web application used by technicians",
+            "1": "Consistently delivered features on schedule as a self-taught developer",
+            "2": "Advocated for usability and design simplicity in feature discussions",
+            "3": "Led daily and weekly Scrum meetings for a 5-person dev team as a Scrum Master"
+          }
+        },
+        "webBusinessDeveloper": {
+          "title": "Web and Business Development",
+          "company": "Ankeri Media",
+          "period": "2019-2020",
+          "description": {
+            "0": "Created the company's website and led branding and outreach campaigns",
+            "1": "Booked 50+ meetings and secured new clients via cold outreach",
+            "2": "Balanced marketing and tech responsibilities in a startup environment"
+          }
+        }
+      }
+    }
+  },
+  "contact": {
+    "title": "Let's get in touch",
+    "subtitle": "Ready to work together? I'd love to hear from you.",
+    "email": {
+      "label": "Email",
+      "description": "Best way to reach me"
+    },
+    "linkedin": {
+      "label": "LinkedIn", 
+      "description": "Professional network"
+    },
+    "github": {
+      "label": "GitHub",
+      "description": "Code and projects"
+    },
+    "portfolio": {
+      "label": "Portfolio",
+      "description": "See my work"
+    },
+    "sendEmail": "Send me an email"
+  },
+  "loading": {
+    "messages": [
+      "Initializing portfolio system...",
+      "Loading React components...",
+      "Fetching project data...",
+      "Rendering user interface...",
+      "Compiling TypeScript assets...",
+      "Mounting UI components...",
+      "Optimizing performance...",
+      "Finalizing experience...",
+      "Almost ready..."
+    ],
+    "terminal": "Karel's Portfolio Terminal",
+    "loadingAssets": "Loading assets..."
+  },
+  "chatbot": {
+    "placeholder": "Ask about my experience and skills...",
+    "sendButton": "Send",
+    "clearTooltip": "Clear Chat & Start New Conversation",
+    "startNewChat": "Start New Chat",
+    "chatError": "Chat Error",
+    "initializing": "Initializing Karel AI...",
+    "sending": "..."
+  }
+}

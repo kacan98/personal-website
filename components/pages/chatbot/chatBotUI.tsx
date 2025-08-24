@@ -7,9 +7,12 @@ import { DeleteSweep as DeleteSweepIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, List, TextField, Tooltip, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "@/app/colors";
+import { useTranslations, useLocale } from 'next-intl';
 
 const ChatBotUI = () => {
   const dispatch = useAppDispatch();
+  const t = useTranslations('chatbot');
+  const locale = useLocale();
   
   const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([]);
   const [input, setInput] = useState<string>("");
@@ -29,7 +32,7 @@ const ChatBotUI = () => {
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chatHistory: messageHistory }),
+        body: JSON.stringify({ chatHistory: messageHistory, language: locale }),
       });
 
       if (!response.ok) {
@@ -178,7 +181,7 @@ const ChatBotUI = () => {
           fontFamily: "system-ui, -apple-system, sans-serif",
           fontSize: "0.9rem",
         }}>
-          Initializing Karel AI...
+          {t('initializing')}
         </Typography>
       </Box>
     );
@@ -202,7 +205,7 @@ const ChatBotUI = () => {
         textAlign: "center",
       }}>
         <Typography variant="h6" sx={{ color: BRAND_COLORS.accent, mb: 2 }}>
-          ⚠️ Chat Error
+          ⚠️ {t('chatError')}
         </Typography>
         <Typography sx={{ color: `${BRAND_COLORS.primary}CC`, mb: 4 }}>
           {error}
@@ -216,7 +219,7 @@ const ChatBotUI = () => {
             "&:hover": { backgroundColor: `${BRAND_COLORS.accent}CC` },
           }}
         >
-          Start New Chat
+          {t('startNewChat')}
         </Button>
       </Box>
     );
@@ -244,7 +247,7 @@ const ChatBotUI = () => {
         borderBottom: `1px solid ${BRAND_COLORS.secondary}`,
         backgroundColor: `${BACKGROUND_COLORS.primary}40`,
       }}>
-        <Tooltip title="Clear Chat & Start New Conversation" placement="left">
+        <Tooltip title={t('clearTooltip')} placement="left">
           <IconButton
             onClick={handleClear}
             disabled={loading && messages.length === 0}
@@ -307,7 +310,7 @@ const ChatBotUI = () => {
           variant="outlined"
           size="small"
           fullWidth
-          placeholder="Ask about my experience and skills..."
+          placeholder={t('placeholder')}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -336,7 +339,7 @@ const ChatBotUI = () => {
             '&:disabled': { backgroundColor: `${BRAND_COLORS.primary}20` },
           }}
         >
-          {loading ? "..." : "Send"}
+          {loading ? t('sending') : t('sendButton')}
         </Button>
       </Box>
     </Box>

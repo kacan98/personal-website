@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
+import { useTranslations } from 'next-intl';
 
 type ProjectFilterProps = {
   selectedFilter: string;
@@ -12,11 +13,14 @@ function ProjectFilter({
   setSelectedFilter,
   filters,
 }: ProjectFilterProps) {
+  const t = useTranslations('projects');
+  const allText = t('allProjects');
+  
   // Function to handle button click
   const handleFilterClick = (filter: string) => {
     // If clicking the already selected filter, set to "All" (unselect)
     if (filter === selectedFilter) {
-      setSelectedFilter("All");
+      setSelectedFilter(allText);
     } else {
       setSelectedFilter(filter);
     }

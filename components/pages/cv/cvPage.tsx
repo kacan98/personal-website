@@ -23,6 +23,7 @@ import { AiForm } from "./aiForm";
 import { useCvTools } from "./hooks/useCvTools";
 import CvLanguageSelectionComponent from "./languageSelect";
 import CvPaper from "./paper/cvPaper";
+import { useTranslations } from 'next-intl';
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -31,6 +32,7 @@ export type CvProps = {
 };
 
 function CvPage({ jobDescription }: CvProps) {
+  const t = useTranslations('cv');
   const reduxCvProps = useAppSelector((state) => state.cv);
   const [selectedLanguage, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
@@ -49,7 +51,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [editableLetterText, setEditableLetterText] = useState<string>('');
   const [letterComments, setLetterComments] = useState<string>('');
   const [isAdjustingLetter, setIsAdjustingLetter] = useState(false);
-  const [currentOperation, setCurrentOperation] = useState<string>('Discussing with AI...');
+  const [currentOperation, setCurrentOperation] = useState<string>(t('discussingWithAI'));
   const [removedSections, setRemovedSections] = useState<Set<string>>(new Set());
   const [modifiedSections, setModifiedSections] = useState<Set<string>>(new Set());
   const [removedSubSections, setRemovedSubSections] = useState<Set<string>>(new Set());
@@ -560,15 +562,14 @@ function CvPage({ jobDescription }: CvProps) {
   };
 
   return (
-    <PageWrapper title={"Resume"} onTitleClicked={onTitleClicked} containerMaxWidth="md">
+    <PageWrapper title={t('pageTitle')} onTitleClicked={onTitleClicked} containerMaxWidth="md">
       {editable && (
         <>
           <Typography variant="h2" mb={2}>
-            Now you can edit. <CreateIcon />
+            {t('editMode')} <CreateIcon />
           </Typography>
           <Typography variant="body1">
-            But be careful. This is possible just to tweak something (or transform with AI) locally on your machine before sending it to potential employers.
-            The changes won&apos;t be saved in any way.
+            {t('editWarning')}
           </Typography>
         </>
       )}
@@ -729,7 +730,7 @@ function CvPage({ jobDescription }: CvProps) {
             variant="secondary"
             disabled={loading}
           >
-            Translate CV
+            {t('translateCV')}
           </Button>
         </>
       )}
@@ -743,7 +744,7 @@ function CvPage({ jobDescription }: CvProps) {
             variant="primary"
             disabled={!positionDetails || positionDetails.trim().length === 0}
           >
-            {motivationalLetter ? 'Regenerate Motivational Letter' : 'Get Motivational Letter'}
+            {motivationalLetter ? t('regenerateMotivationalLetter') : t('getMotivationalLetter')}
           </Button>
           {motivationalLetter && (
             <Paper elevation={2} sx={{ mt: 5, p: 4, backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>

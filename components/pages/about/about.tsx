@@ -9,20 +9,23 @@ export type AboutProps = {
     bodyContent: ReactNode;
     buttonText?: string;
     buttonHref?: string;
+    linkedinButtonText?: string;
     avatarSrc?: string;
     avatarAlt?: string;
     onButtonClick?: () => void;
 };
 
 export const About = ({
+    heading,
     bodyContent,
     buttonText,
     buttonHref,
+    linkedinButtonText = "Add me on LinkedIn",
     onButtonClick
 }: AboutProps): JSX.Element => {
     return (
         <PageWrapper
-            title={"About me"}
+            title={heading}
         >
             <Box
                 sx={{
@@ -147,7 +150,7 @@ export const About = ({
                                         fontSize: "1.1rem",
                                     }}
                                 >
-                                    Add me on LinkedIn
+                                    {linkedinButtonText}
                                 </Button>
                             </Box>
                         )}
