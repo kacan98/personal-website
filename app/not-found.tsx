@@ -1,51 +1,50 @@
-import { Box, Button, Typography } from '@mui/material'
 import Link from 'next/link'
-import { BRAND_COLORS } from './colors'
 
 export default function NotFound() {
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         minHeight: '60vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        px: 3,
+        padding: '24px',
       }}
     >
-      <Typography 
-        variant="h1" 
-        sx={{ 
-          mb: 2, 
-          fontSize: { xs: '4rem', md: '6rem' },
+      <h1 
+        style={{ 
+          marginBottom: '16px', 
+          fontSize: '6rem',
           fontWeight: 700,
-          color: BRAND_COLORS.accent,
+          color: '#a855f7',
+          margin: 0,
         }}
       >
         404
-      </Typography>
-      <Typography variant="h4" sx={{ mb: 2, color: 'white' }}>
+      </h1>
+      <h4 style={{ marginBottom: '16px', color: 'white', margin: 0 }}>
         Page Not Found
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: 'rgba(255, 255, 255, 0.7)', maxWidth: 600 }}>
+      </h4>
+      <p style={{ marginBottom: '32px', color: 'rgba(255, 255, 255, 0.7)', maxWidth: '600px' }}>
         The page you&apos;re looking for doesn&apos;t exist or has been moved. 
         Let&apos;s get you back on track.
-      </Typography>
-      <Link href="/en" passHref>
-        <Button
-          variant="contained"
-          sx={{
-            backgroundColor: BRAND_COLORS.accent,
-            '&:hover': {
-              backgroundColor: 'rgba(168, 85, 247, 0.9)',
-            },
-          }}
-        >
-          Back to Home
-        </Button>
+      </p>
+      <Link 
+        href="/en"
+        style={{
+          backgroundColor: '#a855f7',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '4px',
+          textDecoration: 'none',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        Back to Home
       </Link>
-    </Box>
+    </div>
   )
 }

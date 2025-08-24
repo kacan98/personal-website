@@ -1,10 +1,31 @@
+'use client';
+
 import { getCvSettings } from "@/data-utils";
 import { Box, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CopyButton from "./CopyButton";
+import { CVSettings } from "@/types";
 
-async function Page() {
-  const cvSettings = await getCvSettings();
+function Page() {
+  const [cvSettings, setCvSettings] = useState<CVSettings | null>(null);
+  
+  useEffect(() => {
+    getCvSettings().then(setCvSettings);
+  }, []);
+  
+  if (!cvSettings) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        minHeight: '100vh',
+        color: 'white'
+      }}>
+        Loading...
+      </div>
+    );
+  }
   
   return (
     <Box
