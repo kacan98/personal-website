@@ -3,6 +3,7 @@
 import { CVSettings, Settings, StylesSettings, Gallery } from './types';
 import { cvConfigEn } from './components/pages/cv/data/cv-en';
 import { cvConfigDa } from './components/pages/cv/data/cv-da';
+import { cvSv } from './components/pages/cv/data/cv-sv';
 
 const settingsData: Settings = {
   mainPage: {
@@ -48,6 +49,8 @@ export async function getCvSettings(locale: string = 'en'): Promise<CVSettings> 
   switch (locale) {
     case 'da':
       return cvConfigDa;
+    case 'sv':
+      return cvSv;
     case 'en':
     default:
       return cvConfigEn;

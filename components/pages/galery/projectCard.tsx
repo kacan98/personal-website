@@ -40,7 +40,7 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
               alt={`Image of ${title} project`}
               width={300}
               height={200}
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "cover", objectPosition: "top" }}
             />
           </Box>
         </Box>

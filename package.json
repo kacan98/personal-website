@@ -28,6 +28,7 @@
     "@splinetool/react-spline": "^4.1.0",
     "@splinetool/runtime": "^1.10.48",
     "@types/three": "^0.177.0",
+    "country-flag-icons": "^1.5.19",
     "dotenv": "^16.5.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.13.0",

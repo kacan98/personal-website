@@ -14,7 +14,7 @@ const AnimatedText = ({ texts }: AnimatedTextProps) => {
     chars: texts[0].split(""),
   });
 
-  const [displayTime, setDisplayTime] = useState(3000);
+  const [displayTime, setDisplayTime] = useState(800);
 
   const trail = useTrail(chars.length, {
     config: {
@@ -33,14 +33,14 @@ const AnimatedText = ({ texts }: AnimatedTextProps) => {
       setState(({ open: prevOpen, index: prevIndex, chars: prevChars }) => {
         if (!prevOpen) {
           const newIdx = (prevIndex + 1) % texts.length;
-          setDisplayTime(2500);
+          setDisplayTime(800);
           return {
             open: true,
             index: newIdx,
             chars: texts[newIdx].split(""),
           };
         } else {
-          setDisplayTime(800);
+          setDisplayTime(200);
           return {
             open: false,
             index: prevIndex,

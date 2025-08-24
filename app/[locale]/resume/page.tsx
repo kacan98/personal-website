@@ -2,8 +2,13 @@ import CvPage from "@/components/pages/cv/cvPage";
 import { getCvSettings } from "@/data-utils";
 import { notFound } from "next/navigation";
 
-export default async function ResumePage() {
-  const cvSettings = await getCvSettings();
+interface ResumePageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default async function ResumePage({ params }: ResumePageProps) {
+  const { locale } = await params;
+  const cvSettings = await getCvSettings(locale);
   
   if (!cvSettings.on) {
     notFound();

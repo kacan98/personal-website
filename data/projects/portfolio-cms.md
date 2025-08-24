@@ -1,7 +1,7 @@
 ---
 $schema: ./schemas/project.schema.json
-title: "Reusable Portfolio with a CMS"
-slug: "reusable-portfolio-cms"
+title: "Portfolio with a CMS"
+slug: "portfolio-cms"
 image: "/images/projects/reusable-portfolio-with-a-cms.png"
 description: "Dynamic portfolio integrated with a content management system for easy content updates by non-developers."
 tags: ["Next.js", "TypeScript", "React"]
@@ -12,7 +12,7 @@ links:
 featured: false
 ---
 
-# Reusable Portfolio with a CMS
+# Portfolio with a CMS
 
 A dynamic portfolio integrated with a content management system (CMS) to allow non-developers to easily edit and manage website content.
 

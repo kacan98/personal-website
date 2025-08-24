@@ -25,6 +25,9 @@ export default function middleware(request: NextRequest) {
       if (lang.startsWith('da')) {
         targetLocale = 'da';
         break;
+      } else if (lang.startsWith('sv')) {
+        targetLocale = 'sv';
+        break;
       } else if (lang.startsWith('en')) {
         targetLocale = 'en';
         break;

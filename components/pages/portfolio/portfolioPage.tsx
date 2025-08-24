@@ -10,7 +10,12 @@ interface PortfolioPageProps {
 }
 
 async function PortfolioPage({ title, locale }: PortfolioPageProps) {
-  const projectsFolder = locale === 'da' ? 'data/projects-da' : 'data/projects';
+  let projectsFolder = 'data/projects';
+  if (locale === 'da') {
+    projectsFolder = 'data/projects-da';
+  } else if (locale === 'sv') {
+    projectsFolder = 'data/projects-sv';
+  }
   const projects = readMarkdownFiles<Project>(projectsFolder);
 
   return (
