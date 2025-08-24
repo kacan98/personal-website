@@ -1,5 +1,6 @@
 import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
-import { getCvSettings, getProjects } from "@/sanity/sanity-utils";
+import { getCvSettings } from "@/data-utils";
+import projectsSimple from "@/data/projects-simple.json";
 import OpenAI from "openai";
 
 export const runtime = 'edge';
@@ -13,20 +14,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { chatHistory } = body as ChatPOSTBody;
 
-    const [cvSettings, projects] = await Promise.all([
-      getCvSettings(),
-      getProjects()
-    ]);
+    const cvSettings = await getCvSettings();
 
     // Build input string for Responses API
     let input = `You are Karel Čančara. Here is your CV/experience: ${JSON.stringify(cvSettings)}. 
 
-Here are your portfolio projects: ${JSON.stringify(projects.map(p => ({
-      title: p.title,
-      description: p.description,
-      tags: p.tags,
-      links: p.links
-    })))}. 
+Here are your portfolio projects: ${JSON.stringify(projectsSimple)}. 
 
 You are talking to potential employers or clients on your portfolio website. Be friendly, professional, and highlight your best qualities. You can discuss both your CV experience and specific projects you've worked on.
 

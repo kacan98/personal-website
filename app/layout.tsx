@@ -3,14 +3,13 @@ import BackgroundEffect from "@/components/layout/BackgroundEffect";
 import Footer from "@/components/layout/Footer";
 import NavBar from "@/components/menu/navBar";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
-import ReduxProvider from "@/components/providers/ReduxProvider";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 import {
   getCvSettings,
   getGalleries,
   getSettings,
   getStyles,
-} from "@/sanity/sanity-utils";
+} from "@/data-utils";
 import "@fontsource/cormorant-garamond";
 import "@fontsource/open-sans";
 import "@fontsource/urbanist";
@@ -84,9 +83,8 @@ export default async function RootLayout({
       <body style={{ margin: 0, padding: 0, backgroundColor: BACKGROUND_COLORS.secondary, minHeight: '100vh' }}>
         <CssBaseline />
         <AppRouterCacheProvider>
-          <ReduxProvider>
-            <StoreProvider cvSettings={sanitizedCvSettings}>
-              <CustomThemeProvider styles={sanitizedStyles}>
+          <StoreProvider cvSettings={sanitizedCvSettings}>
+            <CustomThemeProvider styles={sanitizedStyles}>
               <Box
                 sx={{
                   minHeight: "100vh",
@@ -214,7 +212,6 @@ export default async function RootLayout({
               </Box>
               </CustomThemeProvider>
             </StoreProvider>
-          </ReduxProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

@@ -1,5 +1,5 @@
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
-import { getSettings } from "@/sanity/sanity-utils";
+import { getSettings } from "@/data-utils";
 import { notFound } from "next/navigation";
 
 export default async function ChatbotRoute() {

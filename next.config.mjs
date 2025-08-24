@@ -10,11 +10,7 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    remotePatterns: [
-      {
-        hostname: "cdn.sanity.io",
-      },
-    ],
+    // No remote patterns needed - using local images only
   },
   experimental: {
     optimizePackageImports: ['@mui/material', '@mui/icons-material'],

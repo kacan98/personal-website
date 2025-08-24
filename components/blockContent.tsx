@@ -2,7 +2,7 @@ import React from "react";
 import { PortableText } from "@portabletext/react";
 import { Box, Typography } from "@mui/material";
 import Link from "next/link";
-import SanityPicture from "@/components/sanityPicture";
+import Image from "next/image";
 
 type BlockContentProps = {
   value: any;
@@ -38,7 +38,7 @@ const components = {
     image: ({ value }: any) => {
       return (
         <Box m={3}>
-          <SanityPicture sanityImage={value} alt={value.alt} />
+          <Image src={value.src || value} alt={value.alt || "Image"} width={600} height={400} style={{ width: '100%', height: 'auto' }} />
         </Box>
       );
     },

@@ -1,26 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
-import imageUrlBuilder from "@sanity/image-url";
-import { sanityClient } from "@/sanity/lib/sanityClient";
-import { Image } from "sanity";
+import { useState, useEffect } from "react";
 
-export type FetchImageFunction = () => Promise<Image | null>;
+export type FetchImageFunction = () => Promise<string | null>;
 
 export function usePicture(fetchImageFunction: FetchImageFunction) {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const urlFor = useCallback((source: Image) => {
-    const builder = imageUrlBuilder(sanityClient);
-    return builder.image(source).url();
-  }, []);
-
   useEffect(() => {
     const fetchPicture = async () => {
       try {
-        const image = await fetchImageFunction();
-        if (image) {
-          const url = urlFor(image);
-          setImageUrl(url);
+        const imagePath = await fetchImageFunction();
+        if (imagePath) {
+          // If it's already a full URL or starts with /, use as is
+          // Otherwise assume it's a relative path
+          setImageUrl(imagePath);
         }
       } catch (error) {
         console.error("Error fetching picture:", error);
@@ -30,7 +23,7 @@ export function usePicture(fetchImageFunction: FetchImageFunction) {
     };
 
     fetchPicture();
-  }, [fetchImageFunction, urlFor]);
+  }, [fetchImageFunction]);
 
   return { imageUrl, isLoading };
 }

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { CvSection } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CvSection } from '@/types'
 import { AdjustSectionParams, AdjustSectionResponse, adjustSectionAPIEndpointName } from '@/app/api/adjust-section/model'
 
 export const useAdjustSection = ({

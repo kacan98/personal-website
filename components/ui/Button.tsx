@@ -10,6 +10,8 @@ type CustomButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'nav'
 interface ButtonProps extends Omit<MuiButtonProps, 'variant'> {
   variant?: CustomButtonVariant;
   isActive?: boolean;
+  target?: string;
+  rel?: string;
 }
 
 const StyledButton = styled(MuiButton)<{ 
@@ -116,13 +118,23 @@ const StyledButton = styled(MuiButton)<{
 export const Button: React.FC<ButtonProps> = ({ 
   variant = 'primary', 
   isActive = false,
+  target,
+  rel,
   children, 
   ...props 
 }) => {
+  // If target is provided, render as a link component
+  const componentProps = target ? { 
+    component: 'a' as const,
+    target,
+    rel
+  } : {};
+
   return (
     <StyledButton
       customvariant={variant}
       isactive={isActive ? 'true' : undefined}
+      {...componentProps}
       {...props}
     >
       {children}

@@ -3,7 +3,7 @@ import {
   JobCvIntersectionParams,
   JobCvIntersectionResponse,
 } from '@/app/api/job-cv-intersection/model'
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 import { useCallback } from 'react'
 
 interface JobCvIntersectionProps {

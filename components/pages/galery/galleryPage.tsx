@@ -1,14 +1,12 @@
 import React from "react";
 import PageWrapper from "@/components/pages/pageWrapper";
 import { Grid } from "@mui/material";
-import { Gallery } from "@/sanity/schemaTypes/gallery";
-import { getProjectsByRefs } from "@/sanity/sanity-utils";
+import { Gallery, Project } from "@/types";
+import { readMarkdownFiles } from "@/lib/markdown";
 import GalleryComponent from "@/components/pages/galery/galleryComponent";
 
 async function GalleryPage(gallery: Gallery) {
-  const projects = await getProjectsByRefs(
-    gallery.projectRefs.map((p) => p._ref),
-  );
+  const projects = readMarkdownFiles<Project>('data/projects');
   return (
     <PageWrapper title={gallery.title} containerMaxWidth="lg">
       <Grid

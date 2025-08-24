@@ -1,4 +1,4 @@
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 import { z } from 'zod'
 
 export const jobCvIntersectionAPIEndpointName = 'api/job-cv-intersection'

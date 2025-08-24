@@ -1,7 +1,7 @@
 import { Box, Card, CardContent, Grid, IconButton, Typography } from "@mui/material";
-import { Project } from "@/sanity/schemaTypes/project";
+import { Project } from "@/types";
 import { SUPPORTED_ICONS } from "@/components/icon";
-import SanityPicture from "@/components/sanityPicture";
+import Image from "next/image";
 
 export const ProjectCard = ({ title, description, image, links }: Project) => {
 
@@ -35,12 +35,12 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
         >
           <Box width={300} height={200}>
             {/*This should work better... */}
-            <SanityPicture
-              sanityImage={image}
+            <Image
+              src={image}
               alt={`Image of ${title} project`}
               width={300}
               height={200}
-              fitMode="scale"
+              style={{ objectFit: "cover" }}
             />
           </Box>
         </Box>
@@ -59,8 +59,8 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
           <Box sx={{ mt: "auto" }}>
             <Grid container alignItems="center" justifyContent="center">
               {links &&
-                links.map(({ url, iconName }) => (
-                  <IconButton key={iconName} href={url} target="_blank">
+                links.map(({ url, iconName }, index) => (
+                  <IconButton key={`${url}-${index}`} href={url} target="_blank">
                     {SUPPORTED_ICONS[iconName]?.component()}
                   </IconButton>
                 ))}

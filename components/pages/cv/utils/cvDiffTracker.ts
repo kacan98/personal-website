@@ -1,4 +1,4 @@
-import { CVSettings, CvSection } from '@/sanity/schemaTypes/singletons/cvSettings';
+import { CVSettings, CvSection } from '@/types';
 
 export interface TextChange {
   type: 'added' | 'removed' | 'modified';

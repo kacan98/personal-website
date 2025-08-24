@@ -1,4 +1,4 @@
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 import OpenAI from 'openai'
 
 export type CvTranslateParams = {

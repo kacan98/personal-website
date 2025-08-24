@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Project title"
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "URL-friendly slug (lowercase, numbers, hyphens only)"
+    },
+    "image": {
+      "type": "string",
+      "pattern": "^/images/projects/",
+      "description": "Path to project image (must start with /images/projects/)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Array of technology tags"
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "icon": {
+            "type": "string",
+            "enum": ["gitHub", "externalLink", "globe", "mail", "instagram", "facebook", "linkedIn", "libraryBooks", "twitter", "translate", "youTube", "pinterest", "reddit", "school", "science", "whatsApp"]
+          }
+        },
+        "required": ["title", "url", "icon"],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Array of project links"
+    },
+    "featured": {
+      "type": "boolean",
+      "description": "Whether this project should be featured"
+    }
+  },
+  "required": ["title", "slug", "image", "tags", "links", "featured"],
+  "additionalProperties": false
+}

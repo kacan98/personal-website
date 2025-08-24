@@ -1,10 +1,11 @@
 import React from "react";
 import PageWrapper from "@/components/pages/pageWrapper";
-import { getProjectBySlug } from "@/sanity/sanity-utils";
 import { Box } from "@mui/material";
-import SanityPicture from "@/components/sanityPicture";
+import Image from "next/image";
 import BlockContent from "@/components/blockContent";
 import { notFound } from "next/navigation";
+import { readMarkdownFiles } from "@/lib/markdown";
+import { Project } from "@/types";
 
 type PageProps = {
   params: Promise<{
@@ -25,7 +26,8 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { projectSlug } = await params;
-  const project = await getProjectBySlug(projectSlug);
+  const projects = readMarkdownFiles<Project>('data/projects');
+  const project = projects.find(p => p.slug === projectSlug);
   if (!project) return notFound();
 
   return (
@@ -38,21 +40,21 @@ export default async function Page({ params }: PageProps) {
         overflow: "auto",
       }}
     >
-      <PageWrapper title={project.title} description={project.description}>
+      <PageWrapper title={project.title} description={project.title}>
         {project.image && (
           <Box mb={3} sx={{ width: "100%", maxHeight: "100%" }}>
-            <SanityPicture
-              fitMode={"clip"}
-              sanityImage={project.image}
+            <Image
+              src={project.image}
               alt={"project image"}
+              width={800}
+              height={400}
+              style={{ objectFit: "cover", width: '100%', height: 'auto' }}
             />
           </Box>
         )}
-        {
-          <Box textAlign="left">
-            <BlockContent value={project.relatedPage.content} />
-          </Box>
-        }
+        <Box textAlign="left">
+          <BlockContent value={project.content} />
+        </Box>
       </PageWrapper>
     </Box>
   );

@@ -1,9 +1,9 @@
 import { EditableText } from "@/components/editableText";
 import { usePicture } from "@/hooks/usePicture";
 import { useAppSelector } from "@/redux/hooks";
-import { getCVPicture } from "@/sanity/sanity-utils";
-import { CvSection } from "@/sanity/schemaTypes/singletons/cvSettings";
-import { Avatar, Box, Grid, Paper, useMediaQuery, useTheme } from "@mui/material";
+import { getCVPicture } from "@/data-utils";
+import { CvSection } from "@/types";
+import { Avatar, Box, Grid, Paper, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
 
 
@@ -42,32 +42,56 @@ export function CvPaper({
 }: CvPaperProps) {
   const reduxCv = useAppSelector((state) => state.cv);
   const { imageUrl } = usePicture(getCVPicture);
-  const theme = useTheme();
   // Custom breakpoint at 800px - we'll call it "resume breakpoint"
-  const isResumeDesktop = useMediaQuery('(min-width:700px)');
+  // For print version, always use desktop layout regardless of media query
+  const mediaQueryResult = useMediaQuery('(min-width:700px)');
+  const isResumeDesktop = isPrintVersion ? true : mediaQueryResult;
 
   const getSectionKey = (columnType: 'mainColumn' | 'sideColumn', index: number) => {
     return `${columnType}-${index}`;
   };
 
+
   return (
     <Grid container spacing={0}>
-      <Grid
-        size={isResumeDesktop ? 4 : 12}>
+      <Grid size={isResumeDesktop ? 4 : 12}>
         <Box display="flex" flexDirection="column" alignItems="left" sx={{ p: 2, pr: 3 }}>
-          <Grid
-            container
-            alignItems="left"
-            direction="column"
-            textAlign="left"
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={2}
+            mb={3}
+            sx={{
+              flexWrap: { xs: 'wrap', sm: 'nowrap' },
+              textAlign: { xs: 'center', sm: 'left' }
+            }}
           >
             {imageUrl && <Avatar
               src={imageUrl}
-              sx={{ width: 100, height: 100, marginBottom: "15px" }}
+              sx={{ 
+                width: 100, 
+                height: 100,
+                flexShrink: 0
+              }}
             />}
-            <EditableText query={["name"]} editable={editable} variant="h4" component="div" text={reduxCv.name} />
-            <EditableText query={["subtitle"]} editable={editable} variant="body1" pb={2} text={reduxCv.subtitle} />
-          </Grid>
+            <Box sx={{ minWidth: 0, flex: 1 }}>
+              <EditableText 
+                query={["name"]} 
+                editable={editable} 
+                variant="h4" 
+                component="div" 
+                text={reduxCv.name}
+                sx={{ wordWrap: 'break-word' }}
+              />
+              <EditableText 
+                query={["subtitle"]} 
+                editable={editable} 
+                variant="body1" 
+                text={reduxCv.subtitle}
+                sx={{ wordWrap: 'break-word' }}
+              />
+            </Box>
+          </Box>
           {reduxCv.sideColumn?.map((section, index) => {
             const sectionKey = getSectionKey('sideColumn', index);
             const isRemoved = removedSections.has(sectionKey);
@@ -105,9 +129,7 @@ export function CvPaper({
           })}
         </Box>
       </Grid>
-      <Grid
-        size={isResumeDesktop ? 8 : 12}
-        sx={{ textAlign: "left" }}>
+      <Grid size={isResumeDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
         {reduxCv.mainColumn?.map((section, index) => {
           const sectionKey = getSectionKey('mainColumn', index);
           const isRemoved = removedSections.has(sectionKey);
@@ -119,26 +141,27 @@ export function CvPaper({
           }
 
           return (
-            <Paper key={index} sx={{ p: 2, mb: 3 }}>              <CvSectionComponent
-              sideOrMain="mainColumn"
-              sectionIndex={index}
-              section={section}
-              editable={editable}
-              isPrintVersion={isPrintVersion}
-              positionDetails={positionDetails}
-              adjustSection={adjustSection}
-              isRemoved={isRemoved}
-              isModified={isModified}
-              onRemoveSection={onRemoveSection}
-              onRestoreSection={onRestoreSection}
-              onSectionAdjusted={onSectionAdjusted}
-              sectionKey={sectionKey}
-              onRemoveSubSection={onRemoveSubSection}
-              onRestoreSubSection={onRestoreSubSection}
-              onSubSectionAdjusted={onSubSectionAdjusted}
-              removedSubSections={removedSubSections}
-              modifiedSubSections={modifiedSubSections}
-            />
+            <Paper key={index} sx={{ p: 2, mb: 3 }}>
+              <CvSectionComponent
+                sideOrMain="mainColumn"
+                sectionIndex={index}
+                section={section}
+                editable={editable}
+                isPrintVersion={isPrintVersion}
+                positionDetails={positionDetails}
+                adjustSection={adjustSection}
+                isRemoved={isRemoved}
+                isModified={isModified}
+                onRemoveSection={onRemoveSection}
+                onRestoreSection={onRestoreSection}
+                onSectionAdjusted={onSectionAdjusted}
+                sectionKey={sectionKey}
+                onRemoveSubSection={onRemoveSubSection}
+                onRestoreSubSection={onRestoreSubSection}
+                onSubSectionAdjusted={onSubSectionAdjusted}
+                removedSubSections={removedSubSections}
+                modifiedSubSections={modifiedSubSections}
+              />
             </Paper>
           );
         })}

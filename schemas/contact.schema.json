@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Contact method name"
+          },
+          "value": {
+            "type": "string",
+            "description": "Contact value (email, username, etc.)"
+          },
+          "link": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional link URL"
+          },
+          "icon": {
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": ["gitHub", "externalLink", "globe", "mail", "instagram", "facebook", "linkedIn", "libraryBooks", "twitter", "translate", "youTube", "pinterest", "reddit", "school", "science", "whatsApp"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional icon name"
+          }
+        },
+        "required": ["name", "value"],
+        "additionalProperties": false
+      },
+      "minItems": 1,
+      "description": "Array of contact information"
+    }
+  },
+  "required": ["contacts"],
+  "additionalProperties": false
+}

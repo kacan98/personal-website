@@ -1,4 +1,4 @@
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 import { baseUrl } from '@/util'
 import { OpenAI } from 'openai'
 import { jobCvIntersectionAPIEndpointName } from '../job-cv-intersection/model'

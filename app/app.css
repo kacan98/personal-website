@@ -41,6 +41,8 @@ body {
         background-color: white !important;
         color: black !important;
     }
+    
+    
 }
 :root {
     /* Define font family variables with system font fallbacks for faster LCP */

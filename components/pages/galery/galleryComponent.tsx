@@ -1,7 +1,7 @@
 "use client";
 import { ProjectCard } from "@/components/pages/galery/projectCard";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
-import { Project } from "@/sanity/schemaTypes/project";
+import { Project } from "@/types";
 import { Grid } from "@mui/material";
 import { animated, useTransition } from "@react-spring/web";
 import Link from "next/link";
@@ -70,13 +70,9 @@ export const GalleryComponent = ({
           return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.title}>
               <animated.div style={props}>
-                {project.relatedPage?.slug ? (
-                  <Link href={`/project/${project.relatedPage.slug.current}`}>
-                    {card}
-                  </Link>
-                ) : (
-                  card
-                )}
+                <Link href={`/project/${project.slug}`}>
+                  {card}
+                </Link>
               </animated.div>
             </Grid>
           );

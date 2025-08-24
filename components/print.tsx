@@ -1,5 +1,6 @@
 "use client";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
+import Button from "@/components/ui/Button";
 import React, { ReactNode, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import CustomThemeProvider, { CustomThemeProviderProps } from "./theme/customThemeProvider";
@@ -17,6 +18,7 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
   const handlePrint = useReactToPrint({
     contentRef,
     documentTitle: fileName || "download",
+    pageStyle: `@page { size: A4; margin: 0; margin-top:10px }`,
   });
 
   const customThemeProviderProps: Partial<CustomThemeProviderProps> = {
@@ -29,11 +31,10 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
     <CustomThemeProvider {...customThemeProviderProps}>
       <>{children}</>
       <Button
-        variant="contained"
-        color="info"
-        fullWidth
+        variant="secondary"
         sx={{
           mt: 3,
+          width: "100%"
         }}
         onClick={handlePrint}
       >
@@ -44,9 +45,9 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
           position: "absolute",
           top: -99999,
           left: -99999,
-          width: 905,
-          padding: 1,
-          margin: 1,
+          width: "210mm",
+          padding: 0,
+          margin: 0,
           overflow: "hidden",
           visibility: "hidden",
         }}
@@ -54,8 +55,9 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
         <Box
           ref={contentRef}
           sx={{
-            width: 905,
-            padding: 1,
+            width: "210mm",
+            padding: 0,
+            margin: 0,
           }}
         >
           <CustomThemeProvider {...customThemeProviderProps} forceMode="light">

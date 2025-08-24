@@ -1,4 +1,4 @@
-import { getCvSettings } from "@/sanity/sanity-utils";
+import { getCvSettings } from "@/data-utils";
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import CopyButton from "./CopyButton";
@@ -16,7 +16,7 @@ async function Page() {
       minHeight="100vh"
     >
       <Typography variant="h4" gutterBottom>
-        CV Settings
+        CV in JSON format
       </Typography>
       <CopyButton jsonData={JSON.stringify(cvSettings, null, 2)} />
       <Box
@@ -37,6 +37,7 @@ async function Page() {
             whiteSpace: "pre-wrap",
             wordBreak: "break-word",
             fontFamily: "monospace",
+            color: "#333",
           }}
         >
           {JSON.stringify(cvSettings, null, 2)}

@@ -17,7 +17,7 @@ export function ChangeIndicatorText({
     return <>{children}</>;
   }
 
-  const getChangeColor = (type: TextChange['type']) => {
+  const getChangeColor = (type: TextChange['type']): 'success' | 'secondary' | 'error' | 'default' => {
     switch (type) {
       case 'added':
         return 'success';
@@ -89,7 +89,7 @@ export function ChangeIndicatorText({
         <Chip
           label={getChangeLabel(change.type)}
           size="small"
-          color={getChangeColor(change.type) as any}
+          color={getChangeColor(change.type)}
           variant="outlined"
           sx={{
             position: 'absolute',

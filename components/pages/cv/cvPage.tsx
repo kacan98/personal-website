@@ -8,7 +8,6 @@ import CreateIcon from '@mui/icons-material/Create';
 import {
   Backdrop,
   Box,
-  Button,
   CircularProgress,
   Paper,
   Slider,
@@ -17,6 +16,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import Button from "@/components/ui/Button";
 import jsPDF from "jspdf";
 import React, { useEffect, useState } from "react";
 import { AiForm } from "./aiForm";
@@ -726,7 +726,7 @@ function CvPage({ jobDescription }: CvProps) {
             type="button"
             onClick={handleTranslateBoth}
             sx={{ mt: 2, width: "100%" }}
-            variant="outlined"
+            variant="secondary"
             disabled={loading}
           >
             Translate CV
@@ -740,13 +740,13 @@ function CvPage({ jobDescription }: CvProps) {
             type="button"
             onClick={handleManualMotivationalLetter}
             sx={{ mt: 2, mb: 2, width: "100%" }}
-            variant="outlined"
+            variant="primary"
             disabled={!positionDetails || positionDetails.trim().length === 0}
           >
             {motivationalLetter ? 'Regenerate Motivational Letter' : 'Get Motivational Letter'}
           </Button>
           {motivationalLetter && (
-            <Paper elevation={2} sx={{ mt: 5, p: 4, backgroundColor: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+            <Paper elevation={2} sx={{ mt: 5, p: 4, backgroundColor: 'background.paper', border: '1px solid', borderColor: 'divider' }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
                   Motivational Letter
@@ -755,14 +755,14 @@ function CvPage({ jobDescription }: CvProps) {
                   {isEditingLetter ? (
                     <>
                       <Button
-                        variant="outlined"
+                        variant="secondary"
                         onClick={handleCancelEditing}
                         sx={{ borderRadius: 2 }}
                       >
                         Cancel
                       </Button>
                       <Button
-                        variant="contained"
+                        variant="primary"
                         onClick={handleFinishEditing}
                         sx={{ borderRadius: 2 }}
                       >
@@ -772,14 +772,14 @@ function CvPage({ jobDescription }: CvProps) {
                   ) : (
                     <>
                       <Button
-                        variant="outlined"
+                        variant="secondary"
                         onClick={handleStartEditing}
                         sx={{ borderRadius: 2, mr: 1 }}
                       >
                         Edit
                       </Button>
                       <Button
-                        variant="contained"
+                        variant="primary"
                         onClick={downloadMotivationalLetterPDF}
                         sx={{ borderRadius: 2 }}
                       >
@@ -916,7 +916,7 @@ function CvPage({ jobDescription }: CvProps) {
                   variant="outlined"
                 />
                 <Button
-                  variant="outlined"
+                  variant="secondary"
                   onClick={handleAdjustLetterWithComments}
                   disabled={!letterComments.trim() || isAdjustingLetter || loading}
                   sx={{ borderRadius: 2 }}
@@ -940,7 +940,7 @@ function CvPage({ jobDescription }: CvProps) {
                   type="button"
                   onClick={handleTranslateBoth}
                   sx={{ width: "100%", borderRadius: 2 }}
-                  variant="outlined"
+                  variant="secondary"
                   disabled={loading}
                 >
                   Translate CV & Motivational Letter

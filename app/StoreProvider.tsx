@@ -1,5 +1,5 @@
 'use client'
-import { CVSettings } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { CVSettings } from "@/types";
 import { useRef } from 'react';
 import { Provider } from 'react-redux';
 import { AppStore, makeStore } from '../redux/store';

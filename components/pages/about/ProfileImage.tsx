@@ -1,11 +1,9 @@
 import { Box, Avatar } from "@mui/material";
-import { getCVPicture } from "@/sanity/sanity-utils";
-import imageUrlBuilder from "@sanity/image-url";
-import { sanityClient } from "@/sanity/lib/sanityClient";
+import { getCVPicture } from "@/data-utils";
 
 export default async function ProfileImage() {
     const image = await getCVPicture();
-    const imageUrl = image ? imageUrlBuilder(sanityClient).image(image).url() : null;
+    const imageUrl = image;
 
     return (
         <Box

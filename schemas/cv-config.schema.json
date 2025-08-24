@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "on": {
+      "type": "boolean",
+      "description": "Whether CV is enabled"
+    },
+    "name": {
+      "type": "string",
+      "description": "Full name"
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Professional title/subtitle"
+    },
+    "profilePicture": {
+      "type": "string",
+      "pattern": "^/images/cv/",
+      "description": "Path to profile picture (must start with /images/cv/)"
+    },
+    "sections": {
+      "type": "object",
+      "properties": {
+        "mainColumn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of section names for main column"
+        },
+        "sideColumn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of section names for side column"
+        }
+      },
+      "required": ["mainColumn", "sideColumn"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["on", "name", "subtitle", "sections"],
+  "additionalProperties": false
+}

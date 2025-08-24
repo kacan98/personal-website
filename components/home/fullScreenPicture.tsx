@@ -1,14 +1,13 @@
 "use client";
 import React from "react";
 import { Box, Theme } from "@mui/material";
-import { Image as SanityImage } from "sanity";
-import SanityPicture from "@/components/sanityPicture";
+import Image from "next/image";
 
 type FullScreenPictureProps = {
-  sanityImage?: SanityImage;
+  imagePath?: string;
 };
 
-function FullScreenPicture({ sanityImage }: FullScreenPictureProps) {
+function FullScreenPicture({ imagePath }: FullScreenPictureProps) {
   return (
     <>
       <Box
@@ -20,12 +19,12 @@ function FullScreenPicture({ sanityImage }: FullScreenPictureProps) {
           right: 0,
         }}
       >
-        {sanityImage && (
-          <SanityPicture
-            sanityImage={sanityImage}
+        {imagePath && (
+          <Image
+            src={imagePath}
             alt="Background Image"
-            objectFit="cover"
             fill
+            style={{ objectFit: "cover" }}
           />
         )}
       </Box>

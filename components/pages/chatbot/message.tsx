@@ -1,6 +1,6 @@
 "use client";
 import { usePicture } from "@/hooks/usePicture";
-import { getCVPicture } from "@/sanity/sanity-utils";
+import { getCVPicture } from "@/data-utils";
 import {
   Avatar,
   Box,

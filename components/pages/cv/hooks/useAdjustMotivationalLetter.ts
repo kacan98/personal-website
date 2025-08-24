@@ -1,5 +1,5 @@
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model'
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 
 export const useAdjustMotivationalLetter = ({
   setMotivationalLetter,

@@ -1,7 +1,7 @@
 "use client";
 import { ProjectCard } from "@/components/pages/galery/projectCard";
 import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
-import { Project } from "@/sanity/schemaTypes/project";
+import { Project } from "@/types";
 import { Box, Grid } from "@mui/material";
 import { animated, useTransition } from "@react-spring/web";
 import { useState } from "react";

@@ -1,5 +1,5 @@
 import { EditableText, EditableTextProps } from "@/components/editableText";
-import { CvSection, CvSubSection } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { CvSection, CvSubSection } from "@/types";
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import RestoreIcon from '@mui/icons-material/Restore';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';

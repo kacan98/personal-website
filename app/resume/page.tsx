@@ -1,5 +1,5 @@
 import CvPage from "@/components/pages/cv/cvPage";
-import { getCvSettings } from "@/sanity/sanity-utils";
+import { getCvSettings } from "@/data-utils";
 import { notFound } from "next/navigation";
 
 export default async function ResumePage() {

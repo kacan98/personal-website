@@ -15,7 +15,9 @@
       "WebFetch(domain:dev.to)",
       "WebFetch(domain:blog.gitbutler.com)",
       "WebFetch(domain:www.ksred.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(grep:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

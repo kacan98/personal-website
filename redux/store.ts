@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { cvSlice } from './slices/cv'
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 
 export const makeStore = (cvSettings: CVSettings) => {
   return configureStore({

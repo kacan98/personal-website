@@ -1,5 +1,5 @@
 import GalleryPage from "@/components/pages/galery/galleryPage";
-import { getGalleries } from "@/sanity/sanity-utils";
+import { getGalleries } from "@/data-utils";
 import { notFound } from "next/navigation";
 
 interface Props {

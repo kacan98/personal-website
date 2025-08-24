@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
+import { StylesSettings } from "@/types";
 import { getTheme } from "@/app/theme";
 
 export type CustomThemeProviderProps = {

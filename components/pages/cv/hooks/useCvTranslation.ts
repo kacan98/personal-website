@@ -1,5 +1,5 @@
 import { CvTranslateParams } from '@/app/api/translate/cv/route'
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 import { useCallback } from 'react'
 
 interface UseCvTranslationProps {

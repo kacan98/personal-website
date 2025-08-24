@@ -1,8 +1,8 @@
 "use client";
 import { ChatCompletionMessageParam } from "@/app/api/chat/chatAPI.model";
 import Message from "@/components/pages/chatbot/message";
-import { useAppDispatch } from "@/store";
-import { clearChat } from "@/store/slices/chatbotSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import { clearChat } from "@/redux/slices/chatbotSlice";
 import { DeleteSweep as DeleteSweepIcon } from "@mui/icons-material";
 import { Box, Button, IconButton, List, TextField, Tooltip, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";

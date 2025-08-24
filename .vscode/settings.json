@@ -1,0 +1,34 @@
+{
+  "yaml.schemas": {
+    "./schemas/project.schema.json": [
+      "data/projects/*.md",
+      "data/projects/*.yaml",
+      "data/projects/*.yml"
+    ],
+    "./schemas/contact.schema.json": [
+      "data/cv/contact.md",
+      "data/cv/contact.yaml",
+      "data/cv/contact.yml"
+    ],
+    "./schemas/cv-config.schema.json": [
+      "data/cv/config.json",
+      "data/cv/config.yaml",
+      "data/cv/config.yml"
+    ]
+  },
+  "yaml.validate": true,
+  "yaml.completion": true,
+  "yaml.hover": true,
+  "yaml.format.enable": true,
+  "files.associations": {
+    "*.md": "markdown"
+  },
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": true,
+      "strings": true
+    },
+    "yaml.validate": true
+  }
+}

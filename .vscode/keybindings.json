@@ -1,0 +1,8 @@
+[
+  {
+    "key": "ctrl+shift+v",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Validate Markdown",
+    "when": "editorTextFocus && editorLangId == markdown"
+  }
+]

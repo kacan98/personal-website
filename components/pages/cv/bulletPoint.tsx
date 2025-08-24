@@ -1,7 +1,7 @@
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import { EditableText, EditableTextExtraProps } from "@/components/editableText";
 import { SUPPORTED_ICONS } from "@/components/icon";
-import { BulletPoint } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { BulletPoint } from "@/types";
 import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
 export const CvBulletPoint = ({

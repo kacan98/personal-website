@@ -1,5 +1,5 @@
 import { EditableText } from "@/components/editableText";
-import { CvSection } from "@/sanity/schemaTypes/singletons/cvSettings";
+import { CvSection } from "@/types";
 import { Box } from "@mui/material";
 
 export const CvSubSection = ({

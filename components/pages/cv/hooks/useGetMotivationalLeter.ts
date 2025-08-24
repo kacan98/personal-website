@@ -1,5 +1,5 @@
 import { MotivationalLetterParams, MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model'
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 
 interface UseMotivationalLetterProps {
   setsnackbarMessage: (message: string) => void

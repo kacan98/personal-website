@@ -16,7 +16,6 @@ import {
   WhatsApp,
   YouTube,
 } from "@mui/icons-material";
-import { EarthGlobeIcon } from "@sanity/icons";
 
 export const SUPPORTED_ICONS: {
   [key: string]: {
@@ -34,7 +33,7 @@ export const SUPPORTED_ICONS: {
   },
   globe: {
     name: "Globe",
-    component: () => <EarthGlobeIcon />,
+    component: () => <Language />,
   },
   mail: {
     name: "Mail",

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { CvSection } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CvSection } from '@/types'
 
 export const adjustSectionAPIEndpointName = '/api/adjust-section'
 

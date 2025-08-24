@@ -1,8 +1,9 @@
 import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 import {
-    Box, Button,
+    Box,
     TextField
 } from "@mui/material";
+import Button from "@/components/ui/Button";
 import IntersectionSection from "./paper/intersectionSection";
 
 export interface AiFormProps {
@@ -53,8 +54,7 @@ export const AiForm = ({
                         type="button"
                         onClick={getSummary}
                         sx={{ mt: 2, width: "100%" }}
-                        variant="contained"
-                        color="secondary"
+                        variant="secondary"
                     >
                         Summarize the position
                     </Button>
@@ -74,8 +74,7 @@ export const AiForm = ({
                         type="button"
                         onClick={updatePositionIntersection}
                         sx={{ mt: 2, width: "100%" }}
-                        variant="contained"
-                        color="secondary"
+                        variant="secondary"
                     >
                         Match CV with the position
                     </Button>
@@ -89,8 +88,7 @@ export const AiForm = ({
                         type="button"
                         onClick={adjustCvBasedOnPosition}
                         sx={{ mt: 2, width: "100%" }}
-                        variant="contained"
-                        color="primary"
+                        variant="primary"
                     >
                         Improve CV (based on the position)
                     </Button>

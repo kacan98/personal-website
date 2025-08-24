@@ -1,4 +1,4 @@
-import { StylesSettings } from "@/sanity/schemaTypes/singletons/stylesSettings";
+import { StylesSettings } from "@/types";
 import { Theme } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { ThemeOptions } from "@mui/material/styles";

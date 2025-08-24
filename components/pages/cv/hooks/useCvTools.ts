@@ -1,7 +1,7 @@
 import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/model'
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model'
 import { initCv } from '@/redux/slices/cv'
-import { CVSettings } from '@/sanity/schemaTypes/singletons/cvSettings'
+import { CVSettings } from '@/types'
 import { useDispatch } from 'react-redux'
 import { useAdjustCvBasedOnPosition } from './useAdjustCvBasedOnPosition'
 import { useAdjustMotivationalLetter } from './useAdjustMotivationalLetter'
