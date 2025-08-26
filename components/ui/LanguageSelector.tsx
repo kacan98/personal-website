@@ -4,9 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import { Select, MenuItem, FormControl, Box } from '@mui/material';
 import { useTransition } from 'react';
-import { US } from 'country-flag-icons/react/3x2';
-import { DK } from 'country-flag-icons/react/3x2';
-import { SE } from 'country-flag-icons/react/3x2';
+import * as CountryFlags from 'country-flag-icons/react/3x2';
 
 export default function LanguageSelector() {
   const t = useTranslations('language');
@@ -32,10 +30,10 @@ export default function LanguageSelector() {
   const getFlagComponent = (locale: string) => {
     const flagProps = { width: 20, height: 15, style: { marginRight: 8 } };
     switch (locale) {
-      case 'en': return <US {...flagProps} />;
-      case 'da': return <DK {...flagProps} />;
-      case 'sv': return <SE {...flagProps} />;
-      default: return <US {...flagProps} />;
+      case 'en': return <CountryFlags.US {...flagProps} />;
+      case 'da': return <CountryFlags.DK {...flagProps} />;
+      case 'sv': return <CountryFlags.SE {...flagProps} />;
+      default: return <CountryFlags.US {...flagProps} />;
     }
   };
 

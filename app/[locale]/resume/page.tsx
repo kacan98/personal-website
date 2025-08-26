@@ -1,5 +1,5 @@
 import CvPage from "@/components/pages/cv/cvPage";
-import { getCvSettings } from "@/data-utils";
+import { getCvSettings } from "@/data";
 import { notFound } from "next/navigation";
 
 interface ResumePageProps {

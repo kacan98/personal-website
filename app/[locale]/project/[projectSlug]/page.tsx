@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import PageWrapper from "@/components/pages/pageWrapper";
 import { Box } from "@mui/material";
 import Image from "next/image";
@@ -31,31 +31,33 @@ export default async function Page({ params }: PageProps) {
   if (!project) return notFound();
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        height: "100%",
-        bgcolor: "background.paper",
-        color: "text.primary",
-        overflow: "auto",
-      }}
-    >
-      <PageWrapper title={project.title} description={project.title}>
-        {project.image && (
-          <Box mb={3} sx={{ width: "100%", maxHeight: "100%" }}>
-            <Image
-              src={project.image}
-              alt={"project image"}
-              width={800}
-              height={400}
-              style={{ objectFit: "cover", width: '100%', height: 'auto' }}
-            />
+    <Suspense fallback={<div>Loading project...</div>}>
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          bgcolor: "background.paper",
+          color: "text.primary",
+          overflow: "auto",
+        }}
+      >
+        <PageWrapper title={project.title} description={project.title}>
+          {project.image && (
+            <Box mb={3} sx={{ width: "100%", maxHeight: "100%" }}>
+              <Image
+                src={project.image}
+                alt={"project image"}
+                width={800}
+                height={400}
+                style={{ objectFit: "cover", width: '100%', height: 'auto' }}
+              />
+            </Box>
+          )}
+          <Box textAlign="left">
+            <BlockContent value={project.content} />
           </Box>
-        )}
-        <Box textAlign="left">
-          <BlockContent value={project.content} />
-        </Box>
-      </PageWrapper>
-    </Box>
+        </PageWrapper>
+      </Box>
+    </Suspense>
   );
 }

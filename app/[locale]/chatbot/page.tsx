@@ -1,9 +1,9 @@
 import ChatbotPage from "@/components/pages/chatbot/chatbotPage";
-import { getSettings } from "@/data-utils";
+import { getSettings } from "@/data";
 import { notFound } from "next/navigation";
 
-export default async function ChatbotRoute() {
-  const settings = await getSettings();
+export default function ChatbotRoute() {
+  const settings = getSettings();
   const { chatbot } = settings?.specialPages || {};
   
   if (!chatbot) {

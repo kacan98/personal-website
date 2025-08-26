@@ -1,7 +1,7 @@
 import { EditableText } from "@/components/editableText";
 import { usePicture } from "@/hooks/usePicture";
 import { useAppSelector } from "@/redux/hooks";
-import { getCVPicture } from "@/data-utils";
+import { getCVPicture } from "@/data";
 import { CvSection } from "@/types";
 import { Avatar, Box, Grid, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
@@ -144,27 +144,28 @@ export function CvPaper({
             }
 
             return (
-              <CvSectionComponent
-                key={index}
-                sideOrMain="mainColumn"
-                sectionIndex={index}
-                section={section}
-                editable={editable}
-                isPrintVersion={isPrintVersion}
-                positionDetails={positionDetails}
-                adjustSection={adjustSection}
-                isRemoved={isRemoved}
-                isModified={isModified}
-                onRemoveSection={onRemoveSection}
-                onRestoreSection={onRestoreSection}
-                onSectionAdjusted={onSectionAdjusted}
-                sectionKey={sectionKey}
-                onRemoveSubSection={onRemoveSubSection}
-                onRestoreSubSection={onRestoreSubSection}
-                onSubSectionAdjusted={onSubSectionAdjusted}
-                removedSubSections={removedSubSections}
-                modifiedSubSections={modifiedSubSections}
-              />
+              <Box key={index} sx={{ mt: index === 1 ? 4 : 0 }}>
+                <CvSectionComponent
+                  sideOrMain="mainColumn"
+                  sectionIndex={index}
+                  section={section}
+                  editable={editable}
+                  isPrintVersion={isPrintVersion}
+                  positionDetails={positionDetails}
+                  adjustSection={adjustSection}
+                  isRemoved={isRemoved}
+                  isModified={isModified}
+                  onRemoveSection={onRemoveSection}
+                  onRestoreSection={onRestoreSection}
+                  onSectionAdjusted={onSectionAdjusted}
+                  sectionKey={sectionKey}
+                  onRemoveSubSection={onRemoveSubSection}
+                  onRestoreSubSection={onRestoreSubSection}
+                  onSubSectionAdjusted={onSubSectionAdjusted}
+                  removedSubSections={removedSubSections}
+                  modifiedSubSections={modifiedSubSections}
+                />
+              </Box>
             );
           })}
         </Box>

@@ -1,6 +1,6 @@
 'use client';
 
-import { getCvSettings } from "@/data-utils";
+import { getCvSettings } from "@/data";
 import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CopyButton from "./CopyButton";
@@ -10,7 +10,7 @@ function Page() {
   const [cvSettings, setCvSettings] = useState<CVSettings | null>(null);
   
   useEffect(() => {
-    getCvSettings().then(setCvSettings);
+    setCvSettings(getCvSettings('en'));
   }, []);
   
   if (!cvSettings) {

@@ -17,5 +17,10 @@ export default function StoreProvider({
         return makeStore(cvConfig || {} as CVSettings);
     }, [cvConfig]);
 
+    // Ensure store is available before rendering children
+    if (!store) {
+        return <div>Loading...</div>;
+    }
+
     return <Provider store={store}>{children}</Provider>
 }

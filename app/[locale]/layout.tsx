@@ -8,7 +8,7 @@ import {
   getCvSettings,
   getGalleries,
   getSettings,
-} from "@/data-utils";
+} from "@/data";
 import "@fontsource/cormorant-garamond";
 import "@fontsource/open-sans";
 import "@fontsource/urbanist";
@@ -52,11 +52,9 @@ export default async function LocaleLayout({
   // Providing all messages to the client side is the easiest way to get started
   const messages = await getMessages();
 
-  const [settings, galleriesData, cvSettings] = await Promise.all([
-    getSettings(),
-    getGalleries(),
-    getCvSettings(locale),
-  ]);
+  const settings = getSettings();
+  const _galleriesData = getGalleries();
+  const cvSettings = getCvSettings(locale);
 
   const tNav = await getTranslations('navigation');
   
@@ -71,7 +69,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+    <AppRouterCacheProvider options={{ key: 'mui', enableCssLayer: true }}>
       <NextIntlClientProvider messages={messages}>
         <StoreProvider cvConfig={cvSettings}>
           <CustomThemeProvider>

@@ -70,40 +70,7 @@
       }
     },
     "timeline": {
-      "title": "Career Journey",
-      "jobs": {
-        "fullStackDeveloper": {
-          "title": "Full Stack Developer – Dynamics 365 SCM",
-          "company": "Dynaway",
-          "period": "2024 - now",
-          "description": {
-            "0": "Developed backend services and APIs in X++, C#, and .NET for enterprise ERP software",
-            "1": "Collaborated with frontend and infrastructure teams to deliver end-to-end solutions",
-            "2": "Focused on performance improvements, debugging, and customer-specific features"
-          }
-        },
-        "frontendDeveloper": {
-          "title": "Frontend Web Developer",
-          "company": "Dynaway",
-          "period": "2020 - 2024", 
-          "description": {
-            "0": "Delivered new features and bug fixes in an Angular/Deno web application used by technicians",
-            "1": "Consistently delivered features on schedule as a self-taught developer",
-            "2": "Advocated for usability and design simplicity in feature discussions",
-            "3": "Led daily and weekly Scrum meetings for a 5-person dev team as a Scrum Master"
-          }
-        },
-        "webBusinessDeveloper": {
-          "title": "Web and Business Development",
-          "company": "Ankeri Media",
-          "period": "2019-2020",
-          "description": {
-            "0": "Created the company's website and led branding and outreach campaigns",
-            "1": "Booked 50+ meetings and secured new clients via cold outreach",
-            "2": "Balanced marketing and tech responsibilities in a startup environment"
-          }
-        }
-      }
+      "title": "Career Journey"
     }
   },
   "contact": {

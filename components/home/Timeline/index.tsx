@@ -76,7 +76,7 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
           size={{ xs: 12, md: 6 }}
           sx={{ 
             order: { xs: 1, md: index % 2 === 0 ? 1 : 2 },
-            textAlign: { xs: 'left', md: index % 2 === 0 ? 'right' : 'left' }
+            textAlign: 'left'
           }}>
           <Box sx={{ 
             p: 4, 

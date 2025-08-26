@@ -21,6 +21,7 @@ const ChatBotUI = () => {
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [previousLocale, setPreviousLocale] = useState<string>(locale);
 
   // Send message to API
   const sendMessage = async (messageHistory: ChatCompletionMessageParam[]) => {
@@ -95,6 +96,28 @@ const ChatBotUI = () => {
       sendMessage([]);
     }
   }, []);
+
+  // Handle locale changes - clear messages and get new introduction
+  useEffect(() => {
+    if (!mounted) return; // Don't run on initial mount
+    
+    if (locale !== previousLocale) {
+      // Clear current messages
+      setMessages([]);
+      setInput("");
+      setStreamingMessage("");
+      setError(null);
+      localStorage.removeItem("chatMessages");
+      
+      // Get introduction in new language (with small delay to ensure state is updated)
+      setTimeout(() => {
+        sendMessage([]);
+      }, 100);
+      
+      // Update previous locale
+      setPreviousLocale(locale);
+    }
+  }, [locale, mounted, previousLocale]);
 
   // Auto-scroll to latest message
   useEffect(() => {

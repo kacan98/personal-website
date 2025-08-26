@@ -17,7 +17,9 @@
       "WebFetch(domain:www.ksred.com)",
       "WebFetch(domain:github.com)",
       "Bash(grep:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(curl:*)",
+      "Bash(/dev/null)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

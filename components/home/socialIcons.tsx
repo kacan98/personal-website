@@ -1,14 +1,15 @@
+'use client';
+
 import { Box, Grid, IconButton, Tooltip, Zoom } from "@mui/material";
-import { getSocials } from "@/data-utils";
 import { SUPPORTED_ICONS } from "@/components/icon";
 import { Link } from "@/types";
 
 type SocialProps = {
   direction?: "row" | "column";
+  socials: Link[];
 };
 
-const SocialIcons = async ({ direction }: SocialProps) => {
-  const socials = await getSocials();
+const SocialIcons = ({ direction, socials }: SocialProps) => {
   return (    <Box
       sx={{
         position: "fixed",

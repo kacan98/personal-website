@@ -1,5 +1,5 @@
 import GalleryPage from "@/components/pages/galery/galleryPage";
-import { getGalleries } from "@/data-utils";
+import { getGalleries } from "@/data";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  const galleries = await getGalleries();
+  const galleries = getGalleries();
   
   if (!galleries || !Array.isArray(galleries)) {
     return [];
@@ -22,7 +22,7 @@ export async function generateStaticParams() {
 
 export default async function GalleryRoute({ params }: Props) {
   const { slug } = await params;
-  const galleries = await getGalleries();
+  const galleries = getGalleries();
   
   if (!galleries || !Array.isArray(galleries)) {
     notFound();

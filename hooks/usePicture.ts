@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export type FetchImageFunction = () => Promise<string | null>;
+export type FetchImageFunction = () => Promise<string | null> | string | null;
 
 export function usePicture(fetchImageFunction: FetchImageFunction) {
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -9,7 +9,8 @@ export function usePicture(fetchImageFunction: FetchImageFunction) {
   useEffect(() => {
     const fetchPicture = async () => {
       try {
-        const imagePath = await fetchImageFunction();
+        const result = fetchImageFunction();
+        const imagePath = result instanceof Promise ? await result : result;
         if (imagePath) {
           // If it's already a full URL or starts with /, use as is
           // Otherwise assume it's a relative path

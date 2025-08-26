@@ -70,44 +70,11 @@
       }
     },
     "timeline": {
-      "title": "Karriererejse",
-      "jobs": {
-        "fullStackDeveloper": {
-          "title": "Full Stack Developer – Dynamics 365 SCM",
-          "company": "Dynaway",
-          "period": "2024 - nu",
-          "description": {
-            "0": "Udviklede backend services og API'er i X++, C# og .NET til virksomheds-ERP-software",
-            "1": "Samarbejdede med frontend og infrastruktur teams for at levere end-to-end-løsninger",
-            "2": "Fokuserede på præstationsforbedringer, debugging og kundespecifikke funktioner"
-          }
-        },
-        "frontendDeveloper": {
-          "title": "Frontend Web Developer",
-          "company": "Dynaway",
-          "period": "2020 - 2024",
-          "description": {
-            "0": "Leverede nye features og bug fixes i en Angular/Deno web application brugt af teknikere",
-            "1": "Leverede konsistent funktioner til tiden som selvlært udvikler",
-            "2": "Tog til orde for brugervenlighed og designsimplicitet i funktionsdiskussioner",
-            "3": "Ledede daglige og ugentlige Scrum meetings for et 5-personers dev team som Scrum Master"
-          }
-        },
-        "webBusinessDeveloper": {
-          "title": "Web- og Forretningsudvikling",
-          "company": "Ankeri Media",
-          "period": "2019-2020",
-          "description": {
-            "0": "Skabte virksomhedens hjemmeside og ledede branding- og opsøgningskampagner",
-            "1": "Bookede 50+ møder og sikrede nye kunder via kold opsøgning",
-            "2": "Balancerede marketing- og tekniske ansvar i et startup-miljø"
-          }
-        }
-      }
+      "title": "Karriererejse"
     }
   },
   "contact": {
-    "title": "Lad os komme i kontakt",
+    "title": "Lad os arbejde sammen",
     "subtitle": "Klar til at arbejde sammen? Jeg vil gerne høre fra dig.",
     "email": {
       "label": "Email",
