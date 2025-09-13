@@ -1,72 +1,65 @@
-"use client";
-import { ProjectCard } from "@/components/pages/galery/projectCard";
-import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
+import { ModernProjectCard } from "@/components/pages/portfolio/projects/modernProjectCard";
+import ClientProjectFilter from "@/components/pages/portfolio/projects/clientProjectFilter";
 import { Project } from "@/types";
-import { Box, Grid } from "@mui/material";
-import { animated, useTransition } from "@react-spring/web";
-import { useState } from "react";
-import { useTranslations } from 'next-intl';
+import { Box, Container } from "@mui/material";
 
 type ProjectDisplayProps = {
   projects: Project[];
+  allProjects: Project[];
+  selectedTags?: string[];
 };
 
-const ProjectDisplay = ({ projects }: ProjectDisplayProps) => {
-  const t = useTranslations('projects');
-  const [selectedTag, setSelectedTag] = useState<string>(t('allProjects'));
-
+// Modern Horizontal Cards - Clean, professional layout with image-text split
+const ProjectDisplay = ({ projects, allProjects, selectedTags }: ProjectDisplayProps) => {
+  // Get unique tags from ALL projects, not just filtered ones
   const uniqueTags = Array.from(
-    new Set(projects.flatMap((project) => project.tags)),
+    new Set(allProjects.flatMap((project) => project.tags)),
   )
     .sort()
-    //Filter out any empty strings from tags array
     .filter((tag) => !!tag);
 
-  uniqueTags.unshift(t('allProjects'));
-
-  const allProjectsText = t('allProjects');
-  const filteredProjects =
-    selectedTag && selectedTag !== allProjectsText
-      ? projects.filter((project) => project.tags.includes(selectedTag))
-      : projects;
-
-  const transitions = useTransition(filteredProjects, {
-    from: { opacity: 0, transform: "scale(0.5)", height: 0 },
-    enter: { opacity: 1, transform: "scale(1)", height: "auto" },
-    leave: { opacity: 0, transform: "scale(0.5)", height: 0 },
-    keys: (project) => project.title,
-  });
-
   return (
-    <Box p={2}>
-      <Box sx={{
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        mb: 3,
-        px: 2
-      }}>
-        <ProjectFilter
-          selectedFilter={selectedTag}
-          setSelectedFilter={setSelectedTag}
-          filters={uniqueTags}
-        />
-      </Box>
+    <Box sx={{
+      py: 6,
+      minHeight: '100vh',
+      backgroundColor: 'background.default'
+    }}>
+      <ClientProjectFilter
+        allProjects={allProjects}
+        uniqueTags={uniqueTags}
+        initialSelectedTags={selectedTags}
+      />
 
-      <Grid
-        container
-        spacing={3}
-        justifyContent={"center"}
-        alignItems={"stretch"}
-      >
-        {transitions((props, project) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.title}>
-            <animated.div style={props}>
-              <ProjectCard {...project} />
-            </animated.div>
-          </Grid>
-        ))}
-      </Grid>
+      <Container maxWidth="lg" sx={{ mt: 6 }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8, // Generous spacing between projects
+          alignItems: 'center'
+        }}>
+          {projects.map((project, index) => (
+            <Box
+              key={project.title}
+              className="modern-project-card"
+              sx={{
+                width: '100%',
+                maxWidth: '1000px',
+                opacity: 0,
+                transform: 'translateY(40px)',
+                animation: `fadeInUp 0.6s ease-out ${index * 0.15}s forwards`,
+                '@keyframes fadeInUp': {
+                  to: {
+                    opacity: 1,
+                    transform: 'translateY(0)',
+                  },
+                },
+              }}
+            >
+              <ModernProjectCard {...project} />
+            </Box>
+          ))}
+        </Box>
+      </Container>
     </Box>
   );
 };

@@ -10,6 +10,7 @@ links:
     url: "https://github.com/kacan98/my-porfolio"
     iconName: "gitHub"
 featured: false
+order: 25
 ---
 
 # Portfolio with a CMS

@@ -10,6 +10,7 @@ links:
     url: "https://buzzbuzz.vercel.app/"
     iconName: "externalLink"
 featured: false
+order: 15
 ---
 
 # Word Game

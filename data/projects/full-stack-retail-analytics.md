@@ -1,9 +1,9 @@
 ---
 $schema: ./schemas/project.schema.json
-title: "Full Stack Retail Analytics Platform"
-slug: "full-stack-retail-analytics"
+title: "Supermarket Rating App"
+slug: "supermarket-rating-app"
 image: "/images/projects/full-stack-retail-analytics-platform.png"
-description: "Comprehensive retail analytics platform to evaluate and rate supermarkets with real-time insights and community reviews."
+description: "Simple web app for rating and reviewing local supermarkets. Built with C# backend and Angular frontend."
 tags: ["C#", "SQL", "Angular", "TypeScript"]
 links:
   - title: "GitHub"
@@ -13,28 +13,29 @@ links:
     url: "https://r8tit.azurewebsites.net/"
     iconName: "externalLink"
 featured: true
+order: 30
 ---
 
-# Full Stack Retail Analytics Platform
+# Supermarket Rating App
 
-A comprehensive retail analytics platform to evaluate and rate supermarkets, demonstrating proficiency in full-stack development using C#, Microsoft SQL Server, and Angular.
+A simple web application where users can rate and review local supermarkets. Built as a learning project to practice full-stack development with Microsoft technologies.
 
-## Features
+## What it does
 
-- **Store Rating System** - Comprehensive evaluation metrics for retail locations
-- **Analytics Dashboard** - Real-time insights into store performance
-- **User Reviews** - Community-driven feedback and ratings
-- **Data Visualization** - Charts and graphs for performance metrics
-- **Administrative Panel** - Store management and moderation tools
+- **Rate Stores** - Users can give star ratings to supermarkets
+- **Write Reviews** - Add text reviews about shopping experiences
+- **Browse Ratings** - See what others think about different stores
+- **User Accounts** - Simple registration and login system
+- **Store Management** - Basic admin panel to add/edit stores
 
 ## Technology Stack
 
-- **Backend:** C#, .NET Framework, ASP.NET Web API
-- **Database:** Microsoft SQL Server
-- **Frontend:** Angular, TypeScript
-- **Deployment:** Microsoft Azure
-- **Authentication:** JWT-based user authentication
+- **Backend:** C# with ASP.NET Web API
+- **Database:** SQL Server
+- **Frontend:** Angular with TypeScript
+- **Hosting:** Microsoft Azure
+- **Authentication:** Basic JWT tokens
 
-## Key Learnings
+## What I learned
 
-This full-stack project taught me the intricacies of enterprise-level application development, from database design and API architecture to modern frontend frameworks. Working with Azure deployment gave me valuable experience with cloud hosting and CI/CD pipelines.
+This was my first full-stack project using Microsoft technologies. I learned how to set up a REST API, work with Entity Framework for database operations, and connect an Angular frontend to a C# backend. Deploying to Azure taught me about cloud hosting basics.

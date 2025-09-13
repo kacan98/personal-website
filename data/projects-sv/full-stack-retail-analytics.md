@@ -1,9 +1,9 @@
 ---
 $schema: ./schemas/project.schema.json
-title: "Full Stack Retail Analytics Platform"
-slug: "full-stack-retail-analytics"
+title: "Stormarknad Betygsapp"
+slug: "supermarket-rating-app"
 image: "/images/projects/full-stack-retail-analytics-platform.png"
-description: "Omfattande retail analytics-plattform för att utvärdera och betygsätta stormarknader med realtidsinsikter och gemenskapsrecensioner."
+description: "Enkel webbapp för att betygsätta och recensera lokala stormarknader. Byggd med C# backend och Angular frontend."
 tags: ["C#", "SQL", "Angular", "TypeScript"]
 links:
   - title: "GitHub"
@@ -13,28 +13,29 @@ links:
     url: "https://r8tit.azurewebsites.net/"
     iconName: "externalLink"
 featured: true
+order: 30
 ---
 
-# Full Stack Retail Analytics Platform
+# Stormarknad Betygsapp
 
-En omfattande retail analytics-plattform för att utvärdera och betygsätta stormarknader, som visar färdigheter i full-stack-utveckling med C#, Microsoft SQL Server och Angular.
+En enkel webbapplikation där användare kan betygsätta och recensera lokala stormarknader. Byggd som ett lärande projekt för att öva full-stack-utveckling med Microsoft-teknologier.
 
-## Funktioner
+## Vad den gör
 
-- **Butiksbetygsystem** - Omfattande utvärderingsmått för detaljhandelsplatser
-- **Analytics Dashboard** - Realtidsinsikter i butiksprestanda
-- **Användarrecensioner** - Gemenskapsdrivet feedback och betyg
-- **Datavisualisering** - Diagram och grafer för prestationsmått
-- **Administrativ Panel** - Butikshantering och modereringsverktyg
+- **Betygsätt butiker** - Användare kan ge stjärnbetyg till stormarknader
+- **Skriv recensioner** - Lägg till textrecensioner om shoppingupplevelser
+- **Bläddra bland betyg** - Se vad andra tycker om olika butiker
+- **Användarkonton** - Enkel registrering och inloggningssystem
+- **Butikshantering** - Grundläggande adminpanel för att lägga till/redigera butiker
 
 ## Teknisk Stack
 
-- **Backend:** C#, .NET Framework, ASP.NET Web API
-- **Databas:** Microsoft SQL Server
-- **Frontend:** Angular, TypeScript
-- **Deployment:** Microsoft Azure
-- **Autentisering:** JWT-baserad användarautentisering
+- **Backend:** C# med ASP.NET Web API
+- **Databas:** SQL Server
+- **Frontend:** Angular med TypeScript
+- **Hosting:** Microsoft Azure
+- **Autentisering:** Grundläggande JWT-tokens
 
-## Viktiga Lärdomar
+## Vad jag lärde mig
 
-Detta full-stack-projekt lärde mig komplexiteten i företagsnivå applikationsutveckling, från databasdesign och API-arkitektur till moderna frontend-ramverk. Att arbeta med Azure-deployment gav mig värdefull erfarenhet av molnhosting och CI/CD-pipelines.
+Detta var mitt första full-stack-projekt med Microsoft-teknologier. Jag lärde mig hur man sätter upp ett REST API, arbetar med Entity Framework för databasoperationer, och kopplar en Angular frontend till en C# backend. Att distribuera till Azure lärde mig om grundläggande molnhosting.

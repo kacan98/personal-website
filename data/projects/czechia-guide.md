@@ -13,6 +13,7 @@ links:
     url: "https://github.com/kacan98/czechGuide"
     iconName: "gitHub"
 featured: false
+order: 10
 ---
 
 # Czechia Guide

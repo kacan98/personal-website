@@ -1,6 +1,6 @@
 ---
 $schema: ./schemas/project.schema.json
-title: "MMMobile-First Sports Team Organizer"
+title: "Mobile-First Sports Team Organizer"
 slug: "sports-team-organizer"
 image: "/images/projects/mobile-first-sports-team-organizer.png"
 description: "A collaboratively developed sports team organizer application to automate team division, score collection, and reporting for paddle tennis and pool."
@@ -13,6 +13,7 @@ links:
     url: "https://josef-kriz.github.io/team-app/"
     iconName: "externalLink"
 featured: true
+order: 90
 ---
 
 # Mobile-First Sports Team Organizer

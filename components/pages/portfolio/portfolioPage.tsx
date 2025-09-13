@@ -1,5 +1,5 @@
 import React from "react";
-import ProjectDisplay from "@/components/pages/portfolio/projects/projectDisplay";
+import ClientProjectDisplay from "@/components/pages/portfolio/projects/clientProjectDisplay";
 import PageWrapper from "@/components/pages/pageWrapper";
 import { readMarkdownFiles } from "@/lib/markdown";
 import { Project } from "@/types";
@@ -16,13 +16,21 @@ async function PortfolioPage({ title, locale }: PortfolioPageProps) {
   } else if (locale === 'sv') {
     projectsFolder = 'data/projects-sv';
   }
-  const projects = readMarkdownFiles<Project>(projectsFolder);
+
+  const allProjects = readMarkdownFiles<Project>(projectsFolder)
+    .sort((a: Project, b: Project) => {
+      // Sort by order field if it exists, otherwise by title
+      const orderA = (a as any).order || 999;
+      const orderB = (b as any).order || 999;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      return a.title.localeCompare(b.title);
+    });
 
   return (
     <PageWrapper title={title}>
-      <ProjectDisplay
-        projects={projects.sort((a: Project, b: Project) => a.title.localeCompare(b.title))}
-      />
+      <ClientProjectDisplay allProjects={allProjects} />
     </PageWrapper>
   );
 }

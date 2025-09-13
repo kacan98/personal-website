@@ -8,6 +8,9 @@ interface PortfolioProps {
 export default async function Portfolio({ params }: PortfolioProps) {
   const { locale } = await params;
   const t = await getTranslations('projects');
-  
-  return <PortfolioPage title={t('title')} locale={locale} />;
+
+  return <PortfolioPage
+    title={t('title')}
+    locale={locale}
+  />;
 }

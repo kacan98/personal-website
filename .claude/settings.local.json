@@ -19,7 +19,11 @@
       "Bash(grep:*)",
       "Bash(git add:*)",
       "Bash(curl:*)",
-      "Bash(/dev/null)"
+      "Bash(/dev/null)",
+      "WebFetch(domain:docs.browsermcp.io)",
+      "Bash(sed:*)",
+      "mcp__browsermcp__browser_click",
+      "mcp__browsermcp__browser_snapshot"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -1,9 +1,9 @@
 ---
 $schema: ./schemas/project.schema.json
-title: "Full Stack Retail Analytics Platform"
-slug: "full-stack-retail-analytics"
+title: "Supermarked Vurderingsapp"
+slug: "supermarket-rating-app"
 image: "/images/projects/full-stack-retail-analytics-platform.png"
-description: "Omfattende retail analytics platform til evaluering og vurdering af supermarkeder med real-time indsigter og fællesskabsanmeldelser."
+description: "Simpel webapp til vurdering og anmeldelse af lokale supermarkeder. Bygget med C# backend og Angular frontend."
 tags: ["C#", "SQL", "Angular", "TypeScript"]
 links:
   - title: "GitHub"
@@ -13,28 +13,29 @@ links:
     url: "https://r8tit.azurewebsites.net/"
     iconName: "externalLink"
 featured: true
+order: 30
 ---
 
-# Full Stack Retail Analytics Platform
+# Supermarked Vurderingsapp
 
-En omfattende retail analytics platform til evaluering og vurdering af supermarkeder, der demonstrerer færdigheder i full-stack udvikling ved hjælp af C#, Microsoft SQL Server og Angular.
+En simpel webapplikation hvor brugere kan vurdere og anmelde lokale supermarkeder. Bygget som et læringsprojekt for at øve full-stack udvikling med Microsoft teknologier.
 
-## Features
+## Hvad den gør
 
-- **Butiks Vurderingssystem** - Omfattende evalueringsmetrikker for retail lokationer
-- **Analytics Dashboard** - Real-time indsigter i butiksperformance
-- **Brugeranmeldelser** - Fællesskabsdrevet feedback og vurderinger
-- **Data Visualisering** - Diagrammer og grafer for performance metrikker
-- **Administrativt Panel** - Butiksstyring og moderationsværktøjer
+- **Vurder butikker** - Brugere kan give stjerne-vurderinger til supermarkeder
+- **Skriv anmeldelser** - Tilføj tekstanmeldelser om indkøbsoplevelser
+- **Gennemse vurderinger** - Se hvad andre synes om forskellige butikker
+- **Brugerkonti** - Simpel registrering og login-system
+- **Butiksstyring** - Grundlæggende admin-panel til at tilføje/redigere butikker
 
 ## Teknologi Stack
 
-- **Backend:** C#, .NET Framework, ASP.NET Web API
-- **Database:** Microsoft SQL Server
-- **Frontend:** Angular, TypeScript
-- **Deployment:** Microsoft Azure
-- **Autentificering:** JWT-baseret brugerautentificering
+- **Backend:** C# med ASP.NET Web API
+- **Database:** SQL Server
+- **Frontend:** Angular med TypeScript
+- **Hosting:** Microsoft Azure
+- **Autentificering:** Grundlæggende JWT tokens
 
-## Vigtige Læringer
+## Hvad jeg lærte
 
-Dette full-stack projekt lærte mig kompleksiteten i enterprise-level applikationsudvikling, fra database design og API arkitektur til moderne frontend frameworks. At arbejde med Azure deployment gav mig værdifuld erfaring med cloud hosting og CI/CD pipelines.
+Dette var mit første full-stack projekt med Microsoft teknologier. Jeg lærte hvordan man sætter en REST API op, arbejder med Entity Framework til database operationer, og forbinder en Angular frontend til en C# backend. At deploye til Azure lærte mig om grundlæggende cloud hosting.

@@ -1,6 +1,6 @@
 ---
 $schema: ./schemas/project.schema.json
-title: "MMMobil-Första Idrottslag Organisatör"
+title: "Mobil-Första Idrottslag Organisatör"
 slug: "sports-team-organizer"
 image: "/images/projects/mobile-first-sports-team-organizer.png"
 description: "En kollaborativt utvecklad idrottslag organisatör applikation för att automatisera lagindelning, poängsamling och rapportering för padel tennis och pool."
@@ -13,6 +13,7 @@ links:
     url: "https://josef-kriz.github.io/team-app/"
     iconName: "externalLink"
 featured: true
+order: 90
 ---
 
 # Mobil-Första Idrottslag Organisatör

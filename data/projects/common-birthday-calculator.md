@@ -12,7 +12,8 @@ links:
   - title: "Deployment"
     url: "https://kacan98.github.io/common-age-calculator/"
     iconName: "externalLink"
-featured: false 
+featured: false
+order: 95 
 ---
 
 # Common Birthday Calculator

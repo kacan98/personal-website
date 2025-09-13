@@ -13,6 +13,7 @@ links:
     url: "https://kacan98.github.io/buying-vs-renting/"
     iconName: "externalLink"
 featured: true
+order: 20
 ---
 
 # Ejendomstransaktionsanalyse - Køb vs Leje
