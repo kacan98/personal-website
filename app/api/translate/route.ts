@@ -9,6 +9,15 @@ export type CvTranslateParams = {
 export const runtime = 'nodejs';
 
 export async function POST(req: Request): Promise<Response> {
+  // Check if in production mode and disable endpoint
+  if (process.env.NODE_ENV === 'production') {
+    console.log('POST /api/translate - Blocked in production mode')
+    return new Response(JSON.stringify({ error: 'This endpoint is disabled in production mode' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' }
+    })
+  }
+
   const body: CvTranslateParams = await req.json()
 
   const openai = new OpenAI({

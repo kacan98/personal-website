@@ -24,6 +24,15 @@ export async function POST(req: Request): Promise<Response> {
   try {
     console.log('POST /api/position-summary - Starting request')
 
+    // Check if in production mode and disable endpoint
+    if (process.env.NODE_ENV === 'production') {
+      console.log('POST /api/position-summary - Blocked in production mode')
+      return new Response(JSON.stringify({ error: 'This endpoint is disabled in production mode' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+
     // Parse request body
     let body: PositionSummarizeParams
     try {
