@@ -126,6 +126,9 @@ const ManualAdjustmentModal = ({
 
   const actions = (
     <>
+      <Button variant="outline" onClick={onClose} disabled={isLoading}>
+        Close
+      </Button>
       <Button variant="secondary" onClick={handleClose} disabled={isLoading}>
         Cancel
       </Button>

@@ -1,5 +1,5 @@
 "use client";
-import { Box, Tooltip, IconButton } from "@mui/material";
+import { Box, Tooltip, IconButton, Typography } from "@mui/material";
 import {
   Work as WorkIcon,
   Email as EmailIcon,
@@ -9,12 +9,99 @@ import {
   CheckCircle as CheckCircleIcon,
   ExpandLess as ExpandLessIcon,
   Edit as EditIcon,
+  Speed as SpeedIcon,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactElement } from "react";
+
+// Reusable component for sidebar action buttons
+interface SidebarActionButtonProps {
+  icon: ReactElement;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+  completed?: boolean;
+}
+
+const SidebarActionButton = ({
+  icon,
+  label,
+  onClick,
+  disabled = false,
+  completed = false
+}: SidebarActionButtonProps) => {
+  return (
+    <Tooltip title={label} placement="left" arrow>
+      <span>
+        <IconButton
+          onClick={onClick}
+          disabled={disabled}
+          sx={{
+            width: 48,
+            height: 48,
+            borderRadius: 2,
+            position: 'relative',
+            backgroundColor: disabled
+              ? 'rgba(0, 0, 0, 0.04)'
+              : completed
+              ? 'rgba(16, 185, 129, 0.15)'
+              : 'rgba(25, 118, 210, 0.12)',
+            color: disabled
+              ? 'text.disabled'
+              : completed
+              ? '#10b981'
+              : 'primary.main',
+            border: '2px solid',
+            borderColor: disabled
+              ? 'rgba(0, 0, 0, 0.12)'
+              : completed
+              ? '#10b981'
+              : 'primary.main',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              backgroundColor: disabled
+                ? 'rgba(0, 0, 0, 0.04)'
+                : completed
+                ? 'rgba(16, 185, 129, 0.25)'
+                : 'primary.main',
+              color: disabled
+                ? 'text.disabled'
+                : completed
+                ? '#10b981'
+                : 'primary.contrastText',
+              transform: disabled ? 'none' : 'scale(1.05)',
+            },
+            '&:active': {
+              transform: disabled ? 'none' : 'scale(0.95)',
+            },
+          }}
+        >
+          {icon}
+          {completed && (
+            <CheckCircleIcon
+              sx={{
+                position: 'absolute',
+                top: -4,
+                right: -4,
+                width: 16,
+                height: 16,
+                color: '#10b981',
+                backgroundColor: 'background.paper',
+                borderRadius: '50%',
+                border: '2px solid',
+                borderColor: 'background.paper',
+              }}
+            />
+          )}
+        </IconButton>
+      </span>
+    </Tooltip>
+  );
+};
 
 interface CvSidebarProps {
   onAdjustForPosition: () => void;
   onManualAdjustments: () => void;
+  onManualAdjustmentsQuick: () => void;
   onViewMotivationalLetter: () => void;
   onViewPositionAnalysis: () => void;
   onTranslate: () => void;
@@ -28,6 +115,7 @@ interface CvSidebarProps {
 const CvSidebar = ({
   onAdjustForPosition,
   onManualAdjustments,
+  onManualAdjustmentsQuick,
   onViewMotivationalLetter,
   onViewPositionAnalysis,
   onTranslate,
@@ -49,7 +137,7 @@ const CvSidebar = ({
     },
     {
       id: 'manual-adjustments',
-      label: 'Manual Refinements',
+      label: 'Manual Adjustment',
       icon: <TuneIcon />,
       onClick: onManualAdjustments,
       disabled: false,
@@ -160,78 +248,132 @@ const CvSidebar = ({
 
       {!isCollapsed && (
         // Show full buttons when expanded
-        visibleButtons.map((button) => (
-        <Tooltip
-          key={button.id}
-          title={button.label}
-          placement="left"
-          arrow
-        >
-          <span> {/* Span wrapper needed for disabled tooltip */}
-            <IconButton
-              onClick={button.onClick}
-              disabled={button.disabled}
-              sx={{
-                width: 48,
-                height: 48,
-                borderRadius: 2,
-                position: 'relative',
-                backgroundColor: button.disabled
-                  ? 'rgba(0, 0, 0, 0.04)'
-                  : button.completed
-                  ? 'rgba(16, 185, 129, 0.15)'
-                  : 'rgba(25, 118, 210, 0.12)',
-                color: button.disabled
-                  ? 'text.disabled'
-                  : button.completed
-                  ? '#10b981'
-                  : 'primary.main',
-                border: '2px solid',
-                borderColor: button.disabled
-                  ? 'rgba(0, 0, 0, 0.12)'
-                  : button.completed
-                  ? '#10b981'
-                  : 'primary.main',
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  backgroundColor: button.disabled
-                    ? 'rgba(0, 0, 0, 0.04)'
-                    : button.completed
-                    ? 'rgba(16, 185, 129, 0.25)'
-                    : 'primary.main',
-                  color: button.disabled
-                    ? 'text.disabled'
-                    : button.completed
-                    ? '#10b981'
-                    : 'primary.contrastText',
-                  transform: button.disabled ? 'none' : 'scale(1.05)',
-                },
-                '&:active': {
-                  transform: button.disabled ? 'none' : 'scale(0.95)',
-                },
-              }}
-            >
-              {button.icon}
-              {button.completed && (
-                <CheckCircleIcon
-                  sx={{
-                    position: 'absolute',
-                    top: -4,
-                    right: -4,
-                    width: 16,
-                    height: 16,
-                    color: '#10b981',
-                    backgroundColor: 'background.paper',
-                    borderRadius: '50%',
-                    border: '2px solid',
-                    borderColor: 'background.paper',
-                  }}
-                />
-              )}
-            </IconButton>
-          </span>
-        </Tooltip>
-        ))
+        <>
+          {visibleButtons.map((button) => {
+            // Special handling for Manual Adjustments button with Quick Adjustment in tooltip
+            if (button.id === 'manual-adjustments') {
+              return (
+                <Tooltip
+                  key={button.id}
+                  title={
+                    <Box sx={{ p: 1 }}>
+                      <Typography variant="body2" sx={{ mb: 1.5 }}>{button.label}</Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <IconButton
+                          onClick={() => {
+                            onManualAdjustmentsQuick();
+                          }}
+                          sx={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: 2,
+                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                            color: 'primary.main',
+                            border: '2px solid',
+                            borderColor: 'primary.main',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              backgroundColor: 'primary.main',
+                              color: 'primary.contrastText',
+                              transform: 'scale(1.05)',
+                            },
+                            '&:active': {
+                              transform: 'scale(0.95)',
+                            },
+                          }}
+                        >
+                          <SpeedIcon />
+                        </IconButton>
+                        <Typography variant="caption" sx={{ color: 'inherit' }}>Quick Adjustment</Typography>
+                      </Box>
+                    </Box>
+                  }
+                  placement="left"
+                  arrow
+                  disableHoverListener={false}
+                  enterDelay={200}
+                  leaveDelay={300}
+                >
+                  <span>
+                    <IconButton
+                      onClick={button.onClick}
+                      disabled={button.disabled}
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 2,
+                        position: 'relative',
+                        backgroundColor: button.disabled
+                          ? 'rgba(0, 0, 0, 0.04)'
+                          : button.completed
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : 'rgba(25, 118, 210, 0.12)',
+                        color: button.disabled
+                          ? 'text.disabled'
+                          : button.completed
+                          ? '#10b981'
+                          : 'primary.main',
+                        border: '2px solid',
+                        borderColor: button.disabled
+                          ? 'rgba(0, 0, 0, 0.12)'
+                          : button.completed
+                          ? '#10b981'
+                          : 'primary.main',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          backgroundColor: button.disabled
+                            ? 'rgba(0, 0, 0, 0.04)'
+                            : button.completed
+                            ? 'rgba(16, 185, 129, 0.25)'
+                            : 'primary.main',
+                          color: button.disabled
+                            ? 'text.disabled'
+                            : button.completed
+                            ? '#10b981'
+                            : 'primary.contrastText',
+                          transform: button.disabled ? 'none' : 'scale(1.05)',
+                        },
+                        '&:active': {
+                          transform: button.disabled ? 'none' : 'scale(0.95)',
+                        },
+                      }}
+                    >
+                      {button.icon}
+                      {button.completed && (
+                        <CheckCircleIcon
+                          sx={{
+                            position: 'absolute',
+                            top: -4,
+                            right: -4,
+                            width: 16,
+                            height: 16,
+                            color: '#10b981',
+                            backgroundColor: 'background.paper',
+                            borderRadius: '50%',
+                            border: '2px solid',
+                            borderColor: 'background.paper',
+                          }}
+                        />
+                      )}
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              );
+            }
+
+            // Regular buttons use the SidebarActionButton component
+            return (
+              <SidebarActionButton
+                key={button.id}
+                icon={button.icon}
+                label={button.label}
+                onClick={button.onClick}
+                disabled={button.disabled}
+                completed={button.completed}
+              />
+            );
+          })}
+        </>
       )}
 
     </Box>

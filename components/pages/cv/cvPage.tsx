@@ -441,6 +441,10 @@ function CvPage({ jobDescription }: CvProps) {
         <CvSidebar
           onAdjustForPosition={() => setJobDescriptionModalOpen(true)}
           onManualAdjustments={() => setManualAdjustmentModalOpen(true)}
+          onManualAdjustmentsQuick={() => {
+            setManualAdjustmentModalOpen(true);
+            setIsManualAdjustmentMinimized(true);
+          }}
           onViewMotivationalLetter={() => setMotivationalLetterModalOpen(true)}
           onViewPositionAnalysis={() => setPositionAnalysisModalOpen(true)}
           onTranslate={() => setTranslationModalOpen(true)}
@@ -654,6 +658,7 @@ function CvPage({ jobDescription }: CvProps) {
             color: '#fff',
             display: 'flex',
             flexDirection: 'column',
+            zIndex: 1201, // Above sidebar (1000)
           }}
           open={loading}
         >
@@ -695,6 +700,16 @@ function CvPage({ jobDescription }: CvProps) {
                 )}
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant="outline"
+                  size="small"
+                  onClick={() => {
+                    setIsManualAdjustmentMinimized(false);
+                    setManualAdjustmentModalOpen(false);
+                  }}
+                >
+                  Close
+                </Button>
                 <Button
                   variant="secondary"
                   size="small"
