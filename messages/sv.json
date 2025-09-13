@@ -36,7 +36,10 @@
     "regenerateMotivationalLetter": "Generera Motivationsbrev igen",
     "translating": "Översätter...",
     "loading": "Laddar...",
-    "discussingWithAI": "Diskuterar med AI..."
+    "discussingWithAI": "Diskuterar med AI...",
+    "copyJsonTooltip": "Kopiera CV som JSON",
+    "jsonCopiedSuccess": "CV JSON kopierat till urklipp",
+    "jsonCopiedError": "Kunde inte kopiera CV JSON"
   },
   "projects": {
     "title": "Projekt",

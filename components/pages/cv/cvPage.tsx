@@ -5,15 +5,18 @@ import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
 import { useAppSelector } from "@/redux/hooks";
 import CreateIcon from '@mui/icons-material/Create';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {
   Backdrop,
   Box,
   CircularProgress,
+  IconButton,
   Paper,
   Slider,
   Snackbar,
   SnackbarCloseReason,
   TextField,
+  Tooltip,
   Typography
 } from "@mui/material";
 import Button from "@/components/ui/Button";
@@ -483,6 +486,16 @@ function CvPage({ jobDescription }: CvProps) {
     }
   };
 
+  const handleCopyJsonToClipboard = async () => {
+    try {
+      const jsonData = JSON.stringify(reduxCvProps, null, 2);
+      await navigator.clipboard.writeText(jsonData);
+      setsnackbarMessage(t('jsonCopiedSuccess'));
+    } catch (error) {
+      setsnackbarMessage(t('jsonCopiedError'));
+    }
+  };
+
   const handleTranslateBoth = async () => {
     if (selectedLanguage === 'English') {
       setsnackbarMessage('Please select a language to translate to');
@@ -563,6 +576,33 @@ function CvPage({ jobDescription }: CvProps) {
 
   return (
     <PageWrapper title={t('pageTitle')} onTitleClicked={onTitleClicked} containerMaxWidth="md">
+      <>
+      {/* Subtle JSON copy button in bottom-right corner */}
+      <Tooltip title={t('copyJsonTooltip')} placement="left">
+        <IconButton
+          onClick={handleCopyJsonToClipboard}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            zIndex: 998,
+            backgroundColor: 'background.paper',
+            color: 'text.secondary',
+            opacity: 0.3,
+            transition: 'opacity 0.2s',
+            '&:hover': {
+              opacity: 1,
+              backgroundColor: 'background.paper',
+            },
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            width: 40,
+            height: 40,
+          }}
+        >
+          <ContentCopyIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+
       {editable && (
         <>
           <Typography variant="h2" mb={2}>
@@ -974,7 +1014,8 @@ function CvPage({ jobDescription }: CvProps) {
         message={snackbarMessage}
         color="error"
       />
-    </PageWrapper >
+      </>
+    </PageWrapper>
   );
 }
 

@@ -36,7 +36,10 @@
     "regenerateMotivationalLetter": "Regenerate Motivational Letter",
     "translating": "Translating...",
     "loading": "Loading...",
-    "discussingWithAI": "Discussing with AI..."
+    "discussingWithAI": "Discussing with AI...",
+    "copyJsonTooltip": "Copy CV as JSON",
+    "jsonCopiedSuccess": "CV JSON copied to clipboard",
+    "jsonCopiedError": "Failed to copy CV JSON"
   },
   "projects": {
     "title": "Projects",
