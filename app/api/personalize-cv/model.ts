@@ -4,9 +4,9 @@ import { JobCVIntersectionResponse } from '../job-cv-intersection/model'
 
 export const CVUpgradeResponse = z.object({
   cv: z.record(z.unknown()),
-  newPositionSummary: z.string().optional(),
-  newJobIntersection: JobCVIntersectionResponse.optional(),
-  companyName: z.string().optional(),
+  newPositionSummary: z.string().nullable().optional(),
+  newJobIntersection: JobCVIntersectionResponse.nullable().optional(),
+  companyName: z.string().nullable().optional(),
 })
 
 export const personalizeCvAPIEndpointName = '/api/personalize-cv'
@@ -21,8 +21,8 @@ export const CVUpgradeParams = z.object(
   {
     cvBody: z.record(z.any()),
     positionWeAreApplyingFor: z.string(),
-    positionSummary: z.string().optional(),
-    positionIntersection: JobCVIntersectionResponse.optional(),
+    positionSummary: z.string().nullable().optional(),
+    positionIntersection: JobCVIntersectionResponse.nullable().optional(),
   }
 )
 
