@@ -27,14 +27,12 @@ const nextConfig = {
   },
   // External packages for server components
   serverExternalPackages: [
-    'openai', 
-    'three', 
+    'openai',
+    'three',
     'gsap',
     'html2canvas',
     'jspdf',
     'jspdf-autotable',
-    '@emotion/react',
-    '@emotion/styled',
     'zod'
   ],
   // Exclude packages from serverless function bundles
