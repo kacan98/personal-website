@@ -10,6 +10,7 @@ export type CVSettings = {
 };
 
 export interface CvSubSection {
+  id?: string;
   title?: string;
   subtitles?: {
     left?: string;
@@ -25,6 +26,7 @@ export interface CvSection extends CvSubSection {
 }
 
 export type BulletPoint = {
+  id?: string;
   iconName: string;
   text: string;
   url?: string;

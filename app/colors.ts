@@ -81,3 +81,24 @@ export const SHAPE_RGBA = {
   lavenderGlow: `rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
   lavenderBorder: `rgba(${SHAPE_COLORS.lavenderRgb}, 0.3)`,
 } as const;
+
+// Diff colors for text changes and modifications
+export const DIFF_COLORS = {
+  // Text changes - consistent with DiffText component
+  added: {
+    background: '#eaffea',
+    text: '#14532d',
+    border: '#14532d',
+  },
+  removed: {
+    background: '#ffecec',
+    text: '#b91c1c',
+    border: '#b91c1c',
+  },
+  // New elements (sections, bullet points, etc.)
+  new: {
+    background: 'rgba(76, 175, 80, 0.1)',
+    border: 'rgba(76, 175, 80, 0.3)',
+    accent: '#4caf50',
+  }
+} as const;

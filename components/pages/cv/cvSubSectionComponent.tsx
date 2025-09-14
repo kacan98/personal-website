@@ -25,9 +25,12 @@ export function CvSubSectionComponent({
   subSectionKey,
   isRemoved = false,
   isModified = false,
+  isNew = false,
   onRemoveSubSection,
   onRestoreSubSection,
   onSubSectionAdjusted,
+  originalSubSection,
+  showDiff = false,
 }: {
   subSection: CvSubSection;
   subSectionIndex: number;
@@ -40,23 +43,28 @@ export function CvSubSectionComponent({
   subSectionKey?: string;
   isRemoved?: boolean;
   isModified?: boolean;
+  isNew?: boolean;
   onRemoveSubSection?: (subSectionKey: string) => void;
   onRestoreSubSection?: (subSectionKey: string) => void;
   onSubSectionAdjusted?: (subSectionKey: string) => void;
+  originalSubSection?: CvSubSection;
+  showDiff?: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isAdjusting, setIsAdjusting] = useState(false);
   const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
 
-  const SuperEditableText = useCallback(({ query, ...props }: EditableTextProps) => {
-    return <EditableText 
-      {...props} 
-      query={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, ...query]} 
+  const SuperEditableText = useCallback(({ query, originalText, ...props }: EditableTextProps & { originalText?: string }) => {
+    return <EditableText
+      {...props}
+      query={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, ...query]}
       editable={editable}
       onEditStart={() => setIsAnyTextBeingEdited(true)}
       onEditEnd={() => setIsAnyTextBeingEdited(false)}
+      originalText={originalText}
+      showDiff={showDiff && !isPrintVersion}
     />;
-  }, [sideOrMain, sectionIndex, subSectionIndex, editable, setIsAnyTextBeingEdited]);
+  }, [sideOrMain, sectionIndex, subSectionIndex, editable, setIsAnyTextBeingEdited, showDiff, isPrintVersion]);
 
   const handleAdjustSubSection = async () => {
     if (!adjustSection || !positionDetails || !subSectionKey) return;
@@ -217,20 +225,49 @@ export function CvSubSectionComponent({
       )}
 
       {/* Content */}
-      <SuperEditableText query={['title']} editable={editable} variant="h5" text={subSection.title} />
+      <SuperEditableText query={['title']} variant="h5" text={subSection.title} originalText={originalSubSection?.title} />
       {subSection.subtitles && (
         <Box display="flex" justifyContent="space-between" pb={1}>
-          <SuperEditableText query={['subtitles', 'left']} editable={editable} variant="subtitle1" text={subSection.subtitles.left} />
-          <SuperEditableText query={['subtitles', 'right']} editable={editable} variant="subtitle1" text={subSection.subtitles.right} />
+          <SuperEditableText query={['subtitles', 'left']} variant="subtitle1" text={subSection.subtitles.left} originalText={originalSubSection?.subtitles?.left} />
+          <SuperEditableText query={['subtitles', 'right']} variant="subtitle1" text={subSection.subtitles.right} originalText={originalSubSection?.subtitles?.right} />
         </Box>
       )}
       {subSection.paragraphs &&
-        subSection.paragraphs.map((paragraph, idx) => (
-          <SuperEditableText query={['paragraphs', idx]} key={idx} editable={editable} variant="body1" gutterBottom text={paragraph} />
-        ))}
+        subSection.paragraphs.map((paragraph, idx) => {
+          const originalText = originalSubSection?.paragraphs?.[idx];
+          const isCompletelyNew = !originalText && idx >= (originalSubSection?.paragraphs?.length || 0);
+
+          return (
+            <SuperEditableText
+              query={['paragraphs', idx]}
+              key={idx}
+              variant="body1"
+              gutterBottom
+              text={paragraph}
+              // For completely new paragraphs, pass empty string as original to trigger full green highlighting
+              originalText={isCompletelyNew && showDiff ? "" : originalText}
+            />
+          );
+        })}
       {subSection.bulletPoints && subSection.bulletPoints.map((point, idx) => {
         if (!point.text) return <></>
-        return (<CvBulletPoint bulletPoint={point} key={idx} editable={editable} baseQuery={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', idx]} isPrintVersion={isPrintVersion} />)
+        // Find original bullet point by ID only - no index fallback
+        const originalBulletPoint = point.id ? originalSubSection?.bulletPoints?.find(b => b.id === point.id) : undefined;
+        // Check if this is a completely new bullet point
+        const isCompletelyNew = !originalBulletPoint && showDiff;
+
+        return (
+          <CvBulletPoint
+            bulletPoint={point}
+            key={point.id || idx}
+            editable={editable}
+            baseQuery={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', idx]}
+            isPrintVersion={isPrintVersion}
+            // For completely new bullets, pass an empty bullet as original to trigger full green highlighting
+            originalBulletPoint={isCompletelyNew ? { iconName: point.iconName, text: "" } : originalBulletPoint}
+            showDiff={showDiff}
+          />
+        );
       })}
     </Box>
   );

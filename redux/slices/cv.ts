@@ -1,5 +1,6 @@
 import { CVSettings } from '@/types'
 import { createSlice } from '@reduxjs/toolkit'
+import { ensureCvIds } from '@/utils/cvIds'
 
 export type UpdateSectionAction = {
   payload: {
@@ -25,12 +26,18 @@ export const cvSlice = createSlice({
         payload: CVSettings
       }
     ) => {
-      state.on = action.payload.on
-      state.name = action.payload.name
-      state.subtitle = action.payload.subtitle
-      state.mainColumn = action.payload.mainColumn
-      state.sideColumn = action.payload.sideColumn
-      state.profilePicture = action.payload.profilePicture
+      console.log('Redux initCv called - this might overwrite user edits!');
+      console.log('Current state before overwrite:', JSON.stringify(state, null, 2));
+      console.log('New payload:', JSON.stringify(action.payload, null, 2));
+
+      // Ensure all sections have IDs before storing in Redux
+      const cvWithIds = ensureCvIds(action.payload);
+      state.on = cvWithIds.on
+      state.name = cvWithIds.name
+      state.subtitle = cvWithIds.subtitle
+      state.mainColumn = cvWithIds.mainColumn
+      state.sideColumn = cvWithIds.sideColumn
+      state.profilePicture = cvWithIds.profilePicture
     },
     switchLanguage: (
       state,
@@ -38,17 +45,21 @@ export const cvSlice = createSlice({
         payload: CVSettings
       }
     ) => {
-      // Completely replace the CV data with new language data
-      return action.payload;
+      // Completely replace the CV data with new language data, ensuring IDs
+      return ensureCvIds(action.payload);
     },
     updateCv: (state, action: UpdateSectionAction) => {
       const { query, newValue } = action.payload
+
+      console.log('Redux updateCv called:', { query, newValue });
 
       let current: any = state
       for (let i = 0; i < query.length - 1; i++) {
         current = (current as any)[query[i]]
       }
       ;(current as any)[query[query.length - 1]] = newValue
+
+      console.log('Redux state after update:', JSON.stringify(state, null, 2));
     },
   },
 })

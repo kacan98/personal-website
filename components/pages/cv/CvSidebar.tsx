@@ -10,6 +10,7 @@ import {
   ExpandLess as ExpandLessIcon,
   Edit as EditIcon,
   Speed as SpeedIcon,
+  CompareArrows as CompareArrowsIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -110,6 +111,9 @@ interface CvSidebarProps {
   hasAdjustedCv: boolean;
   hasManualRefinements: boolean;
   editable: boolean;
+  showDiff: boolean;
+  onToggleDiff: () => void;
+  hasOriginalCv: boolean;
 }
 
 const CvSidebar = ({
@@ -123,7 +127,10 @@ const CvSidebar = ({
   hasPositionAnalysis,
   hasAdjustedCv,
   hasManualRefinements,
-  editable
+  editable,
+  showDiff,
+  onToggleDiff,
+  hasOriginalCv
 }: CvSidebarProps) => {
   const sidebarButtons = [
     {
@@ -170,6 +177,15 @@ const CvSidebar = ({
       disabled: false,
       visible: true,
       completed: false,
+    },
+    {
+      id: 'show-changes',
+      label: showDiff ? 'Hide Changes' : 'Show Changes',
+      icon: <CompareArrowsIcon />,
+      onClick: onToggleDiff,
+      disabled: !hasOriginalCv,
+      visible: hasOriginalCv,
+      completed: showDiff,
     },
   ];
 

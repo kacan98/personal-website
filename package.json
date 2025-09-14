@@ -30,6 +30,7 @@
     "@splinetool/runtime": "^1.10.48",
     "@types/three": "^0.177.0",
     "country-flag-icons": "^1.5.19",
+    "diff": "^8.0.2",
     "dotenv": "^16.5.0",
     "gray-matter": "^4.0.3",
     "gsap": "^3.13.0",
@@ -53,6 +54,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.5.0",
+    "@types/diff": "^7.0.2",
     "@types/node": "^20.19.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",

@@ -1,20 +1,37 @@
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import { EditableText, EditableTextExtraProps } from "@/components/editableText";
 import { SUPPORTED_ICONS } from "@/components/icon";
+import { useAppDispatch } from "@/redux/hooks";
+import { updateCv } from "@/redux/slices/cv";
 import { BulletPoint } from "@/types";
 import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { IconPicker } from "./IconPicker";
 
 export const CvBulletPoint = ({
     bulletPoint,
     editable,
     baseQuery,
-    isPrintVersion
+    isPrintVersion,
+    originalBulletPoint,
+    showDiff,
+    onDelete
 }: {
     bulletPoint: BulletPoint;
     baseQuery: EditableTextExtraProps["query"];
     editable?: boolean;
     isPrintVersion: boolean;
+    originalBulletPoint?: BulletPoint;
+    showDiff?: boolean;
+    onDelete?: () => void;
 }) => {
+    const dispatch = useAppDispatch();
+
+    const handleIconChange = (newIconName: string) => {
+        dispatch(updateCv({
+            query: [...baseQuery, 'iconName'],
+            newValue: newIconName
+        }));
+    };
     return (
         <>
             <ListItem sx={{ pt: 0, pb: 1, px: 0 }}>
@@ -32,18 +49,34 @@ export const CvBulletPoint = ({
                 >
                     <Grid container spacing={2} alignItems="center" wrap={"nowrap"}>
                         <ListItemIcon sx={{ minWidth: 'auto', mr: 1 }}>
-                            {SUPPORTED_ICONS[bulletPoint.iconName]?.component()}
+                            {editable && !isPrintVersion ? (
+                                <IconPicker
+                                    currentIconName={bulletPoint.iconName}
+                                    onIconSelect={handleIconChange}
+                                    originalIconName={originalBulletPoint?.iconName}
+                                    showDiff={showDiff}
+                                />
+                            ) : (
+                                SUPPORTED_ICONS[bulletPoint.iconName]?.component()
+                            )}
                         </ListItemIcon>
 
-                        <ListItemText 
-                            sx={{ 
+                        <ListItemText
+                            sx={{
                                 wordBreak: 'break-word',
                                 overflowWrap: 'break-word',
                                 hyphens: 'auto',
                                 m: 0
                             }}
                         >
-                            <EditableText query={[...baseQuery ,'text']} text={bulletPoint.text} editable={editable} />
+                            <EditableText
+                                query={[...baseQuery ,'text']}
+                                text={bulletPoint.text}
+                                editable={editable}
+                                originalText={originalBulletPoint?.text}
+                                showDiff={showDiff && !isPrintVersion}
+                                onDelete={onDelete}
+                            />
                         </ListItemText>
                     </Grid>
                 </ConditionalWrapper>

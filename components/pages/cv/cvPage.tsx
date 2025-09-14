@@ -32,6 +32,11 @@ import ManualAdjustmentModal from "./modals/ManualAdjustmentModal";
 import MotivationalLetterModal from "./modals/MotivationalLetterModal";
 import TranslationModal from "./modals/TranslationModal";
 import PositionAnalysisModal from "./modals/PositionAnalysisModal";
+import { CVSettings } from "@/types";
+import { deepClone } from "./utils/cvDiffTracker";
+import { getCvSettings } from "@/data";
+import { ensureCvIds } from "@/utils/cvIds";
+import { useLocale } from 'next-intl';
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -41,8 +46,33 @@ export type CvProps = {
 
 function CvPage({ jobDescription }: CvProps) {
   const t = useTranslations('cv');
+  const locale = useLocale();
   const reduxCvProps = useAppSelector((state) => state.cv);
-  const originalCvProps = useAppSelector((state) => state.cv); // For refinement baseline
+
+  // Store original CV state using useState to trigger re-renders
+  const [originalCv, setOriginalCv] = useState<CVSettings | null>(null);
+  const [showDiff, setShowDiff] = useState(false);
+
+
+  // Load original CV from data files instead of Redux to avoid capturing modified state
+  useEffect(() => {
+    if (!originalCv) {
+      try {
+        console.log('Loading original CV for diff tracking - locale:', locale);
+        const loadedOriginalCv = getCvSettings(locale);
+        // Ensure all sections have unique IDs
+        const cvWithIds = ensureCvIds(loadedOriginalCv);
+        const clonedCv = deepClone(cvWithIds);
+        console.log('Original CV loaded and cloned:', clonedCv);
+        setOriginalCv(clonedCv);
+      } catch (error) {
+        console.error('Failed to load original CV:', error);
+      }
+    } else {
+      console.log('Original CV already exists, not reloading');
+    }
+  }, [locale]); // Only load once per locale
+
 
   // Modal state
   const [jobDescriptionModalOpen, setJobDescriptionModalOpen] = useState(false);
@@ -100,7 +130,7 @@ function CvPage({ jobDescription }: CvProps) {
     })
 
   const { refineCv } = useRefineCv({
-    originalCv: originalCvProps,
+    originalCv: originalCv || reduxCvProps,
     currentCv: reduxCvProps,
     positionDetails,
     setsnackbarMessage,
@@ -453,6 +483,9 @@ function CvPage({ jobDescription }: CvProps) {
           hasAdjustedCv={cvAdjusted}
           hasManualRefinements={hasManualRefinements}
           editable={editable}
+          showDiff={showDiff}
+          onToggleDiff={() => setShowDiff(!showDiff)}
+          hasOriginalCv={!!originalCv}
         />
 
 
@@ -550,6 +583,8 @@ function CvPage({ jobDescription }: CvProps) {
             isPrintVersion
             removedSections={removedSections}
             removedSubSections={removedSubSections}
+            originalCv={originalCv}
+            showDiff={false} // Never show diffs in print version
           />}
           fontSize={fontSize}
           fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}
@@ -568,6 +603,8 @@ function CvPage({ jobDescription }: CvProps) {
             onRemoveSubSection={handleRemoveSubSection}
             onRestoreSubSection={handleRestoreSubSection}
             onSubSectionAdjusted={handleSubSectionAdjusted}
+            originalCv={originalCv}
+            showDiff={showDiff} // Show diff when enabled
           />
         </Print>
 

@@ -22,9 +22,12 @@
       "Bash(/dev/null)",
       "WebFetch(domain:docs.browsermcp.io)",
       "Bash(sed:*)",
+      "mcp__browsermcp__browser*",
       "mcp__browsermcp__browser_click",
-      "mcp__browsermcp__browser_snapshot",
-      "mcp__browsermcp__browser_get_console_logs"
+      "mcp__browsermcp__browser_navigate",
+      "mcp__browsermcp__browser_type",
+      "mcp__browsermcp__browser_screenshot",
+      "mcp__browsermcp__browser_snapshot"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

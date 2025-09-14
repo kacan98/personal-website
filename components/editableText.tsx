@@ -2,10 +2,12 @@
 import { updateCv, UpdateSectionAction } from "@/redux/slices/cv";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { TextField, Typography, TypographyProps } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { TextField, Typography, TypographyProps, Box } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { DiffText } from "@/components/ui/DiffText";
 
 export type EditableTextExtraProps = {
     text?: string;
@@ -13,14 +15,40 @@ export type EditableTextExtraProps = {
     query: UpdateSectionAction["payload"]["query"];
     onEditStart?: () => void;
     onEditEnd?: () => void;
+    originalText?: string;
+    showDiff?: boolean;
+    onDelete?: () => void;
 };
 
 export type EditableTextProps = EditableTextExtraProps & TypographyProps
 
-export function EditableText({ query, text, editable, onEditStart, onEditEnd, ...typographyProps }: EditableTextProps) {
+export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, ...typographyProps }: EditableTextProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState("");
+    const [isNarrowContainer, setIsNarrowContainer] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
+
+    // Check container width when entering edit mode
+    useEffect(() => {
+        if (isEditing && containerRef.current) {
+            const checkWidth = () => {
+                if (containerRef.current) {
+                    const width = containerRef.current.offsetWidth;
+                    // If container is less than 400px, stack buttons vertically
+                    setIsNarrowContainer(width < 400);
+                }
+            };
+
+            checkWidth();
+
+            // Add resize listener
+            const resizeObserver = new ResizeObserver(checkWidth);
+            resizeObserver.observe(containerRef.current);
+
+            return () => resizeObserver.disconnect();
+        }
+    }, [isEditing]);
 
     const handleStartEdit = () => {
         if (editable) {
@@ -55,24 +83,64 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, ..
         }
     };
 
-    return isEditing ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <TextField
-                sx={{ width: "100%" }}
-                multiline
-                type="text"
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-            />
-            <IconButton onClick={handleSave} className="save-button" color="primary" size="small">
-                <CheckIcon />
-            </IconButton>
-            <IconButton onClick={handleCancel} className="cancel-button" color="secondary" size="small">
-                <CloseIcon />
-            </IconButton>
-        </div>
-    ) : (
-            <Typography {...typographyProps} onClick={handleStartEdit}>{text}</Typography>
-    );
+
+    if (isEditing) {
+        return (
+            <Box ref={containerRef} display="flex" alignItems="flex-start" gap={1}>
+                <TextField
+                    sx={{ flex: 1 }}
+                    multiline
+                    type="text"
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                />
+                <Box
+                    display="flex"
+                    flexDirection={isNarrowContainer ? 'column' : 'row'}
+                    gap={isNarrowContainer ? 0.5 : 1}
+                >
+                    <IconButton onClick={handleSave} className="save-button" color="primary" size="small">
+                        <CheckIcon />
+                    </IconButton>
+                    <IconButton onClick={handleCancel} className="cancel-button" color="secondary" size="small">
+                        <CloseIcon />
+                    </IconButton>
+                    {onDelete && (
+                        <IconButton
+                            onClick={() => {
+                                setIsEditing(false);
+                                onDelete();
+                            }}
+                            className="delete-button"
+                            color="error"
+                            size="small"
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    )}
+                </Box>
+            </Box>
+        );
+    } else if (showDiff && originalText !== undefined && originalText !== text) {
+        // Debug logging for new content
+        if (originalText === "") {
+            console.log("EditableText: Showing diff for new content:", {
+                text: text?.substring(0, 50) + "...",
+                originalText,
+                showDiff
+            });
+        }
+        return (
+            <Typography {...typographyProps} onClick={handleStartEdit}>
+                <DiffText original={originalText} current={text} {...typographyProps} />
+            </Typography>
+        );
+    } else {
+        return (
+            <Typography {...typographyProps} onClick={handleStartEdit}>
+                {text}
+            </Typography>
+        );
+    }
 }
