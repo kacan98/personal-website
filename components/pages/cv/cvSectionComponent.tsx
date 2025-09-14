@@ -1,15 +1,10 @@
 import { EditableText, EditableTextProps } from "@/components/editableText";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { initCv, updateCv } from "@/redux/slices/cv";
+import { useAppDispatch } from "@/redux/hooks";
+import { updateCv } from "@/redux/slices/cv";
 import { CvSection } from "@/types";
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import RestoreIcon from '@mui/icons-material/Restore';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
   Box,
   Chip,
-  IconButton,
-  Tooltip,
   alpha
 } from "@mui/material";
 import { useState, useCallback } from "react";
@@ -18,7 +13,6 @@ import { CvSubSectionComponent } from "./cvSubSectionComponent";
 
 export function CvSectionComponent({
   sectionIndex,
-  sectionId,
   editable,
   sideOrMain,
   section,
@@ -64,11 +58,8 @@ export function CvSectionComponent({
   showDiff?: boolean;
 }) {
   const { title, subtitles, paragraphs, bulletPoints, subSections } = section;
-  const [isHovered, setIsHovered] = useState(false);
-  const [isAdjusting, setIsAdjusting] = useState(false);
   const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
   const dispatch = useAppDispatch();
-  const reduxCv = useAppSelector((state) => state.cv);
 
 
   const SuperEditableText = useCallback(({ query, originalText, ...props }: EditableTextProps & { originalText?: string }) => {
@@ -83,166 +74,23 @@ export function CvSectionComponent({
     />;
   }, [sideOrMain, sectionIndex, editable, setIsAnyTextBeingEdited, showDiff, isPrintVersion]);
 
-  const handleAdjustSection = async () => {
-    if (!adjustSection || !positionDetails || !sectionKey) return;
 
-    setIsAdjusting(true);
-    try {
-      const adjustedSection = await adjustSection(section, positionDetails);
-      if (adjustedSection) {
-        // Preserve the original ID to maintain diff tracking
-        adjustedSection.id = section.id;
-
-        // Also preserve IDs for subsections if they exist
-        if (adjustedSection.subSections && section.subSections) {
-          adjustedSection.subSections.forEach((subSection, index) => {
-            if (section.subSections?.[index]) {
-              subSection.id = section.subSections[index]?.id;
-            }
-          });
-        }
-
-        // Preserve bullet point IDs if they exist
-        if (adjustedSection.bulletPoints && section.bulletPoints) {
-          adjustedSection.bulletPoints.forEach((bullet, index) => {
-            if (section.bulletPoints?.[index]) {
-              bullet.id = section.bulletPoints[index]?.id;
-            }
-          });
-        }
-
-        // Update the section in Redux
-        const newCv = { ...reduxCv };
-
-        if (sideOrMain === 'mainColumn' && newCv.mainColumn) {
-          newCv.mainColumn[sectionIndex] = adjustedSection;
-        } else if (sideOrMain === 'sideColumn' && newCv.sideColumn) {
-          newCv.sideColumn[sectionIndex] = adjustedSection;
-        }
-
-        dispatch(initCv(newCv));
-
-        if (onSectionAdjusted) {
-          onSectionAdjusted(sectionKey);
-        }
-      }
-    } catch (error) {
-      console.error('Error adjusting section:', error);
-    } finally {
-      setIsAdjusting(false);
-    }
-  };
-
-  const handleRemove = () => {
-    if (onRemoveSection && sectionKey) {
-      onRemoveSection(sectionKey);
-    }
-  };
-  const handleRestore = () => {
-    if (onRestoreSection && sectionKey) {
-      onRestoreSection(sectionKey);
-    }
-  };
-
-  // Determine when to show hover actions
-  const canShowHoverActions = editable && !isPrintVersion && (positionDetails || isRemoved);
-  const shouldShowHoverEffect = isHovered && canShowHoverActions && !isAnyTextBeingEdited;
-  const showActions = shouldShowHoverEffect && !isAdjusting;
 
   return (
     <Box
       textAlign={"left"}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-      }}
       sx={{
         position: 'relative',
         backgroundColor: isRemoved
           ? alpha('#ff0000', 0.1)
           : isNew && showDiff
             ? alpha('#4caf50', 0.1) // Light green for new sections
-            : (shouldShowHoverEffect ? alpha('#1976d2', 0.05) : 'transparent'),
+            : 'transparent',
         border: isNew && showDiff ? `1px solid ${alpha('#4caf50', 0.3)}` : 'none',
         borderRadius: isNew && showDiff ? 1 : 0,
         transition: 'all 0.2s ease-in-out',
-        '&:hover': canShowHoverActions ? {
-          boxShadow: 1,
-        } : {}
       }}
     >
-      {/* Action buttons */}
-      {showActions && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: -8,
-            right: -8,
-            display: 'flex',
-            gap: 0.5,
-            zIndex: 10
-          }}
-        >
-          <Tooltip title="Adjust section for this position">
-            <IconButton
-              size="small"
-              onClick={handleAdjustSection}
-              disabled={isAdjusting}
-              sx={{
-                backgroundColor: 'secondary.main',
-                color: 'white',
-                boxShadow: 2,
-                '&:hover': {
-                  backgroundColor: 'secondary.dark',
-                },
-                '&:disabled': {
-                  backgroundColor: 'grey.400',
-                }
-              }}
-            >
-              <AutoAwesomeIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-
-          {!isRemoved && (
-            <Tooltip title="Hide this section">
-              <IconButton
-                size="small"
-                onClick={handleRemove}
-                sx={{
-                  backgroundColor: 'error.main',
-                  color: 'white',
-                  boxShadow: 2,
-                  '&:hover': {
-                    backgroundColor: 'error.dark',
-                  }
-                }}
-              >
-                <VisibilityOffIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-
-          {isRemoved && (
-            <Tooltip title="Restore this section">
-              <IconButton
-                size="small"
-                onClick={handleRestore}
-                sx={{
-                  backgroundColor: 'success.main',
-                  color: 'white',
-                  boxShadow: 2,
-                  '&:hover': {
-                    backgroundColor: 'success.dark',
-                  }
-                }}
-              >
-                <RestoreIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
-      )}
 
       {/* Status indicators */}
       {(isRemoved || isModified || isNew) && (
@@ -252,15 +100,6 @@ export function CvSectionComponent({
               label="Hidden"
               size="small"
               color="error"
-              variant="outlined"
-              sx={{ mr: 1 }}
-            />
-          )}
-          {isModified && (
-            <Chip
-              label="AI Modified"
-              size="small"
-              color="secondary"
               variant="outlined"
               sx={{ mr: 1 }}
             />
@@ -286,72 +125,121 @@ export function CvSectionComponent({
           <SuperEditableText query={["subtitles", "right"]} variant="subtitle1" text={subtitles.right} originalText={originalSection?.subtitles?.right} />
         </Box>
       )}
-      {paragraphs &&
-        paragraphs.filter(paragraph => paragraph && paragraph.trim() !== "").map((paragraph, idx) => {
-          // Note: idx here is for the filtered array, need to find original index
-          const originalIdx = paragraphs.indexOf(paragraph);
-          const originalText = originalSection?.paragraphs?.[originalIdx];
-          // A paragraph is completely new if there was no original text at this position
-          // OR if the original section had fewer paragraphs than current position
-          const isCompletelyNew = !originalText || originalIdx >= (originalSection?.paragraphs?.length || 0);
+      {(() => {
+        // Create a merged list of paragraphs showing both current and deleted items
+        const maxLength = Math.max(
+          paragraphs?.length || 0,
+          originalSection?.paragraphs?.length || 0
+        );
 
-          // Debug logging for profile section
-          if (title === "Profile") {
-            console.log(`Profile paragraph ${originalIdx}:`, {
-              paragraph: paragraph.substring(0, 50) + "...",
-              originalText: originalText ? originalText.substring(0, 50) + "..." : "undefined",
-              isCompletelyNew,
-              showDiff,
-              originalIdx,
-              originalSectionParagraphsLength: originalSection?.paragraphs?.length || 0,
-              actualOriginalTextToPass: isCompletelyNew && showDiff ? "" : originalText
+        const mergedParagraphs = [];
+        for (let i = 0; i < maxLength; i++) {
+          const currentParagraph = paragraphs?.[i];
+          const originalParagraph = originalSection?.paragraphs?.[i];
+
+          // Show item if it exists in current OR if it existed in original (to show deletions)
+          if (currentParagraph || originalParagraph) {
+            const isEmpty = !currentParagraph || currentParagraph.trim() === "";
+            const isDeleted = isEmpty && originalParagraph;
+
+            // In print version, skip deleted items
+            if (isPrintVersion && isDeleted) {
+              continue;
+            }
+
+            mergedParagraphs.push({
+              index: i,
+              current: currentParagraph || "",
+              original: originalParagraph,
+              isEmpty,
+              isDeleted,
+              isNew: currentParagraph && !originalParagraph
             });
           }
+        }
+
+        return mergedParagraphs.map(({ index, current, original, isDeleted, isNew }) => {
 
           return (
             <SuperEditableText
-              query={['paragraphs', originalIdx]}
-              key={`paragraph-${originalIdx}-${paragraph.substring(0, 20)}`}
+              query={['paragraphs', index]}
+              key={`paragraph-${index}-${(current || original || "").substring(0, 20)}`}
               variant="body1"
               gutterBottom
-              text={paragraph}
-              // For completely new paragraphs, pass empty string as original to trigger full green highlighting
-              originalText={isCompletelyNew && showDiff ? "" : originalText}
-              onDelete={editable ? () => {
-                // Delete paragraph by setting it to empty string, which will effectively remove it
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', originalIdx], newValue: "" }));
+              text={isDeleted ? "" : current}  // For deleted items, show empty current text
+              originalText={showDiff ? (isNew ? "" : original) : undefined}  // Empty string for new items to trigger green highlighting
+              onDelete={editable && !isDeleted ? () => {
+                // Delete paragraph by setting it to empty string
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: "" }));
+              } : undefined}
+              onRestore={editable && isDeleted && original ? () => {
+                // Restore deleted paragraph by setting its text back to the original
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: original }));
               } : undefined}
             />
           );
-        })}
-      {bulletPoints &&
-        bulletPoints.filter(point => point.text && point.text.trim() !== "").map((point, idx) => {
-          // Find original index for proper query construction
-          const originalIdx = bulletPoints.indexOf(point);
+        });
+      })()}
+      {(() => {
+        // Create a merged list of bullet points showing both current and deleted items
+        const maxLength = Math.max(
+          bulletPoints?.length || 0,
+          originalSection?.bulletPoints?.length || 0
+        );
 
-          // Find original bullet point by ID only - no index fallback
-          const originalBulletPoint = point.id ? originalSection?.bulletPoints?.find(b => b.id === point.id) : undefined;
-          // Check if this is a completely new bullet point
-          const isCompletelyNew = !originalBulletPoint && showDiff;
+        const mergedBulletPoints = [];
+        for (let i = 0; i < maxLength; i++) {
+          const currentPoint = bulletPoints?.[i];
+          const originalPoint = originalSection?.bulletPoints?.[i];
+
+          // Show item if it exists in current OR if it existed in original (to show deletions)
+          if (currentPoint || originalPoint) {
+            const isEmpty = !currentPoint?.text || currentPoint.text.trim() === "";
+            const isDeleted = isEmpty && originalPoint?.text;
+
+            // In print version, skip deleted items
+            if (isPrintVersion && isDeleted) {
+              continue;
+            }
+
+            mergedBulletPoints.push({
+              index: i,
+              current: currentPoint,
+              original: originalPoint,
+              isEmpty,
+              isDeleted,
+              isNew: currentPoint && !originalPoint
+            });
+          }
+        }
+
+        return mergedBulletPoints.map(({ index, current, original, isDeleted, isNew }) => {
+          // For deleted items, show empty current text so DiffText can handle the strikethrough properly
+          const displayPoint = isDeleted
+            ? { ...(original || { iconName: "default", text: "", id: `temp-${index}` }), text: "" }  // Empty text for deleted
+            : current || { iconName: "default", text: "", id: `temp-${index}` };
 
           return (
             <CvBulletPoint
-              bulletPoint={point}
-              key={point.id || `bullet-${originalIdx}`}
-              editable={editable}
-              baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', originalIdx]}
+              key={`bullet-${index}`}
+              bulletPoint={displayPoint}
+              editable={editable && !isDeleted}
+              baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', index]}
               isPrintVersion={isPrintVersion}
-              // For completely new bullets, pass an empty bullet as original to trigger full green highlighting
-              originalBulletPoint={isCompletelyNew ? { iconName: point.iconName, text: "" } : originalBulletPoint}
+              originalBulletPoint={showDiff ? (isNew ? { iconName: "", text: "" } : original) : undefined}  // Empty iconName and text for new items to trigger green highlighting
               showDiff={showDiff}
-              onDelete={editable ? () => {
+              onDelete={editable && !isDeleted ? () => {
                 // Delete bullet point by setting its text to empty string
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', originalIdx, 'text'], newValue: "" }));
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
+              } : undefined}
+              onRestore={editable && isDeleted && original ? () => {
+                // Restore deleted bullet point by setting its text back to the original
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: original.text || "" }));
               } : undefined}
             />
           );
-        }
-        )}      {subSections && (subSections.map((subSection, index) => {
+        });
+      })()}      {subSections && (subSections.map((subSection, index) => {
           const subSectionId = subSection.id || `${sectionKey}-sub-${index}`;
           const isSubRemoved = onRemoveSubSection && removedSubSections?.has(subSectionId);
           const isSubModified = onSubSectionAdjusted && modifiedSubSections?.has(subSectionId);

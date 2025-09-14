@@ -1,7 +1,5 @@
 import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/model'
 import { CvUpgradeParams, CvUpgradeResponse, personalizeCvAPIEndpointName } from '@/app/api/personalize-cv/model'
-import {
-} from '@/app/api/personalize-cv/route'
 import { CVSettings } from '@/types'
 import { useCallback } from 'react'
 

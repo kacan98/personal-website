@@ -3,6 +3,7 @@ import { updateCv, UpdateSectionAction } from "@/redux/slices/cv";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
+import RestoreIcon from '@mui/icons-material/Restore';
 import { TextField, Typography, TypographyProps, Box } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import React, { useState, useRef, useEffect } from "react";
@@ -18,11 +19,12 @@ export type EditableTextExtraProps = {
     originalText?: string;
     showDiff?: boolean;
     onDelete?: () => void;
+    onRestore?: () => void;
 };
 
 export type EditableTextProps = EditableTextExtraProps & TypographyProps
 
-export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, ...typographyProps }: EditableTextProps) {
+export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, onRestore, ...typographyProps }: EditableTextProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState("");
     const [isNarrowContainer, setIsNarrowContainer] = useState(false);
@@ -123,14 +125,28 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
             </Box>
         );
     } else if (showDiff && originalText !== undefined && originalText !== text) {
-        // Debug logging for new content
-        if (originalText === "") {
-            console.log("EditableText: Showing diff for new content:", {
-                text: text?.substring(0, 50) + "...",
-                originalText,
-                showDiff
-            });
+        // Check if this is a deleted item (empty current text but has original text)
+        const isDeleted = (!text || text.trim() === "") && originalText && originalText.trim() !== "";
+
+        if (isDeleted && onRestore && editable) {
+            // For deleted items, show original text with strikethrough and a restore button
+            return (
+                <Box display="flex" alignItems="center" gap={1}>
+                    <Typography {...typographyProps} sx={{ flex: 1 }}>
+                        <DiffText original={originalText} current={text} {...typographyProps} />
+                    </Typography>
+                    <IconButton
+                        onClick={onRestore}
+                        color="success"
+                        size="small"
+                        sx={{ opacity: 0.7, '&:hover': { opacity: 1 } }}
+                    >
+                        <RestoreIcon />
+                    </IconButton>
+                </Box>
+            );
         }
+
         return (
             <Typography {...typographyProps} onClick={handleStartEdit}>
                 <DiffText original={originalText} current={text} {...typographyProps} />

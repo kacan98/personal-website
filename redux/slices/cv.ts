@@ -26,10 +26,6 @@ export const cvSlice = createSlice({
         payload: CVSettings
       }
     ) => {
-      console.log('Redux initCv called - this might overwrite user edits!');
-      console.log('Current state before overwrite:', JSON.stringify(state, null, 2));
-      console.log('New payload:', JSON.stringify(action.payload, null, 2));
-
       // Ensure all sections have IDs before storing in Redux
       const cvWithIds = ensureCvIds(action.payload);
       state.on = cvWithIds.on
@@ -51,15 +47,11 @@ export const cvSlice = createSlice({
     updateCv: (state, action: UpdateSectionAction) => {
       const { query, newValue } = action.payload
 
-      console.log('Redux updateCv called:', { query, newValue });
-
       let current: any = state
       for (let i = 0; i < query.length - 1; i++) {
         current = (current as any)[query[i]]
       }
       ;(current as any)[query[query.length - 1]] = newValue
-
-      console.log('Redux state after update:', JSON.stringify(state, null, 2));
     },
   },
 })

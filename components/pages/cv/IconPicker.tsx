@@ -10,9 +10,9 @@ import {
   Tooltip,
   Typography
 } from "@mui/material";
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 
-export const IconPicker = ({
+export const IconPicker = React.memo(function IconPicker({
   currentIconName,
   onIconSelect,
   disabled = false,
@@ -24,7 +24,7 @@ export const IconPicker = ({
   disabled?: boolean;
   originalIconName?: string;
   showDiff?: boolean;
-}) => {
+}) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -46,7 +46,11 @@ export const IconPicker = ({
   };
 
   const currentIcon = SUPPORTED_ICONS[currentIconName];
-  const hasChanged = showDiff && originalIconName && originalIconName !== currentIconName;
+  // Icon should be highlighted if it's changed OR if it's completely new (originalIconName is empty/undefined)
+  const hasChanged = showDiff && (
+    (originalIconName && originalIconName !== currentIconName) ||  // Changed icon
+    (!originalIconName || originalIconName === "")                 // New icon (no original)
+  );
 
   // Filter icons based on search query
   const filteredIcons = useMemo(() => {
@@ -171,4 +175,4 @@ export const IconPicker = ({
       </Popover>
     </>
   );
-};
+});

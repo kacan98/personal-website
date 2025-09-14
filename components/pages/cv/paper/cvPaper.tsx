@@ -6,6 +6,7 @@ import { CvSection, CVSettings } from "@/types";
 import { Avatar, Box, Grid, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
 import { useLocale } from 'next-intl';
+import { getMergedSectionsForRendering } from "../utils/cvDiffAnalyzer";
 
 
 type CvPaperProps = {
@@ -103,27 +104,37 @@ export function CvPaper({
               />
             </Box>
           </Box>
-          {reduxCv.sideColumn?.map((section, index) => {
-            const sectionId = section.id || getSectionKey('sideColumn', index);
-            const isRemoved = removedSections.has(sectionId);
-            const isModified = modifiedSections.has(sectionId);
+          {(() => {
+            // Get merged sections including deleted ones for diff viewing
+            const mergedSections = originalCv && showDiff
+              ? getMergedSectionsForRendering(originalCv.sideColumn || [], reduxCv.sideColumn || [], 'sideColumn')
+              : (reduxCv.sideColumn || []).map((section, index) => ({
+                  section,
+                  sectionId: section.id || getSectionKey('sideColumn', index),
+                  isDeleted: false,
+                  isFromOriginal: false
+                }));
 
-            // Skip removed sections in print version
-            if (isPrintVersion && isRemoved) {
-              return null;
-            }
+            return mergedSections.map(({ section, sectionId, isDeleted }, renderIndex) => {
+              const isRemoved = isDeleted || removedSections.has(sectionId);
+              const isModified = !isDeleted && modifiedSections.has(sectionId);
 
-            // Find original section by ID only - no index fallback to avoid misalignment
-            const originalSection = section.id ? originalCv?.sideColumn?.find(s => s.id === section.id) : undefined;
+              // Skip removed sections in print version
+              if (isPrintVersion && isRemoved) {
+                return null;
+              }
 
-            // Check if this is a completely new section (has ID but no match in original)
-            const isNewSection = !!(section.id && !originalCv?.sideColumn?.find(s => s.id === section.id));
+              // Find original section by ID
+              const originalSection = section.id ? originalCv?.sideColumn?.find(s => s.id === section.id) : undefined;
 
-            return (
-              <Box key={section.id || index} mb={2.5}>
-                <CvSectionComponent
-                  sideOrMain="sideColumn"
-                  sectionIndex={index}
+              // Check if this is a completely new section (has ID but no match in original)
+              const isNewSection = !isDeleted && !!(section.id && !originalCv?.sideColumn?.find(s => s.id === section.id));
+
+              return (
+                <Box key={sectionId || renderIndex} mb={2.5}>
+                  <CvSectionComponent
+                    sideOrMain="sideColumn"
+                    sectionIndex={renderIndex}
                   section={section}
                   editable={editable}
                   isPrintVersion={isPrintVersion}
@@ -140,38 +151,49 @@ export function CvPaper({
                   onRestoreSubSection={onRestoreSubSection}
                   onSubSectionAdjusted={onSubSectionAdjusted}
                   removedSubSections={removedSubSections}
-                  modifiedSubSections={modifiedSubSections}
-                  originalSection={originalSection}
-                  showDiff={showDiff && !isPrintVersion}
-                />
-              </Box>
-            );
-          })}
+                    modifiedSubSections={modifiedSubSections}
+                    originalSection={originalSection}
+                    showDiff={showDiff && !isPrintVersion}
+                  />
+                </Box>
+              );
+            });
+          })()}
         </Box>
       </Grid>
       <Grid size={isResumeDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
         <Box sx={{ p: 2 }}>
-          {reduxCv.mainColumn?.map((section, index) => {
-            const sectionId = section.id || getSectionKey('mainColumn', index);
-            const isRemoved = removedSections.has(sectionId);
-            const isModified = modifiedSections.has(sectionId);
+          {(() => {
+            // Get merged sections including deleted ones for diff viewing
+            const mergedSections = originalCv && showDiff
+              ? getMergedSectionsForRendering(originalCv.mainColumn || [], reduxCv.mainColumn || [], 'mainColumn')
+              : (reduxCv.mainColumn || []).map((section, index) => ({
+                  section,
+                  sectionId: section.id || getSectionKey('mainColumn', index),
+                  isDeleted: false,
+                  isFromOriginal: false
+                }));
 
-            // Skip removed sections in print version
-            if (isPrintVersion && isRemoved) {
-              return null;
-            }
+            return mergedSections.map(({ section, sectionId, isDeleted }, renderIndex) => {
+              const isRemoved = isDeleted || removedSections.has(sectionId);
+              const isModified = !isDeleted && modifiedSections.has(sectionId);
 
-            // Find original section by ID only - no index fallback to avoid misalignment
-            const originalSection = section.id ? originalCv?.mainColumn?.find(s => s.id === section.id) : undefined;
+              // Skip removed sections in print version
+              if (isPrintVersion && isRemoved) {
+                return null;
+              }
 
-            // Check if this is a completely new section (has ID but no match in original)
-            const isNewSection = !!(section.id && !originalCv?.mainColumn?.find(s => s.id === section.id));
+              // Find original section by ID
+              const originalSection = section.id ? originalCv?.mainColumn?.find(s => s.id === section.id) : undefined;
 
-            return (
-              <Box key={section.id || index} sx={{ mt: index === 1 ? 4 : 0 }}>
-                <CvSectionComponent
-                  sideOrMain="mainColumn"
-                  sectionIndex={index}
+              // Check if this is a completely new section (has ID but no match in original)
+              const isNewSection = !isDeleted && !!(section.id && !originalCv?.mainColumn?.find(s => s.id === section.id));
+
+              return (
+                <Box key={sectionId || renderIndex} sx={{ mt: renderIndex === 1 ? 4 : 0 }}>
+                  <CvSectionComponent
+                    sideOrMain="mainColumn"
+                    sectionIndex={renderIndex}
                   sectionId={sectionId}
                   section={section}
                   editable={editable}
@@ -190,12 +212,13 @@ export function CvPaper({
                   onSubSectionAdjusted={onSubSectionAdjusted}
                   removedSubSections={removedSubSections}
                   modifiedSubSections={modifiedSubSections}
-                  originalSection={originalSection}
-                  showDiff={showDiff && !isPrintVersion}
-                />
-              </Box>
-            );
-          })}
+                    originalSection={originalSection}
+                    showDiff={showDiff && !isPrintVersion}
+                  />
+                </Box>
+              );
+            });
+          })()}
         </Box>
       </Grid>
     </Grid>

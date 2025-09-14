@@ -5,16 +5,18 @@ import { useAppDispatch } from "@/redux/hooks";
 import { updateCv } from "@/redux/slices/cv";
 import { BulletPoint } from "@/types";
 import { Grid, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import React from "react";
 import { IconPicker } from "./IconPicker";
 
-export const CvBulletPoint = ({
+export const CvBulletPoint = React.memo(function CvBulletPoint({
     bulletPoint,
     editable,
     baseQuery,
     isPrintVersion,
     originalBulletPoint,
     showDiff,
-    onDelete
+    onDelete,
+    onRestore
 }: {
     bulletPoint: BulletPoint;
     baseQuery: EditableTextExtraProps["query"];
@@ -23,7 +25,8 @@ export const CvBulletPoint = ({
     originalBulletPoint?: BulletPoint;
     showDiff?: boolean;
     onDelete?: () => void;
-}) => {
+    onRestore?: () => void;
+}) {
     const dispatch = useAppDispatch();
 
     const handleIconChange = (newIconName: string) => {
@@ -76,6 +79,7 @@ export const CvBulletPoint = ({
                                 originalText={originalBulletPoint?.text}
                                 showDiff={showDiff && !isPrintVersion}
                                 onDelete={onDelete}
+                                onRestore={onRestore}
                             />
                         </ListItemText>
                     </Grid>
@@ -83,4 +87,4 @@ export const CvBulletPoint = ({
             </ListItem>
         </>
     )
-}
+});

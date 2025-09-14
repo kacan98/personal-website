@@ -1,13 +1,10 @@
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { CvSection, CvSubSection } from "@/types";
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import RestoreIcon from '@mui/icons-material/Restore';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useAppDispatch } from "@/redux/hooks";
+import { updateCv } from "@/redux/slices/cv";
 import {
   Box,
   Chip,
-  IconButton,
-  Tooltip,
   alpha
 } from "@mui/material";
 import { useState, useCallback } from "react";
@@ -50,9 +47,8 @@ export function CvSubSectionComponent({
   originalSubSection?: CvSubSection;
   showDiff?: boolean;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isAdjusting, setIsAdjusting] = useState(false);
   const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
+  const dispatch = useAppDispatch();
 
   const SuperEditableText = useCallback(({ query, originalText, ...props }: EditableTextProps & { originalText?: string }) => {
     return <EditableText
@@ -66,140 +62,22 @@ export function CvSubSectionComponent({
     />;
   }, [sideOrMain, sectionIndex, subSectionIndex, editable, setIsAnyTextBeingEdited, showDiff, isPrintVersion]);
 
-  const handleAdjustSubSection = async () => {
-    if (!adjustSection || !positionDetails || !subSectionKey) return;
-    
-    setIsAdjusting(true);
-    try {
-      // Convert subsection to a full section format for the API
-      const sectionFormat: CvSection = {
-        title: subSection.title,
-        subtitles: subSection.subtitles,
-        paragraphs: subSection.paragraphs,
-        bulletPoints: subSection.bulletPoints,
-      };
-      
-      const adjustedSection = await adjustSection(sectionFormat, positionDetails);
-      if (adjustedSection && onSubSectionAdjusted) {
-        onSubSectionAdjusted(subSectionKey);
-      }
-    } catch (error) {
-      console.error('Error adjusting subsection:', error);
-    } finally {
-      setIsAdjusting(false);
-    }
-  };
 
-  const handleRemove = () => {
-    if (onRemoveSubSection && subSectionKey) {
-      onRemoveSubSection(subSectionKey);
-    }
-  };
-
-  const handleRestore = () => {
-    if (onRestoreSubSection && subSectionKey) {
-      onRestoreSubSection(subSectionKey);
-    }
-  };
-
-  // Determine when to show hover actions
-  const canShowHoverActions = editable && !isPrintVersion && (positionDetails || isRemoved);
-  const shouldShowHoverEffect = isHovered && canShowHoverActions && !isAnyTextBeingEdited;
-  const showActions = shouldShowHoverEffect && !isAdjusting;
 
   return (
-    <Box 
-      key={subSectionIndex} 
+    <Box
+      key={subSectionIndex}
       mb={2}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-      }}
       sx={{
         position: 'relative',
-        backgroundColor: isRemoved ? alpha('#ff0000', 0.1) : (shouldShowHoverEffect ? alpha('#1976d2', 0.05) : 'transparent'),
+        backgroundColor: isRemoved ? alpha('#ff0000', 0.1) : 'transparent',
         transition: 'all 0.2s ease-in-out',
-        '&:hover': canShowHoverActions ? {
-          boxShadow: 1,
-        } : {},
         '@media print': {
           pageBreakInside: 'avoid',
           breakInside: 'avoid'
         }
       }}
     >
-      {/* Action buttons */}
-      {showActions && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: -8,
-            right: -8,
-            display: 'flex',
-            gap: 0.5,
-            zIndex: 10
-          }}
-        >
-          <Tooltip title="Adjust subsection for this position">
-            <IconButton
-              size="small"
-              onClick={handleAdjustSubSection}
-              disabled={isAdjusting}
-              sx={{
-                backgroundColor: 'secondary.main',
-                color: 'white',
-                boxShadow: 2,
-                '&:hover': { 
-                  backgroundColor: 'secondary.dark',
-                },
-                '&:disabled': {
-                  backgroundColor: 'grey.400',
-                }
-              }}
-            >
-              <AutoAwesomeIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          
-          {!isRemoved && (
-            <Tooltip title="Hide this subsection">
-              <IconButton
-                size="small"
-                onClick={handleRemove}
-                sx={{
-                  backgroundColor: 'error.main',
-                  color: 'white',
-                  boxShadow: 2,
-                  '&:hover': { 
-                    backgroundColor: 'error.dark',
-                  }
-                }}
-              >
-                <VisibilityOffIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-          
-          {isRemoved && (
-            <Tooltip title="Restore this subsection">
-              <IconButton
-                size="small"
-                onClick={handleRestore}
-                sx={{
-                  backgroundColor: 'success.main',
-                  color: 'white',
-                  boxShadow: 2,
-                  '&:hover': { 
-                    backgroundColor: 'success.dark',
-                  }
-                }}
-              >
-                <RestoreIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
-      )}
 
       {/* Status indicators */}
       {(isRemoved || isModified) && (
@@ -211,14 +89,6 @@ export function CvSubSectionComponent({
               color="error" 
               variant="outlined"
               sx={{ mr: 1 }}
-            />
-          )}
-          {isModified && (
-            <Chip 
-              label="AI Modified" 
-              size="small" 
-              color="secondary" 
-              variant="outlined"
             />
           )}
         </Box>
@@ -249,26 +119,66 @@ export function CvSubSectionComponent({
             />
           );
         })}
-      {subSection.bulletPoints && subSection.bulletPoints.map((point, idx) => {
-        if (!point.text) return <></>
-        // Find original bullet point by ID only - no index fallback
-        const originalBulletPoint = point.id ? originalSubSection?.bulletPoints?.find(b => b.id === point.id) : undefined;
-        // Check if this is a completely new bullet point
-        const isCompletelyNew = !originalBulletPoint && showDiff;
-
-        return (
-          <CvBulletPoint
-            bulletPoint={point}
-            key={point.id || idx}
-            editable={editable}
-            baseQuery={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', idx]}
-            isPrintVersion={isPrintVersion}
-            // For completely new bullets, pass an empty bullet as original to trigger full green highlighting
-            originalBulletPoint={isCompletelyNew ? { iconName: point.iconName, text: "" } : originalBulletPoint}
-            showDiff={showDiff}
-          />
+      {(() => {
+        // Create a merged list of bullet points showing both current and deleted items
+        const maxLength = Math.max(
+          subSection.bulletPoints?.length || 0,
+          originalSubSection?.bulletPoints?.length || 0
         );
-      })}
+
+        const mergedBulletPoints = [];
+        for (let i = 0; i < maxLength; i++) {
+          const currentPoint = subSection.bulletPoints?.[i];
+          const originalPoint = originalSubSection?.bulletPoints?.[i];
+
+          // Show item if it exists in current OR if it existed in original (to show deletions)
+          if (currentPoint || originalPoint) {
+            const isEmpty = !currentPoint?.text || currentPoint.text.trim() === "";
+            const isDeleted = isEmpty && originalPoint?.text;
+
+            // In print version, skip deleted items
+            if (isPrintVersion && isDeleted) {
+              continue;
+            }
+
+            mergedBulletPoints.push({
+              index: i,
+              current: currentPoint,
+              original: originalPoint,
+              isEmpty,
+              isDeleted,
+              isNew: currentPoint && !originalPoint
+            });
+          }
+        }
+
+        return mergedBulletPoints.map(({ index, current, original, isDeleted, isNew }) => {
+          // For deleted items, show empty current text so DiffText can handle the strikethrough properly
+          const displayPoint = isDeleted
+            ? { ...(original || { iconName: "default", text: "", id: `temp-${index}` }), text: "" }  // Empty text for deleted
+            : current || { iconName: "default", text: "", id: `temp-${index}` };
+
+          return (
+            <CvBulletPoint
+              key={`subsection-bullet-${index}`}
+              bulletPoint={displayPoint}
+              editable={editable && !isDeleted}
+              baseQuery={[sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index]}
+              isPrintVersion={isPrintVersion}
+              originalBulletPoint={showDiff ? (isNew ? { iconName: "", text: "" } : original) : undefined}  // Empty iconName and text for new items to trigger green highlighting
+              showDiff={showDiff}
+              onDelete={editable && !isDeleted ? () => {
+                // Delete bullet point by setting its text to empty string
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
+              } : undefined}
+              onRestore={editable && isDeleted && original ? () => {
+                // Restore deleted bullet point by setting its text back to the original
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index, 'text'], newValue: original.text || "" }));
+              } : undefined}
+            />
+          );
+        });
+      })()}
     </Box>
   );
 }

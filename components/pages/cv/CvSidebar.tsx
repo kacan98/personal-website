@@ -114,6 +114,7 @@ interface CvSidebarProps {
   showDiff: boolean;
   onToggleDiff: () => void;
   hasOriginalCv: boolean;
+  hasChanges: boolean;
 }
 
 const CvSidebar = ({
@@ -130,7 +131,8 @@ const CvSidebar = ({
   editable,
   showDiff,
   onToggleDiff,
-  hasOriginalCv
+  hasOriginalCv,
+  hasChanges
 }: CvSidebarProps) => {
   const sidebarButtons = [
     {
@@ -183,8 +185,8 @@ const CvSidebar = ({
       label: showDiff ? 'Hide Changes' : 'Show Changes',
       icon: <CompareArrowsIcon />,
       onClick: onToggleDiff,
-      disabled: !hasOriginalCv,
-      visible: hasOriginalCv,
+      disabled: !hasOriginalCv || !hasChanges,
+      visible: hasChanges && hasOriginalCv,
       completed: showDiff,
     },
   ];

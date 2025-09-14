@@ -585,33 +585,29 @@ const ICON_CATEGORIES = {
   other: [] // Will be filled automatically with remaining icons
 };
 
-// Create prioritized icon list
-const createPrioritizedIconList = () => {
-  const allIconKeys = Object.keys(SUPPORTED_ICONS);
-  const prioritizedKeys: string[] = [];
-  const usedKeys = new Set<string>();
+// Pre-computed prioritized icon list (calculated once at module load)
+const allIconKeys = Object.keys(SUPPORTED_ICONS);
+const prioritizedKeys: string[] = [];
+const usedKeys = new Set<string>();
 
-  // Add icons in category order
-  Object.values(ICON_CATEGORIES).forEach(categoryKeys => {
-    categoryKeys.forEach(key => {
-      if (SUPPORTED_ICONS[key] && !usedKeys.has(key)) {
-        prioritizedKeys.push(key);
-        usedKeys.add(key);
-      }
-    });
-  });
-
-  // Add remaining icons
-  allIconKeys.forEach(key => {
-    if (!usedKeys.has(key)) {
+// Add icons in category order
+Object.values(ICON_CATEGORIES).forEach(categoryKeys => {
+  categoryKeys.forEach(key => {
+    if (SUPPORTED_ICONS[key] && !usedKeys.has(key)) {
       prioritizedKeys.push(key);
+      usedKeys.add(key);
     }
   });
+});
 
-  return prioritizedKeys.map(key => ({
-    name: SUPPORTED_ICONS[key].name,
-    key
-  }));
-};
+// Add remaining icons
+allIconKeys.forEach(key => {
+  if (!usedKeys.has(key)) {
+    prioritizedKeys.push(key);
+  }
+});
 
-export const supportedIconNames = createPrioritizedIconList();
+export const supportedIconNames = prioritizedKeys.map(key => ({
+  name: SUPPORTED_ICONS[key].name,
+  key
+}));

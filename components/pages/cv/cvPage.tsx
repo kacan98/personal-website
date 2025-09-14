@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import Button from "@/components/ui/Button";
 import jsPDF from "jspdf";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useCvTools } from "./hooks/useCvTools";
 import { useRefineCv } from "./hooks/useRefineCv";
 import CvPaper from "./paper/cvPaper";
@@ -37,6 +37,7 @@ import { deepClone } from "./utils/cvDiffTracker";
 import { getCvSettings } from "@/data";
 import { ensureCvIds } from "@/utils/cvIds";
 import { useLocale } from 'next-intl';
+import { useCvDiffAnalysis } from "./utils/cvDiffAnalyzer";
 
 const DEV = process.env.NODE_ENV === "development";
 
@@ -51,27 +52,35 @@ function CvPage({ jobDescription }: CvProps) {
 
   // Store original CV state using useState to trigger re-renders
   const [originalCv, setOriginalCv] = useState<CVSettings | null>(null);
-  const [showDiff, setShowDiff] = useState(false);
-
+  const [showDiff, setShowDiff] = useState(DEV); // Enable diff view by default in development
+  const [loading, setLoading] = useState(false);
 
   // Load original CV from data files instead of Redux to avoid capturing modified state
   useEffect(() => {
     if (!originalCv) {
       try {
-        console.log('Loading original CV for diff tracking - locale:', locale);
         const loadedOriginalCv = getCvSettings(locale);
-        // Ensure all sections have unique IDs
         const cvWithIds = ensureCvIds(loadedOriginalCv);
         const clonedCv = deepClone(cvWithIds);
-        console.log('Original CV loaded and cloned:', clonedCv);
         setOriginalCv(clonedCv);
       } catch (error) {
         console.error('Failed to load original CV:', error);
       }
     } else {
-      console.log('Original CV already exists, not reloading');
     }
   }, [locale]); // Only load once per locale
+
+  // Use computed diff analysis instead of tracking state (must be declared before useEffect)
+  const cvDiffAnalysis = useCvDiffAnalysis(originalCv, reduxCvProps);
+  const { removedSections, modifiedSections, removedSubSections, modifiedSubSections, hasChanges } = cvDiffAnalysis;
+
+  // Don't auto-enable diff view - let user manually toggle it
+  // The new personalized CV should be the primary view, not a diff
+  // useEffect(() => {
+  //   if (hasChanges && !showDiff && originalCv && !loading) {
+  //     setShowDiff(true);
+  //   }
+  // }, [hasChanges, showDiff, originalCv, loading]);
 
 
   // Modal state
@@ -83,7 +92,6 @@ function CvPage({ jobDescription }: CvProps) {
 
   // Existing state (simplified)
   const [selectedLanguage, setLanguage] = useState("English");
-  const [loading, setLoading] = useState(false);
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
   const editable = titleClickedTimes >= 5 || DEV;
@@ -96,13 +104,14 @@ function CvPage({ jobDescription }: CvProps) {
   const [motivationalLetter, setMotivationalLetter] = useState<MotivationalLetterResponse | null>(null);
   const [editableMotivationalLetter, setEditableMotivationalLetter] = useState<MotivationalLetterResponse | null>(null);
   const [currentOperation, setCurrentOperation] = useState<string>(t('discussingWithAI'));
-  const [removedSections, setRemovedSections] = useState<Set<string>>(new Set());
-  const [modifiedSections, setModifiedSections] = useState<Set<string>>(new Set());
-  const [removedSubSections, setRemovedSubSections] = useState<Set<string>>(new Set());
-  const [modifiedSubSections, setModifiedSubSections] = useState<Set<string>>(new Set());
   const [cvAdjusted, setCvAdjusted] = useState(false);
   const [hasManualRefinements, setHasManualRefinements] = useState(false);
+
   const [fontSize, setFontSize] = useState(12);
+
+  // Refs for tracking job loading state
+  const jobDescriptionReceived = useRef(false);
+  const jobLoadingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Manual adjustments modal state
   const [isManualAdjustmentMinimized, setIsManualAdjustmentMinimized] = useState(false);
@@ -140,38 +149,8 @@ function CvPage({ jobDescription }: CvProps) {
 
   const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
 
-  // Callback functions for tracking section changes
-  const handleSectionAdjusted = (sectionKey: string) => {
-    setModifiedSections(prev => new Set([...prev, sectionKey]));
-  };
-
-  const handleRemoveSection = (sectionKey: string) => {
-    setRemovedSections(prev => new Set([...prev, sectionKey]));
-  };
-
-  const handleRestoreSection = (sectionKey: string) => {
-    setRemovedSections(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(sectionKey);
-      return newSet;
-    });
-  };
-
-  const handleRemoveSubSection = (subSectionKey: string) => {
-    setRemovedSubSections(prev => new Set([...prev, subSectionKey]));
-  };
-
-  const handleRestoreSubSection = (subSectionKey: string) => {
-    setRemovedSubSections(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(subSectionKey);
-      return newSet;
-    });
-  };
-
-  const handleSubSectionAdjusted = (subSectionKey: string) => {
-    setModifiedSubSections(prev => new Set([...prev, subSectionKey]));
-  };
+  // These functions are no longer needed since we use computed diff analysis
+  // Modifications are automatically detected by comparing original vs current CV state
 
   // Modal handlers
   const handleAdjustForPosition = async () => {
@@ -298,10 +277,47 @@ function CvPage({ jobDescription }: CvProps) {
   };
 
   // Effects
+  // Check for job ID in URL and start loading immediately
+  useEffect(() => {
+    const currentUrl = window.location.pathname;
+    const jobIdMatch = currentUrl.match(/\/cv\/([^\/]+)$/);
+
+    if (jobIdMatch && jobIdMatch[1]) {
+      // Job ID detected in URL, start loading immediately
+      setLoading(true);
+      setCurrentOperation('Personalizing CV and generating motivational letter...');
+
+      // Set a timeout to show failure toast if no job description comes within 10 seconds
+      jobLoadingTimeout.current = setTimeout(() => {
+        if (!jobDescriptionReceived.current) {
+          setLoading(false);
+          setCurrentOperation('Discussing with AI...');
+          setsnackbarMessage('Failed to load job description. Please try again.');
+        }
+      }, 10000);
+    }
+
+    return () => {
+      if (jobLoadingTimeout.current) {
+        clearTimeout(jobLoadingTimeout.current);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (jobDescription && jobDescription.trim().length > 0) {
+      // Mark that we received job description
+      jobDescriptionReceived.current = true;
+
+      // Clear the failure timeout
+      if (jobLoadingTimeout.current) {
+        clearTimeout(jobLoadingTimeout.current);
+        jobLoadingTimeout.current = null;
+      }
+
       setPositionDetails(jobDescription);
       setShouldAdjustCv(true);
+      // Don't clear loading state here - let handleAdjustForPosition manage it
     }
   }, [jobDescription]);
 
@@ -486,6 +502,7 @@ function CvPage({ jobDescription }: CvProps) {
           showDiff={showDiff}
           onToggleDiff={() => setShowDiff(!showDiff)}
           hasOriginalCv={!!originalCv}
+          hasChanges={hasChanges}
         />
 
 
@@ -538,44 +555,6 @@ function CvPage({ jobDescription }: CvProps) {
         )}
 
 
-        {/* CV adjustments indicator */}
-        {(modifiedSections.size > 0 || modifiedSubSections.size > 0 || removedSections.size > 0 || removedSubSections.size > 0) && (
-          <Box
-            sx={{
-              position: 'fixed',
-              top: 24,
-              right: 24,
-              zIndex: 999,
-              p: 2.5,
-              borderRadius: 2,
-              backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              color: 'text.primary',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              gap: 1,
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              backdropFilter: 'blur(8px)',
-              maxWidth: '200px'
-            }}
-          >
-            <Box sx={{ color: '#10b981', fontSize: '18px' }}>✓</Box>
-            <Typography variant="body2" sx={{ fontWeight: 500, margin: 0, color: 'text.primary' }}>
-              CV Successfully Adjusted
-            </Typography>
-            <Typography variant="caption" sx={{ margin: 0, color: 'text.secondary', fontSize: '11px' }}>
-              {modifiedSections.size + modifiedSubSections.size > 0 &&
-                `${modifiedSections.size + modifiedSubSections.size} section${modifiedSections.size + modifiedSubSections.size !== 1 ? 's' : ''} modified`
-              }
-              {(modifiedSections.size + modifiedSubSections.size > 0) && (removedSections.size + removedSubSections.size > 0) && ', '}
-              {removedSections.size + removedSubSections.size > 0 &&
-                `${removedSections.size + removedSubSections.size} removed`
-              }
-            </Typography>
-          </Box>
-        )}
 
         {/* Main CV Paper - Always visible */}
         <Print
@@ -595,16 +574,10 @@ function CvPage({ jobDescription }: CvProps) {
             adjustSection={adjustSection}
             removedSections={removedSections}
             modifiedSections={modifiedSections}
-            onRemoveSection={handleRemoveSection}
-            onRestoreSection={handleRestoreSection}
-            onSectionAdjusted={handleSectionAdjusted}
             removedSubSections={removedSubSections}
             modifiedSubSections={modifiedSubSections}
-            onRemoveSubSection={handleRemoveSubSection}
-            onRestoreSubSection={handleRestoreSubSection}
-            onSubSectionAdjusted={handleSubSectionAdjusted}
             originalCv={originalCv}
-            showDiff={showDiff} // Show diff when enabled
+            showDiff={showDiff && !!originalCv && !loading} // Show diff only when enabled AND original CV is loaded AND not loading
           />
         </Print>
 
