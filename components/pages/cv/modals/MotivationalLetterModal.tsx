@@ -3,8 +3,6 @@ import {
   TextField,
   Typography,
   Box,
-  Tabs,
-  Tab,
   Alert,
 } from "@mui/material";
 import {
@@ -39,27 +37,6 @@ interface MotivationalLetterModalProps {
   _handleChecked: (item: string) => () => void;
 }
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`letter-tabpanel-${index}`}
-      aria-labelledby={`letter-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
-    </div>
-  );
-}
 
 const MotivationalLetterModal = ({
   open,
@@ -80,7 +57,6 @@ const MotivationalLetterModal = ({
   checked,
   _handleChecked,
 }: MotivationalLetterModalProps) => {
-  const [currentTab, setCurrentTab] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [editableText, setEditableText] = useState("");
   const [adjustmentComments, setAdjustmentComments] = useState("");
@@ -270,22 +246,24 @@ const MotivationalLetterModal = ({
       fullScreen
     >
       <>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs value={currentTab} onChange={(_, newValue) => setCurrentTab(newValue)}>
-            {letterToShow ? [
-              <Tab key="edit" label="View & Edit" />,
-              <Tab key="adjust" label="AI Adjustments" />,
-              <Tab key="translate" label="Translation" />
-            ] : [
-              <Tab key="generate" label="Generate Letter" />,
-              <Tab key="translate" label="Translation" />
-            ]}
-          </Tabs>
-        </Box>
+        {/* Main content area with persistent feedback input */}
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: letterToShow ? 'calc(100vh - 200px)' : 'auto',
+          pb: letterToShow ? 2 : 0
+        }}>
+          {/* Scrollable content area */}
+          <Box sx={{
+            flex: 1,
+            overflowY: 'auto',
+            mb: letterToShow ? 2 : 0,
+            pr: 1
+          }}>
 
-          {/* Generate Letter Tab (when no letter exists) */}
+          {/* Generate Letter Section (when no letter exists) */}
           {!letterToShow && (
-            <TabPanel value={currentTab} index={0}>
+            <>
               <Typography variant="h6" sx={{ mb: 2 }}>
                 Generate Motivational Letter
               </Typography>
@@ -333,161 +311,165 @@ const MotivationalLetterModal = ({
               >
                 {isLoading ? 'Generating Letter...' : 'Generate Motivational Letter'}
               </Button>
-
-            </TabPanel>
+            </>
           )}
 
-          {/* View & Edit Tab (when letter exists) */}
+          {/* View & Edit Section (when letter exists) */}
           {letterToShow && (
-            <TabPanel value={currentTab} index={0}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h6">Letter Content</Typography>
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                {isEditing ? (
-                  <>
-                    <Button variant="secondary" onClick={handleCancelEditing}>
-                      Cancel
-                    </Button>
-                    <Button variant="primary" onClick={handleSaveEditing}>
-                      Save Changes
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      variant="secondary"
-                      startIcon={<EditIcon />}
-                      onClick={handleStartEditing}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="primary"
-                      startIcon={<GetAppIcon />}
-                      onClick={onDownloadPDF}
-                    >
-                      Download PDF
-                    </Button>
-                  </>
+            <>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h6">Letter Content</Typography>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  {isEditing ? (
+                    <>
+                      <Button variant="secondary" onClick={handleCancelEditing}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" onClick={handleSaveEditing}>
+                        Save Changes
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="secondary"
+                        startIcon={<EditIcon />}
+                        onClick={handleStartEditing}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="primary"
+                        startIcon={<GetAppIcon />}
+                        onClick={onDownloadPDF}
+                      >
+                        Download PDF
+                      </Button>
+                    </>
+                  )}
+                </Box>
+              </Box>
+
+              {isEditing ? (
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={20}
+                  value={editableText}
+                  onChange={(e) => setEditableText(e.target.value)}
+                  placeholder="Edit your motivational letter here..."
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      fontSize: '16px',
+                      lineHeight: 1.6,
+                      fontFamily: 'inherit'
+                    }
+                  }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    p: 3,
+                    backgroundColor: 'rgba(0,0,0,0.02)',
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                    },
+                    minHeight: 400,
+                    mb: 4
+                  }}
+                  onClick={handleStartEditing}
+                >
+                  <Typography variant="body2" sx={{ fontSize: '12px', color: 'text.secondary', mb: 2, fontStyle: 'italic' }}>
+                    Click to edit
+                  </Typography>
+                  {renderLetterContent()}
+                </Box>
+              )}
+
+              {/* Translation Section */}
+              <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Translate Letter
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  Select a language to translate your motivational letter while maintaining its professional tone and structure.
+                </Typography>
+
+                <Box sx={{ mb: 3, maxWidth: 300 }}>
+                  <CvLanguageSelectionComponent
+                    selectedLanguage={selectedLanguage}
+                    handleLanguageChange={handleLanguageChange}
+                  />
+                </Box>
+
+                <Button
+                  variant="primary"
+                  startIcon={<TranslateIcon />}
+                  onClick={onTranslateLetter}
+                  disabled={selectedLanguage === 'English' || isLoading}
+                  sx={{ minWidth: 160 }}
+                >
+                  Translate Letter
+                </Button>
+
+                {selectedLanguage === 'English' && (
+                  <Alert severity="info" sx={{ mt: 2 }}>
+                    Please select a different language to translate the letter.
+                  </Alert>
                 )}
               </Box>
-            </Box>
-
-            {isEditing ? (
-              <TextField
-                fullWidth
-                multiline
-                rows={20}
-                value={editableText}
-                onChange={(e) => setEditableText(e.target.value)}
-                placeholder="Edit your motivational letter here..."
-                sx={{
-                  '& .MuiInputBase-root': {
-                    fontSize: '16px',
-                    lineHeight: 1.6,
-                    fontFamily: 'inherit'
-                  }
-                }}
-              />
-            ) : (
-              <Box
-                sx={{
-                  p: 3,
-                  backgroundColor: 'rgba(0,0,0,0.02)',
-                  borderRadius: 2,
-                  cursor: 'pointer',
-                  '&:hover': {
-                    backgroundColor: 'rgba(0,0,0,0.04)',
-                  },
-                  minHeight: 400
-                }}
-                onClick={handleStartEditing}
-              >
-                <Typography variant="body2" sx={{ fontSize: '12px', color: 'text.secondary', mb: 2, fontStyle: 'italic' }}>
-                  Click to edit
-                </Typography>
-                {renderLetterContent()}
-              </Box>
-            )}
-          </TabPanel>
+            </>
           )}
+          </Box>
 
-          {/* AI Adjustments Tab (only when letter exists) */}
+          {/* Persistent feedback input at bottom (only when letter exists) */}
           {letterToShow && (
-            <TabPanel value={currentTab} index={1}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Request AI Adjustments
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Provide specific feedback about how you&apos;d like the letter to be improved. The AI will analyze your CV to highlight relevant skills and experience that match the job requirements.
-            </Typography>
-
-            <TextField
-              fullWidth
-              multiline
-              rows={6}
-              value={adjustmentComments}
-              onChange={(e) => setAdjustmentComments(e.target.value)}
-              placeholder="Examples:
-• Highlight my React experience more prominently
-• Emphasize my leadership skills and team management experience
-• Connect my backend experience to their tech stack requirements
-• Make it more specific to this particular role and company
-• Add more enthusiasm and personality to the tone"
-              sx={{ mb: 3 }}
-              variant="outlined"
-            />
-
-            <Button
-              variant="primary"
-              startIcon={<AutoFixHighIcon />}
-              onClick={handleAdjustWithComments}
-              disabled={!adjustmentComments.trim() || isAdjusting || isLoading}
-              sx={{ minWidth: 180 }}
-            >
-              {isAdjusting ? 'Adjusting Letter...' : 'Submit Feedback & Adjust'}
-            </Button>
-          </TabPanel>
-          )}
-
-          {/* Translation Tab */}
-          <TabPanel value={currentTab} index={letterToShow ? 2 : 1}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Translate Letter
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Select a language to translate your motivational letter while maintaining its professional tone and structure.
-            </Typography>
-
-            <Box sx={{ mb: 3, maxWidth: 300 }}>
-              <CvLanguageSelectionComponent
-                selectedLanguage={selectedLanguage}
-                handleLanguageChange={handleLanguageChange}
-              />
+            <Box sx={{
+              borderTop: '1px solid',
+              borderColor: 'divider',
+              pt: 2,
+              backgroundColor: 'background.paper',
+              flexShrink: 0
+            }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                Quick Adjustments
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={adjustmentComments}
+                  onChange={(e) => setAdjustmentComments(e.target.value)}
+                  placeholder="Provide feedback on how to improve the letter while you read..."
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      fontSize: '14px',
+                      lineHeight: 1.4,
+                    }
+                  }}
+                />
+                <Button
+                  variant="primary"
+                  startIcon={<AutoFixHighIcon />}
+                  onClick={handleAdjustWithComments}
+                  disabled={!adjustmentComments.trim() || isAdjusting || isLoading}
+                  sx={{
+                    minWidth: 140,
+                    height: 'fit-content',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {isAdjusting ? 'Adjusting...' : 'Apply Changes'}
+                </Button>
+              </Box>
             </Box>
-
-            <Button
-              variant="primary"
-              startIcon={<TranslateIcon />}
-              onClick={onTranslateLetter}
-              disabled={selectedLanguage === 'English' || isLoading}
-              sx={{ minWidth: 160 }}
-            >
-              Translate Letter
-            </Button>
-
-            {selectedLanguage === 'English' && (
-              <Alert severity="info" sx={{ mt: 2 }}>
-                Please select a different language to translate the letter.
-              </Alert>
-            )}
-
-            {!letterToShow && (
-              <Alert severity="info" sx={{ mt: 2 }}>
-                Generate a motivational letter first to enable translation.
-              </Alert>
-            )}
-          </TabPanel>
+          )}
+        </Box>
       </>
     </BaseModal>
   );
