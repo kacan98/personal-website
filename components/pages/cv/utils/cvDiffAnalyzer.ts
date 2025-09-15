@@ -1,4 +1,4 @@
-import { CVSettings } from '@/types';
+import { CVSettings, CvSection, CvSubSection } from '@/types';
 
 export interface CvDiffAnalysis {
   removedSections: Set<string>;
@@ -34,7 +34,7 @@ export function analyzeCvDifferences(
   };
 
   // Helper function to find section by ID in array
-  const findSectionById = (sections: any[], sectionId: string) => {
+  const findSectionById = (sections: CvSection[], sectionId: string) => {
     return sections.find(section => section.id === sectionId);
   };
 
@@ -81,7 +81,7 @@ export function analyzeCvDifferences(
 
             // Try to find matching subsection by ID first, then by index as fallback
             const currentSubSection = originalSubSection.id
-              ? currentSection.subSections?.find((sub: any) => sub.id === originalSubSection.id)
+              ? currentSection.subSections?.find((sub: CvSubSection) => sub.id === originalSubSection.id)
               : currentSection.subSections?.[subIndex];
 
             if (!currentSubSection || !currentSubSection.title || currentSubSection.title.trim() === '') {
@@ -102,12 +102,12 @@ export function analyzeCvDifferences(
  * Creates a merged list of sections for rendering, including deleted sections
  */
 export function getMergedSectionsForRendering(
-  originalSections: any[],
-  currentSections: any[],
+  originalSections: CvSection[],
+  currentSections: CvSection[],
   columnType: 'mainColumn' | 'sideColumn'
 ) {
   const merged: Array<{
-    section: any;
+    section: CvSection;
     sectionId: string;
     isDeleted: boolean;
     isFromOriginal: boolean;

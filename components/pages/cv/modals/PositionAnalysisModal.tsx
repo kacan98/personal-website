@@ -14,7 +14,6 @@ import {
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
-import IntersectionSection from "../paper/intersectionSection";
 
 interface PositionAnalysisModalProps {
   open: boolean;
@@ -182,13 +181,6 @@ const PositionAnalysisModal = ({
           </Box>
         </Alert>
       )}
-
-      {/* Full Analysis */}
-      <IntersectionSection
-        positionIntersection={positionIntersection}
-        checked={checked}
-        handleChecked={handleChecked}
-      />
 
       {/* Action Guidance */}
       <Box sx={{ mt: 4, p: 3, backgroundColor: 'rgba(25, 118, 210, 0.08)', borderRadius: 2 }}>

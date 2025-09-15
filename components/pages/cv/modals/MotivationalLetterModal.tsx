@@ -4,6 +4,7 @@ import {
   Typography,
   Box,
   Alert,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   GetApp as GetAppIcon,
@@ -28,7 +29,7 @@ interface MotivationalLetterModalProps {
   onTranslateLetter: () => Promise<void>;
   onGenerateLetter: (positionDetails: string, checkedItems: string[], language: string) => Promise<void>;
   selectedLanguage: string;
-  handleLanguageChange: (event: any) => void;
+  handleLanguageChange: (event: SelectChangeEvent<string>) => void;
   isLoading: boolean;
   companyName?: string | null;
   positionDetails: string;

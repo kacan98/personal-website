@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText,
   Checkbox,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   Translate as TranslateIcon,
@@ -23,7 +24,7 @@ interface TranslationModalProps {
   open: boolean;
   onClose: () => void;
   selectedLanguage: string;
-  handleLanguageChange: (event: any) => void;
+  handleLanguageChange: (event: SelectChangeEvent<string>) => void;
   onTranslateBoth: () => Promise<void>;
   hasMotivationalLetter: boolean;
   isLoading: boolean;

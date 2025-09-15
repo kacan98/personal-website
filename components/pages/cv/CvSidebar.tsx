@@ -12,7 +12,7 @@ import {
   Speed as SpeedIcon,
   CompareArrows as CompareArrowsIcon,
   RestartAlt as RestartAltIcon,
-  ClearAll as ClearAllIcon,
+  DeleteSweep as DeleteSweepIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -209,7 +209,7 @@ const CvSidebar = ({
     {
       id: 'clear-cache',
       label: 'Clear AI Cache',
-      icon: <ClearAllIcon />,
+      icon: <DeleteSweepIcon />,
       onClick: onClearCache || (() => {}),
       disabled: !onClearCache,
       visible: !!onClearCache,

@@ -13,6 +13,7 @@ import {
   Box,
   CircularProgress,
   IconButton,
+  SelectChangeEvent,
   Slider,
   Snackbar,
   SnackbarCloseReason,
@@ -22,7 +23,7 @@ import {
 } from "@mui/material";
 import Button from "@/components/ui/Button";
 import jsPDF from "jspdf";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useCvTools } from "./hooks/useCvTools";
 import { useRefineCv } from "./hooks/useRefineCv";
 import CvPaper from "./paper/cvPaper";
@@ -113,6 +114,7 @@ function CvPage({ jobDescription }: CvProps) {
     fromCache: boolean;
   } | null>(null);
   const [lastCacheStatus, setLastCacheStatus] = useState<boolean | null>(null);
+  const [cacheStats, setCacheStats] = useState<{ activeEntries: number } | null>(null);
 
   const [fontSize, setFontSize] = useState(12);
 
@@ -146,6 +148,7 @@ function CvPage({ jobDescription }: CvProps) {
       setCacheStatus: (fromCache: boolean) => {
         setCacheStatusNotification({ show: true, fromCache });
         setLastCacheStatus(fromCache); // Store for sidebar indicator
+        fetchCacheStats(); // Refresh cache stats after AI operation
         // Auto-hide after 5 seconds
         setTimeout(() => {
           setCacheStatusNotification(null);
@@ -355,8 +358,8 @@ function CvPage({ jobDescription }: CvProps) {
   }, [motivationalLetter]);
 
   // Utility functions
-  const handleLanguageChange = async (l: any) => {
-    setLanguage(l.target.value);
+  const handleLanguageChange = async (event: SelectChangeEvent<string>) => {
+    setLanguage(event.target.value);
   };
 
   const handleClose = (
@@ -503,10 +506,27 @@ function CvPage({ jobDescription }: CvProps) {
     }
   };
 
+  // Fetch cache stats
+  const fetchCacheStats = useCallback(async () => {
+    try {
+      const response = await fetch('/api/cache-stats');
+      if (response.ok) {
+        const stats = await response.json();
+        setCacheStats(stats);
+      }
+    } catch (error) {
+      console.error('Error fetching cache stats:', error);
+    }
+  }, []);
+
+  // Fetch cache stats on component mount
+  useEffect(() => {
+    fetchCacheStats();
+  }, [fetchCacheStats]);
+
   // Clear AI cache
   const handleClearCache = async () => {
     try {
-      setLoading(true);
       const response = await fetch('/api/clear-cache', {
         method: 'POST',
         headers: {
@@ -519,15 +539,15 @@ function CvPage({ jobDescription }: CvProps) {
         console.log('Cache cleared:', result);
         setCacheStatusNotification(null); // Reset cache status when cache is cleared
         setLastCacheStatus(null); // Reset sidebar indicator
-        setsnackbarMessage('Cache cleared successfully');
+        fetchCacheStats(); // Refresh cache stats
+        setsnackbarMessage('✅ Cache cleared successfully');
       } else {
         console.error('Failed to clear cache');
-        setsnackbarMessage('Failed to clear cache');
+        setsnackbarMessage('❌ Failed to clear cache');
       }
     } catch (error) {
       console.error('Error clearing cache:', error);
-    } finally {
-      setLoading(false);
+      setsnackbarMessage('❌ Error clearing cache');
     }
   };
 
@@ -559,7 +579,7 @@ function CvPage({ jobDescription }: CvProps) {
           hasOriginalCv={!!originalCv}
           hasChanges={hasChanges}
           onResetToOriginal={handleResetToOriginal}
-          onClearCache={handleClearCache}
+          onClearCache={cacheStats && cacheStats.activeEntries > 0 ? handleClearCache : undefined}
           lastCacheStatus={lastCacheStatus}
         />
 
@@ -612,36 +632,6 @@ function CvPage({ jobDescription }: CvProps) {
           </Box>
         )}
 
-        {/* Cache status notification - temporary */}
-        {cacheStatusNotification?.show && (
-          <Box sx={{
-            position: 'fixed',
-            top: 20,
-            right: 20,
-            zIndex: 1100,
-            p: 2,
-            backgroundColor: cacheStatusNotification.fromCache ? 'warning.light' : 'success.light',
-            borderRadius: 2,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
-            border: '1px solid',
-            borderColor: cacheStatusNotification.fromCache ? 'warning.main' : 'success.main',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            minWidth: 280,
-            animation: 'slideInFromRight 0.3s ease-out'
-          }}>
-            <Box sx={{
-              width: 10,
-              height: 10,
-              borderRadius: '50%',
-              backgroundColor: cacheStatusNotification.fromCache ? 'warning.main' : 'success.main'
-            }} />
-            <Typography variant="body2" color={cacheStatusNotification.fromCache ? 'warning.dark' : 'success.dark'} sx={{ fontWeight: 500 }}>
-              {cacheStatusNotification.fromCache ? '⚡ Loaded from cache' : '🤖 Generated fresh by AI'}
-            </Typography>
-          </Box>
-        )}
 
         {/* Main CV Paper - Always visible */}
         <Print

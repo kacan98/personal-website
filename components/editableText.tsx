@@ -31,6 +31,7 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
     const containerRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
 
+
     // Check container width when entering edit mode
     useEffect(() => {
         if (isEditing && containerRef.current) {

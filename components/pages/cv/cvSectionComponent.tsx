@@ -4,8 +4,11 @@ import { updateCv } from "@/redux/slices/cv";
 import { CvSection } from "@/types";
 import {
   Box,
-  alpha
+  alpha,
+  IconButton,
+  Tooltip
 } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 import { useState, useCallback } from "react";
 import { CvBulletPoint } from "./bulletPoint";
 import { CvSubSectionComponent } from "./cvSubSectionComponent";
@@ -301,7 +304,41 @@ export function CvSectionComponent({
             />
           );
         });
-      })()}      {subSections && (subSections.map((subSection, index) => {
+      })()}
+      {/* Add new bullet point button */}
+      {editable && bulletPoints && bulletPoints.length > 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
+          <Tooltip title="Add bullet point">
+            <IconButton
+              onClick={() => {
+                const newIndex = bulletPoints?.length || 0;
+                dispatch(updateCv({
+                  query: [sideOrMain, sectionIndex, 'bulletPoints', newIndex, 'text'],
+                  newValue: ""
+                }));
+                dispatch(updateCv({
+                  query: [sideOrMain, sectionIndex, 'bulletPoints', newIndex, 'iconName'],
+                  newValue: "default"
+                }));
+              }}
+              size="small"
+              sx={{
+                border: '1px dashed',
+                borderColor: 'divider',
+                backgroundColor: 'transparent',
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  borderStyle: 'solid',
+                },
+              }}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
+      {subSections && (subSections.map((subSection, index) => {
           const subSectionId = subSection.id || `${sectionKey}-sub-${index}`;
           const isSubRemoved = onRemoveSubSection && removedSubSections?.has(subSectionId);
           const isSubModified = onSubSectionAdjusted && modifiedSubSections?.has(subSectionId);
@@ -339,6 +376,40 @@ export function CvSectionComponent({
             />
           );
         }))}
+      {/* Add new subsection button */}
+      {editable && subSections && subSections.length > 0 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 1, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
+          <Tooltip title="Add subsection">
+            <IconButton
+              onClick={() => {
+                const newIndex = subSections?.length || 0;
+                dispatch(updateCv({
+                  query: [sideOrMain, sectionIndex, 'subSections', newIndex],
+                  newValue: {
+                    title: "",
+                    subtitles: { left: "", right: "" },
+                    paragraphs: [""],
+                    bulletPoints: []
+                  }
+                }));
+              }}
+              size="medium"
+              sx={{
+                border: '1px dashed',
+                borderColor: 'divider',
+                backgroundColor: 'transparent',
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  borderStyle: 'solid',
+                },
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
     </Box>
   );
 }
