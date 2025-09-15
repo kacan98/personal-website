@@ -20,17 +20,27 @@ export type EditableTextExtraProps = {
     showDiff?: boolean;
     onDelete?: () => void;
     onRestore?: () => void;
+    autoEdit?: boolean;
+    onAutoDelete?: () => void;
 };
 
 export type EditableTextProps = EditableTextExtraProps & TypographyProps
 
-export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, onRestore, ...typographyProps }: EditableTextProps) {
+export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, onRestore, autoEdit = false, onAutoDelete, ...typographyProps }: EditableTextProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState("");
     const [isNarrowContainer, setIsNarrowContainer] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch();
 
+    // Auto-start editing for new empty items
+    useEffect(() => {
+        if (autoEdit && editable && (!text || text.trim() === "") && !isEditing) {
+            setEditValue(text || "");
+            setIsEditing(true);
+            onEditStart?.();
+        }
+    }, [autoEdit, editable, text, isEditing, onEditStart]);
 
     // Check container width when entering edit mode
     useEffect(() => {
@@ -64,7 +74,12 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
     const handleSave = () => {
         if (editable) {
             setIsEditing(false);
-            dispatch(updateCv({ query, newValue: editValue }));
+            // If saving empty content and onAutoDelete is provided, delete the item
+            if ((!editValue || editValue.trim() === "") && onAutoDelete) {
+                onAutoDelete();
+            } else {
+                dispatch(updateCv({ query, newValue: editValue }));
+            }
             onEditEnd?.();
         }
     };
@@ -106,14 +121,15 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
                     <IconButton onClick={handleSave} className="save-button" color="primary" size="small">
                         <CheckIcon />
                     </IconButton>
-                    <IconButton onClick={handleCancel} className="cancel-button" color="secondary" size="small">
-                        <CloseIcon />
-                    </IconButton>
-                    {onDelete && (
+
+                    {/* For new empty items (autoEdit), only show delete button, no cancel */}
+                    {autoEdit && (!text || text.trim() === "") ? (
                         <IconButton
                             onClick={() => {
                                 setIsEditing(false);
-                                onDelete();
+                                if (onAutoDelete) {
+                                    onAutoDelete();
+                                }
                             }}
                             className="delete-button"
                             color="error"
@@ -121,20 +137,39 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
                         >
                             <DeleteIcon />
                         </IconButton>
-                    )}
-                    {onRestore && (
-                        <IconButton
-                            onClick={() => {
-                                setIsEditing(false);
-                                onRestore();
-                            }}
-                            className="restore-button"
-                            color="info"
-                            size="small"
-                            title="Revert to original"
-                        >
-                            <RestoreIcon />
-                        </IconButton>
+                    ) : (
+                        <>
+                            <IconButton onClick={handleCancel} className="cancel-button" color="secondary" size="small">
+                                <CloseIcon />
+                            </IconButton>
+                            {onDelete && (
+                                <IconButton
+                                    onClick={() => {
+                                        setIsEditing(false);
+                                        onDelete();
+                                    }}
+                                    className="delete-button"
+                                    color="error"
+                                    size="small"
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            )}
+                            {onRestore && (
+                                <IconButton
+                                    onClick={() => {
+                                        setIsEditing(false);
+                                        onRestore();
+                                    }}
+                                    className="restore-button"
+                                    color="info"
+                                    size="small"
+                                    title="Revert to original"
+                                >
+                                    <RestoreIcon />
+                                </IconButton>
+                            )}
+                        </>
                     )}
                 </Box>
             </Box>

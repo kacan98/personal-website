@@ -1,6 +1,6 @@
 import { EditableText } from "@/components/editableText";
 import { usePicture } from "@/hooks/usePicture";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { getCVPicture } from "@/data";
 import { CvSection, CVSettings } from "@/types";
 import { Avatar, Box, Grid, useMediaQuery } from "@mui/material";
@@ -48,6 +48,7 @@ export function CvPaper({
 }: CvPaperProps) {
   const locale = useLocale();
   const reduxCv = useAppSelector((state) => state.cv);
+  const dispatch = useAppDispatch();
   const { imageUrl } = usePicture(() => getCVPicture(locale));
   // Custom breakpoint at 800px - we'll call it "resume breakpoint"
   // For print version, always use desktop layout regardless of media query
@@ -160,6 +161,7 @@ export function CvPaper({
               );
             });
           })()}
+
         </Box>
       </Grid>
       <Grid size={isResumeDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
@@ -221,6 +223,7 @@ export function CvPaper({
               );
             });
           })()}
+
         </Box>
       </Grid>
     </Grid>

@@ -1,7 +1,7 @@
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { CvSection, CvSubSection } from "@/types";
 import { useAppDispatch } from "@/redux/hooks";
-import { updateCv } from "@/redux/slices/cv";
+import { updateCv, removeArrayItem } from "@/redux/slices/cv";
 import {
   Box,
   alpha,
@@ -127,8 +127,13 @@ export function CvSubSectionComponent({
       <SuperEditableText
         query={['title']}
         variant="h5"
-        text={subSection.title}
+        text={subSection.title || ""}
         originalText={originalSubSection?.title}
+        autoEdit={(!subSection.title || subSection.title.trim() === "")}
+        onAutoDelete={() => {
+          // Delete the entire subsection when title is empty
+          // We need to implement subsection deletion logic here
+        }}
         onDelete={editable ? () => {
           dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'title'], newValue: "" }));
         } : undefined}
@@ -181,6 +186,11 @@ export function CvSubSectionComponent({
               text={paragraph}
               // For completely new paragraphs, pass empty string as original to trigger full green highlighting
               originalText={isCompletelyNew && showDiff ? "" : originalText}
+              autoEdit={(!paragraph || paragraph.trim() === "")}
+              onAutoDelete={() => {
+                // Remove paragraph from array
+                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', idx] }));
+              }}
               onDelete={editable ? () => {
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', idx], newValue: "" }));
               } : undefined}
@@ -191,6 +201,41 @@ export function CvSubSectionComponent({
             />
           );
         })}
+
+      {/* Add new paragraph button */}
+      {editable && subSection.paragraphs && (
+        // Show button if there are no paragraphs OR if all existing paragraphs have content
+        subSection.paragraphs.length === 0 ||
+        !subSection.paragraphs.some(p => !p || p.trim() === "")
+      ) && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
+          <Tooltip title="Add paragraph">
+            <IconButton
+              onClick={() => {
+                const newIndex = subSection.paragraphs?.length || 0;
+                dispatch(updateCv({
+                  query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', newIndex],
+                  newValue: ""
+                }));
+              }}
+              size="small"
+              sx={{
+                border: '1px dashed',
+                borderColor: 'divider',
+                backgroundColor: 'transparent',
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  borderStyle: 'solid',
+                },
+              }}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
+
       {(() => {
         // Create a merged list of bullet points showing both current and deleted items
         const maxLength = Math.max(
@@ -239,6 +284,11 @@ export function CvSubSectionComponent({
               isPrintVersion={isPrintVersion}
               originalBulletPoint={showDiff ? (isNew ? { iconName: "", text: "" } : original) : undefined}  // Empty iconName and text for new items to trigger green highlighting
               showDiff={showDiff}
+              autoEdit={(!current?.text || current.text.trim() === "")}
+              onAutoDelete={() => {
+                // Remove bullet point from array
+                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index] }));
+              }}
               onDelete={editable && !isDeleted ? () => {
                 // Delete bullet point by clearing both text and icon
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
@@ -255,6 +305,9 @@ export function CvSubSectionComponent({
       })()}
       {/* Add new bullet point button */}
       {editable && subSection.bulletPoints && subSection.bulletPoints.length > 0 && (
+        // Show button only if all existing bullet points have content
+        !subSection.bulletPoints.some(bp => !bp.text || bp.text.trim() === "")
+      ) && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 1, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
           <Tooltip title="Add bullet point">
             <IconButton

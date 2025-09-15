@@ -16,7 +16,9 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
     originalBulletPoint,
     showDiff,
     onDelete,
-    onRestore
+    onRestore,
+    autoEdit,
+    onAutoDelete
 }: {
     bulletPoint: BulletPoint;
     baseQuery: EditableTextExtraProps["query"];
@@ -26,6 +28,8 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
     showDiff?: boolean;
     onDelete?: () => void;
     onRestore?: () => void;
+    autoEdit?: boolean;
+    onAutoDelete?: () => void;
 }) {
     const dispatch = useAppDispatch();
 
@@ -78,6 +82,8 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                                 editable={editable}
                                 originalText={originalBulletPoint?.text}
                                 showDiff={showDiff && !isPrintVersion}
+                                autoEdit={autoEdit}
+                                onAutoDelete={onAutoDelete}
                                 onDelete={onDelete}
                                 onRestore={onRestore}
                             />

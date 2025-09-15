@@ -1,6 +1,6 @@
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { useAppDispatch } from "@/redux/hooks";
-import { updateCv } from "@/redux/slices/cv";
+import { updateCv, removeArrayItem } from "@/redux/slices/cv";
 import { CvSection } from "@/types";
 import {
   Box,
@@ -143,13 +143,18 @@ export function CvSectionComponent({
       {/* Status indicators removed - revert moved to context menu */}
 
       {/* Content */}
-      {title && (
+      {(title || editable) && (
         <SuperEditableText
           query={["title"]}
           variant="h4"
           mb={1}
-          text={title}
+          text={title || ""}
           originalText={isNew && showDiff ? "" : originalSection?.title}
+          autoEdit={(!title || title.trim() === "")}
+          onAutoDelete={() => {
+            // Delete the entire section when title is empty
+            // We need to implement section deletion logic here
+          }}
           onDelete={editable ? () => {
             dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'title'], newValue: "" }));
           } : undefined}
@@ -232,6 +237,11 @@ export function CvSectionComponent({
               gutterBottom
               text={isDeleted ? "" : current}  // For deleted items, show empty current text
               originalText={showDiff ? (isDeleted ? original : ((isNewItem || isNew) ? "" : original)) : undefined}  // Empty string for new items or items in new sections
+              autoEdit={(!current || current.trim() === "")}
+              onAutoDelete={() => {
+                // Remove paragraph from array
+                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'paragraphs', index] }));
+              }}
               onDelete={editable && !isDeleted ? () => {
                 // Delete paragraph by setting it to empty string
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: "" }));
@@ -244,6 +254,41 @@ export function CvSectionComponent({
           );
         });
       })()}
+
+      {/* Add new paragraph button */}
+      {editable && paragraphs && (
+        // Show button if there are no paragraphs OR if all existing paragraphs have content
+        paragraphs.length === 0 ||
+        !paragraphs.some(p => !p || p.trim() === "")
+      ) && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
+          <Tooltip title="Add paragraph">
+            <IconButton
+              onClick={() => {
+                const newIndex = paragraphs?.length || 0;
+                dispatch(updateCv({
+                  query: [sideOrMain, sectionIndex, 'paragraphs', newIndex],
+                  newValue: ""
+                }));
+              }}
+              size="small"
+              sx={{
+                border: '1px dashed',
+                borderColor: 'divider',
+                backgroundColor: 'transparent',
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  borderStyle: 'solid',
+                },
+              }}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
+
       {(() => {
         // Create a merged list of bullet points showing both current and deleted items
         const maxLength = Math.max(
@@ -292,6 +337,11 @@ export function CvSectionComponent({
               isPrintVersion={isPrintVersion}
               originalBulletPoint={showDiff ? ((isNewItem || isNew) ? { iconName: "", text: "" } : original) : undefined}  // Empty for new items or items in new sections
               showDiff={showDiff}
+              autoEdit={(!current?.text || current.text.trim() === "")}
+              onAutoDelete={() => {
+                // Remove bullet point from array
+                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'bulletPoints', index] }));
+              }}
               onDelete={editable && !isDeleted ? () => {
                 // Delete bullet point by setting its text to empty string
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
@@ -307,6 +357,9 @@ export function CvSectionComponent({
       })()}
       {/* Add new bullet point button */}
       {editable && bulletPoints && bulletPoints.length > 0 && (
+        // Show button only if all existing bullet points have content
+        !bulletPoints.some(bp => !bp.text || bp.text.trim() === "")
+      ) && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
           <Tooltip title="Add bullet point">
             <IconButton
@@ -376,40 +429,6 @@ export function CvSectionComponent({
             />
           );
         }))}
-      {/* Add new subsection button */}
-      {editable && subSections && subSections.length > 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 1, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
-          <Tooltip title="Add subsection">
-            <IconButton
-              onClick={() => {
-                const newIndex = subSections?.length || 0;
-                dispatch(updateCv({
-                  query: [sideOrMain, sectionIndex, 'subSections', newIndex],
-                  newValue: {
-                    title: "",
-                    subtitles: { left: "", right: "" },
-                    paragraphs: [""],
-                    bulletPoints: []
-                  }
-                }));
-              }}
-              size="medium"
-              sx={{
-                border: '1px dashed',
-                borderColor: 'divider',
-                backgroundColor: 'transparent',
-                color: 'text.secondary',
-                '&:hover': {
-                  backgroundColor: 'action.hover',
-                  borderStyle: 'solid',
-                },
-              }}
-            >
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      )}
     </Box>
   );
 }

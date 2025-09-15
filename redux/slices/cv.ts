@@ -9,6 +9,12 @@ export type UpdateSectionAction = {
   }
 }
 
+export type RemoveArrayItemAction = {
+  payload: {
+    query: (string | number)[] //in format mainColumn.0.paragraphs.2 (removes index 2)
+  }
+}
+
 export const cvSlice = createSlice({
   name: 'cv',
   initialState: {
@@ -95,8 +101,28 @@ export const cvSlice = createSlice({
 
       (current as Record<string | number, unknown>)[finalKey] = newValue
     },
+    removeArrayItem: (state, action: RemoveArrayItemAction) => {
+      const { query } = action.payload
+
+      // Navigate to the array that contains the item to remove
+      let current: CVSettings = state
+      for (let i = 0; i < query.length - 1; i++) {
+        const key = query[i]
+        if (current && typeof current === 'object' && key in current) {
+          current = (current as Record<string | number, unknown>)[key] as CVSettings
+        } else {
+          return // Path doesn't exist, nothing to remove
+        }
+      }
+
+      // Remove the item from the array
+      const arrayKey = query[query.length - 1]
+      if (Array.isArray(current) && typeof arrayKey === 'number') {
+        current.splice(arrayKey, 1)
+      }
+    },
   },
 })
 
 export default cvSlice
-export const { initCv, switchLanguage, updateCv } = cvSlice.actions
+export const { initCv, switchLanguage, updateCv, removeArrayItem } = cvSlice.actions
