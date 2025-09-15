@@ -11,6 +11,8 @@ import {
   Edit as EditIcon,
   Speed as SpeedIcon,
   CompareArrows as CompareArrowsIcon,
+  RestartAlt as RestartAltIcon,
+  ClearAll as ClearAllIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -115,6 +117,9 @@ interface CvSidebarProps {
   onToggleDiff: () => void;
   hasOriginalCv: boolean;
   hasChanges: boolean;
+  onResetToOriginal?: () => void;
+  onClearCache?: () => void;
+  lastCacheStatus?: boolean | null;
 }
 
 const CvSidebar = ({
@@ -132,12 +137,15 @@ const CvSidebar = ({
   showDiff,
   onToggleDiff,
   hasOriginalCv,
-  hasChanges
+  hasChanges,
+  onResetToOriginal,
+  onClearCache,
+  lastCacheStatus
 }: CvSidebarProps) => {
   const sidebarButtons = [
     {
       id: 'adjust-position',
-      label: 'Adjust for Position',
+      label: `Adjust for Position${lastCacheStatus !== null ? (lastCacheStatus ? ' ⚡' : ' 🤖') : ''}`,
       icon: <WorkIcon />,
       onClick: onAdjustForPosition,
       disabled: false,
@@ -188,6 +196,24 @@ const CvSidebar = ({
       disabled: !hasOriginalCv || !hasChanges,
       visible: hasChanges && hasOriginalCv,
       completed: showDiff,
+    },
+    {
+      id: 'reset-to-original',
+      label: 'Reset to Original',
+      icon: <RestartAltIcon />,
+      onClick: onResetToOriginal || (() => {}),
+      disabled: !hasChanges || !onResetToOriginal,
+      visible: hasChanges && !!onResetToOriginal,
+      completed: false,
+    },
+    {
+      id: 'clear-cache',
+      label: 'Clear AI Cache',
+      icon: <ClearAllIcon />,
+      onClick: onClearCache || (() => {}),
+      disabled: !onClearCache,
+      visible: !!onClearCache,
+      completed: false,
     },
   ];
 

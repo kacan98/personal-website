@@ -16,6 +16,7 @@ interface AdjustCvBasedOnPositionProps {
   setPositionSummary: (positionSummary: string) => void
   setCompanyName: (companyName: string) => void
   setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
+  setCacheStatus?: (fromCache: boolean) => void
 }
 
 export const useAdjustCvBasedOnPosition = ({
@@ -29,6 +30,7 @@ export const useAdjustCvBasedOnPosition = ({
   setPositionSummary,
   setCompanyName,
   setPositionIntersection,
+  setCacheStatus,
 }: AdjustCvBasedOnPositionProps) => {
   const adjustCvBasedOnPosition = useCallback(async () => {    
     if (!positionDetails) {
@@ -59,7 +61,12 @@ export const useAdjustCvBasedOnPosition = ({
       }
 
       const transformedCv: CvUpgradeResponse = await res.json()
-      const { cv, newPositionSummary, companyName, newJobIntersection } = transformedCv
+      const { cv, newPositionSummary, companyName, newJobIntersection, _cacheInfo } = transformedCv
+
+      // Update cache status if callback provided
+      if (setCacheStatus && _cacheInfo) {
+        setCacheStatus(_cacheInfo.fromCache)
+      }
 
       // Preserve original IDs to maintain diff tracking
       if (cv) {
@@ -132,6 +139,7 @@ export const useAdjustCvBasedOnPosition = ({
     setPositionSummary,
     setCompanyName,
     setPositionIntersection,
+    setCacheStatus,
   ])
 
   return { adjustCvBasedOnPosition }

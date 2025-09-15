@@ -221,17 +221,17 @@ export function cleanupCache(): void {
 }
 
 /**
- * Generic cached function wrapper
+ * Generic cached function wrapper with cache status
  */
-export async function withCache<T>(
+export async function withCacheStatus<T>(
   cacheKey: string,
   fetchFunction: () => Promise<T>,
   ttl: number = CACHE_CONFIG.DEFAULT_TTL
-): Promise<T> {
+): Promise<{ data: T; fromCache: boolean }> {
   // Try to get from cache first
   const cached = getCache<T>(cacheKey);
   if (cached !== null) {
-    return cached;
+    return { data: cached, fromCache: true };
   }
 
   // Cache miss - execute function
@@ -244,7 +244,19 @@ export async function withCache<T>(
   // Store in cache
   setCache(cacheKey, result, ttl);
 
-  return result;
+  return { data: result, fromCache: false };
+}
+
+/**
+ * Generic cached function wrapper (legacy - returns data only)
+ */
+export async function withCache<T>(
+  cacheKey: string,
+  fetchFunction: () => Promise<T>,
+  ttl: number = CACHE_CONFIG.DEFAULT_TTL
+): Promise<T> {
+  const result = await withCacheStatus(cacheKey, fetchFunction, ttl);
+  return result.data;
 }
 
 // Start cleanup interval

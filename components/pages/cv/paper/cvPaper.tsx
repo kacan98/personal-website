@@ -124,11 +124,12 @@ export function CvPaper({
                 return null;
               }
 
-              // Find original section by ID
-              const originalSection = section.id ? originalCv?.sideColumn?.find(s => s.id === section.id) : undefined;
+              // Find original section by index position for simpler matching
+              const currentIndex = reduxCv.sideColumn?.findIndex(s => s === section) ?? -1;
+              const originalSection = currentIndex >= 0 ? originalCv?.sideColumn?.[currentIndex] : undefined;
 
-              // Check if this is a completely new section (has ID but no match in original)
-              const isNewSection = !isDeleted && !!(section.id && !originalCv?.sideColumn?.find(s => s.id === section.id));
+              // Check if this is a completely new section (doesn't exist at this index in original)
+              const isNewSection = !isDeleted && currentIndex >= (originalCv?.sideColumn?.length ?? 0);
 
               return (
                 <Box key={sectionId || renderIndex} mb={2.5}>
@@ -183,11 +184,12 @@ export function CvPaper({
                 return null;
               }
 
-              // Find original section by ID
-              const originalSection = section.id ? originalCv?.mainColumn?.find(s => s.id === section.id) : undefined;
+              // Find original section by index position for simpler matching
+              const currentIndex = reduxCv.mainColumn?.findIndex(s => s === section) ?? -1;
+              const originalSection = currentIndex >= 0 ? originalCv?.mainColumn?.[currentIndex] : undefined;
 
-              // Check if this is a completely new section (has ID but no match in original)
-              const isNewSection = !isDeleted && !!(section.id && !originalCv?.mainColumn?.find(s => s.id === section.id));
+              // Check if this is a completely new section (doesn't exist at this index in original)
+              const isNewSection = !isDeleted && currentIndex >= (originalCv?.mainColumn?.length ?? 0);
 
               return (
                 <Box key={sectionId || renderIndex} sx={{ mt: renderIndex === 1 ? 4 : 0 }}>

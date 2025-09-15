@@ -4,7 +4,6 @@ import { updateCv } from "@/redux/slices/cv";
 import { CvSection } from "@/types";
 import {
   Box,
-  Chip,
   alpha
 } from "@mui/material";
 import { useState, useCallback } from "react";
@@ -61,6 +60,52 @@ export function CvSectionComponent({
   const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
   const dispatch = useAppDispatch();
 
+  // Function to revert entire section to original
+  const revertSectionToOriginal = useCallback(() => {
+    if (originalSection) {
+      // Update title
+      if (originalSection.title) {
+        dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'title'], newValue: originalSection.title }));
+      }
+      // Update paragraphs
+      if (originalSection.paragraphs) {
+        originalSection.paragraphs.forEach((para, idx) => {
+          dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', idx], newValue: para }));
+        });
+      }
+      // Update bullet points
+      if (originalSection.bulletPoints) {
+        originalSection.bulletPoints.forEach((point, idx) => {
+          dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', idx, 'text'], newValue: point.text || "" }));
+          dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', idx, 'iconName'], newValue: point.iconName || "" }));
+        });
+      }
+      // Update subsections
+      if (originalSection.subSections) {
+        originalSection.subSections.forEach((subSection, subIdx) => {
+          // Revert subsection title
+          if (subSection.title) {
+            dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subIdx, 'title'], newValue: subSection.title }));
+          }
+          // Revert subsection paragraphs
+          if (subSection.paragraphs) {
+            subSection.paragraphs.forEach((para, idx) => {
+              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subIdx, 'paragraphs', idx], newValue: para }));
+            });
+          }
+        });
+      }
+    }
+  }, [dispatch, originalSection, sideOrMain, sectionIndex]);
+
+  // Check if section has any changes
+  const hasChanges = originalSection && (
+    title !== originalSection.title ||
+    JSON.stringify(paragraphs) !== JSON.stringify(originalSection.paragraphs) ||
+    JSON.stringify(bulletPoints) !== JSON.stringify(originalSection.bulletPoints) ||
+    JSON.stringify(subSections) !== JSON.stringify(originalSection.subSections)
+  );
+
 
   const SuperEditableText = useCallback(({ query, originalText, ...props }: EditableTextProps & { originalText?: string }) => {
     return <EditableText
@@ -92,37 +137,53 @@ export function CvSectionComponent({
       }}
     >
 
-      {/* Status indicators */}
-      {(isRemoved || isModified || isNew) && (
-        <Box sx={{ mb: 1 }}>
-          {isRemoved && (
-            <Chip
-              label="Hidden"
-              size="small"
-              color="error"
-              variant="outlined"
-              sx={{ mr: 1 }}
-            />
-          )}
-          {isNew && showDiff && (
-            <Chip
-              label="New Section"
-              size="small"
-              color="success"
-              variant="outlined"
-            />
-          )}
-        </Box>
-      )}
+      {/* Status indicators removed - revert moved to context menu */}
 
       {/* Content */}
       {title && (
-        <SuperEditableText query={["title"]} variant="h4" mb={1} text={title} originalText={originalSection?.title} />
+        <SuperEditableText
+          query={["title"]}
+          variant="h4"
+          mb={1}
+          text={title}
+          originalText={isNew && showDiff ? "" : originalSection?.title}
+          onDelete={editable ? () => {
+            dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'title'], newValue: "" }));
+          } : undefined}
+          onRestore={editable && originalSection?.title && title !== originalSection.title ? () => {
+            // Restore just the title
+            dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'title'], newValue: originalSection.title! }));
+          } : undefined}
+        />
       )}
       {subtitles && (
         <Box display="flex" justifyContent="space-between" mb={0}>
-          <SuperEditableText query={['subtitles', 'left']} variant="subtitle1" text={subtitles.left} originalText={originalSection?.subtitles?.left} />
-          <SuperEditableText query={["subtitles", "right"]} variant="subtitle1" text={subtitles.right} originalText={originalSection?.subtitles?.right} />
+          <SuperEditableText
+            query={['subtitles', 'left']}
+            variant="subtitle1"
+            text={subtitles.left}
+            originalText={originalSection?.subtitles?.left}
+            onDelete={editable ? () => {
+              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'left'], newValue: "" }));
+            } : undefined}
+            onRestore={editable && originalSection?.subtitles?.left && subtitles.left !== originalSection.subtitles.left ? () => {
+              // Restore just the left subtitle
+              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'left'], newValue: originalSection.subtitles!.left! }));
+            } : undefined}
+          />
+          <SuperEditableText
+            query={["subtitles", "right"]}
+            variant="subtitle1"
+            text={subtitles.right}
+            originalText={originalSection?.subtitles?.right}
+            onDelete={editable ? () => {
+              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'right'], newValue: "" }));
+            } : undefined}
+            onRestore={editable && originalSection?.subtitles?.right && subtitles.right !== originalSection.subtitles.right ? () => {
+              // Restore just the right subtitle
+              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'right'], newValue: originalSection.subtitles!.right! }));
+            } : undefined}
+          />
         </Box>
       )}
       {(() => {
@@ -153,12 +214,12 @@ export function CvSectionComponent({
               original: originalParagraph,
               isEmpty,
               isDeleted,
-              isNew: currentParagraph && !originalParagraph
+              isNewItem: currentParagraph && !originalParagraph
             });
           }
         }
 
-        return mergedParagraphs.map(({ index, current, original, isDeleted, isNew }) => {
+        return mergedParagraphs.map(({ index, current, original, isDeleted, isNewItem }) => {
 
           return (
             <SuperEditableText
@@ -167,13 +228,13 @@ export function CvSectionComponent({
               variant="body1"
               gutterBottom
               text={isDeleted ? "" : current}  // For deleted items, show empty current text
-              originalText={showDiff ? (isNew ? "" : original) : undefined}  // Empty string for new items to trigger green highlighting
+              originalText={showDiff ? (isDeleted ? original : ((isNewItem || isNew) ? "" : original)) : undefined}  // Empty string for new items or items in new sections
               onDelete={editable && !isDeleted ? () => {
                 // Delete paragraph by setting it to empty string
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: "" }));
               } : undefined}
-              onRestore={editable && isDeleted && original ? () => {
-                // Restore deleted paragraph by setting its text back to the original
+              onRestore={editable && original && (isDeleted || current !== original) ? () => {
+                // Restore individual paragraph by setting its text back to the original
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: original }));
               } : undefined}
             />
@@ -208,12 +269,12 @@ export function CvSectionComponent({
               original: originalPoint,
               isEmpty,
               isDeleted,
-              isNew: currentPoint && !originalPoint
+              isNewItem: currentPoint && !originalPoint
             });
           }
         }
 
-        return mergedBulletPoints.map(({ index, current, original, isDeleted, isNew }) => {
+        return mergedBulletPoints.map(({ index, current, original, isDeleted, isNewItem }) => {
           // For deleted items, show empty current text so DiffText can handle the strikethrough properly
           const displayPoint = isDeleted
             ? { ...(original || { iconName: "default", text: "", id: `temp-${index}` }), text: "" }  // Empty text for deleted
@@ -226,15 +287,16 @@ export function CvSectionComponent({
               editable={editable && !isDeleted}
               baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', index]}
               isPrintVersion={isPrintVersion}
-              originalBulletPoint={showDiff ? (isNew ? { iconName: "", text: "" } : original) : undefined}  // Empty iconName and text for new items to trigger green highlighting
+              originalBulletPoint={showDiff ? ((isNewItem || isNew) ? { iconName: "", text: "" } : original) : undefined}  // Empty for new items or items in new sections
               showDiff={showDiff}
               onDelete={editable && !isDeleted ? () => {
                 // Delete bullet point by setting its text to empty string
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
               } : undefined}
-              onRestore={editable && isDeleted && original ? () => {
-                // Restore deleted bullet point by setting its text back to the original
+              onRestore={editable && original && (isDeleted || current?.text !== original?.text) ? () => {
+                // Restore individual bullet point by setting its text back to the original
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: original.text || "" }));
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'iconName'], newValue: original.iconName || "" }));
               } : undefined}
             />
           );
@@ -249,8 +311,8 @@ export function CvSectionComponent({
             return null;
           }
 
-          // Find original subsection by ID only - no index fallback
-          const originalSubSection = subSection.id ? originalSection?.subSections?.find(s => s.id === subSection.id) : undefined;
+          // Simple index-based matching for subsections
+          const originalSubSection = originalSection?.subSections?.[index];
           // Check if this is a completely new subsection
           const isNewSubSection = !originalSubSection && showDiff;
 

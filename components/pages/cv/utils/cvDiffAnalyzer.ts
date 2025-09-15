@@ -129,9 +129,9 @@ export function getMergedSectionsForRendering(
     currentSectionsByIndex.set(index, section);
   });
 
-  // First, add all current sections
+  // Simple index-based approach: add all current sections
   currentSections.forEach((section, index) => {
-    const sectionId = section.id || getSectionKey(columnType, index);
+    const sectionId = getSectionKey(columnType, index);
     merged.push({
       section,
       sectionId,
@@ -140,22 +140,11 @@ export function getMergedSectionsForRendering(
     });
   });
 
-  // Then, find original sections that were actually deleted (not just modified)
+  // Add any original sections that were deleted (exist in original but not at same index in current)
   originalSections.forEach((originalSection, index) => {
-    const sectionId = originalSection.id || getSectionKey(columnType, index);
-
-    let existsInCurrent = false;
-
-    if (originalSection.id) {
-      // Check by ID first
-      existsInCurrent = currentSectionsById.has(originalSection.id);
-    } else {
-      // For sections without ID, check if position exists
-      existsInCurrent = currentSectionsByIndex.has(index);
-    }
-
-    if (!existsInCurrent) {
-      // This section was actually deleted - add it to show as removed
+    // If current sections is shorter, these sections were deleted
+    if (index >= currentSections.length) {
+      const sectionId = getSectionKey(columnType, index);
       merged.push({
         section: originalSection,
         sectionId,

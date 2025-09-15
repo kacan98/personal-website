@@ -7,6 +7,7 @@ export const cvSv: CVSettings = {
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
+      id: "profile",
       title: "Profil",
       paragraphs: [
         "Full Stack Utvecklare med 4+ års erfarenhet av att bygga webbapplikationer och företagslösningar. Bevisad track record av att leverera högimpaktfunktioner och betydande prestandaförbättringar.\n\n",
@@ -14,6 +15,7 @@ export const cvSv: CVSettings = {
       ]
     },
     {
+      id: "work-experience",
       title: "Arbetslivserfarenhet",
       subSections: [
         {
@@ -72,6 +74,7 @@ export const cvSv: CVSettings = {
   ],
   sideColumn: [
     {
+      id: "contact",
       title: "Kontakt",
       bulletPoints: [
         {
@@ -97,6 +100,7 @@ export const cvSv: CVSettings = {
       ]
     },
     {
+      id: "skills",
       title: "Färdigheter",
       bulletPoints: [
         {
@@ -122,6 +126,7 @@ export const cvSv: CVSettings = {
       ]
     },
     {
+      id: "languages",
       title: "Språk",
       bulletPoints: [
         {
@@ -139,8 +144,14 @@ export const cvSv: CVSettings = {
       ]
     },
     {
+      id: "personal-projects",
       title: "Personliga Projekt",
       bulletPoints: [
+        {
+          iconName: "gitHub",
+          text: "Git-till-JIRA Bridge - Automatiserat tidsspårningssystem som synkroniserar Git commits till JIRA (React/Node.js)",
+          url: "https://log-bridge.vercel.app"
+        },
         {
           iconName: "gitHub",
           text: "Fastighetsinvesteringskalkylator - React/Redux finansiellt analysverktyg",
@@ -155,16 +166,6 @@ export const cvSv: CVSettings = {
           iconName: "gitHub",
           text: "Tjeckien Reseguide - Astro-baserad reseguide",
           url: "https://czech-guide.vercel.app/en/"
-        },
-        {
-          iconName: "gitHub",
-          text: "Portfolio Webbplats - Next.js portfolio med AI-integration",
-          url: "https://github.com/kacan98/my-porfolio"
-        },
-        {
-          iconName: "gitHub",
-          text: "Gemensam Födelsedag Kalkylator - Förutsäger när folk delar födelsedagar i grupper",
-          url: "https://kacan98.github.io/common-age-calculator/"
         }
       ]
     }

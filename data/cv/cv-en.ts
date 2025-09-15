@@ -7,6 +7,7 @@ export const cvConfigEn: CVSettings = {
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
+      id: "profile",
       title: "Profile",
       paragraphs: [
         "Full Stack Developer with 4+ years experience building web applications and enterprise solutions. Proven track record of delivering high-impact features and significant performance improvements.\n\n",
@@ -14,6 +15,7 @@ export const cvConfigEn: CVSettings = {
       ]
     },
     {
+      id: "work-experience",
       title: "Work Experience",
       subSections: [
         {
@@ -70,6 +72,7 @@ export const cvConfigEn: CVSettings = {
   ],
   sideColumn: [
     {
+      id: "contact",
       title: "Contact",
       bulletPoints: [
         {
@@ -95,6 +98,7 @@ export const cvConfigEn: CVSettings = {
       ]
     },
     {
+      id: "skills",
       title: "Skills",
       bulletPoints: [
         {
@@ -120,6 +124,7 @@ export const cvConfigEn: CVSettings = {
       ]
     },
     {
+      id: "languages",
       title: "Languages",
       bulletPoints: [
         {
@@ -137,8 +142,14 @@ export const cvConfigEn: CVSettings = {
       ]
     },
     {
+      id: "personal-projects",
       title: "Personal Projects",
       bulletPoints: [
+        {
+          iconName: "gitHub",
+          text: "Git-to-JIRA Bridge - Automated time tracking system syncing Git commits to JIRA (React/Node.js)",
+          url: "https://log-bridge.vercel.app"
+        },
         {
           iconName: "gitHub",
           text: "Property Investment Calculator - React/Redux financial analysis tool",
@@ -153,16 +164,6 @@ export const cvConfigEn: CVSettings = {
           iconName: "gitHub",
           text: "Czech Republic Travel Guide - Astro-based travel guide",
           url: "https://czech-guide.vercel.app/en/"
-        },
-        {
-          iconName: "gitHub",
-          text: "Portfolio Website - Next.js portfolio with AI integration",
-          url: "https://github.com/kacan98/my-porfolio"
-        },
-        {
-          iconName: "gitHub",
-          text: "Common Birthday Calculator - Predicts when people share birthdays in groups",
-          url: "https://kacan98.github.io/common-age-calculator/"
         }
       ]
     }

@@ -7,6 +7,10 @@ export const CVUpgradeResponse = z.object({
   newPositionSummary: z.string().nullable().optional(),
   newJobIntersection: JobCVIntersectionResponse.nullable().optional(),
   companyName: z.string().nullable().optional(),
+  _cacheInfo: z.object({
+    fromCache: z.boolean(),
+    cacheKey: z.string().optional(),
+  }).optional(),
 })
 
 export const personalizeCvAPIEndpointName = '/api/personalize-cv'

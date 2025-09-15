@@ -3,7 +3,8 @@ import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motivational-letter.model";
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { initCv } from "@/redux/slices/cv";
 import CreateIcon from '@mui/icons-material/Create';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -48,6 +49,7 @@ export type CvProps = {
 function CvPage({ jobDescription }: CvProps) {
   const t = useTranslations('cv');
   const locale = useLocale();
+  const dispatch = useAppDispatch();
   const reduxCvProps = useAppSelector((state) => state.cv);
 
   // Store original CV state using useState to trigger re-renders
@@ -106,6 +108,11 @@ function CvPage({ jobDescription }: CvProps) {
   const [currentOperation, setCurrentOperation] = useState<string>(t('discussingWithAI'));
   const [cvAdjusted, setCvAdjusted] = useState(false);
   const [hasManualRefinements, setHasManualRefinements] = useState(false);
+  const [cacheStatusNotification, setCacheStatusNotification] = useState<{
+    show: boolean;
+    fromCache: boolean;
+  } | null>(null);
+  const [lastCacheStatus, setLastCacheStatus] = useState<boolean | null>(null);
 
   const [fontSize, setFontSize] = useState(12);
 
@@ -135,7 +142,15 @@ function CvPage({ jobDescription }: CvProps) {
       setPositionIntersection,
       setPositionSummary,
       setCompanyName,
-      setLanguage
+      setLanguage,
+      setCacheStatus: (fromCache: boolean) => {
+        setCacheStatusNotification({ show: true, fromCache });
+        setLastCacheStatus(fromCache); // Store for sidebar indicator
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          setCacheStatusNotification(null);
+        }, 5000);
+      }
     })
 
   const { refineCv } = useRefineCv({
@@ -476,6 +491,46 @@ function CvPage({ jobDescription }: CvProps) {
     pdf.save(fileName);
   };
 
+  // Reset CV to original
+  const handleResetToOriginal = () => {
+    if (originalCv) {
+      dispatch(initCv(originalCv));
+      setShowDiff(false); // Turn off diff view after reset
+      // Clear any adjusted CV state
+      setCvAdjusted(false);
+      setPositionIntersection(null);
+      setMotivationalLetter(null);
+    }
+  };
+
+  // Clear AI cache
+  const handleClearCache = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/clear-cache', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Cache cleared:', result);
+        setCacheStatusNotification(null); // Reset cache status when cache is cleared
+        setLastCacheStatus(null); // Reset sidebar indicator
+        setsnackbarMessage('Cache cleared successfully');
+      } else {
+        console.error('Failed to clear cache');
+        setsnackbarMessage('Failed to clear cache');
+      }
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <PageWrapper title={t('pageTitle')} onTitleClicked={onTitleClicked} containerMaxWidth="md">
       <Box sx={{
@@ -503,6 +558,9 @@ function CvPage({ jobDescription }: CvProps) {
           onToggleDiff={() => setShowDiff(!showDiff)}
           hasOriginalCv={!!originalCv}
           hasChanges={hasChanges}
+          onResetToOriginal={handleResetToOriginal}
+          onClearCache={handleClearCache}
+          lastCacheStatus={lastCacheStatus}
         />
 
 
@@ -554,7 +612,36 @@ function CvPage({ jobDescription }: CvProps) {
           </Box>
         )}
 
-
+        {/* Cache status notification - temporary */}
+        {cacheStatusNotification?.show && (
+          <Box sx={{
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            zIndex: 1100,
+            p: 2,
+            backgroundColor: cacheStatusNotification.fromCache ? 'warning.light' : 'success.light',
+            borderRadius: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            border: '1px solid',
+            borderColor: cacheStatusNotification.fromCache ? 'warning.main' : 'success.main',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            minWidth: 280,
+            animation: 'slideInFromRight 0.3s ease-out'
+          }}>
+            <Box sx={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: cacheStatusNotification.fromCache ? 'warning.main' : 'success.main'
+            }} />
+            <Typography variant="body2" color={cacheStatusNotification.fromCache ? 'warning.dark' : 'success.dark'} sx={{ fontWeight: 500 }}>
+              {cacheStatusNotification.fromCache ? '⚡ Loaded from cache' : '🤖 Generated fresh by AI'}
+            </Typography>
+          </Box>
+        )}
 
         {/* Main CV Paper - Always visible */}
         <Print

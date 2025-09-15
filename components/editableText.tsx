@@ -121,6 +121,20 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
                             <DeleteIcon />
                         </IconButton>
                     )}
+                    {onRestore && (
+                        <IconButton
+                            onClick={() => {
+                                setIsEditing(false);
+                                onRestore();
+                            }}
+                            className="restore-button"
+                            color="info"
+                            size="small"
+                            title="Revert to original"
+                        >
+                            <RestoreIcon />
+                        </IconButton>
+                    )}
                 </Box>
             </Box>
         );

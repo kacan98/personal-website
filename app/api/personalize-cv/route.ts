@@ -9,7 +9,7 @@ import {
   PositionSummarizeResponse,
 } from '../position-summary/route'
 import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
-import { withCache, generateCacheKey, CACHE_CONFIG } from '@/lib/cache-server'
+import { withCacheStatus, generateCacheKey, CACHE_CONFIG } from '@/lib/cache-server'
 
 export const runtime = 'nodejs';
 
@@ -66,7 +66,7 @@ export async function POST(req: Request): Promise<Response> {
 
     // Try to get cached response
     try {
-      const cachedResult = await withCache(
+      const { data: cachedResult, fromCache } = await withCacheStatus(
         cacheKey,
         async () => {
           console.log('POST /api/personalize-cv - Cache miss, executing full personalization')
@@ -75,10 +75,27 @@ export async function POST(req: Request): Promise<Response> {
         CACHE_CONFIG.PERSONALIZE_CV
       )
 
-      console.log('POST /api/personalize-cv - Returning result (cached or fresh)')
-      return new Response(JSON.stringify(cachedResult), {
+      // Log cache status with clear visual indicators
+      if (fromCache) {
+        console.log('🔵 POST /api/personalize-cv - ⚡ CACHE HIT - Returning cached result')
+      } else {
+        console.log('🟢 POST /api/personalize-cv - 🤖 FRESH - Generated new result from OpenAI')
+      }
+
+      // Include cache status in response
+      const responseWithCacheInfo = {
+        ...cachedResult,
+        _cacheInfo: {
+          fromCache,
+          cacheKey: process.env.NODE_ENV === 'development' ? cacheKey : undefined
+        }
+      }
+
+      return new Response(JSON.stringify(responseWithCacheInfo), {
         headers: {
           'Content-Type': 'application/json',
+          'X-Cache-Status': fromCache ? 'HIT' : 'MISS',
+          'X-Cache-Source': fromCache ? 'disk-cache' : 'openai-api',
         },
       })
     } catch (e: any) {
@@ -193,8 +210,9 @@ async function personalizeCV(body: CvUpgradeParams): Promise<CvUpgradeResponse> 
             content: `
             The candidate is applying for a position: ${body.positionWeAreApplyingFor}.
 
-            Improve the CV. Don't lie, but make it cusomized for the position.
-            Do not mention the name of the company in the CV.
+            Improve the CV to match this position. Keep the CV approximately the same length as the original.
+            Focus on adjusting existing content rather than adding lots of new content.
+            Do not mention the company name in the CV.
             `,
           },
           {
