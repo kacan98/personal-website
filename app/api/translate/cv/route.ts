@@ -1,5 +1,7 @@
 import { CVSettings } from '@/types'
 import OpenAI from 'openai'
+import { checkAuthFromRequest } from '@/lib/auth-middleware'
+import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
 
 export type CvTranslateParams = {
   targetLanguage: string
@@ -9,19 +11,23 @@ export type CvTranslateParams = {
 export const runtime = 'nodejs';
 
 export async function POST(req: Request): Promise<Response> {
-  // Check if in production mode and disable endpoint
-  if (process.env.NODE_ENV === 'production') {
-    console.log('POST /api/translate/cv - Blocked in production mode')
-    return new Response(JSON.stringify({ error: 'This endpoint is disabled in production mode' }), {
-      status: 403,
-      headers: { 'Content-Type': 'application/json' }
-    })
+  // Check authentication when required
+  if (IS_PRODUCTION) {
+    const authResult = await checkAuthFromRequest(req)
+    if (!authResult.authenticated) {
+      console.log('POST /api/translate/cv - Authentication required')
+      return new Response(JSON.stringify({ error: 'Authentication required for CV translation' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+    console.log('POST /api/translate/cv - Authentication verified')
   }
 
   const body: CvTranslateParams = await req.json()
 
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: OPENAI_API_KEY,
   })
 
   try {

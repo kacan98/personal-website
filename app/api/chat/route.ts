@@ -2,13 +2,14 @@ import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
 import { getCvSettings } from "@/data";
 import projectsSimple from "@/data/projects-simple.json";
 import OpenAI from "openai";
+import { OPENAI_API_KEY } from "@/lib/env";
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: OPENAI_API_KEY,
     });
 
     const body = await req.json();

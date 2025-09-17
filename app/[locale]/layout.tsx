@@ -22,6 +22,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 type Props = {
   children: React.ReactNode;
@@ -71,8 +72,9 @@ export default async function LocaleLayout({
   return (
     <AppRouterCacheProvider options={{ key: 'mui', enableCssLayer: true }}>
       <NextIntlClientProvider messages={messages}>
-        <StoreProvider cvConfig={cvSettings}>
-          <CustomThemeProvider>
+        <AuthProvider>
+          <StoreProvider cvConfig={cvSettings}>
+            <CustomThemeProvider>
             <CssBaseline />
             <NavBar navLinks={navigationLinks} />
             <BackgroundEffect />
@@ -120,8 +122,9 @@ export default async function LocaleLayout({
               </Box>
               <Footer />
             </Box>
-          </CustomThemeProvider>
-        </StoreProvider>
+            </CustomThemeProvider>
+          </StoreProvider>
+        </AuthProvider>
       </NextIntlClientProvider>
     </AppRouterCacheProvider>
   );

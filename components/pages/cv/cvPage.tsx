@@ -8,6 +8,7 @@ import { initCv } from "@/redux/slices/cv";
 import CreateIcon from '@mui/icons-material/Create';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {
   Backdrop,
   Box,
@@ -40,8 +41,9 @@ import { getCvSettings } from "@/data";
 import { ensureCvIds } from "@/utils/cvIds";
 import { useLocale } from 'next-intl';
 import { useCvDiffAnalysis } from "./utils/cvDiffAnalyzer";
-
-const DEV = process.env.NODE_ENV === "development";
+import { useAuth } from '@/contexts/AuthContext';
+import PasswordModal from '@/components/auth/PasswordModal';
+import { IS_PRODUCTION } from '@/lib/env';
 
 export type CvProps = {
   jobDescription?: string
@@ -55,8 +57,13 @@ function CvPage({ jobDescription }: CvProps) {
 
   // Store original CV state using useState to trigger re-renders
   const [originalCv, setOriginalCv] = useState<CVSettings | null>(null);
-  const [showDiff, setShowDiff] = useState(DEV); // Enable diff view by default in development
+  const [showDiff, setShowDiff] = useState(true); // Enable diff view by default
   const [loading, setLoading] = useState(false);
+
+  // Authentication state - declare before any useEffect that uses it
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const { isAuthenticated, isLoading: authLoading, logout } = useAuth();
+  const editable = !IS_PRODUCTION || isAuthenticated; // Allow editing when auth disabled OR when authenticated
 
   // Load original CV from data files instead of Redux to avoid capturing modified state
   useEffect(() => {
@@ -72,6 +79,44 @@ function CvPage({ jobDescription }: CvProps) {
     } else {
     }
   }, [locale]); // Only load once per locale
+
+  // Auto-show login modal when auth is required and user is not authenticated
+  useEffect(() => {
+    if (IS_PRODUCTION && !isAuthenticated && !authLoading && !showPasswordModal) {
+      // Small delay to ensure component is fully mounted
+      const timer = setTimeout(() => {
+        setShowPasswordModal(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [IS_PRODUCTION, isAuthenticated, authLoading, showPasswordModal]);
+
+  // Periodic auth status check (every 4 seconds) to detect cross-tab authentication
+  useEffect(() => {
+    if (!IS_PRODUCTION) return;
+
+    const interval = setInterval(async () => {
+      if (!isAuthenticated) {
+        // Only check if currently not authenticated
+        try {
+          const response = await fetch('/api/auth/status', {
+            method: 'GET',
+            credentials: 'include',
+          });
+          const data = await response.json();
+
+          if (data.authenticated && !isAuthenticated) {
+            // Authentication detected from another tab - refresh auth state
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error('Periodic auth check failed:', error);
+        }
+      }
+    }, 4000); // Check every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [IS_PRODUCTION, isAuthenticated]);
 
   // Use computed diff analysis instead of tracking state (must be declared before useEffect)
   const cvDiffAnalysis = useCvDiffAnalysis(originalCv, reduxCvProps);
@@ -97,7 +142,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [selectedLanguage, setLanguage] = useState("English");
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
-  const editable = DEV && titleClickedTimes >= 5; // Only allow editing in development mode after 5 clicks
+
   const [positionSummary, setPositionSummary] = useState<string>('')
   const [positionDetails, setPositionDetails] = useState<string>('')
   const [shouldAdjustCv, setShouldAdjustCv] = useState(false);
@@ -109,7 +154,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [currentOperation, setCurrentOperation] = useState<string>(t('discussingWithAI'));
   const [cvAdjusted, setCvAdjusted] = useState(false);
   const [hasManualRefinements, setHasManualRefinements] = useState(false);
-  const [cacheStatusNotification, setCacheStatusNotification] = useState<{
+  const [_cacheStatusNotification, _setCacheStatusNotification] = useState<{
     show: boolean;
     fromCache: boolean;
   } | null>(null);
@@ -157,12 +202,12 @@ function CvPage({ jobDescription }: CvProps) {
       setCompanyName,
       setLanguage,
       setCacheStatus: (fromCache: boolean) => {
-        setCacheStatusNotification({ show: true, fromCache });
+        _setCacheStatusNotification({ show: true, fromCache });
         setLastCacheStatus(fromCache); // Store for sidebar indicator
         fetchCacheStats(); // Refresh cache stats after AI operation
         // Auto-hide after 5 seconds
         setTimeout(() => {
-          setCacheStatusNotification(null);
+          _setCacheStatusNotification(null);
         }, 5000);
       }
     })
@@ -384,9 +429,20 @@ function CvPage({ jobDescription }: CvProps) {
   };
 
   const onTitleClicked = () => {
-    // Only allow title click-to-edit in development mode
-    if (DEV) {
+    if (!IS_PRODUCTION) {
+      // When auth is disabled, just increment clicks for dev fun
       setTitleClickedTimes(prev => prev + 1);
+    } else {
+      // When auth is required, need 5 clicks to show password modal (only if not already shown)
+      if (!isAuthenticated && !showPasswordModal) {
+        const newClickCount = titleClickedTimes + 1;
+        setTitleClickedTimes(newClickCount);
+
+        if (newClickCount >= 5) {
+          setTitleClickedTimes(0); // Reset click counter when opening modal
+          setShowPasswordModal(true);
+        }
+      }
     }
   }
 
@@ -551,7 +607,7 @@ function CvPage({ jobDescription }: CvProps) {
       if (response.ok) {
         const result = await response.json();
         console.log('Cache cleared:', result);
-        setCacheStatusNotification(null); // Reset cache status when cache is cleared
+        _setCacheStatusNotification(null); // Reset cache status when cache is cleared
         setLastCacheStatus(null); // Reset sidebar indicator
         fetchCacheStats(); // Refresh cache stats
         setsnackbarMessage('✅ Cache cleared successfully');
@@ -598,6 +654,37 @@ function CvPage({ jobDescription }: CvProps) {
         />
 
 
+        {/* Logout button (when authenticated) */}
+        {IS_PRODUCTION && isAuthenticated && (
+          <Tooltip title="Logout" placement="left">
+            <IconButton
+              onClick={async () => {
+                await logout();
+                setsnackbarMessage('Logged out successfully');
+              }}
+              sx={{
+                position: 'fixed',
+                bottom: 24,
+                right: 80,
+                zIndex: 998,
+                backgroundColor: 'error.main',
+                color: 'white',
+                opacity: 0.7,
+                transition: 'opacity 0.2s',
+                '&:hover': {
+                  opacity: 1,
+                  backgroundColor: 'error.dark',
+                },
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                width: 40,
+                height: 40,
+              }}
+            >
+              <LogoutIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
+
         {/* JSON copy button in bottom-right corner */}
         <Tooltip title={t('copyJsonTooltip')} placement="left">
           <IconButton
@@ -623,6 +710,7 @@ function CvPage({ jobDescription }: CvProps) {
             <ContentCopyIcon fontSize="small" />
           </IconButton>
         </Tooltip>
+
 
         {/* Edit mode indicator */}
         {editable && (
@@ -751,6 +839,12 @@ function CvPage({ jobDescription }: CvProps) {
           setPositionDetails={setPositionDetails}
           onAnalyzePosition={updatePositionIntersection}
           isLoading={loading}
+        />
+
+        {/* Password Modal */}
+        <PasswordModal
+          open={showPasswordModal}
+          onClose={() => setShowPasswordModal(false)}
         />
 
         {/* Loading backdrop */}

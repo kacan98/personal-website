@@ -10,6 +10,8 @@ import {
 } from '../position-summary/route'
 import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
 import { withCacheStatus, generateCacheKey, CACHE_CONFIG } from '@/lib/cache-server'
+import { checkAuthFromRequest } from '@/lib/auth-middleware'
+import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
 
 export const runtime = 'nodejs';
 
@@ -17,13 +19,17 @@ export async function POST(req: Request): Promise<Response> {
   try {
     console.log('POST /api/personalize-cv - Starting request')
 
-    // Check if in production mode and disable endpoint
-    if (process.env.NODE_ENV === 'production') {
-      console.log('POST /api/personalize-cv - Blocked in production mode')
-      return new Response(JSON.stringify({ error: 'This endpoint is disabled in production mode' }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' }
-      })
+    // Check authentication when required
+    if (IS_PRODUCTION) {
+      const authResult = await checkAuthFromRequest(req)
+      if (!authResult.authenticated) {
+        console.log('POST /api/personalize-cv - Authentication required')
+        return new Response(JSON.stringify({ error: 'Authentication required for CV personalization' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        })
+      }
+      console.log('POST /api/personalize-cv - Authentication verified')
     }
 
     // Parse request body
@@ -52,7 +58,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     // Check API key
-    if (!process.env.OPENAI_API_KEY) {
+    if (!OPENAI_API_KEY) {
       console.error('POST /api/personalize-cv - OpenAI API key not configured')
       return new Response(JSON.stringify({ error: 'OpenAI API key not configured' }), {
         status: 500,
@@ -70,7 +76,7 @@ export async function POST(req: Request): Promise<Response> {
         cacheKey,
         async () => {
           console.log('POST /api/personalize-cv - Cache miss, executing full personalization')
-          return await personalizeCV(body)
+          return await personalizeCV(body, req)
         },
         CACHE_CONFIG.PERSONALIZE_CV
       )
@@ -115,9 +121,9 @@ export async function POST(req: Request): Promise<Response> {
 }
 
 // Extract the personalization logic to a separate function
-async function personalizeCV(body: CvUpgradeParams): Promise<CvUpgradeResponse> {
+async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<CvUpgradeResponse> {
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: OPENAI_API_KEY,
   })
 
   let positionSummary = body.positionSummary
@@ -140,6 +146,8 @@ async function personalizeCV(body: CvUpgradeParams): Promise<CvUpgradeResponse> 
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              // Forward cookies from the original request
+              'Cookie': request?.headers.get('cookie') || '',
             },
             body: JSON.stringify(positionSummarizeParams),
           }
@@ -169,6 +177,11 @@ async function personalizeCV(body: CvUpgradeParams): Promise<CvUpgradeResponse> 
         const newIntersection = await POSTIntersection(
           new Request(baseUrl + '/' + jobCvIntersectionAPIEndpointName, {
             method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              // Forward cookies from the original request
+              'Cookie': request?.headers.get('cookie') || '',
+            },
             body: JSON.stringify({
               candidate: body.cvBody,
               jobDescription: body.positionWeAreApplyingFor,

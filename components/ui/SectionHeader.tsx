@@ -49,10 +49,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           color: 'text.primary',
           letterSpacing: '-0.02em',
           mb: subtitle ? 2 : (description ? 3 : 0),
-          cursor: onClick ? 'pointer' : 'default',
-          '&:hover': onClick ? {
-            color: 'text.secondary',
-          } : {},
+          cursor: 'default',
         }}
       >
         {title}

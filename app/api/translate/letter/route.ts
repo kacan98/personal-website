@@ -2,6 +2,8 @@ import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motiva
 import OpenAI from 'openai'
 import { zodResponseFormat } from "openai/helpers/zod"
 import { MotivationalLetterSchema } from '../../motivational-letter/motivational-letter.model'
+import { checkAuthFromRequest } from '@/lib/auth-middleware'
+import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
 
 export type LetterTranslateParams = {
   targetLanguage: string
@@ -11,19 +13,23 @@ export type LetterTranslateParams = {
 export const runtime = 'nodejs';
 
 export async function POST(req: Request): Promise<Response> {
-  // Check if in production mode and disable endpoint
-  if (process.env.NODE_ENV === 'production') {
-    console.log('POST /api/translate/letter - Blocked in production mode')
-    return new Response(JSON.stringify({ error: 'This endpoint is disabled in production mode' }), {
-      status: 403,
-      headers: { 'Content-Type': 'application/json' }
-    })
+  // Check authentication when required
+  if (IS_PRODUCTION) {
+    const authResult = await checkAuthFromRequest(req)
+    if (!authResult.authenticated) {
+      console.log('POST /api/translate/letter - Authentication required')
+      return new Response(JSON.stringify({ error: 'Authentication required for letter translation' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      })
+    }
+    console.log('POST /api/translate/letter - Authentication verified')
   }
 
   const body: LetterTranslateParams = await req.json()
 
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: OPENAI_API_KEY,
   })
 
   try {
