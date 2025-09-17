@@ -5,6 +5,7 @@ import {
 } from "@mui/material";
 import Button from "@/components/ui/Button";
 import IntersectionSection from "./paper/intersectionSection";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export interface AiFormProps {
     positionIntersection: JobCvIntersectionResponse | null;
@@ -36,6 +37,54 @@ export const AiForm = ({
     updatePositionIntersection,
     adjustCvBasedOnPosition
 }: AiFormProps) => {
+    // Local state for immediate UI updates
+    const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
+    const [localPositionSummary, setLocalPositionSummary] = useState(positionSummary);
+    const detailsDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+    const summaryDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+    // Sync local state with props
+    useEffect(() => {
+        setLocalPositionDetails(positionDetails);
+    }, [positionDetails]);
+
+    useEffect(() => {
+        setLocalPositionSummary(positionSummary);
+    }, [positionSummary]);
+
+    // Debounced handler for position details
+    const handlePositionDetailsChange = useCallback((value: string) => {
+        setLocalPositionDetails(value);
+
+        if (detailsDebounceRef.current) {
+            clearTimeout(detailsDebounceRef.current);
+        }
+
+        detailsDebounceRef.current = setTimeout(() => {
+            setPositionDetails(value);
+        }, 300);
+    }, [setPositionDetails]);
+
+    // Debounced handler for position summary
+    const handlePositionSummaryChange = useCallback((value: string) => {
+        setLocalPositionSummary(value);
+
+        if (summaryDebounceRef.current) {
+            clearTimeout(summaryDebounceRef.current);
+        }
+
+        summaryDebounceRef.current = setTimeout(() => {
+            setPositionSummary(value);
+        }, 300);
+    }, [setPositionSummary]);
+
+    // Cleanup timeouts on unmount
+    useEffect(() => {
+        return () => {
+            if (detailsDebounceRef.current) clearTimeout(detailsDebounceRef.current);
+            if (summaryDebounceRef.current) clearTimeout(summaryDebounceRef.current);
+        };
+    }, []);
     return (
         <Box>
             <TextField
@@ -45,8 +94,8 @@ export const AiForm = ({
                 label="Enter a job description here"
                 variant="outlined"
                 fullWidth
-                value={positionDetails}
-                onChange={(e) => setPositionDetails(e.target.value)}
+                value={localPositionDetails}
+                onChange={(e) => handlePositionDetailsChange(e.target.value)}
             />
             {positionDetails && positionDetails.length > 10 && (
                 <>
@@ -66,8 +115,8 @@ export const AiForm = ({
                             fullWidth
                             label="Position Summary"
                             variant="outlined"
-                            value={positionSummary}
-                            onChange={(e) => setPositionSummary(e.target.value)}
+                            value={localPositionSummary}
+                            onChange={(e) => handlePositionSummaryChange(e.target.value)}
                         />
                     )}
                     <Button

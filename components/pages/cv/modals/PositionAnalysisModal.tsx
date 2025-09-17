@@ -6,6 +6,7 @@ import {
   Chip,
   TextField,
 } from "@mui/material";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Analytics as AnalyticsIcon,
   TrendingUp as TrendingUpIcon,
@@ -43,6 +44,35 @@ const PositionAnalysisModal = ({
   isLoading,
 }: PositionAnalysisModalProps) => {
   const hasSelectedImprovements = checked.length > 0;
+  const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
+  const positionDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Sync local state with props
+  useEffect(() => {
+    setLocalPositionDetails(positionDetails);
+  }, [positionDetails]);
+
+  // Debounced handler for position details
+  const handlePositionDetailsChange = useCallback((value: string) => {
+    setLocalPositionDetails(value);
+
+    if (positionDebounceRef.current) {
+      clearTimeout(positionDebounceRef.current);
+    }
+
+    positionDebounceRef.current = setTimeout(() => {
+      setPositionDetails(value);
+    }, 300);
+  }, [setPositionDetails]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (positionDebounceRef.current) {
+        clearTimeout(positionDebounceRef.current);
+      }
+    };
+  }, []);
 
   // Actions for when analysis exists
   const analysisActions = (
@@ -112,8 +142,8 @@ const PositionAnalysisModal = ({
             label="Position Details"
             placeholder="Paste the job description here to analyze how your CV matches the requirements..."
             variant="outlined"
-            value={positionDetails}
-            onChange={(e) => setPositionDetails(e.target.value)}
+            value={localPositionDetails}
+            onChange={(e) => handlePositionDetailsChange(e.target.value)}
             sx={{
               '& .MuiInputBase-root': {
                 fontSize: '14px',
@@ -121,14 +151,14 @@ const PositionAnalysisModal = ({
               },
             }}
           />
-          {positionDetails && positionDetails.length > 0 && (
+          {localPositionDetails && localPositionDetails.length > 0 && (
             <Typography
               variant="caption"
-              color={positionDetails.length > 10 ? 'success.main' : 'text.secondary'}
+              color={localPositionDetails.length > 10 ? 'success.main' : 'text.secondary'}
               sx={{ mt: 1, display: 'block' }}
             >
-              {positionDetails.length} characters
-              {positionDetails.length <= 10 && ' (minimum 10 characters required)'}
+              {localPositionDetails.length} characters
+              {localPositionDetails.length <= 10 && ' (minimum 10 characters required)'}
             </Typography>
           )}
         </Box>

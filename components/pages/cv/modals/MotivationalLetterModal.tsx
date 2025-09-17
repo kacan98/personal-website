@@ -12,7 +12,7 @@ import {
   AutoFixHigh as AutoFixHighIcon,
   Translate as TranslateIcon,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motivational-letter.model";
@@ -60,8 +60,10 @@ const MotivationalLetterModal = ({
 }: MotivationalLetterModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableText, setEditableText] = useState("");
+  const [localEditableText, setLocalEditableText] = useState("");
   const [adjustmentComments, setAdjustmentComments] = useState("");
   const [isAdjusting, setIsAdjusting] = useState(false);
+  const editableTextDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const letterToShow = editableMotivationalLetter || motivationalLetter;
 
@@ -140,7 +142,9 @@ const MotivationalLetterModal = ({
 
   useEffect(() => {
     if (letterToShow && !isEditing) {
-      setEditableText(convertLetterToText(letterToShow));
+      const text = convertLetterToText(letterToShow);
+      setEditableText(text);
+      setLocalEditableText(text);
     }
   }, [letterToShow, isEditing]);
 
@@ -151,10 +155,37 @@ const MotivationalLetterModal = ({
     }
   };
 
+  // Debounced handler for editable text updates
+  const handleEditableTextDebounced = useCallback((value: string) => {
+    setLocalEditableText(value);
+
+    // Clear existing timeout
+    if (editableTextDebounceRef.current) {
+      clearTimeout(editableTextDebounceRef.current);
+    }
+
+    // Set new timeout to update actual state after 200ms
+    editableTextDebounceRef.current = setTimeout(() => {
+      setEditableText(value);
+    }, 200);
+  }, []);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (editableTextDebounceRef.current) {
+        clearTimeout(editableTextDebounceRef.current);
+      }
+    };
+  }, []);
+
   const handleSaveEditing = () => {
-    if (editableText) {
-      const parsedLetter = convertTextToLetter(editableText);
+    // Use local text for immediate save, then sync with editableText
+    const textToSave = localEditableText || editableText;
+    if (textToSave) {
+      const parsedLetter = convertTextToLetter(textToSave);
       setEditableMotivationalLetter(parsedLetter);
+      setEditableText(textToSave); // Ensure sync
     }
     setIsEditing(false);
   };
@@ -356,8 +387,8 @@ const MotivationalLetterModal = ({
                   fullWidth
                   multiline
                   rows={20}
-                  value={editableText}
-                  onChange={(e) => setEditableText(e.target.value)}
+                  value={localEditableText}
+                  onChange={(e) => handleEditableTextDebounced(e.target.value)}
                   placeholder="Edit your motivational letter here..."
                   sx={{
                     '& .MuiInputBase-root': {

@@ -46,6 +46,7 @@ const TranslationModal = ({
 
   const handleTranslate = async () => {
     if (canTranslate) {
+      onClose(); // Close modal immediately when translation starts
       await onTranslateBoth();
     }
   };

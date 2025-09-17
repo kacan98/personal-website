@@ -17,7 +17,7 @@ import {
   EditNote as EditNoteIcon,
   Minimize as MinimizeIcon,
 } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
@@ -63,12 +63,51 @@ const ManualAdjustmentModal = ({
   const [internalOtherChanges, setInternalOtherChanges] = useState("");
   const [_hasSubmitted, setHasSubmitted] = useState(false);
   const [internalIsMinimized, setInternalIsMinimized] = useState(false);
+  const [localOtherChanges, setLocalOtherChanges] = useState("");
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [localImprovementInputs, setLocalImprovementInputs] = useState<{ [key: string]: string }>({});
+  const improvementDebounceRefs = useRef<{ [key: string]: NodeJS.Timeout | undefined }>({});
 
   // Use external state if provided, otherwise use internal state
   const otherChanges = externalOtherChanges ?? internalOtherChanges;
   const setOtherChanges = externalSetOtherChanges ?? setInternalOtherChanges;
   const isMinimized = externalIsMinimized ?? internalIsMinimized;
   const _onToggleMinimize = externalOnToggleMinimize ?? (() => setInternalIsMinimized(prev => !prev));
+
+  // Initialize local state with external/internal value
+  useEffect(() => {
+    if (localOtherChanges === "" && otherChanges !== "") {
+      setLocalOtherChanges(otherChanges);
+    }
+  }, [otherChanges, localOtherChanges]);
+
+  // Debounced handler for otherChanges updates
+  const handleOtherChangesDebounced = useCallback((value: string) => {
+    setLocalOtherChanges(value);
+
+    // Clear existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // Set new timeout to update actual state after 150ms
+    debounceTimeoutRef.current = setTimeout(() => {
+      setOtherChanges(value);
+    }, 150);
+  }, [setOtherChanges]);
+
+  // Clean up timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      // Clean up improvement debounce timeouts
+      Object.values(improvementDebounceRefs.current).forEach(timeout => {
+        clearTimeout(timeout);
+      });
+    };
+  }, []);
 
   // State for position-specific improvements
   const [selectedImprovements, setSelectedImprovements] = useState<string[]>(checkedImprovements);
@@ -82,18 +121,41 @@ const ManualAdjustmentModal = ({
       const newInputs = { ...improvementInputs };
       delete newInputs[improvement];
       setImprovementInputs(newInputs);
+      // Also remove from local state
+      const newLocalInputs = { ...localImprovementInputs };
+      delete newLocalInputs[improvement];
+      setLocalImprovementInputs(newLocalInputs);
+      // Clear any pending debounce for this improvement
+      if (improvementDebounceRefs.current[improvement]) {
+        clearTimeout(improvementDebounceRefs.current[improvement]);
+        delete improvementDebounceRefs.current[improvement];
+      }
     } else {
       setSelectedImprovements(prev => [...prev, improvement]);
     }
   };
 
-  // Handle improvement input changes
-  const handleImprovementInputChange = (improvement: string, value: string) => {
-    setImprovementInputs(prev => ({
+  // Handle improvement input changes with debouncing
+  const handleImprovementInputChange = useCallback((improvement: string, value: string) => {
+    // Update local state immediately for responsive UI
+    setLocalImprovementInputs(prev => ({
       ...prev,
       [improvement]: value
     }));
-  };
+
+    // Clear existing timeout for this improvement
+    if (improvementDebounceRefs.current[improvement]) {
+      clearTimeout(improvementDebounceRefs.current[improvement]);
+    }
+
+    // Set new timeout to update actual state after 200ms
+    improvementDebounceRefs.current[improvement] = setTimeout(() => {
+      setImprovementInputs(prev => ({
+        ...prev,
+        [improvement]: value
+      }));
+    }, 200);
+  }, []);
 
   const handleSubmit = async () => {
     if (!otherChanges.trim() && selectedImprovements.length === 0) {
@@ -122,7 +184,7 @@ const ManualAdjustmentModal = ({
     onClose();
   };
 
-  const hasContent = otherChanges.trim() || selectedImprovements.length > 0;
+  const hasContent = useMemo(() => otherChanges.trim() || selectedImprovements.length > 0, [otherChanges, selectedImprovements]);
 
   const actions = (
     <>
@@ -270,7 +332,7 @@ const ManualAdjustmentModal = ({
                         placeholder="Describe your actual experience with this skill/requirement..."
                         variant="outlined"
                         size="small"
-                        value={improvementInputs[missing.description] || ''}
+                        value={localImprovementInputs[missing.description] || ''}
                         onChange={(e) => handleImprovementInputChange(missing.description, e.target.value)}
                         sx={{
                           '& .MuiInputBase-root': {
@@ -342,8 +404,8 @@ const ManualAdjustmentModal = ({
 • Make the summary more concise and impactful
 • Reorganize work experience to show most relevant roles first"
           variant="outlined"
-          value={otherChanges}
-          onChange={(e) => setOtherChanges(e.target.value)}
+          value={localOtherChanges}
+          onChange={(e) => handleOtherChangesDebounced(e.target.value)}
           sx={{
             '& .MuiInputBase-root': {
               fontSize: '14px',
@@ -351,9 +413,9 @@ const ManualAdjustmentModal = ({
             },
           }}
         />
-        {otherChanges && (
+        {localOtherChanges && (
           <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-            {otherChanges.length} characters
+            {localOtherChanges.length} characters
           </Typography>
         )}
       </Box>

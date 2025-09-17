@@ -9,7 +9,7 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
@@ -42,6 +42,35 @@ const JobDescriptionModal = ({
 }: JobDescriptionModalProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasAdjusted, setHasAdjusted] = useState(false);
+  const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
+  const positionDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Sync local state with props
+  useEffect(() => {
+    setLocalPositionDetails(positionDetails);
+  }, [positionDetails]);
+
+  // Debounced handler for position details
+  const handlePositionDetailsChange = useCallback((value: string) => {
+    setLocalPositionDetails(value);
+
+    if (positionDebounceRef.current) {
+      clearTimeout(positionDebounceRef.current);
+    }
+
+    positionDebounceRef.current = setTimeout(() => {
+      setPositionDetails(value);
+    }, 300);
+  }, [setPositionDetails]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (positionDebounceRef.current) {
+        clearTimeout(positionDebounceRef.current);
+      }
+    };
+  }, []);
 
   const steps = [
     'Enter Job Description',
@@ -134,8 +163,8 @@ const JobDescriptionModal = ({
             label="Job Description"
             placeholder="Paste the job posting here..."
             variant="outlined"
-            value={positionDetails}
-            onChange={(e) => setPositionDetails(e.target.value)}
+            value={localPositionDetails}
+            onChange={(e) => handlePositionDetailsChange(e.target.value)}
             sx={{
               '& .MuiInputBase-root': {
                 fontSize: '14px',
@@ -143,14 +172,14 @@ const JobDescriptionModal = ({
               },
             }}
           />
-          {positionDetails && positionDetails.length > 0 && (
+          {localPositionDetails && localPositionDetails.length > 0 && (
             <Typography
               variant="caption"
-              color={positionDetails.length > 10 ? 'success.main' : 'text.secondary'}
+              color={localPositionDetails.length > 10 ? 'success.main' : 'text.secondary'}
               sx={{ mt: 1, display: 'block' }}
             >
-              {positionDetails.length} characters
-              {positionDetails.length <= 10 && ' (minimum 10 characters required)'}
+              {localPositionDetails.length} characters
+              {localPositionDetails.length <= 10 && ' (minimum 10 characters required)'}
             </Typography>
           )}
         </Box>

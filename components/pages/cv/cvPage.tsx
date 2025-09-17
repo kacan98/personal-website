@@ -97,7 +97,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [selectedLanguage, setLanguage] = useState("English");
   const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
-  const editable = titleClickedTimes >= 5 || DEV;
+  const editable = DEV && titleClickedTimes >= 5; // Only allow editing in development mode after 5 clicks
   const [positionSummary, setPositionSummary] = useState<string>('')
   const [positionDetails, setPositionDetails] = useState<string>('')
   const [shouldAdjustCv, setShouldAdjustCv] = useState(false);
@@ -125,6 +125,17 @@ function CvPage({ jobDescription }: CvProps) {
   // Manual adjustments modal state
   const [isManualAdjustmentMinimized, setIsManualAdjustmentMinimized] = useState(false);
   const [manualOtherChanges, setManualOtherChanges] = useState("");
+  const [localManualChanges, setLocalManualChanges] = useState("");
+  const manualChangesDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Cleanup manual changes timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (manualChangesDebounceRef.current) {
+        clearTimeout(manualChangesDebounceRef.current);
+      }
+    };
+  }, []);
 
   // Hooks
   const { getMotivationalLetter,
@@ -373,7 +384,10 @@ function CvPage({ jobDescription }: CvProps) {
   };
 
   const onTitleClicked = () => {
-    setTitleClickedTimes(prev => prev + 1);
+    // Only allow title click-to-edit in development mode
+    if (DEV) {
+      setTitleClickedTimes(prev => prev + 1);
+    }
   }
 
   const handleChecked = (value: string) => () => {
@@ -839,8 +853,19 @@ function CvPage({ jobDescription }: CvProps) {
               fullWidth
               placeholder="Describe the changes you want to make to your CV..."
               variant="outlined"
-              value={manualOtherChanges}
-              onChange={(e) => setManualOtherChanges(e.target.value)}
+              value={localManualChanges}
+              onChange={(e) => {
+                const value = e.target.value;
+                setLocalManualChanges(value);
+
+                if (manualChangesDebounceRef.current) {
+                  clearTimeout(manualChangesDebounceRef.current);
+                }
+
+                manualChangesDebounceRef.current = setTimeout(() => {
+                  setManualOtherChanges(value);
+                }, 300);
+              }}
               sx={{
                 '& .MuiInputBase-root': {
                   fontSize: '14px',
