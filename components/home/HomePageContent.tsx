@@ -6,7 +6,6 @@ import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
-import AboutVisual from "@/components/home/AboutVisual";
 import { isKarelsPortfolio } from "@/globalVars";
 import { SPACING } from "@/app/spacing";
 import { Box, Typography } from "@mui/material";
@@ -120,7 +119,7 @@ function AboutSectionItem({ section, id, index }: { section: AboutSection; id: s
           </Typography>
         </Box>
 
-        {/* Visual Content */}
+        {/* Visual Content - temporarily removed */}
         {section.visualType && (
           <Box sx={{
             flex: { xs: 'none', md: '0 0 45%' },
@@ -129,7 +128,7 @@ function AboutSectionItem({ section, id, index }: { section: AboutSection; id: s
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            order: { xs: -1, md: 0 }, // On mobile, show visual above text
+            order: { xs: -1, md: 0 },
             opacity: isRevealed ? 1 : 0,
             transform: isRevealed
               ? 'translateX(0) scale(1)'
@@ -138,8 +137,12 @@ function AboutSectionItem({ section, id, index }: { section: AboutSection; id: s
                 : 'translateX(-60px) scale(0.95)',
             transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
             transitionDelay: '0.3s',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: 2,
           }}>
-            <AboutVisual type={section.visualType} />
+            <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+              Visual Component ({section.visualType})
+            </Typography>
           </Box>
         )}
       </Box>

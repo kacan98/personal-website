@@ -48,12 +48,12 @@ export function CvPaper({
 }: CvPaperProps) {
   const locale = useLocale();
   const reduxCv = useAppSelector((state) => state.cv);
-  const dispatch = useAppDispatch();
+  const _dispatch = useAppDispatch();
   const { imageUrl } = usePicture(() => getCVPicture(locale));
-  // Custom breakpoint at 800px - we'll call it "resume breakpoint"
+  // Custom breakpoint at 800px - we'll call it "CV breakpoint"
   // For print version, always use desktop layout regardless of media query
   const mediaQueryResult = useMediaQuery('(min-width:700px)');
-  const isResumeDesktop = isPrintVersion ? true : mediaQueryResult;
+  const isCvDesktop = isPrintVersion ? true : mediaQueryResult;
 
   const getSectionKey = (columnType: 'mainColumn' | 'sideColumn', index: number) => {
     return `${columnType}-${index}`;
@@ -63,7 +63,7 @@ export function CvPaper({
 
   return (
     <Grid container spacing={0}>
-      <Grid size={isResumeDesktop ? 4 : 12}>
+      <Grid size={isCvDesktop ? 4 : 12}>
         <Box display="flex" flexDirection="column" alignItems="left" sx={{ p: 2, pr: 3 }}>
           <Box
             display="flex"
@@ -164,7 +164,7 @@ export function CvPaper({
 
         </Box>
       </Grid>
-      <Grid size={isResumeDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
+      <Grid size={isCvDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
         <Box sx={{ p: 2 }}>
           {(() => {
             // Get merged sections including deleted ones for diff viewing

@@ -1,5 +1,5 @@
 "use client";
-import { Box, Tooltip, IconButton, Typography } from "@mui/material";
+import { Box, Tooltip, IconButton } from "@mui/material";
 import {
   Work as WorkIcon,
   Email as EmailIcon,
@@ -13,6 +13,7 @@ import {
   CompareArrows as CompareArrowsIcon,
   RestartAlt as RestartAltIcon,
   DeleteSweep as DeleteSweepIcon,
+  Extension as ExtensionIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -108,6 +109,7 @@ interface CvSidebarProps {
   onViewMotivationalLetter: () => void;
   onViewPositionAnalysis: () => void;
   onTranslate: () => void;
+  onOpenExtensionModal?: () => void;
   hasMotivationalLetter: boolean;
   hasPositionAnalysis: boolean;
   hasAdjustedCv: boolean;
@@ -129,6 +131,7 @@ const CvSidebar = ({
   onViewMotivationalLetter,
   onViewPositionAnalysis,
   onTranslate,
+  onOpenExtensionModal,
   hasMotivationalLetter,
   hasPositionAnalysis,
   hasAdjustedCv,
@@ -167,7 +170,7 @@ const CvSidebar = ({
       icon: <EmailIcon />,
       onClick: onViewMotivationalLetter,
       disabled: false,
-      visible: true, // Always visible - can generate or view existing
+      visible: hasMotivationalLetter, // Only visible when letter has been generated
       completed: hasMotivationalLetter,
     },
     {
@@ -176,7 +179,7 @@ const CvSidebar = ({
       icon: <AnalyticsIcon />,
       onClick: onViewPositionAnalysis,
       disabled: false,
-      visible: true, // Always visible - can analyze position or prompt for input
+      visible: hasAdjustedCv, // Only visible after CV has been adjusted for position
       completed: hasPositionAnalysis,
     },
     {
@@ -215,6 +218,20 @@ const CvSidebar = ({
       visible: !!onClearCache,
       completed: false,
     },
+    {
+      id: 'separator',
+      isSeparator: true,
+      visible: !!onOpenExtensionModal,
+    },
+    {
+      id: 'chrome-extension',
+      label: 'Get Chrome Extension',
+      icon: <ExtensionIcon />,
+      onClick: onOpenExtensionModal || (() => {}),
+      disabled: false,
+      visible: !!onOpenExtensionModal,
+      completed: false,
+    },
   ];
 
   const visibleButtons = sidebarButtons.filter(button => button.visible);
@@ -239,11 +256,6 @@ const CvSidebar = ({
     setIsCollapsed(prev => !prev);
   };
 
-  // Only show sidebar in development/editable mode
-  if (!editable) {
-    return null;
-  }
-
   return (
     <Box
       sx={{
@@ -252,7 +264,7 @@ const CvSidebar = ({
         top: '50%',
         transform: 'translateY(-50%)',
         zIndex: 1000,
-        display: 'flex',
+        display: editable ? 'flex' : 'none',
         flexDirection: 'column',
         gap: 2,
         p: 2,
@@ -294,6 +306,21 @@ const CvSidebar = ({
         // Show full buttons when expanded
         <>
           {visibleButtons.map((button) => {
+            // Render separator
+            if (button.isSeparator) {
+              return (
+                <Box
+                  key={button.id}
+                  sx={{
+                    width: '100%',
+                    height: '1px',
+                    backgroundColor: 'divider',
+                    my: 1,
+                  }}
+                />
+              );
+            }
+
             // Special handling for Manual Adjustments button with Quick Adjustment in tooltip
             if (button.id === 'manual-adjustments') {
               return (
@@ -301,12 +328,12 @@ const CvSidebar = ({
                   key={button.id}
                   title={
                     <Box sx={{ p: 1 }}>
-                      <Typography variant="body2" sx={{ mb: 1.5 }}>{button.label}</Typography>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <IconButton
-                          onClick={() => {
-                            onManualAdjustmentsQuick();
-                          }}
+                        <Tooltip title="Quick Adjustment" placement="top">
+                          <IconButton
+                            onClick={() => {
+                              onManualAdjustmentsQuick();
+                            }}
                           sx={{
                             width: 48,
                             height: 48,
@@ -326,9 +353,9 @@ const CvSidebar = ({
                             },
                           }}
                         >
-                          <SpeedIcon />
-                        </IconButton>
-                        <Typography variant="caption" sx={{ color: 'inherit' }}>Quick Adjustment</Typography>
+                            <SpeedIcon />
+                          </IconButton>
+                        </Tooltip>
                       </Box>
                     </Box>
                   }
@@ -406,16 +433,20 @@ const CvSidebar = ({
             }
 
             // Regular buttons use the SidebarActionButton component
-            return (
-              <SidebarActionButton
-                key={button.id}
-                icon={button.icon}
-                label={button.label}
-                onClick={button.onClick}
-                disabled={button.disabled}
-                completed={button.completed}
-              />
-            );
+            if (!button.isSeparator && button.icon && button.label && button.onClick) {
+              return (
+                <SidebarActionButton
+                  key={button.id}
+                  icon={button.icon}
+                  label={button.label}
+                  onClick={button.onClick}
+                  disabled={button.disabled}
+                  completed={button.completed}
+                />
+              );
+            }
+
+            return null;
           })}
         </>
       )}

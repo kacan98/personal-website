@@ -30,7 +30,7 @@ import { useRefineCv } from "./hooks/useRefineCv";
 import CvPaper from "./paper/cvPaper";
 import { useTranslations } from 'next-intl';
 import CvSidebar from "./CvSidebar";
-import JobDescriptionModal from "./modals/JobDescriptionModal";
+import ExtensionDownload from "./ExtensionDownload";
 import ManualAdjustmentModal from "./modals/ManualAdjustmentModal";
 import MotivationalLetterModal from "./modals/MotivationalLetterModal";
 import TranslationModal from "./modals/TranslationModal";
@@ -63,64 +63,72 @@ function CvPage({ jobDescription }: CvProps) {
   // Authentication state - declare before any useEffect that uses it
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const { isAuthenticated, isLoading: authLoading, logout } = useAuth();
-  const editable = !IS_PRODUCTION || isAuthenticated; // Allow editing when auth disabled OR when authenticated
 
-  // Load original CV from data files instead of Redux to avoid capturing modified state
+  // Only allow editing when auth is disabled OR when authenticated AND auth loading is complete
+  // During auth loading, always show as not editable to prevent hydration mismatch
+  const editable = !authLoading && (!IS_PRODUCTION || isAuthenticated);
+
+  // Load original CV from data files and sync with Redux to ensure they match initially
   useEffect(() => {
     if (!originalCv) {
       try {
         const loadedOriginalCv = getCvSettings(locale);
         const cvWithIds = ensureCvIds(loadedOriginalCv);
         const clonedCv = deepClone(cvWithIds);
+
+        // Set original CV for comparison
         setOriginalCv(clonedCv);
+
+        // Ensure Redux state matches the original CV exactly on initial load
+        // Only initialize if Redux CV is significantly different (not just from previous edits)
+        if (!reduxCvProps.name || reduxCvProps.name !== cvWithIds.name) {
+          dispatch(initCv(cvWithIds));
+        }
       } catch (error) {
         console.error('Failed to load original CV:', error);
       }
-    } else {
     }
   }, [locale]); // Only load once per locale
 
-  // Auto-show login modal when auth is required and user is not authenticated
-  useEffect(() => {
-    if (IS_PRODUCTION && !isAuthenticated && !authLoading && !showPasswordModal) {
-      // Small delay to ensure component is fully mounted
-      const timer = setTimeout(() => {
-        setShowPasswordModal(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [IS_PRODUCTION, isAuthenticated, authLoading, showPasswordModal]);
+  // Authentication modal only shows when user clicks title 5 times (no auto-show)
 
-  // Periodic auth status check (every 4 seconds) to detect cross-tab authentication
-  useEffect(() => {
-    if (!IS_PRODUCTION) return;
+  // Periodic auth status check (temporarily disabled - use manual refresh instead)
+  // TODO: Re-enable if cross-tab authentication detection is needed
+  // useEffect(() => {
+  //   if (!IS_PRODUCTION) return;
 
-    const interval = setInterval(async () => {
-      if (!isAuthenticated) {
-        // Only check if currently not authenticated
-        try {
-          const response = await fetch('/api/auth/status', {
-            method: 'GET',
-            credentials: 'include',
-          });
-          const data = await response.json();
+  //   const interval = setInterval(async () => {
+  //     if (!isAuthenticated) {
+  //       // Only check if currently not authenticated
+  //       try {
+  //         const response = await fetch('/api/auth/status', {
+  //           method: 'GET',
+  //           credentials: 'include',
+  //         });
+  //         const data = await response.json();
 
-          if (data.authenticated && !isAuthenticated) {
-            // Authentication detected from another tab - refresh auth state
-            window.location.reload();
-          }
-        } catch (error) {
-          console.error('Periodic auth check failed:', error);
-        }
-      }
-    }, 4000); // Check every 4 seconds
+  //         if (data.authenticated && !isAuthenticated) {
+  //           // Authentication detected from another tab - refresh auth state
+  //           window.location.reload();
+  //         }
+  //       } catch (error) {
+  //         console.error('Periodic auth check failed:', error);
+  //       }
+  //     }
+  //   }, 30000); // Check every 30 seconds (twice per minute)
 
-    return () => clearInterval(interval);
-  }, [IS_PRODUCTION, isAuthenticated]);
+  //   return () => clearInterval(interval);
+  // }, [IS_PRODUCTION, isAuthenticated]);
 
-  // Use computed diff analysis instead of tracking state (must be declared before useEffect)
-  const cvDiffAnalysis = useCvDiffAnalysis(originalCv, reduxCvProps);
-  const { removedSections, modifiedSections, removedSubSections, modifiedSubSections, hasChanges } = cvDiffAnalysis;
+  // Use Redux hasChanges flag instead of expensive diff analysis
+  const hasChanges = reduxCvProps.hasChanges || false;
+
+  // Always call the hook, but only compute when needed
+  const cvDiffAnalysis = useCvDiffAnalysis(
+    showDiff && originalCv ? originalCv : null,
+    showDiff && originalCv ? reduxCvProps : null
+  );
+  const { removedSections, modifiedSections, removedSubSections, modifiedSubSections } = cvDiffAnalysis;
 
   // Don't auto-enable diff view - let user manually toggle it
   // The new personalized CV should be the primary view, not a diff
@@ -132,11 +140,11 @@ function CvPage({ jobDescription }: CvProps) {
 
 
   // Modal state
-  const [jobDescriptionModalOpen, setJobDescriptionModalOpen] = useState(false);
   const [manualAdjustmentModalOpen, setManualAdjustmentModalOpen] = useState(false);
   const [motivationalLetterModalOpen, setMotivationalLetterModalOpen] = useState(false);
   const [translationModalOpen, setTranslationModalOpen] = useState(false);
   const [positionAnalysisModalOpen, setPositionAnalysisModalOpen] = useState(false);
+  const [extensionModalOpen, setExtensionModalOpen] = useState(false);
 
   // Existing state (simplified)
   const [selectedLanguage, setLanguage] = useState("English");
@@ -228,28 +236,23 @@ function CvPage({ jobDescription }: CvProps) {
 
   // Modal handlers
   const handleAdjustForPosition = async () => {
-    if (shouldAdjustCv && positionDetails && positionDetails.trim().length > 0) {
+    if (positionDetails && positionDetails.trim().length > 0) {
       // Run CV adjustment and motivational letter generation in parallel
-      const runParallelTasks = async () => {
-        setLoading(true);
-        setCurrentOperation('Personalizing CV and generating motivational letter...');
-        try {
-          await Promise.all([
-            adjustCvBasedOnPosition(),
-            getMotivationalLetter(positionDetails, checked, selectedLanguage)
-          ]);
-          setsnackbarMessage('CV personalized and motivational letter generated successfully!');
-          setCvAdjusted(true);
-        } catch (error) {
-          setsnackbarMessage('Error during CV personalization or letter generation');
-        } finally {
-          setLoading(false);
-          setCurrentOperation('Discussing with AI...');
-        }
-      };
-
-      await runParallelTasks();
-      setShouldAdjustCv(false);
+      setLoading(true);
+      setCurrentOperation('Personalizing CV and generating motivational letter...');
+      try {
+        await Promise.all([
+          adjustCvBasedOnPosition(),
+          getMotivationalLetter(positionDetails, checked, selectedLanguage)
+        ]);
+        setsnackbarMessage('CV personalized and motivational letter generated successfully!');
+        setCvAdjusted(true);
+      } catch (error) {
+        setsnackbarMessage('Error during CV personalization or letter generation');
+      } finally {
+        setLoading(false);
+        setCurrentOperation('Discussing with AI...');
+      }
     }
   };
 
@@ -413,6 +416,7 @@ function CvPage({ jobDescription }: CvProps) {
     }
   }, [motivationalLetter]);
 
+
   // Utility functions
   const handleLanguageChange = async (event: SelectChangeEvent<string>) => {
     setLanguage(event.target.value);
@@ -567,7 +571,7 @@ function CvPage({ jobDescription }: CvProps) {
   // Reset CV to original
   const handleResetToOriginal = () => {
     if (originalCv) {
-      dispatch(initCv(originalCv));
+      dispatch(initCv(originalCv)); // This automatically sets hasChanges to false
       setShowDiff(false); // Turn off diff view after reset
       // Clear any adjusted CV state
       setCvAdjusted(false);
@@ -630,7 +634,7 @@ function CvPage({ jobDescription }: CvProps) {
       <>
         {/* Sidebar with action buttons */}
         <CvSidebar
-          onAdjustForPosition={() => setJobDescriptionModalOpen(true)}
+          onAdjustForPosition={() => setManualAdjustmentModalOpen(true)}
           onManualAdjustments={() => setManualAdjustmentModalOpen(true)}
           onManualAdjustmentsQuick={() => {
             setManualAdjustmentModalOpen(true);
@@ -651,8 +655,11 @@ function CvPage({ jobDescription }: CvProps) {
           onResetToOriginal={handleResetToOriginal}
           onClearCache={cacheStats && cacheStats.activeEntries > 0 ? handleClearCache : undefined}
           lastCacheStatus={lastCacheStatus}
+          onOpenExtensionModal={() => setExtensionModalOpen(true)}
         />
 
+        {/* Extension Download Modal */}
+        <ExtensionDownload open={extensionModalOpen} onClose={() => setExtensionModalOpen(false)} />
 
         {/* Logout button (when authenticated) */}
         {IS_PRODUCTION && isAuthenticated && (
@@ -713,26 +720,24 @@ function CvPage({ jobDescription }: CvProps) {
 
 
         {/* Edit mode indicator */}
-        {editable && (
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h2" mb={1}>
-              {t('editMode')} <CreateIcon />
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {t('editWarning')}
-            </Typography>
-            <Slider
-              min={9}
-              max={20}
-              value={fontSize}
-              onChange={(_: Event, newValue: number | number[]) => setFontSize(Array.isArray(newValue) ? newValue[0] : newValue)}
-              valueLabelDisplay="auto"
-              aria-label="font size"
-              defaultValue={12}
-              sx={{ mt: 2 }}
-            />
-          </Box>
-        )}
+        <Box sx={{ mb: 3, display: editable ? 'block' : 'none' }}>
+          <Typography variant="h2" mb={1}>
+            {t('editMode')} <CreateIcon />
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {t('editWarning')}
+          </Typography>
+          <Slider
+            min={9}
+            max={20}
+            value={fontSize}
+            onChange={(_: Event, newValue: number | number[]) => setFontSize(Array.isArray(newValue) ? newValue[0] : newValue)}
+            valueLabelDisplay="auto"
+            aria-label="font size"
+            defaultValue={12}
+            sx={{ mt: 2 }}
+          />
+        </Box>
 
 
         {/* Main CV Paper - Always visible */}
@@ -761,18 +766,6 @@ function CvPage({ jobDescription }: CvProps) {
         </Print>
 
         {/* Modals */}
-        <JobDescriptionModal
-          open={jobDescriptionModalOpen}
-          onClose={() => setJobDescriptionModalOpen(false)}
-          positionDetails={positionDetails}
-          setPositionDetails={setPositionDetails}
-          onAdjustCV={handleAdjustForPosition}
-          positionIntersection={positionIntersection}
-          checked={checked}
-          handleChecked={handleChecked}
-          companyName={companyName}
-          isLoading={loading}
-        />
 
         <ManualAdjustmentModal
           open={manualAdjustmentModalOpen}
@@ -783,11 +776,10 @@ function CvPage({ jobDescription }: CvProps) {
           checkedImprovements={checked}
           onRefineCV={handleManualRefinement}
           isLoading={loading}
-          companyName={companyName}
-          positionIntersection={positionIntersection}
+          _companyName={companyName}
           positionDetails={positionDetails}
           setPositionDetails={setPositionDetails}
-          onAnalyzePosition={updatePositionIntersection}
+          onAdjustForPosition={handleAdjustForPosition}
           isMinimized={isManualAdjustmentMinimized}
           onToggleMinimize={() => setIsManualAdjustmentMinimized(prev => !prev)}
           otherChanges={manualOtherChanges}
@@ -829,12 +821,12 @@ function CvPage({ jobDescription }: CvProps) {
           onClose={() => setPositionAnalysisModalOpen(false)}
           positionIntersection={positionIntersection}
           checked={checked}
-          handleChecked={handleChecked}
+          _handleChecked={handleChecked}
           onOpenManualAdjustments={() => {
             setPositionAnalysisModalOpen(false);
             setManualAdjustmentModalOpen(true);
           }}
-          companyName={companyName}
+          _companyName={companyName}
           positionDetails={positionDetails}
           setPositionDetails={setPositionDetails}
           onAnalyzePosition={updatePositionIntersection}

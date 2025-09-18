@@ -1,33 +1,18 @@
-import OpenAI from "openai"
 import { zodResponseFormat } from "openai/helpers/zod"
 import { MotivationalLetterParams, MotivationalLetterSchema } from "./motivational-letter.model"
-import { checkAuthFromRequest } from '@/lib/auth-middleware'
-import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
+import { getOpenAIClient, OPENAI_MODELS } from '@/lib/openai-service'
+import { withAuth, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware'
 
 export const runtime = 'nodejs';
 
-export async function POST(req: Request): Promise<Response> {
+async function handleMotivationalLetter(req: Request): Promise<Response> {
   try {
-    // Check authentication when required
-    if (IS_PRODUCTION) {
-      const authResult = await checkAuthFromRequest(req)
-      if (!authResult.authenticated) {
-        console.log('POST /api/motivational-letter - Authentication required')
-        return new Response(JSON.stringify({ error: 'Authentication required for motivational letter generation' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        })
-      }
-      console.log('POST /api/motivational-letter - Authentication verified')
-    }
 
     const body = await req.json()
 
     MotivationalLetterParams.parse(body)
 
-    const openai = new OpenAI({
-      apiKey: OPENAI_API_KEY,
-    })
+    const openai = getOpenAIClient();
 
     // Check if this is an adjustment request
     const isAdjustment = body.currentLetter && body.adjustmentComments;
@@ -99,7 +84,7 @@ Use this as a loose guide, but let the letter flow naturally—no strict section
 The goal is to sound like you're chatting with someone, not drafting a formal letter.`;
 
     const response = await openai.chat.completions.parse({
-      model: 'gpt-5-mini',
+      model: OPENAI_MODELS.LATEST_MINI,
       messages: [
         {
           role: 'system',
@@ -116,10 +101,11 @@ The goal is to sound like you're chatting with someone, not drafting a formal le
       ),
     })
 
-    return new Response(JSON.stringify(response.choices[0].message.parsed), {
-      status: 200,
-    })
-  } catch (e: any) {
-    return new Response(e.message, { status: 500 })
+    return createSuccessResponse(response.choices[0].message.parsed);
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    return createErrorResponse(errorMessage);
   }
 }
+
+export const POST = withAuth(handleMotivationalLetter);

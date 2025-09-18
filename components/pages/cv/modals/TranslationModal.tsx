@@ -80,12 +80,6 @@ const TranslationModal = ({
     >
       {/* Language Selection */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Select Target Language
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Choose the language you want to translate your documents to. The AI will maintain professional tone and structure while adapting to cultural norms.
-        </Typography>
         <CvLanguageSelectionComponent
           selectedLanguage={selectedLanguage}
           handleLanguageChange={handleLanguageChange}
@@ -94,9 +88,6 @@ const TranslationModal = ({
 
       {/* What to Translate */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          What to Translate
-        </Typography>
         <List sx={{ py: 0 }}>
           <ListItem sx={{ py: 1, px: 0 }}>
             <ListItemIcon>
@@ -110,7 +101,7 @@ const TranslationModal = ({
               <DescriptionIcon color="primary" />
             </ListItemIcon>
             <ListItemText
-              primary="CV/Resume"
+              primary="CV"
               secondary="Translate your complete CV including all sections and content"
             />
           </ListItem>

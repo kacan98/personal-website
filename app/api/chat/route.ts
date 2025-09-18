@@ -1,16 +1,13 @@
 import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
 import { getCvSettings } from "@/data";
 import projectsSimple from "@/data/projects-simple.json";
-import OpenAI from "openai";
-import { OPENAI_API_KEY } from "@/lib/env";
+import { getOpenAIClient, extractContentFromChunk } from "@/lib/openai-service";
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    const openai = new OpenAI({
-      apiKey: OPENAI_API_KEY,
-    });
+    const openai = getOpenAIClient();
 
     const body = await req.json();
     const { chatHistory, language } = body as ChatPOSTBody;
@@ -70,18 +67,8 @@ IMPORTANT: Keep ALL responses very short (1-2 sentences max). Be concise and to 
         
         try {
           for await (const chunk of completion) {
-            // For Responses API, handle different chunk formats
-            let content = '';
-            const chunkData = chunk as any; // Type assertion for flexibility with different API response formats
-            
-            if (chunkData.delta?.content) {
-              content = String(chunkData.delta.content);
-            } else if (chunkData.content) {
-              content = String(chunkData.content);
-            } else if (chunkData.text) {
-              content = String(chunkData.text);
-            }
-            
+            const content = extractContentFromChunk(chunk);
+
             if (content) {
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
             }

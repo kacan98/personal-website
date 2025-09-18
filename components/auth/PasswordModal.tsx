@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
 
 interface PasswordModalProps {
   open: boolean;
@@ -26,7 +27,20 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
   const [isLoading, setIsLoading] = useState(false);
   const [remainingAttempts, setRemainingAttempts] = useState<number | undefined>();
 
-  const { login } = useAuth();
+  const { login, checkAuthStatus } = useAuth();
+
+  const handleRefresh = async (): Promise<void> => {
+    setIsLoading(true);
+    setError('');
+    try {
+      await checkAuthStatus();
+    } catch (error) {
+      console.error('Manual auth refresh failed:', error);
+      setError('Failed to check authentication status');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
@@ -123,22 +137,32 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
           </Typography>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 3 }}>
+        <DialogActions sx={{ px: 3, pb: 3, justifyContent: 'space-between' }}>
           <Button
-            onClick={handleClose}
+            onClick={handleRefresh}
             disabled={isLoading}
-            color="inherit"
+            startIcon={<RefreshIcon />}
+            size="small"
           >
-            Cancel
+            Refresh Auth
           </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isLoading || !password.trim()}
-            startIcon={isLoading ? <CircularProgress size={16} /> : undefined}
-          >
-            {isLoading ? 'Authenticating...' : 'Login'}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              onClick={handleClose}
+              disabled={isLoading}
+              color="inherit"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isLoading || !password.trim()}
+              startIcon={isLoading ? <CircularProgress size={16} /> : undefined}
+            >
+              {isLoading ? 'Authenticating...' : 'Login'}
+            </Button>
+          </Box>
         </DialogActions>
       </Box>
     </Dialog>

@@ -1,5 +1,5 @@
 "use client";
-import { Box, Container, ContainerProps } from "@mui/material";
+import { Box, Container, ContainerProps, SxProps, Theme } from "@mui/material";
 import { ReactNode } from "react";
 import { SPACING } from "@/app/spacing";
 
@@ -32,9 +32,9 @@ const ContentContainer = ({
           p: padding,
         }}
       >
-        <Container 
-          maxWidth={maxWidth} 
-          sx={{ px: SPACING.containerPadding } as any}
+        <Container
+          maxWidth={maxWidth}
+          sx={{ px: SPACING.containerPadding } satisfies SxProps<Theme>}
           {...props}
         >
           {children}
@@ -45,13 +45,13 @@ const ContentContainer = ({
 
   // Otherwise, just render a contained Container
   return (
-    <Container 
-      maxWidth={maxWidth} 
-      sx={{ 
+    <Container
+      maxWidth={maxWidth}
+      sx={{
         px: SPACING.containerPadding,
         py: padding,
         backgroundColor: background,
-      } as any}
+      } satisfies SxProps<Theme>}
       {...props}
     >
       {children}

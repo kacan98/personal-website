@@ -11,7 +11,7 @@ export const IS_PRODUCTION = process.env.DEV === '0' || !dev || process.env.DEV 
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 // Authentication secrets
-export const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-for-development';
+export const JWT_SECRET = process.env.JWT_SECRET;
 export const CV_ADMIN_PASSWORD = process.env.CV_ADMIN_PASSWORD;
 
 // Sanity configuration

@@ -3,6 +3,7 @@ import { zodResponseFormat } from 'openai/helpers/zod.mjs'
 import { z } from 'zod'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
 import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
+import { OPENAI_MODELS } from '@/lib/openai-service'
 
 const PositionSummarizeParams = z.object({
   description: z.string().min(20, 'Description too short'),
@@ -81,7 +82,7 @@ export async function POST(req: Request): Promise<Response> {
     let completion
     try {
       completion = await openai.chat.completions.parse({
-        model: 'gpt-5-mini',
+        model: OPENAI_MODELS.LATEST_MINI,
         messages: [
           {
             role: 'user',

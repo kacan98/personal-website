@@ -57,9 +57,10 @@ export function getTheme({
   const baseTheme = getBaseTheme(fontSize);
 
   if (baseTheme.typography && typeof baseTheme.typography === 'object') {
+    const currentFontFamily = baseTheme.typography.fontFamily || '"Open Sans", "Urbanist", "Cormorant Garamond", "Yeseva One", system-ui, sans-serif';
     baseTheme.typography = {
       ...baseTheme.typography,
-      fontFamily: styles?.font || (baseTheme.typography as any).fontFamily,
+      fontFamily: styles?.font || currentFontFamily,
     };
   }
 

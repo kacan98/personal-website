@@ -110,42 +110,64 @@ const styles = {
 };
 
 const Options = () => {
-  const [color, setColor] = useState<string>("");
+  const [targetUrl, setTargetUrl] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const [like, setLike] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
+
+  // Preset URLs for quick selection
+  const presetUrls = [
+    { label: "Local Development", value: "http://localhost:3000" },
+    { label: "Production", value: "https://your-domain.com" }, // Will be replaced in production build
+  ];
 
   useEffect(() => {
-    // Restores select box and checkbox state using the preferences
-    // stored in chrome.storage.
+    // Restore saved URL from storage
     chrome.storage.sync.get(
       {
-        favoriteColor: "red",
-        likesColor: true,
+        targetUrl: "http://localhost:3000",
       },
       (items) => {
-        setColor(items.favoriteColor);
-        setLike(items.likesColor);
+        setTargetUrl(items.targetUrl);
       }
     );
   }, []);
 
   const saveOptions = () => {
-    // Saves options to chrome.storage.sync.
+    // Validate URL
+    try {
+      new URL(targetUrl);
+    } catch (e) {
+      setStatus("❌ Please enter a valid URL");
+      setTimeout(() => setStatus(""), 3000);
+      return;
+    }
+
+    // Save to chrome storage
     chrome.storage.sync.set(
       {
-        favoriteColor: color,
-        likesColor: like,
+        targetUrl: targetUrl,
       },
       () => {
-        // Update status to let user know options were saved.
-        setStatus("✅ Options saved successfully!");
-        const id = setTimeout(() => {
-          setStatus("");
-        }, 3000);
-        return () => clearTimeout(id);
+        setStatus("✅ Settings saved successfully!");
+        setTimeout(() => setStatus(""), 3000);
       }
     );
+  };
+
+  const testConnection = async () => {
+    setIsTesting(true);
+    try {
+      const _response = await fetch(`${targetUrl}/api/health`, {
+        method: 'HEAD',
+        mode: 'no-cors'
+      });
+      setStatus("✅ Connection successful!");
+    } catch (e) {
+      setStatus("⚠️ Could not connect - make sure the server is running");
+    }
+    setIsTesting(false);
+    setTimeout(() => setStatus(""), 3000);
   };
 
   return (<div style={styles.container}>
@@ -156,35 +178,57 @@ const Options = () => {
 
     <div style={styles.content}>
       <div style={styles.section}>
-        <label style={styles.label} htmlFor="color-select">
-          🎨 Favorite Color Theme
+        <label style={styles.label} htmlFor="target-url">
+          🌐 Target Website URL
         </label>
-        <select
-          id="color-select"
-          style={styles.select}
-          value={color}
-          onChange={(event) => setColor(event.target.value)}
-        >
-          <option value="red">❤️ Red</option>
-          <option value="green">💚 Green</option>
-          <option value="blue">💙 Blue</option>
-          <option value="yellow">💛 Yellow</option>
-        </select>
+        <input
+          id="target-url"
+          type="text"
+          style={{
+            ...styles.select,
+            fontFamily: "'Courier New', monospace",
+          }}
+          value={targetUrl}
+          onChange={(event) => setTargetUrl(event.target.value)}
+          placeholder="https://your-website.com"
+        />
+
+        <div style={{ marginTop: "12px", display: "flex", gap: "8px", flexWrap: "wrap" as const }}>
+          {presetUrls.map((preset) => (
+            <button
+              key={preset.value}
+              onClick={() => setTargetUrl(preset.value)}
+              style={{
+                padding: "6px 12px",
+                border: "1px solid #444",
+                borderRadius: "4px",
+                background: targetUrl === preset.value ? "#4CAF50" : "#2a2a2a",
+                color: "#ffffff",
+                fontSize: "12px",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div style={styles.section}>
-        <div style={styles.checkboxContainer}>
-          <input
-            id="like-colors"
-            type="checkbox"
-            style={styles.checkbox}
-            checked={like}
-            onChange={(event) => setLike(event.target.checked)}
-          />
-          <label htmlFor="like-colors" style={styles.checkboxLabel}>
-            🌈 I enjoy working with colors in my CV designs
-          </label>
-        </div>
+        <button
+          onClick={testConnection}
+          disabled={isTesting}
+          style={{
+            ...styles.button,
+            background: "linear-gradient(45deg, #2196F3 0%, #1976D2 100%)",
+            marginTop: "0",
+            opacity: isTesting ? 0.7 : 1,
+            cursor: isTesting ? "not-allowed" : "pointer"
+          }}
+        >
+          {isTesting ? "🔄 Testing..." : "🧪 Test Connection"}
+        </button>
       </div>
 
       <button
@@ -196,7 +240,7 @@ const Options = () => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        💾 Save Preferences
+        💾 Save Settings
       </button>
 
       {status && (

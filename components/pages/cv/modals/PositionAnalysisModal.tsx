@@ -21,9 +21,9 @@ interface PositionAnalysisModalProps {
   onClose: () => void;
   positionIntersection: JobCvIntersectionResponse | null;
   checked: string[];
-  handleChecked: (missing: string) => () => void;
+  _handleChecked: (missing: string) => () => void;
   onOpenManualAdjustments: () => void;
-  companyName?: string | null;
+  _companyName?: string | null;
   positionDetails: string;
   setPositionDetails: (value: string) => void;
   onAnalyzePosition: () => Promise<void>;
@@ -35,9 +35,9 @@ const PositionAnalysisModal = ({
   onClose,
   positionIntersection,
   checked,
-  handleChecked,
+  _handleChecked,
   onOpenManualAdjustments,
-  companyName,
+  _companyName,
   positionDetails,
   setPositionDetails,
   onAnalyzePosition,
@@ -123,18 +123,7 @@ const PositionAnalysisModal = ({
         actions={noAnalysisActions}
         disableBackdropClick={isLoading}
       >
-        <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <AnalyticsIcon color="primary" fontSize="small" />
-          Get Position Insights
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Paste a job description below to get detailed analysis of how your CV matches the requirements, identify gaps, and get improvement suggestions.
-        </Typography>
-
         <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle1" sx={{ mb: 2 }}>
-            Job Description or Position Details
-          </Typography>
           <TextField
             multiline
             rows={8}
@@ -171,7 +160,7 @@ const PositionAnalysisModal = ({
       open={open}
       onClose={onClose}
       title="Position Analysis"
-      subtitle={companyName ? `Match analysis for ${companyName}` : "CV-Position compatibility analysis"}
+      subtitle={_companyName ? `Match analysis for ${_companyName}` : "CV-Position compatibility analysis"}
       maxWidth="lg"
       actions={analysisActions}
     >

@@ -20,8 +20,8 @@ async function PortfolioPage({ title, locale }: PortfolioPageProps) {
   const allProjects = readMarkdownFiles<Project>(projectsFolder)
     .sort((a: Project, b: Project) => {
       // Sort by order field if it exists, otherwise by title
-      const orderA = (a as any).order || 999;
-      const orderB = (b as any).order || 999;
+      const orderA = a.order ?? 999;
+      const orderB = b.order ?? 999;
       if (orderA !== orderB) {
         return orderA - orderB;
       }

@@ -4,7 +4,7 @@
     "about": "About",
     "projects": "Projects", 
     "cv": "CV",
-    "resume": "Resume",
+    "cv": "CV",
     "gallery": "Gallery",
     "chatbot": "Chat"
   },
@@ -26,8 +26,8 @@
     "linkedinButton": "Add me on LinkedIn"
   },
   "cv": {
-    "title": "Resume",
-    "pageTitle": "Resume",
+    "title": "CV",
+    "pageTitle": "CV",
     "editMode": "Now you can edit",
     "editWarning": "But be careful. This is possible just to tweak something (or transform with AI) locally on your machine before sending it to potential employers. The changes won't be saved in any way.",
     "translateCV": "Translate CV",

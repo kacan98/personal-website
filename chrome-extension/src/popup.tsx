@@ -88,6 +88,7 @@ const Popup = () => {
   const [pageText, setPageText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [focusedButton, setFocusedButton] = useState<string | null>(null);
+  const [targetUrl, setTargetUrl] = useState("http://localhost:3000");
   const jobIdRef = useRef(`job-${Date.now()}`);
 
   const openCVTool = (textToStore?: string) => {
@@ -104,9 +105,9 @@ const Popup = () => {
           });
 
           const newWindowId = newWindowDetails.id;
-          // Open localhost as a new tab in the new window
+          // Open CV tool using the configured URL
           await chrome.tabs.create({
-            url: `http://localhost:3000/cv/${jobIdRef.current}`,
+            url: `${targetUrl}/cv/${jobIdRef.current}`,
             windowId: newWindowId,
           });
         }
@@ -115,6 +116,14 @@ const Popup = () => {
   };
 
   useEffect(() => {
+    // Load the target URL from storage
+    chrome.storage.sync.get(
+      { targetUrl: "http://localhost:3000" },
+      (items) => {
+        setTargetUrl(items.targetUrl);
+      }
+    );
+
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, (response) => {
@@ -148,6 +157,9 @@ const Popup = () => {
     <div style={styles.header}>
       <h1 style={styles.title}>CV Tailor</h1>
       <p style={styles.subtitle}>Automatically customize your CV for specific job postings using AI</p>
+      <p style={{ ...styles.subtitle, fontSize: "10px", marginTop: "4px", opacity: 0.7 }}>
+        Target: {targetUrl}
+      </p>
     </div>
     <div style={styles.content}>
       <textarea

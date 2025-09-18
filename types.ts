@@ -63,6 +63,7 @@ export type Project = {
   links: Link[];
   featured: boolean;
   description?: string;
+  order?: number;
 };
 
 export type Gallery = {

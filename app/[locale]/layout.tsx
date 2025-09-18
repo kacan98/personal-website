@@ -62,7 +62,7 @@ export default async function LocaleLayout({
   const navigationLinks = [
     { name: tNav('about'), href: `/${locale}/about` },
     { name: tNav('projects'), href: `/${locale}/portfolio` },
-    { name: tNav('resume'), href: `/${locale}/resume` },
+    { name: tNav('cv'), href: `/${locale}/cv` },
   ];
 
   if (settings?.specialPages?.chatbot) {

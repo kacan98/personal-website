@@ -1,8 +1,7 @@
 "use client";
 import { ProjectCard } from "@/components/pages/galery/projectCard";
-import ProjectFilter from "@/components/pages/portfolio/projects/projectFilter";
 import { Project } from "@/types";
-import { Grid } from "@mui/material";
+import { Grid, Chip, Box } from "@mui/material";
 import { animated, useTransition } from "@react-spring/web";
 import Link from "next/link";
 import { useState } from "react";
@@ -49,13 +48,18 @@ export const GalleryComponent = ({
     >
       {filteringIsEnabled && (
         <Grid mb={3} p={2}>
-          {
-            <ProjectFilter
-              selectedFilter={selectedTag}
-              setSelectedFilter={setSelectedTag}
-              filters={uniqueTags}
-            />
-          }
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
+            {uniqueTags.map((tag) => (
+              <Chip
+                key={tag}
+                label={tag === 'all' ? 'All' : tag}
+                onClick={() => setSelectedTag(tag)}
+                variant={selectedTag === tag ? 'filled' : 'outlined'}
+                color={selectedTag === tag ? 'primary' : 'default'}
+                sx={{ textTransform: 'capitalize' }}
+              />
+            ))}
+          </Box>
         </Grid>
       )}
       <Grid

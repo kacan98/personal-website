@@ -2,6 +2,22 @@ import { CVSettings } from '@/types'
 import { z } from 'zod'
 import { JobCVIntersectionResponse } from '../job-cv-intersection/model'
 
+// Comprehensive response schema for single API call
+export const ComprehensiveCVAnalysisResponse = z.object({
+  personalizedCV: z.record(z.any()).describe("The personalized CV structure matching the original format"),
+  positionSummary: z.string(),
+  companyName: z.string().nullable(),
+  languagePostIsWrittenIn: z.string(),
+  matchAnalysis: z.object({
+    rating: z.number().min(1).max(10),
+    whatIsGood: z.array(z.string()),
+    potentialImprovements: z.array(z.string()),
+    missingFromCV: z.array(z.string())
+  })
+})
+
+export type ComprehensiveCVAnalysisType = z.infer<typeof ComprehensiveCVAnalysisResponse>
+
 export const CVUpgradeResponse = z.object({
   cv: z.record(z.unknown()),
   newPositionSummary: z.string().nullable().optional(),

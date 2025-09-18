@@ -275,7 +275,6 @@ const MotivationalLetterModal = ({
       title="Motivational Letter"
       subtitle={companyName ? `Generated for ${companyName}` : "AI-generated motivational letter"}
       maxWidth="lg"
-      fullScreen
     >
       <>
         {/* Main content area with persistent feedback input */}
@@ -296,17 +295,8 @@ const MotivationalLetterModal = ({
           {/* Generate Letter Section (when no letter exists) */}
           {!letterToShow && (
             <>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Generate Motivational Letter
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Create a personalized motivational letter based on your CV and position requirements.
-              </Typography>
 
               <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle1" sx={{ mb: 2 }}>
-                  Job Description or Position Details
-                </Typography>
                 <TextField
                   multiline
                   rows={6}

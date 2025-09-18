@@ -8,7 +8,7 @@ export const makeStore = (cvSettings: CVSettings) => {
       cv: cvSlice.reducer,
     },
     preloadedState: {
-      cv: cvSettings,
+      cv: { ...cvSettings, hasChanges: false },
     },
   })
 }

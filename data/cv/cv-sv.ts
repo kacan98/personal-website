@@ -25,10 +25,10 @@ export const cvSv: CVSettings = {
             right: "Nov 2024 - Nuvarande"
           },
           paragraphs: [
-            "- Utvecklade backend-tjänster och API:er i X++, C# och .NET för företags-ERP-programvara. Integrerade med Microsoft Graph.",
-            "- Samarbetade med frontend- och infrastrukturteam för att leverera end-to-end-lösningar\n",
-            "- Fokuserade på prestandaförbättringar, debugging och kundspecifika funktioner",
-            "10x ökade hastigheten för dataöverföring mellan frontend och backend"
+            "- Utvecklar backend-tjänster och API:er i X++, C# och .NET för företags-ERP-programvara. Integrerar med Microsoft Graph.",
+            "- Samarbetar med frontend- och infrastrukturteam för att leverera end-to-end-lösningar",
+            "- Fokuserar på prestandaförbättringar, debugging och kundspecifika funktioner",
+            "- Uppnådde 10x prestandaförbättring i dataöverföring mellan frontend och backend"
           ]
         },
         {

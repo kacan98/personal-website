@@ -24,7 +24,8 @@ export const cvSlice = createSlice({
     mainColumn: [],
     sideColumn: [],
     image: '',
-  } as CVSettings,
+    hasChanges: false,
+  } as CVSettings & { hasChanges: boolean },
   reducers: {
     initCv: (
       state,
@@ -40,6 +41,7 @@ export const cvSlice = createSlice({
       state.mainColumn = cvWithIds.mainColumn
       state.sideColumn = cvWithIds.sideColumn
       state.profilePicture = cvWithIds.profilePicture
+      state.hasChanges = false // Reset changes when initializing CV
     },
     switchLanguage: (
       state,
@@ -48,7 +50,8 @@ export const cvSlice = createSlice({
       }
     ) => {
       // Completely replace the CV data with new language data, ensuring IDs
-      return ensureCvIds(action.payload);
+      const cvWithIds = ensureCvIds(action.payload);
+      return { ...cvWithIds, hasChanges: false }; // Reset changes when switching language
     },
     updateCv: (state, action: UpdateSectionAction) => {
       const { query, newValue } = action.payload
@@ -100,6 +103,9 @@ export const cvSlice = createSlice({
       }
 
       (current as Record<string | number, unknown>)[finalKey] = newValue
+
+      // Mark that changes have been made
+      state.hasChanges = true
     },
     removeArrayItem: (state, action: RemoveArrayItemAction) => {
       const { query } = action.payload
@@ -119,10 +125,16 @@ export const cvSlice = createSlice({
       const arrayKey = query[query.length - 1]
       if (Array.isArray(current) && typeof arrayKey === 'number') {
         current.splice(arrayKey, 1)
+        // Mark that changes have been made
+        state.hasChanges = true
       }
+    },
+    resetChanges: (state) => {
+      // Reset the changes flag without modifying CV content
+      state.hasChanges = false
     },
   },
 })
 
 export default cvSlice
-export const { initCv, switchLanguage, updateCv, removeArrayItem } = cvSlice.actions
+export const { initCv, switchLanguage, updateCv, removeArrayItem, resetChanges } = cvSlice.actions

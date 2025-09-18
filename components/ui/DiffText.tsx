@@ -1,7 +1,7 @@
 'use client';
 import { TypographyProps } from '@mui/material';
 import { diffWords } from 'diff';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 interface DiffTextProps extends Omit<TypographyProps, 'children'> {
   original?: string;
@@ -17,14 +17,20 @@ export function DiffText({ original = '', current = '', ...typographyProps }: Di
   // Compute the diff
   const diff = diffWords(original, current);
 
+  // Convert sx prop to CSS properties safely
+  const sxStyles: CSSProperties = typographyProps.sx
+    ? (typeof typographyProps.sx === 'function'
+        ? {} // Skip function-based sx for now
+        : typographyProps.sx as CSSProperties)
+    : {};
+
   return (
     <span style={{
-      fontSize: typographyProps.fontSize,
-      fontFamily: typographyProps.fontFamily,
-      fontWeight: typographyProps.fontWeight,
-      color: typographyProps.color as string,
-      // Apply any other typography styles
-      ...(typographyProps.sx as any || {})
+      fontSize: typeof typographyProps.fontSize === 'string' || typeof typographyProps.fontSize === 'number' ? typographyProps.fontSize : undefined,
+      fontFamily: typeof typographyProps.fontFamily === 'string' ? typographyProps.fontFamily : undefined,
+      fontWeight: typeof typographyProps.fontWeight === 'string' || typeof typographyProps.fontWeight === 'number' ? typographyProps.fontWeight : undefined,
+      color: typeof typographyProps.color === 'string' ? typographyProps.color : undefined,
+      ...sxStyles
     }}>
       {diff.map((part, index) => {
         if (part.removed) {

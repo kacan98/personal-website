@@ -1,0 +1,87 @@
+name: Build and Release Chrome Extension
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'chrome-extension/**'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  build-extension:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install dependencies
+        working-directory: ./chrome-extension
+        run: npm ci
+
+      - name: Bump version
+        id: version
+        working-directory: ./chrome-extension
+        run: |
+          # Bump patch version
+          NEW_VERSION=$(npm version patch --no-git-tag-version)
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          # Update manifest.json
+          CLEAN_VERSION=$(echo $NEW_VERSION | sed 's/^v//')
+          sed -i 's/"version": "[^"]*"/"version": "'$CLEAN_VERSION'"/' public/manifest.json
+
+      - name: Build extension
+        working-directory: ./chrome-extension
+        run: npm run build
+
+      - name: Package extension
+        run: |
+          cd chrome-extension/dist
+          zip -r ../../cv-tailor-extension-${{ steps.version.outputs.new_version }}.zip .
+
+      - name: Commit version updates
+        run: |
+          git add chrome-extension/package.json chrome-extension/public/manifest.json
+          git commit -m "chore: bump extension version to ${{ steps.version.outputs.new_version }} [skip ci]"
+          git push origin ${{ github.ref_name }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: CV Tailor Extension ${{ steps.version.outputs.tag_name }}
+          files: cv-tailor-extension-${{ steps.version.outputs.new_version }}.zip
+          body: |
+            ## 🚀 CV Tailor Chrome Extension ${{ steps.version.outputs.tag_name }}
+
+            ### 📦 Installation
+            1. Download the ZIP file below
+            2. Extract it to a folder
+            3. Open Chrome → Extensions (chrome://extensions/)
+            4. Enable "Developer mode"
+            5. Click "Load unpacked" and select the extracted folder
+
+            ### 🌐 Usage
+            Navigate to any job posting, highlight the description, click the extension icon to tailor your CV!
+
+            **Repository**: ${{ github.repository }}
+            **Commit**: ${{ github.sha }}
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

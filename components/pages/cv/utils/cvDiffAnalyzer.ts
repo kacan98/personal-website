@@ -28,6 +28,17 @@ export function analyzeCvDifferences(
     return analysis;
   }
 
+  // Quick check for basic properties that should be identical initially
+  const basicFieldsChanged = (
+    originalCv.name !== currentCv.name ||
+    originalCv.subtitle !== currentCv.subtitle ||
+    originalCv.profilePicture !== currentCv.profilePicture
+  );
+
+  if (basicFieldsChanged) {
+    analysis.hasChanges = true;
+  }
+
   // Helper function to generate section key
   const getSectionKey = (columnType: 'mainColumn' | 'sideColumn', index: number, sectionId?: string) => {
     return sectionId || `${columnType}-${index}`;
@@ -60,18 +71,23 @@ export function analyzeCvDifferences(
         analysis.hasChanges = true;
       } else {
         // Check if section content has actually changed (more granular than full JSON comparison)
-        const hasContentChanges = (
-          originalSection.title !== currentSection.title ||
-          JSON.stringify(originalSection.paragraphs || []) !== JSON.stringify(currentSection.paragraphs || []) ||
-          JSON.stringify(originalSection.bulletPoints || []) !== JSON.stringify(currentSection.bulletPoints || []) ||
-          JSON.stringify(originalSection.subtitles || {}) !== JSON.stringify(currentSection.subtitles || {}) ||
-          JSON.stringify(originalSection.subSections || []) !== JSON.stringify(currentSection.subSections || [])
-        );
+        // Normalize sections by removing/ignoring IDs for comparison to avoid false positives
+        const normalizeSection = (section: any) => {
+          const { id: _id, ...rest } = section;
+          return rest;
+        };
+
+        const normalizedOriginal = normalizeSection(originalSection);
+        const normalizedCurrent = normalizeSection(currentSection);
+
+        const hasContentChanges = JSON.stringify(normalizedOriginal) !== JSON.stringify(normalizedCurrent);
 
         if (hasContentChanges) {
           // Section exists but content is different - consider it modified
           analysis.modifiedSections.add(sectionId);
           analysis.hasChanges = true;
+
+          // Debug logging removed to reduce console spam
         }
 
         // Check subsections if they exist
@@ -160,6 +176,15 @@ export function getMergedSectionsForRendering(
 /**
  * Hook that provides CV diff analysis using current Redux state
  */
-export function useCvDiffAnalysis(originalCv: CVSettings | null, currentCv: CVSettings): CvDiffAnalysis {
+export function useCvDiffAnalysis(originalCv: CVSettings | null, currentCv: CVSettings | null): CvDiffAnalysis {
+  if (!currentCv) {
+    return {
+      removedSections: new Set<string>(),
+      modifiedSections: new Set<string>(),
+      removedSubSections: new Set<string>(),
+      modifiedSubSections: new Set<string>(),
+      hasChanges: false,
+    };
+  }
   return analyzeCvDifferences(originalCv, currentCv);
 }

@@ -2,7 +2,15 @@ import { NextRequest } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
 import { JWT_SECRET, CV_ADMIN_PASSWORD, IS_PRODUCTION } from './env';
 
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
 const secret = new TextEncoder().encode(JWT_SECRET);
+
+// Session duration configuration
+const SESSION_DURATION_DAYS = 14;
+const SESSION_DURATION_SECONDS = SESSION_DURATION_DAYS * 24 * 60 * 60;
 
 /**
  * Check if authentication should be required
@@ -23,7 +31,7 @@ export async function createAuthToken(): Promise<string> {
   const token = await new SignJWT({})
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('1h') // 1 hour expiry
+    .setExpirationTime(`${SESSION_DURATION_DAYS}d`)
     .sign(secret);
 
   return token;
@@ -124,7 +132,7 @@ export const AUTH_COOKIE_CONFIG = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict' as const,
-    maxAge: 3600, // 1 hour in seconds
+    maxAge: SESSION_DURATION_SECONDS,
     path: '/'
   }
 };
@@ -142,17 +150,17 @@ export function checkRateLimit(ip: string): { allowed: boolean; remainingAttempt
 
   if (!attempts) {
     authAttempts.set(ip, { count: 1, lastAttempt: now });
-    return { allowed: true, remainingAttempts: 2 };
+    return { allowed: true, remainingAttempts: 4 };
   }
 
   // Reset if more than an hour has passed
   if (now - attempts.lastAttempt > hour) {
     authAttempts.set(ip, { count: 1, lastAttempt: now });
-    return { allowed: true, remainingAttempts: 2 };
+    return { allowed: true, remainingAttempts: 4 };
   }
 
   // Check if too many attempts
-  if (attempts.count >= 3) {
+  if (attempts.count >= 5) {
     return { allowed: false };
   }
 
@@ -160,5 +168,5 @@ export function checkRateLimit(ip: string): { allowed: boolean; remainingAttempt
   attempts.count++;
   attempts.lastAttempt = now;
 
-  return { allowed: true, remainingAttempts: 3 - attempts.count };
+  return { allowed: true, remainingAttempts: 5 - attempts.count };
 }
