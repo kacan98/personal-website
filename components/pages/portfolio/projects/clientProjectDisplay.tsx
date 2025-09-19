@@ -28,7 +28,7 @@ const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
       return allProjects;
     }
     return allProjects.filter((project) =>
-      selectedTags.some(tag => project.tags.includes(tag))
+      selectedTags.some(tag => project.tags?.includes(tag))
     );
   }, [allProjects, selectedTags]);
 

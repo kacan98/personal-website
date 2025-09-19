@@ -1,7 +1,7 @@
 import { CVSettings } from '@/types'
 import OpenAI from 'openai'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
-import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
+import { OPENAI_API_KEY } from '@/lib/env'
 
 export type CvTranslateParams = {
   targetLanguage: string
@@ -12,17 +12,14 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request): Promise<Response> {
   // Check authentication when required
-  if (IS_PRODUCTION) {
+    // Always check authentication
     const authResult = await checkAuthFromRequest(req)
     if (!authResult.authenticated) {
-      console.log('POST /api/translate/cv - Authentication required')
-      return new Response(JSON.stringify({ error: 'Authentication required for CV translation' }), {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
         status: 401,
         headers: { 'Content-Type': 'application/json' }
       })
     }
-    console.log('POST /api/translate/cv - Authentication verified')
-  }
 
   const body: CvTranslateParams = await req.json()
 

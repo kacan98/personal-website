@@ -3,21 +3,19 @@ import {
   Box,
   Button,
   Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Stepper,
   Step,
   StepLabel,
-  StepContent,
   Alert
 } from '@mui/material';
 import {
   Extension as ExtensionIcon,
   Download as DownloadIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
+  ArrowForward as ArrowForwardIcon,
+  ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
+import BaseModal from './modals/BaseModal';
 
 interface ExtensionDownloadProps {
   open: boolean;
@@ -41,15 +39,21 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
 
         // Auto-detect common patterns
         if (hostname.includes('vercel.app')) {
-          // For Vercel deployments, use environment or fallback
-          repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO || 'your-username/personal-website';
+          // For Vercel deployments, use environment or throw error
+          if (!process.env.NEXT_PUBLIC_GITHUB_REPO) {
+            throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required for Vercel deployments');
+          }
+          repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO;
         } else if (hostname.endsWith('.github.io')) {
           // GitHub Pages
           const owner = hostname.replace('.github.io', '');
           repoUrl = `${owner}/personal-website`;
         } else {
-          // Custom domain or localhost - use environment or fallback
-          repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO || 'your-username/personal-website';
+          // Custom domain or localhost - use environment or throw error
+          if (!process.env.NEXT_PUBLIC_GITHUB_REPO) {
+            throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required');
+          }
+          repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO;
         }
 
         const apiUrl = `https://api.github.com/repos/${repoUrl}/releases/latest`;
@@ -81,7 +85,10 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
         const owner = hostname.replace('.github.io', '');
         repoUrl = `${owner}/personal-website`;
       } else {
-        repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO || 'your-username/personal-website';
+        if (!process.env.NEXT_PUBLIC_GITHUB_REPO) {
+          throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required');
+        }
+        repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO;
       }
 
       // Try to get the exact asset from the latest release
@@ -116,6 +123,7 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
     }
   };
 
+
   const installationSteps = [
     {
       label: 'Download Extension',
@@ -147,13 +155,10 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
       description: (
         <Box>
           <Typography variant="body2" gutterBottom>
-            Open Chrome and navigate to the extensions page:
+            Click the puzzle piece icon (🧩) in Chrome&apos;s toolbar, then click &quot;⚙️ Manage extensions&quot;
           </Typography>
-          <Box sx={{ mt: 1, p: 2, bgcolor: 'background.default', borderRadius: 1 }}>
-            <code>chrome://extensions/</code>
-          </Box>
-          <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
-            Or go to Menu → More Tools → Extensions
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+            Alternative: Type <code style={{ background: '#e0e0e0', padding: '2px 4px', borderRadius: '3px', color: '#333' }}>chrome://extensions/</code> in Chrome&apos;s address bar
           </Typography>
         </Box>
       )
@@ -203,96 +208,81 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
             <li>Click the CV Tailor extension icon</li>
             <li>Your CV will automatically be tailored for that position!</li>
           </Typography>
-          <Alert severity="info" sx={{ mt: 2 }}>
-            <Typography variant="caption">
-              The extension is pre-configured to work with {typeof window !== 'undefined' ? window.location.origin : 'this website'}
-            </Typography>
-          </Alert>
         </Box>
       )
     }
   ];
 
   return (
-    <Dialog
+    <BaseModal
       open={open}
       onClose={onClose}
+      title="CV Tailor Chrome Extension"
+      subtitle={!isLoadingVersion && latestVersion ? `Latest version: ${latestVersion}` : "Automatically tailor your CV for any job posting"}
       maxWidth="md"
-      fullWidth
     >
-      <DialogTitle>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <ExtensionIcon />
-          <Box>
-            <Typography variant="h6" component="div">
-              CV Tailor Chrome Extension
-            </Typography>
-            {!isLoadingVersion && latestVersion && (
-              <Typography variant="caption" color="text.secondary">
-                Latest version: {latestVersion}
-              </Typography>
-            )}
-          </Box>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Typography variant="body1" gutterBottom sx={{ mb: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+        <ExtensionIcon sx={{ fontSize: 24, color: 'primary.main' }} />
+        <Typography variant="body1" color="text.secondary">
           Automatically tailor your CV for any job posting with our Chrome extension!
         </Typography>
+      </Box>
 
-        <Stepper activeStep={activeStep} orientation="vertical">
-          {installationSteps.map((step, index) => (
-            <Step key={step.label}>
-              <StepLabel
-                optional={
-                  index === installationSteps.length - 1 ? (
-                    <Typography variant="caption">Last step</Typography>
-                  ) : null
-                }
-              >
-                {step.label}
-              </StepLabel>
-              <StepContent>
-                {step.description}
-                <Box sx={{ mt: 2 }}>
-                  {index < installationSteps.length - 1 && (
-                    <Button
-                      variant="contained"
-                      onClick={() => setActiveStep(index + 1)}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
-                      Continue
-                    </Button>
-                  )}
-                  {index > 0 && (
-                    <Button
-                      onClick={() => setActiveStep(index - 1)}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
-                      Back
-                    </Button>
-                  )}
-                </Box>
-              </StepContent>
-            </Step>
-          ))}
-        </Stepper>
+      <Stepper activeStep={activeStep} orientation="horizontal" sx={{ mb: 3 }}>
+        {installationSteps.map((step, _index) => (
+          <Step key={step.label}>
+            <StepLabel>
+              {step.label}
+            </StepLabel>
+          </Step>
+        ))}
+      </Stepper>
 
-        {activeStep === installationSteps.length && (
-          <Box sx={{ mt: 3, p: 2, bgcolor: 'success.light', borderRadius: 1 }}>
+      <Box sx={{ mt: 3 }}>
+        {installationSteps[activeStep] && (
+          <Box>
             <Typography variant="h6" gutterBottom>
-              🎉 All done!
+              {installationSteps[activeStep].label}
             </Typography>
-            <Typography variant="body2">
-              Your CV Tailor extension is ready to use. Happy job hunting!
-            </Typography>
+            {installationSteps[activeStep].description}
+
+            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Button
+                onClick={() => setActiveStep(activeStep - 1)}
+                disabled={activeStep === 0}
+                sx={{ visibility: activeStep === 0 ? 'hidden' : 'visible' }}
+              >
+                <ArrowBackIcon />
+              </Button>
+
+              <Typography variant="body2" color="text.secondary">
+                Step {activeStep + 1} of {installationSteps.length}
+              </Typography>
+
+              <Button
+                variant="contained"
+                onClick={() => setActiveStep(activeStep + 1)}
+                disabled={activeStep === installationSteps.length - 1}
+                sx={{ visibility: activeStep === installationSteps.length - 1 ? 'hidden' : 'visible' }}
+              >
+                <ArrowForwardIcon />
+              </Button>
+            </Box>
           </Box>
         )}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Close</Button>
-      </DialogActions>
-    </Dialog>
+      </Box>
+
+      {activeStep === installationSteps.length && (
+        <Alert severity="success" sx={{ mt: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            All done!
+          </Typography>
+          <Typography variant="body2">
+            Your CV Tailor extension is ready to use. Happy job hunting!
+          </Typography>
+        </Alert>
+      )}
+    </BaseModal>
   );
 };
 

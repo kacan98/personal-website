@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { DEFAULT_TARGET_URL } from "./constants";
+import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 
 const styles = {
   container: {
     width: "420px",
     minHeight: "500px",
-    background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-    color: "#ffffff",
-    fontFamily: "'Open Sans', system-ui, sans-serif",
+    background: `linear-gradient(135deg, ${BACKGROUND_COLORS.primary} 0%, ${BACKGROUND_COLORS.surface} 100%)`,
+    color: BRAND_COLORS.primary,
+    fontFamily: "'Open Sans', 'Urbanist', 'Cormorant Garamond', 'Yeseva One', system-ui, sans-serif",
     borderRadius: "0px",
     overflow: "hidden"
   },
   header: {
-    background: "linear-gradient(90deg, #333 0%, #444 100%)",
+    background: `linear-gradient(90deg, ${BACKGROUND_COLORS.secondary} 0%, ${BACKGROUND_COLORS.overlay} 100%)`,
     padding: "20px",
     textAlign: "center" as const,
-    borderBottom: "1px solid #444"
+    borderBottom: `1px solid ${BACKGROUND_COLORS.overlay}`
   }, title: {
     margin: "0",
     fontSize: "20px",
@@ -39,10 +41,10 @@ const styles = {
     width: "100%",
     height: "280px",
     padding: "16px",
-    border: "1px solid #444",
+    border: `1px solid ${BACKGROUND_COLORS.overlay}`,
     borderRadius: "8px",
-    background: "#2a2a2a",
-    color: "#ffffff",
+    background: BACKGROUND_COLORS.surface,
+    color: BRAND_COLORS.primary,
     fontSize: "13px",
     fontFamily: "'Open Sans', system-ui, sans-serif",
     lineHeight: "1.5",
@@ -51,7 +53,7 @@ const styles = {
     transition: "border-color 0.2s ease"
   },
   textareaFocus: {
-    borderColor: "#666"
+    borderColor: BRAND_COLORS.accent
   },
   buttonContainer: {
     marginTop: "16px",
@@ -70,8 +72,8 @@ const styles = {
     fontFamily: "'Open Sans', sans-serif"
   },
   primaryButton: {
-    background: "linear-gradient(45deg, #4CAF50 0%, #45a049 100%)",
-    color: "#ffffff",
+    background: `linear-gradient(45deg, ${BRAND_COLORS.accent} 0%, rgba(${BRAND_COLORS.accentRgb}, 0.8) 100%)`,
+    color: BRAND_COLORS.primary,
     boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
   },
   primaryButtonHover: {
@@ -79,8 +81,57 @@ const styles = {
     boxShadow: "0 4px 8px rgba(0,0,0,0.3)"
   },
   placeholder: {
-    color: "#888",
+    color: BRAND_COLORS.secondary,
     fontStyle: "italic"
+  },
+  urlContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    marginTop: "4px"
+  },
+  urlText: {
+    fontSize: "10px",
+    opacity: 0.7,
+    cursor: "pointer",
+    padding: "4px",
+    borderRadius: "4px",
+    transition: "all 0.2s ease",
+    userSelect: "none" as const,
+    flex: 1
+  },
+  urlTextHover: {
+    opacity: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.1)"
+  },
+  urlInput: {
+    flex: 1,
+    padding: "4px 8px",
+    fontSize: "10px",
+    background: BACKGROUND_COLORS.surface,
+    border: `1px solid ${BRAND_COLORS.accent}`,
+    borderRadius: "4px",
+    color: BRAND_COLORS.primary,
+    outline: "none",
+    fontFamily: "'Courier New', monospace"
+  },
+  urlButton: {
+    padding: "3px 8px",
+    fontSize: "9px",
+    fontWeight: "600",
+    border: "none",
+    borderRadius: "3px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    fontFamily: "'Open Sans', sans-serif"
+  },
+  saveButton: {
+    background: BRAND_COLORS.accent,
+    color: BRAND_COLORS.primary
+  },
+  cancelButton: {
+    background: BACKGROUND_COLORS.overlay,
+    color: BRAND_COLORS.secondary
   }
 };
 
@@ -88,7 +139,9 @@ const Popup = () => {
   const [pageText, setPageText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [focusedButton, setFocusedButton] = useState<string | null>(null);
-  const [targetUrl, setTargetUrl] = useState("http://localhost:3000");
+  const [targetUrl, setTargetUrl] = useState(DEFAULT_TARGET_URL);
+  const [isEditingUrl, setIsEditingUrl] = useState(false);
+  const [editingUrl, setEditingUrl] = useState("");
   const jobIdRef = useRef(`job-${Date.now()}`);
 
   const openCVTool = (textToStore?: string) => {
@@ -115,51 +168,153 @@ const Popup = () => {
     });
   };
 
+  const startEditingUrl = () => {
+    setEditingUrl(targetUrl);
+    setIsEditingUrl(true);
+  };
+
+  const saveUrl = () => {
+    try {
+      new URL(editingUrl); // Validate URL
+      chrome.storage.sync.set({ targetUrl: editingUrl }, () => {
+        setTargetUrl(editingUrl);
+        setIsEditingUrl(false);
+      });
+    } catch (e) {
+      // Invalid URL - show some feedback or just cancel
+      cancelEditingUrl();
+    }
+  };
+
+  const cancelEditingUrl = () => {
+    setEditingUrl("");
+    setIsEditingUrl(false);
+  };
+
+  const handleUrlKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      saveUrl();
+    } else if (e.key === 'Escape') {
+      cancelEditingUrl();
+    }
+  };
+
   useEffect(() => {
-    // Load the target URL from storage
+    // Load the target URL from storage first
     chrome.storage.sync.get(
-      { targetUrl: "http://localhost:3000" },
+      { targetUrl: DEFAULT_TARGET_URL },
       (items) => {
         setTargetUrl(items.targetUrl);
+
+        // Only after URL is loaded, check for page text and auto-navigate
+        const checkForText = (retryCount = 0) => {
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            if (tabs[0]?.id) {
+              chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, (response) => {
+                // Handle the case where response might be undefined or content script not ready
+                if (chrome.runtime.lastError) {
+                  console.log("Popup: Runtime error:", chrome.runtime.lastError.message);
+                  // If content script isn't ready and we haven't retried too many times, try again
+                  if (retryCount < 3) {
+                    console.log(`Popup: Retrying (${retryCount + 1}/3)...`);
+                    setTimeout(() => checkForText(retryCount + 1), 500);
+                    return;
+                  }
+                  setIsLoading(false);
+                  return;
+                }
+
+                const { selectedText } = response || {};
+                console.log("Popup: Received response:", response);
+                console.log("Popup: Selected text:", selectedText);
+
+                if (selectedText) {
+                  setPageText(selectedText);
+
+                  // Auto-open if there's selected text, now using the correct URL
+                  // Store the current job description content right before opening the CV tool
+                  chrome.storage.local.set({ [jobIdRef.current]: selectedText }, () => {
+                    // Only open the CV tool after the storage operation completes
+                    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+                      const currentTabUrl = tabs[0]?.url;
+                      if (currentTabUrl) {
+                        const newWindowDetails = await chrome.windows.create({
+                          url: currentTabUrl,
+                          type: "normal",
+                        });
+
+                        const newWindowId = newWindowDetails.id;
+                        // Open CV tool using the configured URL from settings
+                        await chrome.tabs.create({
+                          url: `${items.targetUrl}/cv/${jobIdRef.current}`,
+                          windowId: newWindowId,
+                        });
+                      }
+                    });
+                  });
+                }
+
+                setIsLoading(false);
+              });
+            } else {
+              setIsLoading(false);
+            }
+          });
+        };
+
+        // Start checking for text, potentially with retries
+        checkForText();
       }
     );
-
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]?.id) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, (response) => {
-          // Handle the case where response might be undefined
-          if (chrome.runtime.lastError) {
-            setIsLoading(false);
-            return;
-          }
-
-          const { selectedText } = response || {};
-
-          if (selectedText) {
-            setPageText(selectedText);
-          }
-
-          setIsLoading(false);
-
-          // Auto-open if there's selected text 
-          if (selectedText) {
-            // Use the text directly since state hasn't updated yet
-            openCVTool(selectedText);
-          }
-        });
-      } else {
-        setIsLoading(false);
-      }
-    });
   }, []);
 
   return (<div style={styles.container}>
     <div style={styles.header}>
       <h1 style={styles.title}>CV Tailor</h1>
       <p style={styles.subtitle}>Automatically customize your CV for specific job postings using AI</p>
-      <p style={{ ...styles.subtitle, fontSize: "10px", marginTop: "4px", opacity: 0.7 }}>
-        Target: {targetUrl}
-      </p>
+      <div style={styles.urlContainer}>
+        <span style={{ fontSize: "10px", opacity: 0.7 }}>Target:</span>
+        {isEditingUrl ? (
+          <>
+            <input
+              type="text"
+              value={editingUrl}
+              onChange={(e) => setEditingUrl(e.target.value)}
+              onKeyDown={handleUrlKeyDown}
+              style={styles.urlInput}
+              placeholder="https://your-website.com"
+            />
+            <button
+              onClick={saveUrl}
+              style={{ ...styles.urlButton, ...styles.saveButton }}
+            >
+              ✓
+            </button>
+            <button
+              onClick={cancelEditingUrl}
+              style={{ ...styles.urlButton, ...styles.cancelButton }}
+            >
+              ✕
+            </button>
+          </>
+        ) : (
+          <span
+            onClick={startEditingUrl}
+            onKeyDown={(e) => e.key === 'Enter' && startEditingUrl()}
+            role="button"
+            tabIndex={0}
+            style={{
+              ...styles.urlText,
+              ...(focusedButton === 'url' ? styles.urlTextHover : {})
+            }}
+            onMouseEnter={() => setFocusedButton('url')}
+            onMouseLeave={() => setFocusedButton(null)}
+            title="Click to edit URL"
+          >
+            {targetUrl}
+          </span>
+        )}
+      </div>
     </div>
     <div style={styles.content}>
       <textarea
@@ -186,7 +341,7 @@ const Popup = () => {
           onMouseEnter={() => setFocusedButton('tailor')}
           onMouseLeave={() => setFocusedButton(null)}
         >
-          📝 Tailor CV {pageText.length < 10 && '(min 10 chars)'}
+          Tailor CV {pageText.length < 10 && '(min 10 chars)'}
         </button>
       </div>
     </div>

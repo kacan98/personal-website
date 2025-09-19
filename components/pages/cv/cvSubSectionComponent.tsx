@@ -19,15 +19,7 @@ export function CvSubSectionComponent({
   sideOrMain,
   editable,
   isPrintVersion = false,
-  positionDetails,
-  adjustSection,
-  subSectionKey,
   isRemoved = false,
-  isModified = false,
-  isNew = false,
-  onRemoveSubSection,
-  onRestoreSubSection,
-  onSubSectionAdjusted,
   originalSubSection,
   showDiff = false,
 }: {
@@ -49,11 +41,11 @@ export function CvSubSectionComponent({
   originalSubSection?: CvSubSection;
   showDiff?: boolean;
 }) {
-  const [isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
+  const [_isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
   const dispatch = useAppDispatch();
 
   // Function to revert entire subsection to original
-  const revertSubSectionToOriginal = useCallback(() => {
+  const _revertSubSectionToOriginal = useCallback(() => {
     if (originalSubSection) {
       // Update title
       if (originalSubSection.title) {
@@ -85,7 +77,7 @@ export function CvSubSectionComponent({
   }, [dispatch, originalSubSection, sideOrMain, sectionIndex, subSectionIndex]);
 
   // Check if subsection has any changes
-  const hasChanges = originalSubSection && (
+  const _hasChanges = originalSubSection && (
     subSection.title !== originalSubSection.title ||
     JSON.stringify(subSection.paragraphs) !== JSON.stringify(originalSubSection.paragraphs) ||
     JSON.stringify(subSection.bulletPoints) !== JSON.stringify(originalSubSection.bulletPoints) ||

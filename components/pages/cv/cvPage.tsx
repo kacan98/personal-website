@@ -43,7 +43,6 @@ import { useLocale } from 'next-intl';
 import { useCvDiffAnalysis } from "./utils/cvDiffAnalyzer";
 import { useAuth } from '@/contexts/AuthContext';
 import PasswordModal from '@/components/auth/PasswordModal';
-import { IS_PRODUCTION } from '@/lib/env';
 
 export type CvProps = {
   jobDescription?: string
@@ -66,7 +65,7 @@ function CvPage({ jobDescription }: CvProps) {
 
   // Only allow editing when auth is disabled OR when authenticated AND auth loading is complete
   // During auth loading, always show as not editable to prevent hydration mismatch
-  const editable = !authLoading && (!IS_PRODUCTION || isAuthenticated);
+  const editable = !authLoading && isAuthenticated; // Always require authentication
 
   // Load original CV from data files and sync with Redux to ensure they match initially
   useEffect(() => {
@@ -95,7 +94,6 @@ function CvPage({ jobDescription }: CvProps) {
   // Periodic auth status check (temporarily disabled - use manual refresh instead)
   // TODO: Re-enable if cross-tab authentication detection is needed
   // useEffect(() => {
-  //   if (!IS_PRODUCTION) return;
 
   //   const interval = setInterval(async () => {
   //     if (!isAuthenticated) {
@@ -118,7 +116,6 @@ function CvPage({ jobDescription }: CvProps) {
   //   }, 30000); // Check every 30 seconds (twice per minute)
 
   //   return () => clearInterval(interval);
-  // }, [IS_PRODUCTION, isAuthenticated]);
 
   // Use Redux hasChanges flag instead of expensive diff analysis
   const hasChanges = reduxCvProps.hasChanges || false;
@@ -237,6 +234,12 @@ function CvPage({ jobDescription }: CvProps) {
   // Modal handlers
   const handleAdjustForPosition = async () => {
     if (positionDetails && positionDetails.trim().length > 0) {
+    // Check authentication first
+    if (!isAuthenticated) {
+      setShowPasswordModal(true);
+      return;
+    }
+
       // Run CV adjustment and motivational letter generation in parallel
       setLoading(true);
       setCurrentOperation('Personalizing CV and generating motivational letter...');
@@ -400,9 +403,16 @@ function CvPage({ jobDescription }: CvProps) {
 
   useEffect(() => {
     if (shouldAdjustCv && positionDetails && positionDetails.trim().length > 0) {
+      // Check authentication before automatically adjusting CV
+      if (!isAuthenticated) {
+        setShowPasswordModal(true);
+        setLoading(false); // Stop the loading spinner
+        setCurrentOperation('Discussing with AI...');
+        return;
+      }
       handleAdjustForPosition();
     }
-  }, [positionDetails, shouldAdjustCv]);
+  }, [positionDetails, shouldAdjustCv, isAuthenticated]);
 
   useEffect(() => {
     if (snackbarMessage === 'CV transformed') {
@@ -433,19 +443,14 @@ function CvPage({ jobDescription }: CvProps) {
   };
 
   const onTitleClicked = () => {
-    if (!IS_PRODUCTION) {
-      // When auth is disabled, just increment clicks for dev fun
-      setTitleClickedTimes(prev => prev + 1);
-    } else {
-      // When auth is required, need 5 clicks to show password modal (only if not already shown)
-      if (!isAuthenticated && !showPasswordModal) {
-        const newClickCount = titleClickedTimes + 1;
-        setTitleClickedTimes(newClickCount);
+    // Always require authentication - show password modal after 5 clicks
+    if (!isAuthenticated && !showPasswordModal) {
+      const newClickCount = titleClickedTimes + 1;
+      setTitleClickedTimes(newClickCount);
 
-        if (newClickCount >= 5) {
-          setTitleClickedTimes(0); // Reset click counter when opening modal
-          setShowPasswordModal(true);
-        }
+      if (newClickCount >= 5) {
+        setTitleClickedTimes(0); // Reset click counter when opening modal
+        setShowPasswordModal(true);
       }
     }
   }
@@ -662,7 +667,7 @@ function CvPage({ jobDescription }: CvProps) {
         <ExtensionDownload open={extensionModalOpen} onClose={() => setExtensionModalOpen(false)} />
 
         {/* Logout button (when authenticated) */}
-        {IS_PRODUCTION && isAuthenticated && (
+        {isAuthenticated && (
           <Tooltip title="Logout" placement="left">
             <IconButton
               onClick={async () => {

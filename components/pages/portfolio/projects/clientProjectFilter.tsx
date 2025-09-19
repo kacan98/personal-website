@@ -13,7 +13,6 @@ type ClientProjectFilterProps = {
 };
 
 const ClientProjectFilter = ({
-  allProjects,
   uniqueTags,
   initialSelectedTags = []
 }: ClientProjectFilterProps) => {

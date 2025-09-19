@@ -6,6 +6,7 @@ import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
+import SplineWrapper from "@/components/spline/SplineWrapper";
 import { isKarelsPortfolio } from "@/globalVars";
 import { SPACING } from "@/app/spacing";
 import { Box, Typography } from "@mui/material";
@@ -16,6 +17,61 @@ interface AboutSection {
   header: string;
   content: string;
   visualType?: 'laptop' | 'ai' | 'problem' | 'user';
+}
+
+// Function to render visual component based on type
+function renderVisualComponent(visualType: string) {
+  switch (visualType) {
+    case 'laptop':
+      return <SplineWrapper />; // 3D laptop for Full Stack
+    case 'ai':
+      // Simple AI icon
+      return (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%',
+          fontSize: '120px',
+          animation: 'pulse 3s ease-in-out infinite'
+        }}>
+          🤖
+        </Box>
+      );
+    case 'problem':
+      // Video for Problem Solver
+      return (
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/GcPJUR0wq_M?si=wmhMvYYtVDBvmNq4"
+            title="YouTube video player"
+            style={{ border: 0, borderRadius: '8px' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </Box>
+      );
+    case 'user':
+      // Simple user icon
+      return (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%',
+          fontSize: '120px',
+          animation: 'bounce 2s ease-in-out infinite'
+        }}>
+          👤
+        </Box>
+      );
+    default:
+      return null;
+  }
 }
 
 // Simple inline component for about sections
@@ -137,12 +193,10 @@ function AboutSectionItem({ section, id, index }: { section: AboutSection; id: s
                 : 'translateX(-60px) scale(0.95)',
             transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
             transitionDelay: '0.3s',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'transparent',
             borderRadius: 2,
           }}>
-            <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-              Visual Component ({section.visualType})
-            </Typography>
+            {renderVisualComponent(section.visualType)}
           </Box>
         )}
       </Box>

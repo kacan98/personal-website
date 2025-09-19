@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
-import { JWT_SECRET, CV_ADMIN_PASSWORD, IS_PRODUCTION } from './env';
+import { JWT_SECRET, CV_ADMIN_PASSWORD } from './env';
 
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
@@ -12,12 +12,6 @@ const secret = new TextEncoder().encode(JWT_SECRET);
 const SESSION_DURATION_DAYS = 14;
 const SESSION_DURATION_SECONDS = SESSION_DURATION_DAYS * 24 * 60 * 60;
 
-/**
- * Check if authentication should be required
- */
-export function shouldRequireAuth(): boolean {
-  return IS_PRODUCTION;
-}
 
 export interface AuthResult {
   authenticated: boolean;

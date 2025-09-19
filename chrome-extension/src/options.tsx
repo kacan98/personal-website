@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { DEFAULT_TARGET_URL, PRESET_URLS } from "./constants";
+import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 
 const styles = {
   container: {
-    maxWidth: "600px",
+    maxWidth: "800px",
     margin: "0 auto",
-    background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-    color: "#ffffff",
-    fontFamily: "'Open Sans', system-ui, sans-serif",
+    background: `linear-gradient(135deg, ${BACKGROUND_COLORS.primary} 0%, ${BACKGROUND_COLORS.surface} 100%)`,
+    color: BRAND_COLORS.primary,
+    fontFamily: "'Open Sans', 'Urbanist', 'Cormorant Garamond', 'Yeseva One', system-ui, sans-serif",
     borderRadius: "12px",
     overflow: "hidden",
     boxShadow: "0 8px 32px rgba(0,0,0,0.3)"
   },
   header: {
-    background: "linear-gradient(90deg, #333 0%, #444 100%)",
+    background: `linear-gradient(90deg, ${BACKGROUND_COLORS.secondary} 0%, ${BACKGROUND_COLORS.overlay} 100%)`,
     padding: "30px",
     textAlign: "center" as const,
-    borderBottom: "1px solid #444"
+    borderBottom: `1px solid ${BACKGROUND_COLORS.overlay}`
   }, title: {
     margin: "0 0 10px 0",
     fontSize: "28px",
@@ -38,25 +40,22 @@ const styles = {
   },
   section: {
     marginBottom: "24px",
-    padding: "20px",
-    background: "rgba(255,255,255,0.02)",
-    borderRadius: "8px",
-    border: "1px solid #333"
+    padding: "20px 0",
   },
   label: {
     display: "block",
     marginBottom: "12px",
     fontSize: "14px",
     fontWeight: "600",
-    color: "#e0e0e0"
+    color: BRAND_COLORS.primary
   },
   select: {
     width: "100%",
     padding: "12px",
-    border: "1px solid #444",
+    border: `1px solid ${BACKGROUND_COLORS.overlay}`,
     borderRadius: "6px",
-    background: "#2a2a2a",
-    color: "#ffffff",
+    background: BACKGROUND_COLORS.surface,
+    color: BRAND_COLORS.primary,
     fontSize: "14px",
     fontFamily: "'Open Sans', system-ui, sans-serif",
     outline: "none",
@@ -71,11 +70,11 @@ const styles = {
   checkbox: {
     width: "18px",
     height: "18px",
-    accentColor: "#4CAF50"
+    accentColor: BRAND_COLORS.accent
   },
   checkboxLabel: {
     fontSize: "14px",
-    color: "#e0e0e0",
+    color: BRAND_COLORS.primary,
     cursor: "pointer",
     userSelect: "none" as const
   },
@@ -88,8 +87,8 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.2s ease",
     fontFamily: "'Open Sans', sans-serif",
-    background: "linear-gradient(45deg, #4CAF50 0%, #45a049 100%)",
-    color: "#ffffff",
+    background: `linear-gradient(45deg, ${BRAND_COLORS.accent} 0%, rgba(${BRAND_COLORS.accentRgb}, 0.8) 100%)`,
+    color: BRAND_COLORS.primary,
     boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
     marginTop: "20px"
   },
@@ -100,10 +99,10 @@ const styles = {
   status: {
     marginTop: "16px",
     padding: "12px",
-    background: "rgba(76, 175, 80, 0.1)",
-    border: "1px solid rgba(76, 175, 80, 0.3)",
+    background: `rgba(${BRAND_COLORS.accentRgb}, 0.1)`,
+    border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.3)`,
     borderRadius: "6px",
-    color: "#81C784",
+    color: BRAND_COLORS.accent,
     fontSize: "14px",
     textAlign: "center" as const
   }
@@ -112,20 +111,17 @@ const styles = {
 const Options = () => {
   const [targetUrl, setTargetUrl] = useState<string>("");
   const [status, setStatus] = useState<string>("");
-  const [isHovered, setIsHovered] = useState(false);
+  const [_isHovered, _setIsHovered] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
 
   // Preset URLs for quick selection
-  const presetUrls = [
-    { label: "Local Development", value: "http://localhost:3000" },
-    { label: "Production", value: "https://your-domain.com" }, // Will be replaced in production build
-  ];
+  const presetUrls = PRESET_URLS;
 
   useEffect(() => {
     // Restore saved URL from storage
     chrome.storage.sync.get(
       {
-        targetUrl: "http://localhost:3000",
+        targetUrl: DEFAULT_TARGET_URL,
       },
       (items) => {
         setTargetUrl(items.targetUrl);
@@ -138,7 +134,7 @@ const Options = () => {
     try {
       new URL(targetUrl);
     } catch (e) {
-      setStatus("❌ Please enter a valid URL");
+      setStatus("Please enter a valid URL");
       setTimeout(() => setStatus(""), 3000);
       return;
     }
@@ -149,7 +145,7 @@ const Options = () => {
         targetUrl: targetUrl,
       },
       () => {
-        setStatus("✅ Settings saved successfully!");
+        setStatus("Settings saved successfully!");
         setTimeout(() => setStatus(""), 3000);
       }
     );
@@ -162,9 +158,9 @@ const Options = () => {
         method: 'HEAD',
         mode: 'no-cors'
       });
-      setStatus("✅ Connection successful!");
+      setStatus("Connection successful!");
     } catch (e) {
-      setStatus("⚠️ Could not connect - make sure the server is running");
+      setStatus("Could not connect - make sure the server is running");
     }
     setIsTesting(false);
     setTimeout(() => setStatus(""), 3000);
@@ -172,14 +168,13 @@ const Options = () => {
 
   return (<div style={styles.container}>
     <div style={styles.header}>
-      <h1 style={styles.title}>CV Tailor</h1>
-      <p style={styles.subtitle}>Extension Options & Preferences</p>
+      <h1 style={styles.title}>Settings</h1>
     </div>
 
     <div style={styles.content}>
       <div style={styles.section}>
         <label style={styles.label} htmlFor="target-url">
-          🌐 Target Website URL
+          Target Website URL
         </label>
         <input
           id="target-url"
@@ -190,6 +185,7 @@ const Options = () => {
           }}
           value={targetUrl}
           onChange={(event) => setTargetUrl(event.target.value)}
+          onBlur={saveOptions}
           placeholder="https://your-website.com"
         />
 
@@ -197,13 +193,22 @@ const Options = () => {
           {presetUrls.map((preset) => (
             <button
               key={preset.value}
-              onClick={() => setTargetUrl(preset.value)}
+              onClick={() => {
+                setTargetUrl(preset.value);
+                // Auto-save after a short delay to let state update
+                setTimeout(() => {
+                  chrome.storage.sync.set({ targetUrl: preset.value }, () => {
+                    setStatus("Settings saved successfully!");
+                    setTimeout(() => setStatus(""), 3000);
+                  });
+                }, 50);
+              }}
               style={{
                 padding: "6px 12px",
-                border: "1px solid #444",
+                border: `1px solid ${BACKGROUND_COLORS.overlay}`,
                 borderRadius: "4px",
-                background: targetUrl === preset.value ? "#4CAF50" : "#2a2a2a",
-                color: "#ffffff",
+                background: targetUrl === preset.value ? BRAND_COLORS.accent : BACKGROUND_COLORS.surface,
+                color: BRAND_COLORS.primary,
                 fontSize: "12px",
                 cursor: "pointer",
                 transition: "all 0.2s ease"
@@ -221,27 +226,16 @@ const Options = () => {
           disabled={isTesting}
           style={{
             ...styles.button,
-            background: "linear-gradient(45deg, #2196F3 0%, #1976D2 100%)",
+            background: `linear-gradient(45deg, ${BRAND_COLORS.secondary} 0%, rgba(${BRAND_COLORS.secondaryRgb}, 0.8) 100%)`,
             marginTop: "0",
             opacity: isTesting ? 0.7 : 1,
             cursor: isTesting ? "not-allowed" : "pointer"
           }}
         >
-          {isTesting ? "🔄 Testing..." : "🧪 Test Connection"}
+          {isTesting ? "Testing..." : "Test Connection"}
         </button>
       </div>
 
-      <button
-        onClick={saveOptions}
-        style={{
-          ...styles.button,
-          ...(isHovered ? styles.buttonHover : {})
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        💾 Save Settings
-      </button>
 
       {status && (
         <div style={styles.status}>

@@ -18,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     };
 
     return NextResponse.json(response, {
-      status: authResult.authenticated ? 200 : 401
+      status: 200 // Always return 200 - the authenticated field indicates auth status
     });
 
   } catch (error) {

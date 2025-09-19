@@ -2,23 +2,20 @@ import { OpenAI } from 'openai'
 import { AdjustSectionParams, AdjustSectionResponse } from './model'
 import { ADJUST_SECTION_CONFIG, createChatCompletionRequest } from '../shared/prompts'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
-import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
+import { OPENAI_API_KEY } from '@/lib/env'
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request): Promise<Response> {
   try {
     // Check authentication when required
-    if (IS_PRODUCTION) {
-      const authResult = await checkAuthFromRequest(req)
-      if (!authResult.authenticated) {
-        console.log('POST /api/adjust-section - Authentication required')
-        return new Response(JSON.stringify({ error: 'Authentication required for section adjustment' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        })
-      }
-      console.log('POST /api/adjust-section - Authentication verified')
+    // Always check authentication
+    const authResult = await checkAuthFromRequest(req)
+    if (!authResult.authenticated) {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
 
     const body: AdjustSectionParams = await req.json()

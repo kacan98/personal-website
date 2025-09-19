@@ -2,7 +2,7 @@ import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod.mjs'
 import { JobCvIntersectionParams, JobCVIntersectionResponse } from './model'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
-import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
+import { OPENAI_API_KEY } from '@/lib/env'
 import { OPENAI_MODELS } from '@/lib/openai-service'
 
 export const runtime = 'nodejs';
@@ -10,16 +10,13 @@ export const runtime = 'nodejs';
 export async function POST(req: Request): Promise<Response> {
   try {
     // Check authentication when required
-    if (IS_PRODUCTION) {
-      const authResult = await checkAuthFromRequest(req)
-      if (!authResult.authenticated) {
-        console.log('POST /api/job-cv-intersection - Authentication required')
-        return new Response(JSON.stringify({ error: 'Authentication required for job intersection analysis' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        })
-      }
-      console.log('POST /api/job-cv-intersection - Authentication verified')
+    // Always check authentication
+    const authResult = await checkAuthFromRequest(req)
+    if (!authResult.authenticated) {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
 
     // Parse request body

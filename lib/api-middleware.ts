@@ -1,5 +1,4 @@
 import { checkAuthFromRequest, AuthResult } from './auth-middleware';
-import { IS_PRODUCTION } from './env';
 
 export interface StandardErrorResponse {
   error: string;
@@ -12,18 +11,17 @@ export function withAuth<T extends any[]>(
   handler: (req: Request, ...args: T) => Promise<Response>
 ) {
   return async (req: Request, ...args: T): Promise<Response> => {
-    if (IS_PRODUCTION) {
-      const authResult: AuthResult = await checkAuthFromRequest(req);
+    // Always check authentication
+    const authResult: AuthResult = await checkAuthFromRequest(req);
 
-      if (!authResult.authenticated) {
-        return new Response(
-          JSON.stringify({ error: 'Authentication required' } as StandardErrorResponse),
-          {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' }
-          }
-        );
-      }
+    if (!authResult.authenticated) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' } as StandardErrorResponse),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     return handler(req, ...args);

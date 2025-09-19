@@ -1,8 +1,10 @@
 chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
   if (msg.action === "GET_PAGE_TEXT") {
     const selectedText = window.getSelection()?.toString() || "";
+    console.log("Content script: Found selected text:", selectedText);
     const response = { selectedText };
     sendResponse(response);
+    return true; // Important: indicates we will send a response
   }
 });
 

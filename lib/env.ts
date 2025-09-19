@@ -4,8 +4,6 @@
  */
 
 // Single toggle for authentication (works on both client and server)
-const dev = process.env.DEV;
-export const IS_PRODUCTION = process.env.DEV === '0' || !dev || process.env.DEV === 'false';
 
 // API Keys
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

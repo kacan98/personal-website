@@ -2,7 +2,7 @@ import { CVSettings } from '@/types'
 import { OpenAI } from 'openai'
 import { RefineCvParams, RefineCvRequest, RefineCvResponseData } from './model'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
-import { IS_PRODUCTION, OPENAI_API_KEY } from '@/lib/env'
+import { OPENAI_API_KEY } from '@/lib/env'
 
 export const runtime = 'nodejs';
 
@@ -11,16 +11,13 @@ export async function POST(req: Request): Promise<Response> {
     console.log('POST /api/refine-cv - Starting request')
 
     // Check authentication when required
-    if (IS_PRODUCTION) {
-      const authResult = await checkAuthFromRequest(req)
-      if (!authResult.authenticated) {
-        console.log('POST /api/refine-cv - Authentication required')
-        return new Response(JSON.stringify({ error: 'Authentication required for CV refinement' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' }
-        })
-      }
-      console.log('POST /api/refine-cv - Authentication verified')
+    // Always check authentication
+    const authResult = await checkAuthFromRequest(req)
+    if (!authResult.authenticated) {
+      return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      })
     }
 
     // Parse request body
