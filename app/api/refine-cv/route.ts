@@ -76,16 +76,10 @@ export async function POST(req: Request): Promise<Response> {
     let refinementInstructions = "Please refine this CV based on the following instructions:\n\n"
 
     if (body.checkedImprovements && body.checkedImprovements.length > 0) {
-      refinementInstructions += "SELECTED IMPROVEMENTS with user explanations:\n"
+      refinementInstructions += "IMPROVEMENTS TO INCORPORATE:\n"
       body.checkedImprovements.forEach((improvement, index) => {
-        refinementInstructions += `${index + 1}. ${improvement}\n`
-
-        // Add user's specific explanation if provided
-        if (body.improvementInputs && body.improvementInputs[improvement]) {
-          refinementInstructions += `   User's actual experience: ${body.improvementInputs[improvement]}\n`
-        }
+        refinementInstructions += `${index + 1}. ${improvement}\n\n`
       })
-      refinementInstructions += "\n"
     }
 
     if (body.missingSkills && body.missingSkills.trim().length > 0) {
@@ -100,13 +94,18 @@ export async function POST(req: Request): Promise<Response> {
 
     refinementInstructions += `
 IMPORTANT GUIDELINES:
-- Use the ORIGINAL CV as the baseline truth for the candidate's actual experience
-- Only add skills/experience that are explicitly mentioned in the additional information
+- Use the CURRENT CV as the starting point for these refinements
+- In the "IMPROVEMENTS TO INCORPORATE" section:
+  * "AI suggested:" shows what gaps or improvements were identified
+  * "User said:" shows the candidate's actual experience related to that suggestion
+  * Focus on incorporating the "User said" content into the CV, using the AI suggestion as context
+- Incorporate the user's actual experiences naturally into the CV by enhancing existing sections or adding relevant details
+- Use the ORIGINAL CV as reference for the candidate's baseline experience to avoid making up information
 - Maintain the professional tone and structure of the CV
-- Don't make up or exaggerate any experience
-- Ensure all changes are truthful and based on provided information
+- Don't make up or exaggerate any experience beyond what's explicitly provided by the user
+- Ensure all changes are truthful and based on the provided information
 - Keep the JSON structure and format intact
-- Focus on highlighting relevant experience that matches the improvements
+- Prominently feature the user's actual experiences in relevant sections of the CV
 ${body.positionContext ? `- Keep the position context in mind: ${body.positionContext}` : ''}
 
 Please return the refined CV in the same JSON format.`
@@ -123,11 +122,11 @@ Please return the refined CV in the same JSON format.`
           },
           {
             role: 'user',
-            content: `ORIGINAL CV (baseline truth):\n${JSON.stringify(body.originalCv, null, 2)}`,
+            content: `ORIGINAL CV (reference for candidate's actual experience):\n${JSON.stringify(body.originalCv, null, 2)}`,
           },
           {
             role: 'user',
-            content: `CURRENT CV (may have been modified):\n${JSON.stringify(body.currentCv, null, 2)}`,
+            content: `CURRENT CV (starting point - apply refinements to this version):\n${JSON.stringify(body.currentCv, null, 2)}`,
           },
           {
             role: 'user',

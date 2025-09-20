@@ -294,8 +294,8 @@ const Popup = () => {
           });
         };
 
-        // Start checking for text, potentially with retries
-        checkForText();
+        // Start checking for text with a small delay to ensure content script is ready
+        setTimeout(() => checkForText(), 100);
       }
     );
   }, []);

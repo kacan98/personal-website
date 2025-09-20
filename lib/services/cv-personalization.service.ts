@@ -42,7 +42,7 @@ export class CVPersonalizationService {
 
             Improve the CV to match this position. Keep the CV approximately the same length as the original.
             Focus on adjusting existing content rather than adding lots of new content.
-            Do not mention the company name in the CV.
+            Keep all existing company names and workplace information exactly as they are - do not modify, hide, or replace them.
             `,
           },
           {

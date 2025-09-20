@@ -5,6 +5,10 @@ export interface ImprovementDescription {
   selected: boolean
   usedInCV: boolean
   timestamp: number
+  // Auto-fill metadata
+  autoFilled?: boolean
+  confidence?: number
+  matchedFrom?: string
 }
 
 export interface PositionImprovements {
@@ -209,6 +213,42 @@ const improvementDescriptionsSlice = createSlice({
         currentPosition.timestamp = Date.now()
         saveToStorage(state.positions)
       }
+    },
+
+    // Bulk update improvements with auto-filled data
+    bulkUpdateImprovements: (state, action: PayloadAction<{
+      autoFilledImprovements: { [improvementKey: string]: {
+        shouldSelect: boolean
+        description: string
+        confidence: number
+        matchedFrom?: string
+      }}
+    }>) => {
+      const { autoFilledImprovements } = action.payload
+      const currentPosition = state.positions[state.currentPositionHash]
+
+      if (currentPosition) {
+        Object.entries(autoFilledImprovements).forEach(([improvementKey, autoFillData]) => {
+          // Only auto-fill if the improvement doesn't already have user input
+          if (!currentPosition.improvements[improvementKey] ||
+              currentPosition.improvements[improvementKey].userDescription.trim().length === 0) {
+
+            currentPosition.improvements[improvementKey] = {
+              userDescription: autoFillData.description,
+              selected: autoFillData.shouldSelect,
+              usedInCV: false,
+              timestamp: Date.now(),
+              // Add metadata for auto-filled items
+              autoFilled: true,
+              confidence: autoFillData.confidence,
+              matchedFrom: autoFillData.matchedFrom
+            }
+          }
+        })
+
+        currentPosition.timestamp = Date.now()
+        saveToStorage(state.positions)
+      }
     }
   }
 })
@@ -219,7 +259,8 @@ export const {
   toggleImprovementSelection,
   markImprovementsAsUsed,
   cleanupOldPositions,
-  clearCurrentPositionImprovements
+  clearCurrentPositionImprovements,
+  bulkUpdateImprovements
 } = improvementDescriptionsSlice.actions
 
 export default improvementDescriptionsSlice.reducer

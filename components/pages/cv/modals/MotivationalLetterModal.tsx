@@ -26,7 +26,7 @@ interface MotivationalLetterModalProps {
   editableMotivationalLetter: MotivationalLetterResponse | null;
   setEditableMotivationalLetter: (letter: MotivationalLetterResponse | null) => void;
   onDownloadPDF: () => void;
-  onAdjustLetter: (comments: string) => Promise<void>;
+  _onAdjustLetter: (comments: string) => Promise<void>;
   onTranslateLetter: () => Promise<void>;
   onGenerateLetter: (positionDetails: string, checkedItems: string[], language: string) => Promise<void>;
   selectedLanguage: string;
@@ -47,7 +47,7 @@ const MotivationalLetterModal = ({
   editableMotivationalLetter,
   setEditableMotivationalLetter,
   onDownloadPDF,
-  onAdjustLetter,
+  _onAdjustLetter,
   onTranslateLetter,
   onGenerateLetter,
   selectedLanguage,
@@ -320,10 +320,18 @@ const MotivationalLetterModal = ({
                   rows={6}
                   fullWidth
                   label="Position Details"
-                  placeholder="Paste the job description or describe the position you're applying for..."
+                  placeholder="Paste the job description or describe the position you're applying for... (Ctrl+Enter to generate)"
                   variant="outlined"
                   value={positionDetails}
                   onChange={(e) => setPositionDetails(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                      e.preventDefault();
+                      if (positionDetails && positionDetails.trim().length >= 10 && !isLoading) {
+                        onGenerateLetter(positionDetails, checked, selectedLanguage);
+                      }
+                    }
+                  }}
                   sx={{
                     '& .MuiInputBase-root': {
                       fontSize: '14px',
@@ -473,7 +481,7 @@ const MotivationalLetterModal = ({
               flexShrink: 0
             }}>
               <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                Quick Adjustments
+                Adjustments
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}>
                 <TextField
@@ -482,9 +490,17 @@ const MotivationalLetterModal = ({
                   rows={3}
                   value={adjustmentComments}
                   onChange={(e) => setAdjustmentComments(e.target.value)}
-                  placeholder="Describe how you want to modify the letter (e.g., 'make it shorter', 'more casual', 'bullet points')..."
+                  placeholder="Describe how you want to modify the letter (e.g., 'make it shorter', 'more casual', 'bullet points')... (Ctrl+Enter to apply)"
                   variant="outlined"
                   size="small"
+                  onKeyDown={(e) => {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                      e.preventDefault();
+                      if (adjustmentComments.trim() && !isAdjusting && !isLoading) {
+                        handleAdjustWithComments();
+                      }
+                    }
+                  }}
                   sx={{
                     '& .MuiInputBase-root': {
                       fontSize: '14px',

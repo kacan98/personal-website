@@ -133,8 +133,24 @@ export const cvSlice = createSlice({
       // Reset the changes flag without modifying CV content
       state.hasChanges = false
     },
+    updateCvWithChanges: (
+      state,
+      action: {
+        payload: CVSettings
+      }
+    ) => {
+      // Update CV content but keep hasChanges = true to maintain diff view
+      const cvWithIds = ensureCvIds(action.payload);
+      state.on = cvWithIds.on
+      state.name = cvWithIds.name
+      state.subtitle = cvWithIds.subtitle
+      state.mainColumn = cvWithIds.mainColumn
+      state.sideColumn = cvWithIds.sideColumn
+      state.profilePicture = cvWithIds.profilePicture
+      state.hasChanges = true // Keep changes flag to maintain diff view
+    },
   },
 })
 
 export default cvSlice
-export const { initCv, switchLanguage, updateCv, removeArrayItem, resetChanges } = cvSlice.actions
+export const { initCv, switchLanguage, updateCv, removeArrayItem, resetChanges, updateCvWithChanges } = cvSlice.actions

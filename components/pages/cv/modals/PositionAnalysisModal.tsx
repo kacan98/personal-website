@@ -2,24 +2,24 @@
 import {
   Typography,
   Box,
-  Alert,
-  Chip,
   TextField,
   Checkbox,
   FormControlLabel,
-  Divider,
 } from "@mui/material";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import {
   selectImprovementInput,
   selectImprovementsWithDescriptions,
-  updateImprovementDescription
+  updateImprovementDescription,
+  selectCurrentPosition,
+  bulkUpdateImprovements
 } from "@/redux/slices/improvementDescriptions";
+import { autoFillImprovementsAPIEndpointName, AutoFillImprovementsParams, AutoFillImprovementsResponse } from '@/app/api/auto-fill-improvements/model';
 import {
   Analytics as AnalyticsIcon,
   TrendingUp as TrendingUpIcon,
-  Lightbulb as LightbulbIcon,
+  AutoAwesome as AutoAwesomeIcon,
 } from "@mui/icons-material";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
@@ -28,66 +28,85 @@ import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
 // Component for improvement description input
 const ImprovementDescriptionInput = ({
   improvementKey,
-  placeholder
+  placeholder,
+  disabled = false
 }: {
   improvementKey: string;
   placeholder: string;
+  disabled?: boolean;
 }) => {
   const dispatch = useAppDispatch();
   const currentValue = useAppSelector(selectImprovementInput(improvementKey));
+  const currentPosition = useAppSelector(selectCurrentPosition);
   const [localValue, setLocalValue] = useState(currentValue);
-  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Check if this improvement was auto-filled
+  const improvementData = currentPosition?.improvements[improvementKey];
+  const isAutoFilled = improvementData?.autoFilled || false;
+  const confidence = improvementData?.confidence;
+  const matchedFrom = improvementData?.matchedFrom;
 
   // Sync local state with Redux state
   useEffect(() => {
     setLocalValue(currentValue);
   }, [currentValue]);
 
-  // Debounced handler for input changes
-  const handleInputChange = useCallback((value: string) => {
-    setLocalValue(value);
-
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      dispatch(updateImprovementDescription({
-        improvementKey,
-        userDescription: value,
-        selected: true
-      }));
-    }, 300);
+  // Handler for saving on blur
+  const handleSave = useCallback((value: string) => {
+    dispatch(updateImprovementDescription({
+      improvementKey,
+      userDescription: value,
+      selected: true
+    }));
   }, [dispatch, improvementKey]);
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
-  }, []);
 
   return (
-    <TextField
-      multiline
-      rows={2}
-      fullWidth
-      size="small"
-      placeholder={placeholder}
-      value={localValue}
-      onChange={(e) => handleInputChange(e.target.value)}
-      sx={{
-        '& .MuiInputBase-root': {
-          fontSize: '13px',
-          backgroundColor: 'rgba(0, 0, 0, 0.02)',
-        },
-        '& .MuiInputBase-input': {
-          padding: '8px 12px',
-        }
-      }}
-    />
+    <Box>
+      {isAutoFilled && (
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 0.5 }}>
+          <AutoAwesomeIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+          <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 500 }}>
+            Auto-filled from previous experience
+            {confidence && (
+              <span style={{ color: '#666', fontWeight: 400 }}>
+                {' '}({Math.round(confidence * 100)}% match)
+              </span>
+            )}
+          </Typography>
+        </Box>
+      )}
+      <TextField
+        multiline
+        rows={2}
+        fullWidth
+        size="small"
+        placeholder={placeholder}
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={(e) => handleSave(e.target.value)}
+        disabled={disabled}
+        sx={{
+          '& .MuiInputBase-root': {
+            fontSize: '13px',
+            backgroundColor: isAutoFilled
+              ? 'rgba(25, 118, 210, 0.05)'
+              : 'rgba(0, 0, 0, 0.02)',
+            border: isAutoFilled
+              ? '1px solid rgba(25, 118, 210, 0.3)'
+              : undefined,
+          },
+          '& .MuiInputBase-input': {
+            padding: '8px 12px',
+          }
+        }}
+      />
+      {isAutoFilled && matchedFrom && (
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic', mt: 0.5, display: 'block' }}>
+          Based on: &ldquo;{matchedFrom}&rdquo;
+        </Typography>
+      )}
+    </Box>
   );
 };
 
@@ -97,13 +116,15 @@ interface PositionAnalysisModalProps {
   positionIntersection: JobCvIntersectionResponse | null;
   checked: string[];
   _handleChecked: (missing: string) => () => void;
-  onOpenManualAdjustments: () => void;
+  _onOpenManualAdjustments: () => void;
+  onOpenQuickAdjustments: () => void;
   _companyName?: string | null;
   positionDetails: string;
   setPositionDetails: (value: string) => void;
   onAnalyzePosition: () => Promise<void>;
   isLoading: boolean;
-  onImprovementDescriptionChange?: (improvementKey: string, description: string) => void;
+  _onImprovementDescriptionChange?: (improvementKey: string, description: string) => void;
+  setsnackbarMessage: (message: string) => void;
 }
 
 const PositionAnalysisModal = ({
@@ -112,20 +133,32 @@ const PositionAnalysisModal = ({
   positionIntersection,
   checked,
   _handleChecked,
-  onOpenManualAdjustments,
+  _onOpenManualAdjustments,
+  onOpenQuickAdjustments,
   _companyName,
   positionDetails,
   setPositionDetails,
   onAnalyzePosition,
   isLoading,
-  onImprovementDescriptionChange,
+  _onImprovementDescriptionChange,
+  setsnackbarMessage,
 }: PositionAnalysisModalProps) => {
   const dispatch = useAppDispatch();
   const hasSelectedImprovements = checked.length > 0;
   const improvementsWithDescriptions = useAppSelector(selectImprovementsWithDescriptions);
-  const hasImprovementDescriptions = improvementsWithDescriptions.length > 0;
+
+  // Only count improvements that are both checked AND have descriptions
+  const currentlyCheckedWithDescriptions = improvementsWithDescriptions.filter(item =>
+    checked.includes(item.improvement)
+  );
+  const hasImprovementDescriptions = currentlyCheckedWithDescriptions.length > 0;
+  const currentPosition = useAppSelector(selectCurrentPosition);
   const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
   const positionDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
+
+  // Get historical positions for auto-fill
+  const historicalPositions = useAppSelector((state) => state.improvementDescriptions.positions);
 
   // Sync local state with props
   useEffect(() => {
@@ -154,6 +187,75 @@ const PositionAnalysisModal = ({
     };
   }, []);
 
+  // Manual auto-fill function
+  const handleAutoFill = useCallback(async () => {
+    if (!positionIntersection?.whatIsMissing || positionIntersection.whatIsMissing.length === 0) {
+      return;
+    }
+
+    setIsAutoFilling(true);
+
+    try {
+      const newImprovements = positionIntersection.whatIsMissing.map(item => item.description);
+      console.log('Manual auto-fill with improvements:', newImprovements);
+      console.log('Historical positions available:', Object.keys(historicalPositions).length);
+
+      const autoFillRes = await fetch(autoFillImprovementsAPIEndpointName, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newImprovements,
+          historicalPositions
+        } as AutoFillImprovementsParams),
+      });
+
+      if (autoFillRes.ok) {
+        const autoFillData: AutoFillImprovementsResponse = await autoFillRes.json();
+        console.log('Manual auto-fill API response:', autoFillData);
+
+        if (Object.keys(autoFillData.autoFilledImprovements).length > 0) {
+          console.log('Dispatching auto-filled improvements to Redux:', autoFillData.autoFilledImprovements);
+
+          dispatch(bulkUpdateImprovements({
+            autoFilledImprovements: autoFillData.autoFilledImprovements
+          }));
+
+          const filledCount = Object.keys(autoFillData.autoFilledImprovements).length;
+          setsnackbarMessage(`Auto-filled ${filledCount} improvement${filledCount !== 1 ? 's' : ''} based on your past experience!`);
+          console.log(`Auto-filled ${filledCount} improvements based on historical data`);
+        } else {
+          setsnackbarMessage('No matching improvements found in your past experience.');
+          console.log('No auto-fill matches found');
+        }
+      } else {
+        console.warn('Auto-fill API call failed, status:', autoFillRes.status);
+        const errorText = await autoFillRes.text();
+        console.warn('Auto-fill error response:', errorText);
+        setsnackbarMessage('Failed to auto-fill improvements. Please try again.');
+      }
+    } catch (autoFillError) {
+      console.error('Error during auto-fill process:', autoFillError);
+      setsnackbarMessage('Error occurred during auto-fill. Please try again.');
+    } finally {
+      setIsAutoFilling(false);
+    }
+  }, [positionIntersection, historicalPositions, dispatch, setsnackbarMessage]);
+
+  // Check if there are unfilled improvements that could potentially be auto-filled
+  const hasUnfilledImprovements = useCallback(() => {
+    if (!positionIntersection?.whatIsMissing || Object.keys(historicalPositions).length === 0) {
+      return false;
+    }
+
+    // Check if there are improvements without auto-filled data or user descriptions
+    return positionIntersection.whatIsMissing.some(missing => {
+      const improvementData = currentPosition?.improvements[missing.description];
+      return !improvementData || (!improvementData.autoFilled && improvementData.userDescription.trim().length === 0);
+    });
+  }, [positionIntersection, historicalPositions, currentPosition]);
+
   // Actions for when analysis exists
   const analysisActions = (
     <>
@@ -165,11 +267,11 @@ const PositionAnalysisModal = ({
           variant="primary"
           onClick={() => {
             onClose();
-            onOpenManualAdjustments();
+            onOpenQuickAdjustments();
           }}
           startIcon={<TrendingUpIcon />}
         >
-          Refine CV ({hasImprovementDescriptions ? improvementsWithDescriptions.length : checked.length} {hasImprovementDescriptions ? 'with details' : 'selected'})
+          Refine CV ({hasImprovementDescriptions ? currentlyCheckedWithDescriptions.length : checked.length} {hasImprovementDescriptions ? 'with details' : 'selected'})
         </Button>
       )}
     </>
@@ -209,10 +311,18 @@ const PositionAnalysisModal = ({
             rows={8}
             fullWidth
             label="Position Details"
-            placeholder="Paste the job description here to analyze how your CV matches the requirements..."
+            placeholder="Paste the job description here to analyze how your CV matches the requirements... (Ctrl+Enter to analyze)"
             variant="outlined"
             value={localPositionDetails}
             onChange={(e) => handlePositionDetailsChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                if (positionDetails && positionDetails.trim().length >= 10 && !isLoading) {
+                  onAnalyzePosition();
+                }
+              }
+            }}
             sx={{
               '& .MuiInputBase-root': {
                 fontSize: '14px',
@@ -284,45 +394,78 @@ const PositionAnalysisModal = ({
       {/* Potential Improvements Section */}
       {positionIntersection.whatIsMissing && positionIntersection.whatIsMissing.length > 0 && (
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ mb: 2, color: 'warning.main', fontWeight: 600 }}>
-            ⚡ Potential Improvements
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="h6" sx={{ color: 'warning.main', fontWeight: 600 }}>
+              ⚡ Potential Improvements
+            </Typography>
+            {hasUnfilledImprovements() && (
+              <Button
+                variant="primary"
+                size="medium"
+                onClick={handleAutoFill}
+                disabled={isAutoFilling}
+                startIcon={<AutoAwesomeIcon />}
+                sx={{
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                  '&:hover': {
+                    boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
+                  }
+                }}
+              >
+                {isAutoFilling ? 'Filling...' : 'Fill from past jobs'}
+              </Button>
+            )}
+          </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Select the skills or experiences you actually have to include them in your CV refinement:
           </Typography>
           <Box sx={{ pl: 1 }}>
-            {positionIntersection.whatIsMissing.map((missing, index) => (
-              <Box key={index} sx={{ mb: 2 }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={checked.includes(missing.description)}
-                      onChange={_handleChecked(missing.description)}
-                      color="primary"
-                    />
-                  }
-                  label={
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {missing.description}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {missing.whatWouldImproveTheCv}
-                      </Typography>
+            {positionIntersection.whatIsMissing.map((missing, index) => {
+              const improvementData = currentPosition?.improvements[missing.description];
+              const isAutoFilled = improvementData?.autoFilled || false;
+
+              return (
+                <Box key={index} sx={{ mb: 2 }}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={checked.includes(missing.description)}
+                        onChange={_handleChecked(missing.description)}
+                        disabled={isAutoFilling}
+                        color="primary"
+                      />
+                    }
+                    label={
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {missing.description}
+                          </Typography>
+                          {isAutoFilled && (
+                            <AutoAwesomeIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+                          )}
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">
+                          {missing.whatWouldImproveTheCv}
+                        </Typography>
+                      </Box>
+                    }
+                    sx={{ alignItems: 'flex-start', width: '100%' }}
+                  />
+                  {checked.includes(missing.description) && (
+                    <Box sx={{ mt: 1, ml: 4 }}>
+                      <ImprovementDescriptionInput
+                        improvementKey={missing.description}
+                        placeholder="Describe your experience with this skill or requirement..."
+                        disabled={isAutoFilling}
+                      />
                     </Box>
-                  }
-                  sx={{ alignItems: 'flex-start', width: '100%' }}
-                />
-                {checked.includes(missing.description) && (
-                  <Box sx={{ mt: 1, ml: 4 }}>
-                    <ImprovementDescriptionInput
-                      improvementKey={missing.description}
-                      placeholder="Describe your experience with this skill or requirement..."
-                    />
-                  </Box>
-                )}
-              </Box>
-            ))}
+                  )}
+                </Box>
+              )
+            })}
           </Box>
         </Box>
       )}
@@ -339,66 +482,6 @@ const PositionAnalysisModal = ({
         </Box>
       )}
 
-      <Divider sx={{ my: 3 }} />
-
-      {/* Selected Improvements Summary */}
-      {hasSelectedImprovements && (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-            <Typography variant="body2" sx={{ mr: 1 }}>
-              <strong>{checked.length} improvement{checked.length !== 1 ? 's' : ''} selected</strong>
-              {hasImprovementDescriptions && (
-                <span>, <strong>{improvementsWithDescriptions.length} with descriptions</strong></span>
-              )}:
-            </Typography>
-            {checked.slice(0, 3).map((item, index) => (
-              <Chip
-                key={index}
-                label={item}
-                size="small"
-                color={improvementsWithDescriptions.some(imp => imp.improvement === item) ? "primary" : "success"}
-                variant="outlined"
-              />
-            ))}
-            {checked.length > 3 && (
-              <Chip label={`+${checked.length - 3} more`} size="small" color="success" variant="outlined" />
-            )}
-          </Box>
-          {hasImprovementDescriptions && (
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-              💡 Items with descriptions will be prioritized during CV refinement
-            </Typography>
-          )}
-        </Alert>
-      )}
-
-      {/* Action Guidance */}
-      <Box sx={{ mt: 4, p: 3, backgroundColor: 'rgba(25, 118, 210, 0.08)', borderRadius: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <LightbulbIcon color="primary" sx={{ mr: 1 }} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Recommended Next Steps
-          </Typography>
-        </Box>
-
-        <Box component="ol" sx={{ pl: 3, m: 0 }}>
-          <Box component="li" sx={{ mb: 1 }}>
-            <Typography variant="body2">
-              <strong>Select relevant improvements:</strong> Check any skills or experience from the &quot;Potential improvements&quot; that you actually possess.
-            </Typography>
-          </Box>
-          <Box component="li" sx={{ mb: 1 }}>
-            <Typography variant="body2">
-              <strong>Use Manual Adjustments:</strong> Add specific details about your experience and request targeted CV modifications.
-            </Typography>
-          </Box>
-          <Box component="li" sx={{ mb: 1 }}>
-            <Typography variant="body2">
-              <strong>Review & Download:</strong> Check your refined CV and download the final version along with your motivational letter.
-            </Typography>
-          </Box>
-        </Box>
-      </Box>
     </BaseModal>
   );
 };

@@ -49,7 +49,8 @@ import {
   toggleImprovementSelection,
   selectSelectedImprovements,
   selectImprovementsWithDescriptions,
-  markImprovementsAsUsed
+  markImprovementsAsUsed,
+  clearCurrentPositionImprovements
 } from '@/redux/slices/improvementDescriptions';
 
 export type CvProps = {
@@ -165,7 +166,7 @@ function CvPage({ jobDescription }: CvProps) {
   const improvementsWithDescriptions = useAppSelector(selectImprovementsWithDescriptions);
 
   // Enhanced validation logic for refinement buttons
-  const hasSelectedImprovements = checked.length > 0;
+  const _hasSelectedImprovements = checked.length > 0;
   const hasImprovementDescriptions = improvementsWithDescriptions.length > 0;
   const [companyName, setCompanyName] = useState<string | null>(null);
   const [motivationalLetter, setMotivationalLetter] = useState<MotivationalLetterResponse | null>(null);
@@ -190,17 +191,12 @@ function CvPage({ jobDescription }: CvProps) {
   const [isManualAdjustmentMinimized, setIsManualAdjustmentMinimized] = useState(false);
   const [manualOtherChanges, setManualOtherChanges] = useState("");
   const [localManualChanges, setLocalManualChanges] = useState("");
-  const manualChangesDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-
-  // Cleanup manual changes timeout on unmount
+  // Sync local manual changes with main state when it's cleared programmatically
   useEffect(() => {
-    return () => {
-      if (manualChangesDebounceRef.current) {
-        clearTimeout(manualChangesDebounceRef.current);
-      }
-    };
-  }, []);
+    setLocalManualChanges(manualOtherChanges);
+  }, [manualOtherChanges]);
+
 
   // Hooks
   const { getMotivationalLetter,
@@ -286,9 +282,16 @@ function CvPage({ jobDescription }: CvProps) {
     missingSkills: string;
     otherChanges: string;
   }) => {
-    // Include improvement descriptions from Redux store
+    // Format improvements with AI suggestion + user experience
+    const formattedImprovements = improvementsWithDescriptions.map(item =>
+      `AI suggested: ${item.improvement}\nUser said: ${item.description}`
+    );
+
     const refinementWithDescriptions = {
       ...refinementData,
+      // Send formatted improvements with both AI suggestion and user response
+      checkedImprovements: formattedImprovements.length > 0 ? formattedImprovements : refinementData.checkedImprovements,
+      // Keep original structure for backward compatibility
       improvementInputs: {
         ...refinementData.improvementInputs,
         ...Object.fromEntries(
@@ -511,7 +514,7 @@ function CvPage({ jobDescription }: CvProps) {
     dispatch(toggleImprovementSelection(value));
   }
 
-  const handleImprovementDescriptionChange = (improvementKey: string, description: string) => {
+  const _handleImprovementDescriptionChange = (improvementKey: string, description: string) => {
     dispatch(updateImprovementDescription({
       improvementKey,
       userDescription: description,
@@ -695,7 +698,7 @@ function CvPage({ jobDescription }: CvProps) {
             setManualAdjustmentModalOpen(true);
             setIsManualAdjustmentMinimized(true);
           }}
-          onManualAdjustmentsQuick={() => {
+          _onManualAdjustmentsQuick={() => {
             setManualAdjustmentModalOpen(true);
             setIsManualAdjustmentMinimized(true);
           }}
@@ -852,7 +855,7 @@ function CvPage({ jobDescription }: CvProps) {
           editableMotivationalLetter={editableMotivationalLetter}
           setEditableMotivationalLetter={setEditableMotivationalLetter}
           onDownloadPDF={downloadMotivationalLetterPDF}
-          onAdjustLetter={handleAdjustLetter}
+          _onAdjustLetter={handleAdjustLetter}
           onTranslateLetter={handleTranslateBoth}
           onGenerateLetter={getMotivationalLetter}
           selectedLanguage={selectedLanguage}
@@ -881,15 +884,21 @@ function CvPage({ jobDescription }: CvProps) {
           positionIntersection={positionIntersection}
           checked={checked}
           _handleChecked={handleChecked}
-          onOpenManualAdjustments={() => {
+          _onOpenManualAdjustments={() => {
             setPositionAnalysisModalOpen(false);
             setManualAdjustmentModalOpen(true);
+          }}
+          onOpenQuickAdjustments={() => {
+            setPositionAnalysisModalOpen(false);
+            setManualAdjustmentModalOpen(true);
+            setIsManualAdjustmentMinimized(true);
           }}
           _companyName={companyName}
           positionDetails={positionDetails}
           setPositionDetails={setPositionDetails}
           onAnalyzePosition={updatePositionIntersection}
           isLoading={loading}
+          setsnackbarMessage={setsnackbarMessage}
         />
 
         {/* Password Modal */}
@@ -937,7 +946,7 @@ function CvPage({ jobDescription }: CvProps) {
               <Box>
                 <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <EditNoteIcon color="primary" fontSize="small" />
-                  Quick CV Adjustments
+                  CV Adjustments
                 </Typography>
                 {checked.length > 0 && (
                   <Typography variant="caption" sx={{ color: 'text.secondary', ml: 3 }}>
@@ -972,6 +981,17 @@ function CvPage({ jobDescription }: CvProps) {
                         missingSkills: "",
                         otherChanges: manualOtherChanges.trim(),
                       });
+
+                      // Clear all improvements and close the panel
+                      dispatch(clearCurrentPositionImprovements());
+                      setManualOtherChanges('');
+                      setManualAdjustmentModalOpen(false);
+                      setIsManualAdjustmentMinimized(false);
+
+                      // Request new analysis if we have position details
+                      if (positionDetails && positionDetails.trim().length >= 10) {
+                        await updatePositionIntersection();
+                      }
                     }
                   }}
                   disabled={(!manualOtherChanges.trim() && !hasImprovementDescriptions) || loading}
@@ -980,24 +1000,62 @@ function CvPage({ jobDescription }: CvProps) {
                 </Button>
               </Box>
             </Box>
+
+            {/* Display selected improvements with descriptions */}
+            {hasImprovementDescriptions && (
+              <Box sx={{ mb: 3, p: 2, backgroundColor: 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid rgba(25, 118, 210, 0.2)' }}>
+                <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+                  Selected Improvements with Your Experience:
+                </Typography>
+                {improvementsWithDescriptions.map((item, index) => (
+                  <Box key={index} sx={{ mb: 2, pb: 2, borderBottom: index < improvementsWithDescriptions.length - 1 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}>
+                    <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+                      • {item.improvement}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', pl: 2 }}>
+                      &ldquo;{item.description}&rdquo;
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            )}
+
             <TextField
               multiline
               rows={3}
               fullWidth
-              placeholder="Describe the changes you want to make to your CV..."
+              placeholder="Describe the changes you want to make to your CV... (Ctrl+Enter to apply)"
               variant="outlined"
               value={localManualChanges}
               onChange={(e) => {
                 const value = e.target.value;
                 setLocalManualChanges(value);
+                // Update the main state immediately for button validation and real-time features
+                setManualOtherChanges(value);
+              }}
+              onKeyDown={async (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                  e.preventDefault();
+                  if ((manualOtherChanges.trim() || hasImprovementDescriptions) && !loading) {
+                    await handleManualRefinement({
+                      checkedImprovements: checked,
+                      improvementInputs: {},
+                      missingSkills: "",
+                      otherChanges: manualOtherChanges.trim(),
+                    });
 
-                if (manualChangesDebounceRef.current) {
-                  clearTimeout(manualChangesDebounceRef.current);
+                    // Clear all improvements and close the panel
+                    dispatch(clearCurrentPositionImprovements());
+                    setManualOtherChanges('');
+                    setManualAdjustmentModalOpen(false);
+                    setIsManualAdjustmentMinimized(false);
+
+                    // Request new analysis if we have position details
+                    if (positionDetails && positionDetails.trim().length >= 10) {
+                      await updatePositionIntersection();
+                    }
+                  }
                 }
-
-                manualChangesDebounceRef.current = setTimeout(() => {
-                  setManualOtherChanges(value);
-                }, 300);
               }}
               sx={{
                 '& .MuiInputBase-root': {

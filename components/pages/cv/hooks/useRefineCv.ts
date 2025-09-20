@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { CVSettings } from '@/types';
 import { RefineCvRequest, RefineCvResponseData, refineCvAPIEndpointName } from '@/app/api/refine-cv/model';
 import { useAppDispatch } from '@/redux/hooks';
-import { initCv } from '@/redux/slices/cv';
+import { updateCvWithChanges } from '@/redux/slices/cv';
 
 interface UseRefineCvProps {
   originalCv: CVSettings;
@@ -63,8 +63,8 @@ export const useRefineCv = ({
 
       const data: RefineCvResponseData = await response.json();
 
-      // Update the CV in Redux
-      dispatch(initCv(data.cv));
+      // Update the CV in Redux while preserving hasChanges flag
+      dispatch(updateCvWithChanges(data.cv));
 
       // Track refinement history
       if (data.refinementSummary) {

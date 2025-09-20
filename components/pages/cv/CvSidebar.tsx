@@ -1,5 +1,6 @@
 "use client";
 import { Box, Tooltip, IconButton } from "@mui/material";
+import { BRAND_COLORS } from "@/app/colors";
 import {
   Work as WorkIcon,
   Email as EmailIcon,
@@ -104,7 +105,7 @@ const SidebarActionButton = ({
 interface CvSidebarProps {
   onAdjustForPosition: () => void;
   onManualAdjustments: () => void;
-  onManualAdjustmentsQuick: () => void;
+  _onManualAdjustmentsQuick: () => void;
   onViewMotivationalLetter: () => void;
   onViewPositionAnalysis: () => void;
   onTranslate: () => void;
@@ -126,7 +127,7 @@ interface CvSidebarProps {
 const CvSidebar = ({
   onAdjustForPosition,
   onManualAdjustments,
-  onManualAdjustmentsQuick,
+  _onManualAdjustmentsQuick,
   onViewMotivationalLetter,
   onViewPositionAnalysis,
   onTranslate,
@@ -328,7 +329,7 @@ const CvSidebar = ({
                 <SidebarActionButton
                   key={button.id}
                   icon={button.icon}
-                  label="Quick CV Adjustments - Opens bottom panel for quick improvements"
+                  label="CV Adjustments"
                   onClick={button.onClick}
                   disabled={button.disabled}
                   completed={button.completed}
@@ -357,26 +358,26 @@ const CvSidebar = ({
                         backgroundColor: lastCacheStatus === true
                           ? 'rgba(255, 152, 0, 0.15)' // Orange for cached responses
                           : lastCacheStatus === false
-                          ? 'rgba(76, 175, 80, 0.15)' // Green for fresh responses
-                          : 'rgba(156, 39, 176, 0.15)', // Purple for unknown state
+                          ? `rgba(${BRAND_COLORS.accentRgb}, 0.15)` // Brand accent for fresh responses
+                          : `rgba(${BRAND_COLORS.accentRgb}, 0.15)`, // Brand accent for unknown state
                         color: lastCacheStatus === true
                           ? '#ff9800'
                           : lastCacheStatus === false
-                          ? '#4caf50'
-                          : '#9c27b0',
+                          ? BRAND_COLORS.accent
+                          : BRAND_COLORS.accent,
                         border: '2px solid',
                         borderColor: lastCacheStatus === true
                           ? '#ff9800'
                           : lastCacheStatus === false
-                          ? '#4caf50'
-                          : '#9c27b0',
+                          ? BRAND_COLORS.accent
+                          : BRAND_COLORS.accent,
                         transition: 'all 0.2s ease',
                         '&:hover': {
                           backgroundColor: lastCacheStatus === true
                             ? 'rgba(255, 152, 0, 0.25)'
                             : lastCacheStatus === false
-                            ? 'rgba(76, 175, 80, 0.25)'
-                            : 'rgba(156, 39, 176, 0.25)',
+                            ? `rgba(${BRAND_COLORS.accentRgb}, 0.25)`
+                            : `rgba(${BRAND_COLORS.accentRgb}, 0.25)`,
                           transform: 'scale(1.05)',
                         },
                         '&:active': {
