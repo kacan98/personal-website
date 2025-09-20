@@ -103,28 +103,51 @@ export async function POST(req: Request): Promise<Response> {
   }
 }
 
-// Clean, focused CV personalization using separate services
+// Clean, focused CV personalization using separate services - now parallelized
 async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<CvUpgradeResponse> {
   let positionSummary = body.positionSummary
-
-  // Step 1: Get position analysis if needed (position summary + job intersection)
-  let newPositionSummary: string | undefined
-  let companyName: string | null | undefined
-  let newJobIntersection = body.positionIntersection
 
   const needsPositionSummary = body.positionWeAreApplyingFor && !positionSummary
   const needsJobIntersection = !body.positionIntersection
 
+  // Run all tasks in parallel for better performance
+  const tasks: Promise<any>[] = []
+
+  // Task 1: Position analysis (summary + intersection)
   if (needsPositionSummary || needsJobIntersection) {
-    const analysisResult = await PositionAnalysisService.analyzePosition(
-      body.positionWeAreApplyingFor,
-      body.cvBody,
-      request,
-      {
-        skipSummary: !needsPositionSummary,
-        skipIntersection: !needsJobIntersection
-      }
+    tasks.push(
+      PositionAnalysisService.analyzePosition(
+        body.positionWeAreApplyingFor,
+        body.cvBody,
+        request,
+        {
+          skipSummary: !needsPositionSummary,
+          skipIntersection: !needsJobIntersection
+        }
+      )
     )
+  }
+
+  // Task 2: CV Personalization (can run in parallel since it doesn't use position summary)
+  tasks.push(
+    CVPersonalizationService.personalizeCV({
+      cvData: body.cvBody,
+      jobDescription: body.positionWeAreApplyingFor,
+      positionSummary: positionSummary || undefined
+    })
+  )
+
+  // Wait for all tasks to complete
+  const results = await Promise.all(tasks)
+
+  let resultIndex = 0
+  let newPositionSummary: string | undefined
+  let companyName: string | null | undefined
+  let newJobIntersection = body.positionIntersection
+
+  // Process analysis results if we ran them
+  if (needsPositionSummary || needsJobIntersection) {
+    const analysisResult = results[resultIndex++]
 
     if (analysisResult.positionSummary) {
       newPositionSummary = analysisResult.positionSummary
@@ -138,12 +161,8 @@ async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<
     }
   }
 
-  // Step 2: Personalize the CV
-  const personalizedCV = await CVPersonalizationService.personalizeCV({
-    cvData: body.cvBody,
-    jobDescription: body.positionWeAreApplyingFor,
-    positionSummary: positionSummary || undefined
-  })
+  // Get the personalized CV
+  const personalizedCV = results[resultIndex]
 
   const response: CvUpgradeResponse = {
     cv: personalizedCV,

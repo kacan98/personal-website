@@ -24,7 +24,8 @@ export const useCvTools = ({
   setPositionSummary,
   setCompanyName,
   setLanguage,
-  setCacheStatus
+  setCacheStatus,
+  extractedCompanyName
 }: {
   reduxCvProps: CVSettings
   positionDetails: string
@@ -38,6 +39,7 @@ export const useCvTools = ({
   setCompanyName: (companyName: string) => void
   setLanguage: (language: string) => void
   setCacheStatus?: (fromCache: boolean) => void
+  extractedCompanyName?: string | null
 }) => {
   const dispatch = useDispatch()
 
@@ -60,6 +62,7 @@ export const useCvTools = ({
     reduxCvProps,
     positionDetails,
     setPositionIntersection,
+    companyName: extractedCompanyName,
   })
 
   const { updateSummary } = useGetSummary({

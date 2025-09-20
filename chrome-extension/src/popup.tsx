@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { DEFAULT_TARGET_URL } from "./constants";
+import { DEFAULT_TARGET_URL, PRESET_URLS } from "./constants";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 
 const styles = {
@@ -132,6 +132,32 @@ const styles = {
   cancelButton: {
     background: BACKGROUND_COLORS.overlay,
     color: BRAND_COLORS.secondary
+  },
+  presetContainer: {
+    display: "flex",
+    gap: "6px",
+    marginTop: "8px"
+  },
+  presetButton: {
+    flex: "1",
+    padding: "6px 8px",
+    fontSize: "10px",
+    fontWeight: "600",
+    border: `1px solid ${BACKGROUND_COLORS.overlay}`,
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    fontFamily: "'Open Sans', sans-serif"
+  },
+  presetButtonActive: {
+    background: BRAND_COLORS.accent,
+    color: BRAND_COLORS.primary,
+    borderColor: BRAND_COLORS.accent
+  },
+  presetButtonInactive: {
+    background: BACKGROUND_COLORS.surface,
+    color: BRAND_COLORS.secondary,
+    borderColor: BACKGROUND_COLORS.overlay
   }
 };
 
@@ -197,6 +223,12 @@ const Popup = () => {
     } else if (e.key === 'Escape') {
       cancelEditingUrl();
     }
+  };
+
+  const selectPresetUrl = (presetValue: string) => {
+    chrome.storage.sync.set({ targetUrl: presetValue }, () => {
+      setTargetUrl(presetValue);
+    });
   };
 
   useEffect(() => {
@@ -314,6 +346,20 @@ const Popup = () => {
             {targetUrl}
           </span>
         )}
+      </div>
+      <div style={styles.presetContainer}>
+        {PRESET_URLS.map((preset) => (
+          <button
+            key={preset.value}
+            onClick={() => selectPresetUrl(preset.value)}
+            style={{
+              ...styles.presetButton,
+              ...(targetUrl === preset.value ? styles.presetButtonActive : styles.presetButtonInactive)
+            }}
+          >
+            {preset.label}
+          </button>
+        ))}
       </div>
     </div>
     <div style={styles.content}>

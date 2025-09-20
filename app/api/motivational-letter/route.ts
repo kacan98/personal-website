@@ -1,7 +1,8 @@
 import { zodResponseFormat } from "openai/helpers/zod"
 import { MotivationalLetterParams, MotivationalLetterSchema } from "./motivational-letter.model"
 import { getOpenAIClient, OPENAI_MODELS } from '@/lib/openai-service'
-import { withAuth, createErrorResponse, createSuccessResponse } from '@/lib/api-middleware'
+import { withAuth, createErrorResponse } from '@/lib/api-middleware'
+import { withCacheStatus, generateCacheKey, CACHE_CONFIG } from '@/lib/cache-server'
 
 export const runtime = 'nodejs';
 
@@ -12,7 +13,43 @@ async function handleMotivationalLetter(req: Request): Promise<Response> {
 
     MotivationalLetterParams.parse(body)
 
-    const openai = getOpenAIClient();
+    // Generate cache key from request parameters
+    const cacheKey = generateCacheKey('motivational-letter', body)
+
+    // Try to get cached response
+    const { data: result, fromCache } = await withCacheStatus(
+      cacheKey,
+      async () => {
+        return await generateMotivationalLetter(body)
+      },
+      CACHE_CONFIG.MOTIVATIONAL_LETTER
+    )
+
+    // Include cache status in response
+    const responseWithCacheInfo = {
+      ...result,
+      _cacheInfo: {
+        fromCache,
+        cacheKey: process.env.NODE_ENV === 'development' ? cacheKey : undefined
+      }
+    }
+
+    return new Response(JSON.stringify(responseWithCacheInfo), {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Cache-Status': fromCache ? 'HIT' : 'MISS',
+        'X-Cache-Source': fromCache ? 'disk-cache' : 'openai-api',
+      },
+    })
+
+  } catch (e: unknown) {
+    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    return createErrorResponse(errorMessage);
+  }
+}
+
+async function generateMotivationalLetter(body: any) {
+  const openai = getOpenAIClient();
 
     // Check if this is an adjustment request
     const isAdjustment = body.currentLetter && body.adjustmentComments;
@@ -101,11 +138,7 @@ The goal is to sound like you're chatting with someone, not drafting a formal le
       ),
     })
 
-    return createSuccessResponse(response.choices[0].message.parsed);
-  } catch (e: unknown) {
-    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
-    return createErrorResponse(errorMessage);
-  }
+    return response.choices[0].message.parsed;
 }
 
 export const POST = withAuth(handleMotivationalLetter);

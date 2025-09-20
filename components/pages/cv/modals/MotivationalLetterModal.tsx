@@ -17,6 +17,7 @@ import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motivational-letter.model";
 import CvLanguageSelectionComponent from "../languageSelect";
+import { useFreeformLetterAdjustment } from "../hooks/useFreeformLetterAdjustment";
 
 interface MotivationalLetterModalProps {
   open: boolean;
@@ -65,7 +66,14 @@ const MotivationalLetterModal = ({
   const [isAdjusting, setIsAdjusting] = useState(false);
   const editableTextDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
+
   const letterToShow = editableMotivationalLetter || motivationalLetter;
+
+  // Hook for freeform letter adjustment
+  const { adjustLetterFreeform } = useFreeformLetterAdjustment({
+    setMotivationalLetter: setEditableMotivationalLetter,
+    positionDetails,
+  });
 
   // Helper functions for converting between structured and text formats
   const convertLetterToText = (letter: MotivationalLetterResponse): string => {
@@ -198,16 +206,26 @@ const MotivationalLetterModal = ({
   };
 
   const handleAdjustWithComments = async () => {
-    if (!adjustmentComments.trim()) return;
+    if (!adjustmentComments.trim() || !letterToShow) return;
 
     setIsAdjusting(true);
     try {
-      await onAdjustLetter(adjustmentComments);
+      // Get current letter as text
+      const currentLetterText = convertLetterToText(letterToShow);
+
+      // Use freeform adjustment
+      await adjustLetterFreeform(currentLetterText, adjustmentComments.trim());
+
+      // Clear the input
       setAdjustmentComments('');
+    } catch (error) {
+      console.error('Error adjusting letter:', error);
+      // Could add error handling here
     } finally {
       setIsAdjusting(false);
     }
   };
+
 
   const renderLetterContent = () => {
     if (!letterToShow) return null;
@@ -339,8 +357,7 @@ const MotivationalLetterModal = ({
           {/* View & Edit Section (when letter exists) */}
           {letterToShow && (
             <>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                <Typography variant="h6">Letter Content</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 3 }}>
                 <Box sx={{ display: 'flex', gap: 2 }}>
                   {isEditing ? (
                     <>
@@ -465,7 +482,7 @@ const MotivationalLetterModal = ({
                   rows={3}
                   value={adjustmentComments}
                   onChange={(e) => setAdjustmentComments(e.target.value)}
-                  placeholder="Provide feedback on how to improve the letter while you read..."
+                  placeholder="Describe how you want to modify the letter (e.g., 'make it shorter', 'more casual', 'bullet points')..."
                   variant="outlined"
                   size="small"
                   sx={{

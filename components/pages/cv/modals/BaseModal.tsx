@@ -53,6 +53,19 @@ const BaseModal = ({
       maxWidth={isMinimized ? 'sm' : maxWidth}
       fullWidth={!isMinimized}
       fullScreen={isMinimized ? false : shouldBeFullScreen}
+      slotProps={{
+        backdrop: {
+          sx: {
+            backgroundColor: isMinimized ? 'transparent' : 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: isMinimized ? 'none' : 'blur(4px)',
+            cursor: disableBackdropClick ? 'default' : 'pointer',
+            pointerEvents: isMinimized ? 'none' : 'auto',
+            '&:hover': {
+              cursor: disableBackdropClick ? 'default' : 'pointer',
+            },
+          },
+        },
+      }}
       sx={{
         '& .MuiDialog-paper': {
           borderRadius: shouldBeFullScreen && !isMinimized ? 0 : 3,
@@ -71,15 +84,6 @@ const BaseModal = ({
             margin: 0,
             transform: 'none',
           }),
-        },
-        '& .MuiBackdrop-root': {
-          backgroundColor: isMinimized ? 'transparent' : 'rgba(0, 0, 0, 0.5)',
-          backdropFilter: isMinimized ? 'none' : 'blur(4px)',
-          cursor: disableBackdropClick ? 'default' : 'pointer !important',
-          pointerEvents: isMinimized ? 'none' : 'auto',
-          '&:hover': {
-            cursor: disableBackdropClick ? 'default' : 'pointer',
-          },
         },
       }}
     >

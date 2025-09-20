@@ -9,11 +9,10 @@ import {
   CheckCircle as CheckCircleIcon,
   ExpandLess as ExpandLessIcon,
   Edit as EditIcon,
-  Speed as SpeedIcon,
   CompareArrows as CompareArrowsIcon,
   RestartAlt as RestartAltIcon,
-  DeleteSweep as DeleteSweepIcon,
   Extension as ExtensionIcon,
+  Storage as StorageIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -148,7 +147,7 @@ const CvSidebar = ({
   const sidebarButtons = [
     {
       id: 'adjust-position',
-      label: `Adjust for Position${lastCacheStatus !== null ? (lastCacheStatus ? ' ⚡' : ' 🤖') : ''}`,
+      label: 'Adjust for Position',
       icon: <WorkIcon />,
       onClick: onAdjustForPosition,
       disabled: false,
@@ -211,8 +210,10 @@ const CvSidebar = ({
     },
     {
       id: 'clear-cache',
-      label: 'Clear AI Cache',
-      icon: <DeleteSweepIcon />,
+      label: lastCacheStatus !== null
+        ? `Clear AI Cache (${lastCacheStatus ? 'Recently used cache' : 'Fresh AI responses'})`
+        : 'Clear AI Cache',
+      icon: <StorageIcon />,
       onClick: onClearCache || (() => {}),
       disabled: !onClearCache,
       visible: !!onClearCache,
@@ -321,49 +322,28 @@ const CvSidebar = ({
               );
             }
 
-            // Special handling for Manual Adjustments button with Quick Adjustment in tooltip
-            if (button.id === 'manual-adjustments') {
+            // Special handling for Manual Adjustments button with simple tooltip
+            if (button.id === 'manual-adjustments' && button.icon && button.onClick) {
+              return (
+                <SidebarActionButton
+                  key={button.id}
+                  icon={button.icon}
+                  label="Quick CV Adjustments - Opens bottom panel for quick improvements"
+                  onClick={button.onClick}
+                  disabled={button.disabled}
+                  completed={button.completed}
+                />
+              );
+            }
+
+            // Special handling for cache clear button with enhanced styling
+            if (button.id === 'clear-cache') {
               return (
                 <Tooltip
                   key={button.id}
-                  title={
-                    <Box sx={{ p: 1 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Tooltip title="Quick Adjustment" placement="top">
-                          <IconButton
-                            onClick={() => {
-                              onManualAdjustmentsQuick();
-                            }}
-                          sx={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: 2,
-                            backgroundColor: 'rgba(25, 118, 210, 0.12)',
-                            color: 'primary.main',
-                            border: '2px solid',
-                            borderColor: 'primary.main',
-                            transition: 'all 0.2s ease',
-                            '&:hover': {
-                              backgroundColor: 'primary.main',
-                              color: 'primary.contrastText',
-                              transform: 'scale(1.05)',
-                            },
-                            '&:active': {
-                              transform: 'scale(0.95)',
-                            },
-                          }}
-                        >
-                            <SpeedIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </Box>
-                  }
+                  title={button.label}
                   placement="left"
                   arrow
-                  disableHoverListener={false}
-                  enterDelay={200}
-                  leaveDelay={300}
                 >
                   <span>
                     <IconButton
@@ -374,58 +354,37 @@ const CvSidebar = ({
                         height: 48,
                         borderRadius: 2,
                         position: 'relative',
-                        backgroundColor: button.disabled
-                          ? 'rgba(0, 0, 0, 0.04)'
-                          : button.completed
-                          ? 'rgba(16, 185, 129, 0.15)'
-                          : 'rgba(25, 118, 210, 0.12)',
-                        color: button.disabled
-                          ? 'text.disabled'
-                          : button.completed
-                          ? '#10b981'
-                          : 'primary.main',
+                        backgroundColor: lastCacheStatus === true
+                          ? 'rgba(255, 152, 0, 0.15)' // Orange for cached responses
+                          : lastCacheStatus === false
+                          ? 'rgba(76, 175, 80, 0.15)' // Green for fresh responses
+                          : 'rgba(156, 39, 176, 0.15)', // Purple for unknown state
+                        color: lastCacheStatus === true
+                          ? '#ff9800'
+                          : lastCacheStatus === false
+                          ? '#4caf50'
+                          : '#9c27b0',
                         border: '2px solid',
-                        borderColor: button.disabled
-                          ? 'rgba(0, 0, 0, 0.12)'
-                          : button.completed
-                          ? '#10b981'
-                          : 'primary.main',
+                        borderColor: lastCacheStatus === true
+                          ? '#ff9800'
+                          : lastCacheStatus === false
+                          ? '#4caf50'
+                          : '#9c27b0',
                         transition: 'all 0.2s ease',
                         '&:hover': {
-                          backgroundColor: button.disabled
-                            ? 'rgba(0, 0, 0, 0.04)'
-                            : button.completed
-                            ? 'rgba(16, 185, 129, 0.25)'
-                            : 'primary.main',
-                          color: button.disabled
-                            ? 'text.disabled'
-                            : button.completed
-                            ? '#10b981'
-                            : 'primary.contrastText',
-                          transform: button.disabled ? 'none' : 'scale(1.05)',
+                          backgroundColor: lastCacheStatus === true
+                            ? 'rgba(255, 152, 0, 0.25)'
+                            : lastCacheStatus === false
+                            ? 'rgba(76, 175, 80, 0.25)'
+                            : 'rgba(156, 39, 176, 0.25)',
+                          transform: 'scale(1.05)',
                         },
                         '&:active': {
-                          transform: button.disabled ? 'none' : 'scale(0.95)',
+                          transform: 'scale(0.95)',
                         },
                       }}
                     >
-                      {button.icon}
-                      {button.completed && (
-                        <CheckCircleIcon
-                          sx={{
-                            position: 'absolute',
-                            top: -4,
-                            right: -4,
-                            width: 16,
-                            height: 16,
-                            color: '#10b981',
-                            backgroundColor: 'background.paper',
-                            borderRadius: '50%',
-                            border: '2px solid',
-                            borderColor: 'background.paper',
-                          }}
-                        />
-                      )}
+                      <StorageIcon />
                     </IconButton>
                   </span>
                 </Tooltip>

@@ -20,12 +20,12 @@ export class CVPersonalizationService {
       apiKey: OPENAI_API_KEY,
     })
 
-    console.log(`CVPersonalizationService - Starting CV personalization with ${OPENAI_MODELS.LATEST}`)
+    console.log(`CVPersonalizationService - Starting CV personalization with ${OPENAI_MODELS.LATEST_MINI}`)
 
     let completion
     try {
       completion = await openai.chat.completions.parse({
-        model: OPENAI_MODELS.LATEST,
+        model: OPENAI_MODELS.LATEST_MINI,
         messages: [
           {
             role: 'user',

@@ -15,7 +15,7 @@ const FirstNameContainer = styled(Typography)(({
   letterSpacing: '-0.02em',
   color: BRAND_COLORS.primary,
   marginBottom: '0.5rem',
-  fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+  fontSize: 'clamp(3rem, 8vw, 5rem)',
   fontWeight: 600,
   fontDisplay: 'swap',
 }));
@@ -25,7 +25,7 @@ const LastNameContainer = styled(Typography)(({
   color: BRAND_COLORS.primary,
   marginTop: '0.5rem',
   letterSpacing: '-0.02em',
-  fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+  fontSize: 'clamp(3rem, 8vw, 5rem)',
   fontWeight: 700,
   fontDisplay: 'swap',
 }));
@@ -36,7 +36,7 @@ const JobTitle = styled(Typography)({
   textTransform: 'none',
   letterSpacing: '0.02em',
   fontWeight: 500,
-  fontSize: 'clamp(1.2rem, 3vw, 1.5rem)',
+  fontSize: 'clamp(1.4rem, 4vw, 1.8rem)',
   marginTop: '1rem',
   contain: 'layout style',
   minHeight: '2rem',
@@ -71,7 +71,11 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps) => {
           }}
         >
           <Grid size={{ xs: 12, md: 6 }}>
-            <Box className="hero-text" sx={{ data: { speed: 0.2 } }}>
+            <Box className="hero-text" sx={{
+              data: { speed: 0.2 },
+              textAlign: { xs: 'center', md: 'left' },
+              px: { xs: 2, sm: 3, md: 0 }
+            }}>
               <NameHeading variant="h1" aria-label={firstName + " " + lastName}>
                 <FirstNameContainer className="name-container" variant="inherit">
                   {renderOptimizedText(firstName)}

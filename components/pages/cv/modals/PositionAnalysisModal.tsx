@@ -5,8 +5,17 @@ import {
   Alert,
   Chip,
   TextField,
+  Checkbox,
+  FormControlLabel,
+  Divider,
 } from "@mui/material";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import {
+  selectImprovementInput,
+  selectImprovementsWithDescriptions,
+  updateImprovementDescription
+} from "@/redux/slices/improvementDescriptions";
 import {
   Analytics as AnalyticsIcon,
   TrendingUp as TrendingUpIcon,
@@ -15,6 +24,72 @@ import {
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
+
+// Component for improvement description input
+const ImprovementDescriptionInput = ({
+  improvementKey,
+  placeholder
+}: {
+  improvementKey: string;
+  placeholder: string;
+}) => {
+  const dispatch = useAppDispatch();
+  const currentValue = useAppSelector(selectImprovementInput(improvementKey));
+  const [localValue, setLocalValue] = useState(currentValue);
+  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Sync local state with Redux state
+  useEffect(() => {
+    setLocalValue(currentValue);
+  }, [currentValue]);
+
+  // Debounced handler for input changes
+  const handleInputChange = useCallback((value: string) => {
+    setLocalValue(value);
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      dispatch(updateImprovementDescription({
+        improvementKey,
+        userDescription: value,
+        selected: true
+      }));
+    }, 300);
+  }, [dispatch, improvementKey]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <TextField
+      multiline
+      rows={2}
+      fullWidth
+      size="small"
+      placeholder={placeholder}
+      value={localValue}
+      onChange={(e) => handleInputChange(e.target.value)}
+      sx={{
+        '& .MuiInputBase-root': {
+          fontSize: '13px',
+          backgroundColor: 'rgba(0, 0, 0, 0.02)',
+        },
+        '& .MuiInputBase-input': {
+          padding: '8px 12px',
+        }
+      }}
+    />
+  );
+};
 
 interface PositionAnalysisModalProps {
   open: boolean;
@@ -28,6 +103,7 @@ interface PositionAnalysisModalProps {
   setPositionDetails: (value: string) => void;
   onAnalyzePosition: () => Promise<void>;
   isLoading: boolean;
+  onImprovementDescriptionChange?: (improvementKey: string, description: string) => void;
 }
 
 const PositionAnalysisModal = ({
@@ -42,8 +118,12 @@ const PositionAnalysisModal = ({
   setPositionDetails,
   onAnalyzePosition,
   isLoading,
+  onImprovementDescriptionChange,
 }: PositionAnalysisModalProps) => {
+  const dispatch = useAppDispatch();
   const hasSelectedImprovements = checked.length > 0;
+  const improvementsWithDescriptions = useAppSelector(selectImprovementsWithDescriptions);
+  const hasImprovementDescriptions = improvementsWithDescriptions.length > 0;
   const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
   const positionDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -89,7 +169,7 @@ const PositionAnalysisModal = ({
           }}
           startIcon={<TrendingUpIcon />}
         >
-          Refine CV ({checked.length} selected)
+          Refine CV ({hasImprovementDescriptions ? improvementsWithDescriptions.length : checked.length} {hasImprovementDescriptions ? 'with details' : 'selected'})
         </Button>
       )}
     </>
@@ -184,20 +264,111 @@ const PositionAnalysisModal = ({
         </Typography>
       </Box>
 
+      {/* What's Good Section */}
+      {positionIntersection.whatIsGood && positionIntersection.whatIsGood.length > 0 && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ mb: 2, color: 'success.main', fontWeight: 600 }}>
+            ✅ Strengths Found
+          </Typography>
+          <Box sx={{ pl: 2 }}>
+            {positionIntersection.whatIsGood.map((strength, index) => (
+              <Box key={index} sx={{ mb: 1, display: 'flex', alignItems: 'flex-start' }}>
+                <Typography variant="body2" sx={{ color: 'success.main', mr: 1 }}>•</Typography>
+                <Typography variant="body2">{strength}</Typography>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      )}
+
+      {/* Potential Improvements Section */}
+      {positionIntersection.whatIsMissing && positionIntersection.whatIsMissing.length > 0 && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ mb: 2, color: 'warning.main', fontWeight: 600 }}>
+            ⚡ Potential Improvements
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Select the skills or experiences you actually have to include them in your CV refinement:
+          </Typography>
+          <Box sx={{ pl: 1 }}>
+            {positionIntersection.whatIsMissing.map((missing, index) => (
+              <Box key={index} sx={{ mb: 2 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked.includes(missing.description)}
+                      onChange={_handleChecked(missing.description)}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        {missing.description}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {missing.whatWouldImproveTheCv}
+                      </Typography>
+                    </Box>
+                  }
+                  sx={{ alignItems: 'flex-start', width: '100%' }}
+                />
+                {checked.includes(missing.description) && (
+                  <Box sx={{ mt: 1, ml: 4 }}>
+                    <ImprovementDescriptionInput
+                      improvementKey={missing.description}
+                      placeholder="Describe your experience with this skill or requirement..."
+                    />
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      )}
+
+      {/* Analysis Opinion */}
+      {positionIntersection.opinion && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+            💡 Analysis Summary
+          </Typography>
+          <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
+            {positionIntersection.opinion}
+          </Typography>
+        </Box>
+      )}
+
+      <Divider sx={{ my: 3 }} />
+
       {/* Selected Improvements Summary */}
       {hasSelectedImprovements && (
         <Alert severity="success" sx={{ mb: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
             <Typography variant="body2" sx={{ mr: 1 }}>
-              <strong>{checked.length} improvement{checked.length !== 1 ? 's' : ''} selected:</strong>
+              <strong>{checked.length} improvement{checked.length !== 1 ? 's' : ''} selected</strong>
+              {hasImprovementDescriptions && (
+                <span>, <strong>{improvementsWithDescriptions.length} with descriptions</strong></span>
+              )}:
             </Typography>
             {checked.slice(0, 3).map((item, index) => (
-              <Chip key={index} label={item} size="small" color="success" variant="outlined" />
+              <Chip
+                key={index}
+                label={item}
+                size="small"
+                color={improvementsWithDescriptions.some(imp => imp.improvement === item) ? "primary" : "success"}
+                variant="outlined"
+              />
             ))}
             {checked.length > 3 && (
               <Chip label={`+${checked.length - 3} more`} size="small" color="success" variant="outlined" />
             )}
           </Box>
+          {hasImprovementDescriptions && (
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+              💡 Items with descriptions will be prioritized during CV refinement
+            </Typography>
+          )}
         </Alert>
       )}
 

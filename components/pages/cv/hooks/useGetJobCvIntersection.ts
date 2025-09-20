@@ -5,6 +5,8 @@ import {
 } from '@/app/api/job-cv-intersection/model'
 import { CVSettings } from '@/types'
 import { useCallback } from 'react'
+import { useAppDispatch } from '@/redux/hooks'
+import { setCurrentPosition } from '@/redux/slices/improvementDescriptions'
 
 interface JobCvIntersectionProps {
   reduxCvProps: CVSettings
@@ -13,6 +15,7 @@ interface JobCvIntersectionProps {
   setLoading: (loading: boolean) => void
   setsnackbarMessage: (message: string) => void
   setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
+  companyName?: string | null
 }
 
 export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
@@ -22,7 +25,9 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
     setLoading,
     setsnackbarMessage,
     setPositionIntersection,
+    companyName,
   } = props
+  const dispatch = useAppDispatch()
   const updatePositionIntersection = useCallback(async () => {
     if (!positionDetails) {
       return setsnackbarMessage('Please provide position details')
@@ -31,6 +36,12 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
     setLoading(true)
 
     try {
+      // Set current position in Redux for improvement tracking
+      dispatch(setCurrentPosition({
+        positionDetails: positionDetails.trim(),
+        companyName: companyName || 'Unknown Company'
+      }));
+
       const res = await fetch(jobCvIntersectionAPIEndpointName, {
         method: 'POST',
         body: JSON.stringify({
