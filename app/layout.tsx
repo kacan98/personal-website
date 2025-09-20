@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BACKGROUND_COLORS } from "./colors";
 
 export const metadata: Metadata = {
-  title: "Karel Čančara - AI-Enhanced Full-Stack Developer", 
+  title: "Karel Čančara - Full-Stack Developer",
   description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 200+ companies.",
 };
 

@@ -24,6 +24,11 @@ const STORAGE_KEY = 'cv-improvements'
 
 // Helper function to load from localStorage
 const loadFromStorage = (): { [positionHash: string]: PositionImprovements } => {
+  // Check if we're in the browser environment
+  if (typeof window === 'undefined') {
+    return {}
+  }
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     return stored ? JSON.parse(stored) : {}
@@ -35,6 +40,11 @@ const loadFromStorage = (): { [positionHash: string]: PositionImprovements } => 
 
 // Helper function to save to localStorage
 const saveToStorage = (positions: { [positionHash: string]: PositionImprovements }) => {
+  // Check if we're in the browser environment
+  if (typeof window === 'undefined') {
+    return
+  }
+
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(positions))
   } catch (error) {

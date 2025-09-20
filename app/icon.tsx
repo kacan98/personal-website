@@ -13,8 +13,8 @@ export default function Icon() {
     (
       <div
         style={{
-          fontSize: 18,
-          background: '#0f172a',
+          fontSize: 20,
+          background: 'black',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -23,10 +23,10 @@ export default function Icon() {
           color: 'white',
           fontWeight: 900,
           fontFamily: 'system-ui',
-          borderRadius: '6px',
+          borderRadius: '50%',
         }}
       >
-        KČ
+        K
       </div>
     ),
     {
