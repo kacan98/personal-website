@@ -1,6 +1,6 @@
 {
   "name": "cv-tailor-extension",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CV Tailor - Highlight job descriptions to automatically tailor your CV",
   "main": "index.js",
   "scripts": {
