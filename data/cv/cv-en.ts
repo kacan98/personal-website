@@ -10,7 +10,7 @@ export const cvConfigEn: CVSettings = {
       id: "profile",
       title: "Profile",
       paragraphs: [
-        "Full Stack Developer with 4+ years experience building web applications and enterprise solutions. Proven track record of delivering high-impact features and significant performance improvements.\n\n",
+        "Full Stack Developer with 4+ years of experience building web applications and enterprise solutions. Proven track record of delivering high-impact features and significant performance improvements.\n\n",
         "Transitioned from marketing to development, bringing user-focused perspective and cross-functional collaboration skills. Top performer in development teams with expertise in TypeScript, Angular, React, and .NET."
       ]
     },

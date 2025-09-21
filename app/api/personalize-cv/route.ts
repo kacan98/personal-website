@@ -1,7 +1,8 @@
 import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
 import { PositionAnalysisService } from '@/lib/services/position-analysis.service'
 import { CVPersonalizationService } from '@/lib/services/cv-personalization.service'
-import { withCacheStatus, generateCacheKey, CACHE_CONFIG } from '@/lib/cache-server'
+import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
+import { CACHE_CONFIG } from '@/lib/cache-config'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
 import { OPENAI_API_KEY } from '@/lib/env'
 

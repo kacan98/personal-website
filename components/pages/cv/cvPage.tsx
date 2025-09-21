@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import Button from "@/components/ui/Button";
 import jsPDF from "jspdf";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, startTransition } from "react";
 import { useCvTools } from "./hooks/useCvTools";
 import { useRefineCv } from "./hooks/useRefineCv";
 import CvPaper from "./paper/cvPaper";
@@ -435,8 +435,11 @@ function CvPage({ jobDescription }: CvProps) {
         jobLoadingTimeout.current = null;
       }
 
-      setPositionDetails(jobDescription);
-      setShouldAdjustCv(true);
+      // Use startTransition to mark heavy operations as non-urgent
+      startTransition(() => {
+        setPositionDetails(jobDescription);
+        setShouldAdjustCv(true);
+      });
       // Don't clear loading state here - let handleAdjustForPosition manage it
     }
   }, [jobDescription]);

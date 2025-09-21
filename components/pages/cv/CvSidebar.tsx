@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { Box, Tooltip, IconButton } from "@mui/material";
 import { BRAND_COLORS } from "@/app/colors";
 import {
@@ -17,7 +18,7 @@ import {
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
-// Reusable component for sidebar action buttons
+// Compact version with smaller buttons and tighter spacing
 interface SidebarActionButtonProps {
   icon: ReactElement;
   label: string;
@@ -26,7 +27,7 @@ interface SidebarActionButtonProps {
   completed?: boolean;
 }
 
-const SidebarActionButton = ({
+const CompactSidebarActionButton = ({
   icon,
   label,
   onClick,
@@ -40,9 +41,9 @@ const SidebarActionButton = ({
           onClick={onClick}
           disabled={disabled}
           sx={{
-            width: 48,
-            height: 48,
-            borderRadius: 2,
+            width: 36, // Reduced from 48
+            height: 36, // Reduced from 48
+            borderRadius: 1.5, // Reduced border radius
             position: 'relative',
             backgroundColor: disabled
               ? 'rgba(0, 0, 0, 0.04)'
@@ -54,7 +55,7 @@ const SidebarActionButton = ({
               : completed
               ? '#10b981'
               : 'primary.main',
-            border: '2px solid',
+            border: '1px solid', // Reduced border thickness
             borderColor: disabled
               ? 'rgba(0, 0, 0, 0.12)'
               : completed
@@ -84,14 +85,14 @@ const SidebarActionButton = ({
             <CheckCircleIcon
               sx={{
                 position: 'absolute',
-                top: -4,
-                right: -4,
-                width: 16,
-                height: 16,
+                top: -3,
+                right: -3,
+                width: 12, // Reduced from 16
+                height: 12, // Reduced from 16
                 color: '#10b981',
                 backgroundColor: 'background.paper',
                 borderRadius: '50%',
-                border: '2px solid',
+                border: '1px solid', // Reduced border
                 borderColor: 'background.paper',
               }}
             />
@@ -161,7 +162,7 @@ const CvSidebar = ({
       icon: <TuneIcon />,
       onClick: onManualAdjustments,
       disabled: false,
-      visible: true, // Always visible for general CV improvements
+      visible: true,
       completed: hasManualRefinements,
     },
     {
@@ -170,7 +171,7 @@ const CvSidebar = ({
       icon: <EmailIcon />,
       onClick: onViewMotivationalLetter,
       disabled: false,
-      visible: hasMotivationalLetter, // Only visible when letter has been generated
+      visible: hasMotivationalLetter,
       completed: hasMotivationalLetter,
     },
     {
@@ -179,7 +180,7 @@ const CvSidebar = ({
       icon: <AnalyticsIcon />,
       onClick: onViewPositionAnalysis,
       disabled: false,
-      visible: hasAdjustedCv, // Only visible after CV has been adjusted for position
+      visible: hasAdjustedCv,
       completed: hasPositionAnalysis,
     },
     {
@@ -219,11 +220,6 @@ const CvSidebar = ({
       disabled: !onClearCache,
       visible: !!onClearCache,
       completed: false,
-    },
-    {
-      id: 'separator',
-      isSeparator: true,
-      visible: !!onOpenExtensionModal,
     },
     {
       id: 'chrome-extension',
@@ -268,30 +264,30 @@ const CvSidebar = ({
         zIndex: 1000,
         display: editable ? 'flex' : 'none',
         flexDirection: 'column',
-        gap: 2,
-        p: 2,
-        borderRadius: 3,
+        gap: 1, // Reduced from 2
+        p: 1.5, // Reduced from 2
+        borderRadius: 2, // Reduced from 3
         backgroundColor: 'background.paper',
         backdropFilter: 'blur(10px)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)', // Lighter shadow
         border: '1px solid',
         borderColor: 'divider',
-        minWidth: isCollapsed ? 64 : 64,
+        minWidth: isCollapsed ? 52 : 52, // Reduced from 64
         transition: 'all 0.3s ease',
       }}
     >
-      {/* Collapse/Expand Toggle Button */}
+      {/* Compact Collapse/Expand Toggle Button */}
       <Tooltip title={isCollapsed ? "CV Actions" : "Collapse Actions"} placement="left" arrow>
         <IconButton
           onClick={handleToggleCollapse}
           sx={{
-            width: 48,
-            height: 48,
+            width: 36, // Reduced from 48
+            height: 36, // Reduced from 48
             alignSelf: 'center',
-            mb: isCollapsed ? 0 : 2,
+            mb: isCollapsed ? 0 : 1, // Reduced margin
             backgroundColor: isCollapsed ? 'primary.main' : 'rgba(25, 118, 210, 0.12)',
             color: isCollapsed ? 'primary.contrastText' : 'primary.main',
-            border: '2px solid',
+            border: '1px solid', // Reduced border
             borderColor: 'primary.main',
             '&:hover': {
               backgroundColor: isCollapsed ? 'primary.dark' : 'rgba(25, 118, 210, 0.2)',
@@ -300,33 +296,18 @@ const CvSidebar = ({
             transition: 'all 0.2s ease',
           }}
         >
-          {isCollapsed ? <EditIcon /> : <ExpandLessIcon />}
+          {React.cloneElement(isCollapsed ? <EditIcon /> : <ExpandLessIcon />, { fontSize: 'small' })}
         </IconButton>
       </Tooltip>
 
       {!isCollapsed && (
-        // Show full buttons when expanded
+        // Show compact buttons when expanded
         <>
           {visibleButtons.map((button) => {
-            // Render separator
-            if (button.isSeparator) {
-              return (
-                <Box
-                  key={button.id}
-                  sx={{
-                    width: '100%',
-                    height: '1px',
-                    backgroundColor: 'divider',
-                    my: 1,
-                  }}
-                />
-              );
-            }
-
-            // Special handling for Manual Adjustments button with simple tooltip
+            // Special handling for Manual Adjustments button
             if (button.id === 'manual-adjustments' && button.icon && button.onClick) {
               return (
-                <SidebarActionButton
+                <CompactSidebarActionButton
                   key={button.id}
                   icon={button.icon}
                   label="CV Adjustments"
@@ -351,21 +332,21 @@ const CvSidebar = ({
                       onClick={button.onClick}
                       disabled={button.disabled}
                       sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 2,
+                        width: 36, // Reduced size
+                        height: 36, // Reduced size
+                        borderRadius: 1.5,
                         position: 'relative',
                         backgroundColor: lastCacheStatus === true
-                          ? 'rgba(255, 152, 0, 0.15)' // Orange for cached responses
+                          ? 'rgba(255, 152, 0, 0.15)'
                           : lastCacheStatus === false
-                          ? `rgba(${BRAND_COLORS.accentRgb}, 0.15)` // Brand accent for fresh responses
-                          : `rgba(${BRAND_COLORS.accentRgb}, 0.15)`, // Brand accent for unknown state
+                          ? `rgba(${BRAND_COLORS.accentRgb}, 0.15)`
+                          : `rgba(${BRAND_COLORS.accentRgb}, 0.15)`,
                         color: lastCacheStatus === true
                           ? '#ff9800'
                           : lastCacheStatus === false
                           ? BRAND_COLORS.accent
                           : BRAND_COLORS.accent,
-                        border: '2px solid',
+                        border: '1px solid',
                         borderColor: lastCacheStatus === true
                           ? '#ff9800'
                           : lastCacheStatus === false
@@ -385,17 +366,17 @@ const CvSidebar = ({
                         },
                       }}
                     >
-                      <StorageIcon />
+                      <StorageIcon fontSize="small" />
                     </IconButton>
                   </span>
                 </Tooltip>
               );
             }
 
-            // Regular buttons use the SidebarActionButton component
-            if (!button.isSeparator && button.icon && button.label && button.onClick) {
+            // Regular compact buttons
+            if (button.icon && button.label && button.onClick) {
               return (
-                <SidebarActionButton
+                <CompactSidebarActionButton
                   key={button.id}
                   icon={button.icon}
                   label={button.label}
@@ -410,7 +391,6 @@ const CvSidebar = ({
           })}
         </>
       )}
-
     </Box>
   );
 };

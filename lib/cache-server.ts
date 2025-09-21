@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { CACHE_CONFIG } from './cache-config';
 
 // File-based cache for development persistence - SERVER ONLY
 const CACHE_DIR = path.join(process.cwd(), '.next', 'cache-data');
@@ -48,21 +49,6 @@ const saveCacheToFile = () => {
       console.warn('Failed to save cache to file:', error);
     }
   }, 1000); // Debounce by 1 second
-};
-
-// Cache configuration
-export const CACHE_CONFIG = {
-  // Default TTL: 1 hour for most API calls
-  DEFAULT_TTL: 60 * 60 * 1000,
-
-  // Specific TTL for different endpoints
-  PERSONALIZE_CV: 2 * 60 * 60 * 1000, // 2 hours - CV personalization changes less frequently
-  POSITION_SUMMARY: 4 * 60 * 60 * 1000, // 4 hours - position analysis is quite stable
-  JOB_INTERSECTION: 2 * 60 * 60 * 1000, // 2 hours - job-CV intersection analysis
-  MOTIVATIONAL_LETTER: 1 * 60 * 60 * 1000, // 1 hour - letters may need more frequent updates
-
-  // Cache cleanup interval (every 30 minutes)
-  CLEANUP_INTERVAL: 30 * 60 * 1000,
 };
 
 /**

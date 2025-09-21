@@ -5,8 +5,6 @@ import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 
 const styles = {
   container: {
-    maxWidth: "800px",
-    margin: "0 auto",
     background: `linear-gradient(135deg, ${BACKGROUND_COLORS.primary} 0%, ${BACKGROUND_COLORS.surface} 100%)`,
     color: BRAND_COLORS.primary,
     fontFamily: "'Open Sans', 'Urbanist', 'Cormorant Garamond', 'Yeseva One', system-ui, sans-serif",

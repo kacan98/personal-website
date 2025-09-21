@@ -2,7 +2,8 @@ import { zodResponseFormat } from "openai/helpers/zod"
 import { MotivationalLetterParams, MotivationalLetterSchema } from "./motivational-letter.model"
 import { getOpenAIClient, OPENAI_MODELS } from '@/lib/openai-service'
 import { withAuth, createErrorResponse } from '@/lib/api-middleware'
-import { withCacheStatus, generateCacheKey, CACHE_CONFIG } from '@/lib/cache-server'
+import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
+import { CACHE_CONFIG } from '@/lib/cache-config'
 
 export const runtime = 'nodejs';
 

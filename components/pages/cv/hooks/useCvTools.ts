@@ -1,6 +1,6 @@
 import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/model'
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model'
-import { initCv } from '@/redux/slices/cv'
+import { updateCvWithChanges } from '@/redux/slices/cv'
 import { CVSettings } from '@/types'
 import { useDispatch } from 'react-redux'
 import { useAdjustCvBasedOnPosition } from './useAdjustCvBasedOnPosition'
@@ -44,7 +44,7 @@ export const useCvTools = ({
   const dispatch = useDispatch()
 
   const updateCvInRedux = (cv: CVSettings) => {
-    dispatch(initCv(cv))
+    dispatch(updateCvWithChanges(cv))
   }
 
   const { getMotivationalLetter } = useGetMotivationalLetter({

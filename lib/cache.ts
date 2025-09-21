@@ -1,22 +1,8 @@
 import crypto from 'crypto';
+import { CACHE_CONFIG } from './cache-config';
 
 // In-memory cache for client-side use (lightweight version)
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
-
-// Cache configuration
-const CACHE_CONFIG = {
-  // Default TTL: 1 hour for most API calls
-  DEFAULT_TTL: 60 * 60 * 1000,
-
-  // Specific TTL for different endpoints
-  PERSONALIZE_CV: 2 * 60 * 60 * 1000, // 2 hours - CV personalization changes less frequently
-  POSITION_SUMMARY: 4 * 60 * 60 * 1000, // 4 hours - position analysis is quite stable
-  JOB_INTERSECTION: 2 * 60 * 60 * 1000, // 2 hours - job-CV intersection analysis
-  MOTIVATIONAL_LETTER: 1 * 60 * 60 * 1000, // 1 hour - letters may need more frequent updates
-
-  // Cache cleanup interval (every 30 minutes)
-  CLEANUP_INTERVAL: 30 * 60 * 1000,
-};
 
 /**
  * Generate a deterministic cache key from any object/parameters

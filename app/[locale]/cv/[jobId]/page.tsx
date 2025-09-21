@@ -16,13 +16,9 @@ export default function Page({ params }: PageProps) {
   const [pageText, setPageText] = React.useState("");
 
   useEffect(() => {
-    console.log("CV Page: Setting up message listener for job ID:", jobId);
-
     // Listen for the response from the content script
     const handleMessage = (event: MessageEvent) => {
-      console.log("CV Page: Received message:", event.data);
       if (event.data.action === "RECEIVED_SAVED_TEXT") {
-        console.log("CV Page: Setting page text to:", event.data.text);
         setPageText(event.data.text);
       }
     };
@@ -30,7 +26,6 @@ export default function Page({ params }: PageProps) {
     window.addEventListener("message", handleMessage);
 
     // Send a message to the content script
-    console.log("CV Page: Sending GET_SAVED_TEXT message for job ID:", jobId);
     window.postMessage({ action: "GET_SAVED_TEXT", jobId }, "*");
 
     // Cleanup the event listener

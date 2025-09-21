@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit'
 
 export interface ImprovementDescription {
   userDescription: string
@@ -272,26 +272,30 @@ export const selectCurrentPosition = (state: { improvementDescriptions: Improvem
 export const selectCurrentPositionHash = (state: { improvementDescriptions: ImprovementDescriptionsState }) =>
   state.improvementDescriptions.currentPositionHash
 
-export const selectSelectedImprovements = (state: { improvementDescriptions: ImprovementDescriptionsState }) => {
-  const currentPosition = selectCurrentPosition(state)
-  if (!currentPosition) return []
+export const selectSelectedImprovements = createSelector(
+  [selectCurrentPosition],
+  (currentPosition) => {
+    if (!currentPosition) return []
 
-  return Object.entries(currentPosition.improvements)
-    .filter(([_, data]) => data.selected)
-    .map(([key, _]) => key)
-}
+    return Object.entries(currentPosition.improvements)
+      .filter(([_, data]) => data.selected)
+      .map(([key, _]) => key)
+  }
+)
 
-export const selectImprovementsWithDescriptions = (state: { improvementDescriptions: ImprovementDescriptionsState }) => {
-  const currentPosition = selectCurrentPosition(state)
-  if (!currentPosition) return []
+export const selectImprovementsWithDescriptions = createSelector(
+  [selectCurrentPosition],
+  (currentPosition) => {
+    if (!currentPosition) return []
 
-  return Object.entries(currentPosition.improvements)
-    .filter(([_, data]) => data.selected && data.userDescription.trim().length > 0)
-    .map(([improvement, data]) => ({
-      improvement,
-      description: data.userDescription.trim()
-    }))
-}
+    return Object.entries(currentPosition.improvements)
+      .filter(([_, data]) => data.selected && data.userDescription.trim().length > 0)
+      .map(([improvement, data]) => ({
+        improvement,
+        description: data.userDescription.trim()
+      }))
+  }
+)
 
 export const selectImprovementInput = (improvementKey: string) =>
   (state: { improvementDescriptions: ImprovementDescriptionsState }) => {

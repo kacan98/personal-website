@@ -30,7 +30,8 @@
       "mcp__browsermcp__browser_snapshot",
       "mcp__browsermcp__browser_wait",
       "mcp__browsermcp__browser_get_console_logs",
-      "mcp__browsermcp__browser_go_back"
+      "mcp__browsermcp__browser_go_back",
+      "Bash(npm run type-check:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
