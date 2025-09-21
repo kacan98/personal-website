@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { DEFAULT_TARGET_URL, PRESET_URLS } from "./constants";
+import { DEFAULT_TARGET_URL, PRESET_URLS, DEFAULT_AUTO_OPEN } from "./constants";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
+
+console.log("Popup script starting...");
 
 const styles = {
   container: {
@@ -162,10 +164,12 @@ const styles = {
 };
 
 const Popup = () => {
+  console.log("Popup component rendering...");
   const [pageText, setPageText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [focusedButton, setFocusedButton] = useState<string | null>(null);
   const [targetUrl, setTargetUrl] = useState(DEFAULT_TARGET_URL);
+  const [autoOpen, setAutoOpen] = useState(DEFAULT_AUTO_OPEN);
   const [isEditingUrl, setIsEditingUrl] = useState(false);
   const [editingUrl, setEditingUrl] = useState("");
   const jobIdRef = useRef(`job-${Date.now()}`);
@@ -231,18 +235,30 @@ const Popup = () => {
     });
   };
 
+  const toggleAutoOpen = () => {
+    const newAutoOpen = !autoOpen;
+    setAutoOpen(newAutoOpen);
+    chrome.storage.sync.set({ autoOpen: newAutoOpen });
+  };
+
   useEffect(() => {
-    // Load the target URL from storage first
+    // Load settings from storage first
     chrome.storage.sync.get(
-      { targetUrl: DEFAULT_TARGET_URL },
+      {
+        targetUrl: DEFAULT_TARGET_URL,
+        autoOpen: DEFAULT_AUTO_OPEN
+      },
       (items) => {
         setTargetUrl(items.targetUrl);
+        setAutoOpen(items.autoOpen);
 
         // Only after URL is loaded, check for page text and auto-navigate
         const checkForText = (retryCount = 0) => {
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs[0]?.id) {
               chrome.tabs.sendMessage(tabs[0].id, { action: "GET_PAGE_TEXT" }, (response) => {
+                console.log("Popup: Raw response from content script:", response);
+
                 // Handle the case where response might be undefined or content script not ready
                 if (chrome.runtime.lastError) {
                   console.log("Popup: Runtime error:", chrome.runtime.lastError.message);
@@ -256,34 +272,47 @@ const Popup = () => {
                   return;
                 }
 
-                const { selectedText } = response || {};
-                console.log("Popup: Received response:", response);
-                console.log("Popup: Selected text:", selectedText);
+                if (!response) {
+                  console.log("Popup: Response is null/undefined!");
+                  setIsLoading(false);
+                  return;
+                }
 
-                if (selectedText) {
+                const { selectedText } = response;
+                console.log("Popup: Extracted selectedText:", selectedText ? `${selectedText.length} characters` : "none");
+                console.log("Popup: First 100 chars:", selectedText ? selectedText.substring(0, 100) : "N/A");
+
+                if (selectedText && selectedText.length > 0) {
+                  console.log("Popup: Setting page text with", selectedText.length, "characters");
                   setPageText(selectedText);
+                  console.log("Popup: State should be updated now");
 
-                  // Auto-open if there's selected text, now using the correct URL
-                  // Store the current job description content right before opening the CV tool
-                  chrome.storage.local.set({ [jobIdRef.current]: selectedText }, () => {
-                    // Only open the CV tool after the storage operation completes
-                    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-                      const currentTabUrl = tabs[0]?.url;
-                      if (currentTabUrl) {
-                        const newWindowDetails = await chrome.windows.create({
-                          url: currentTabUrl,
-                          type: "normal",
-                        });
+                  // Only auto-open if the setting is enabled
+                  if (items.autoOpen) {
+                    console.log("Popup: Auto-open is enabled, opening CV tool");
+                    // Store the current job description content right before opening the CV tool
+                    chrome.storage.local.set({ [jobIdRef.current]: selectedText }, () => {
+                      // Only open the CV tool after the storage operation completes
+                      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+                        const currentTabUrl = tabs[0]?.url;
+                        if (currentTabUrl) {
+                          const newWindowDetails = await chrome.windows.create({
+                            url: currentTabUrl,
+                            type: "normal",
+                          });
 
-                        const newWindowId = newWindowDetails.id;
-                        // Open CV tool using the configured URL from settings
-                        await chrome.tabs.create({
-                          url: `${items.targetUrl}/cv/${jobIdRef.current}`,
-                          windowId: newWindowId,
-                        });
-                      }
+                          const newWindowId = newWindowDetails.id;
+                          // Open CV tool using the configured URL from settings
+                          await chrome.tabs.create({
+                            url: `${items.targetUrl}/cv/${jobIdRef.current}`,
+                            windowId: newWindowId,
+                          });
+                        }
+                      });
                     });
-                  });
+                  } else {
+                    console.log("Popup: Auto-open is disabled, user must click button manually");
+                  }
                 }
 
                 setIsLoading(false);
@@ -372,6 +401,30 @@ const Popup = () => {
         onChange={(e) => setPageText(e.target.value)}
         placeholder={isLoading ? "Loading page content..." : "Paste or edit job description here..."}
         disabled={isLoading} />
+      <div style={{ marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+        <button
+          onClick={toggleAutoOpen}
+          style={{
+            padding: "6px 10px",
+            fontSize: "11px",
+            fontWeight: "600",
+            border: `1px solid ${BACKGROUND_COLORS.overlay}`,
+            borderRadius: "4px",
+            background: autoOpen ? BRAND_COLORS.accent : BACKGROUND_COLORS.surface,
+            color: autoOpen ? BRAND_COLORS.primary : BRAND_COLORS.secondary,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            fontFamily: "'Open Sans', sans-serif"
+          }}
+          title={autoOpen ? "Auto-open is ON - CV tool will open automatically" : "Auto-open is OFF - manual button click required"}
+        >
+          Auto-open: {autoOpen ? "ON" : "OFF"}
+        </button>
+        <span style={{ fontSize: "11px", color: BRAND_COLORS.secondary, opacity: 0.7 }}>
+          {autoOpen ? "CV tool opens automatically" : "Manual button click required"}
+        </span>
+      </div>
+
       <div style={styles.buttonContainer}>
         <button
           onClick={() => openCVTool()}
@@ -395,5 +448,16 @@ const Popup = () => {
   );
 };
 
-const root = createRoot(document.getElementById("root")!);
-root.render(<Popup />);
+console.log("Looking for root element...");
+const rootElement = document.getElementById("root");
+console.log("Root element found:", rootElement);
+
+if (rootElement) {
+  console.log("Creating React root...");
+  const root = createRoot(rootElement);
+  console.log("Rendering Popup component...");
+  root.render(<Popup />);
+  console.log("Render called");
+} else {
+  console.error("Root element not found!");
+}

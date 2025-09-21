@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { DEFAULT_TARGET_URL, PRESET_URLS } from "./constants";
+import { DEFAULT_TARGET_URL, PRESET_URLS, DEFAULT_DEBUG_LOGGING, DEFAULT_AUTO_OPEN } from "./constants";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
 
 const styles = {
@@ -110,6 +110,8 @@ const styles = {
 
 const Options = () => {
   const [targetUrl, setTargetUrl] = useState<string>("");
+  const [debugLogging, setDebugLogging] = useState<boolean>(DEFAULT_DEBUG_LOGGING);
+  const [autoOpen, setAutoOpen] = useState<boolean>(DEFAULT_AUTO_OPEN);
   const [status, setStatus] = useState<string>("");
   const [_isHovered, _setIsHovered] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
@@ -118,13 +120,17 @@ const Options = () => {
   const presetUrls = PRESET_URLS;
 
   useEffect(() => {
-    // Restore saved URL from storage
+    // Restore saved settings from storage
     chrome.storage.sync.get(
       {
         targetUrl: DEFAULT_TARGET_URL,
+        debugLogging: DEFAULT_DEBUG_LOGGING,
+        autoOpen: DEFAULT_AUTO_OPEN,
       },
       (items) => {
         setTargetUrl(items.targetUrl);
+        setDebugLogging(items.debugLogging);
+        setAutoOpen(items.autoOpen);
       }
     );
   }, []);
@@ -143,6 +149,8 @@ const Options = () => {
     chrome.storage.sync.set(
       {
         targetUrl: targetUrl,
+        debugLogging: debugLogging,
+        autoOpen: autoOpen,
       },
       () => {
         setStatus("Settings saved successfully!");
@@ -217,6 +225,82 @@ const Options = () => {
               {preset.label}
             </button>
           ))}
+        </div>
+      </div>
+
+      <div style={styles.section}>
+        <label style={styles.label} htmlFor="debug-logging">
+          Debug Logging
+        </label>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "8px" }}>
+          <label style={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            fontSize: "14px",
+            color: BRAND_COLORS.secondary
+          }}>
+            <input
+              id="debug-logging"
+              type="checkbox"
+              checked={debugLogging}
+              onChange={(e) => setDebugLogging(e.target.checked)}
+              onBlur={saveOptions}
+              style={{
+                marginRight: "8px",
+                width: "16px",
+                height: "16px",
+                accentColor: BRAND_COLORS.accent
+              }}
+            />
+            Enable debug console logging
+          </label>
+        </div>
+        <div style={{
+          fontSize: "12px",
+          color: BRAND_COLORS.secondary,
+          marginTop: "4px",
+          opacity: 0.8
+        }}>
+          When enabled, CV Tailor will log detailed information to the browser console for debugging purposes
+        </div>
+      </div>
+
+      <div style={styles.section}>
+        <label style={styles.label} htmlFor="auto-open">
+          Auto-Open CV Tool
+        </label>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginTop: "8px" }}>
+          <label style={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            fontSize: "14px",
+            color: BRAND_COLORS.secondary
+          }}>
+            <input
+              id="auto-open"
+              type="checkbox"
+              checked={autoOpen}
+              onChange={(e) => setAutoOpen(e.target.checked)}
+              onBlur={saveOptions}
+              style={{
+                marginRight: "8px",
+                width: "16px",
+                height: "16px",
+                accentColor: BRAND_COLORS.accent
+              }}
+            />
+            Automatically open CV tool when text is selected
+          </label>
+        </div>
+        <div style={{
+          fontSize: "12px",
+          color: BRAND_COLORS.secondary,
+          marginTop: "4px",
+          opacity: 0.8
+        }}>
+          When enabled, the CV tool will open automatically when you select text and click the extension. When disabled, you&apos;ll need to manually click the &quot;Tailor CV&quot; button.
         </div>
       </div>
 
