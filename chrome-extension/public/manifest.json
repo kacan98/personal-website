@@ -3,7 +3,7 @@
 
   "name": "CV Tailor",
   "description": "Highlight job descriptions to automatically tailor your CV for that specific role",
-  "version": "1.0.5",
+  "version": "1.0.6",
 
   "options_ui": {
     "page": "options.html"
