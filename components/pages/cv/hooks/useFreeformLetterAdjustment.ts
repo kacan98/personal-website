@@ -1,13 +1,18 @@
 import { useCallback } from 'react'
+import { CVSettings } from '@/types'
 
 interface UseFreeformLetterAdjustmentProps {
   setMotivationalLetter: (letter: any) => void
   positionDetails?: string
+  candidate?: CVSettings
+  strongPoints?: string[]
 }
 
 export const useFreeformLetterAdjustment = ({
   setMotivationalLetter,
   positionDetails,
+  candidate,
+  strongPoints,
 }: UseFreeformLetterAdjustmentProps) => {
 
   const adjustLetterFreeform = useCallback(async (
@@ -24,6 +29,8 @@ export const useFreeformLetterAdjustment = ({
           currentLetter,
           userRequest,
           positionDetails,
+          candidate,
+          strongPoints,
         }),
       })
 
@@ -51,7 +58,7 @@ export const useFreeformLetterAdjustment = ({
     } catch (error) {
       throw error
     }
-  }, [setMotivationalLetter, positionDetails])
+  }, [setMotivationalLetter, positionDetails, candidate, strongPoints])
 
   return {
     adjustLetterFreeform,

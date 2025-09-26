@@ -37,7 +37,7 @@ export async function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Karel Čančara - AI-Enhanced Full-Stack Developer",
-    description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 200+ companies.",
+    description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 100+ companies.",
   };
 }
 
@@ -63,6 +63,7 @@ export default async function LocaleLayout({
     { name: tNav('about'), href: `/${locale}/about` },
     { name: tNav('projects'), href: `/${locale}/portfolio` },
     { name: tNav('cv'), href: `/${locale}/cv` },
+    { name: tNav('blog'), href: `/${locale}/case-studies` },
   ];
 
   if (settings?.specialPages?.chatbot) {

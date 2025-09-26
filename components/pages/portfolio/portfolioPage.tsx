@@ -1,8 +1,9 @@
 import React from "react";
 import ClientProjectDisplay from "@/components/pages/portfolio/projects/clientProjectDisplay";
-import PageWrapper from "@/components/pages/pageWrapper";
+import SectionHeader from "@/components/ui/SectionHeader";
 import { readMarkdownFiles } from "@/lib/markdown";
 import { Project } from "@/types";
+import { Box } from "@mui/material";
 
 interface PortfolioPageProps {
   title: string;
@@ -29,9 +30,13 @@ async function PortfolioPage({ title, locale }: PortfolioPageProps) {
     });
 
   return (
-    <PageWrapper title={title}>
+    <Box sx={{ py: 6 }}>
+      <SectionHeader
+        title={title}
+        size="large"
+      />
       <ClientProjectDisplay allProjects={allProjects} />
-    </PageWrapper>
+    </Box>
   );
 }
 

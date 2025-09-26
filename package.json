@@ -12,7 +12,8 @@
     "prepare": "husky",
     "validate-md": "remark data/ --use remark-lint-frontmatter-schema",
     "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch",
-    "analyze": "ANALYZE=true npm run build"
+    "analyze": "ANALYZE=true npm run build",
+    "generate-embeddings": "node scripts/generate-embeddings.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -32,7 +33,7 @@
     "@types/three": "^0.177.0",
     "country-flag-icons": "^1.5.19",
     "diff": "^8.0.2",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "gray-matter": "^4.0.3",
     "gsap": "^3.13.0",
     "html2canvas": "^1.4.1",

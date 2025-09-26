@@ -2,9 +2,9 @@
   "navigation": {
     "home": "Hjem",
     "about": "Om mig",
-    "projects": "Projekter", 
+    "projects": "Projekter",
     "cv": "CV",
-    "cv": "CV",
+    "blog": "Project Stories",
     "gallery": "Galleri",
     "chatbot": "Chat"
   },

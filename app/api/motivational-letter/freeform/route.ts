@@ -2,6 +2,7 @@ import OpenAI from "openai"
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
 import { OPENAI_API_KEY } from '@/lib/env'
 import { OPENAI_MODELS } from '@/lib/openai-service'
+import { CVSettings } from '@/types'
 
 export const runtime = 'nodejs';
 
@@ -9,6 +10,8 @@ interface FreeformLetterRequest {
   currentLetter: string
   userRequest: string
   positionDetails?: string
+  candidate?: CVSettings
+  strongPoints?: string[]
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -23,7 +26,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const body: FreeformLetterRequest = await req.json()
-    const { currentLetter, userRequest, positionDetails } = body
+    const { currentLetter, userRequest, positionDetails, candidate, strongPoints } = body
 
     if (!currentLetter || !userRequest) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
@@ -36,16 +39,23 @@ export async function POST(req: Request): Promise<Response> {
       apiKey: OPENAI_API_KEY,
     })
 
-    const systemMessage = `You are helping to modify a motivational letter based on user requests. Follow the user's instructions exactly as they specify. The user has complete control over the format, style, and content.`
+    const systemMessage = `You are helping to modify a motivational letter based on user requests. Follow the user's instructions exactly as they specify. The user has complete control over the format, style, and content.
+
+When making changes, you have access to the candidate's CV data and can reference specific projects, technologies, and experiences from their background to make the letter more personalized and accurate.`
 
     const userMessage = `Current motivational letter:
 ${currentLetter}
 
 ${positionDetails ? `Position context: ${positionDetails}` : ''}
 
+${candidate ? `Candidate's CV/Background:
+${JSON.stringify(candidate, null, 2)}` : ''}
+
+${strongPoints && strongPoints.length > 0 ? `Key points to highlight: ${strongPoints.join(', ')}` : ''}
+
 User's request: ${userRequest}
 
-Please modify the letter according to the user's request.`
+Please modify the letter according to the user's request. When possible, reference specific projects, technologies, or experiences from the candidate's background to make the changes more personalized and credible.`
 
     const response = await openai.chat.completions.create({
       model: OPENAI_MODELS.LATEST,

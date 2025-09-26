@@ -123,7 +123,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
               <Link key={name} href={href} passHref>
                 <Button
                   variant="nav"
-                  isActive={pathname === href}
+                  isActive={pathname === href || pathname.startsWith(href + '/')}
                   onClick={() => setMobileMenuOpen(false)}
                   sx={{
                     fontSize: '1.2rem',
@@ -210,7 +210,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
                 <Link key={name} href={href} passHref>
                   <Button
                     variant="nav"
-                    isActive={pathname === href}
+                    isActive={pathname === href || pathname.startsWith(href + '/')}
                     sx={{ mx: 1 }}
                   >
                     {name}

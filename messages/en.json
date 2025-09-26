@@ -2,9 +2,9 @@
   "navigation": {
     "home": "Home",
     "about": "About",
-    "projects": "Projects", 
+    "projects": "Projects",
     "cv": "CV",
-    "cv": "CV",
+    "blog": "Project Stories",
     "gallery": "Gallery",
     "chatbot": "Chat"
   },

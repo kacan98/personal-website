@@ -4,6 +4,7 @@ import { getOpenAIClient, OPENAI_MODELS } from '@/lib/openai-service'
 import { withAuth, createErrorResponse } from '@/lib/api-middleware'
 import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
 import { CACHE_CONFIG } from '@/lib/cache-config'
+import { findRelevantStories } from '@/lib/blog-stories'
 
 export const runtime = 'nodejs';
 
@@ -52,16 +53,17 @@ async function handleMotivationalLetter(req: Request): Promise<Response> {
 async function generateMotivationalLetter(body: any) {
   const openai = getOpenAIClient();
 
+  // Get relevant stories for this job
+  const relevantStories = await findRelevantStories(body.jobDescription, 5);
+
     // Check if this is an adjustment request
     const isAdjustment = body.currentLetter && body.adjustmentComments;
 
     const systemPrompt = isAdjustment
-      ? `Adjust this motivational letter based on user feedback. Keep it natural and honest: Fix what the user asked for while sticking to the authentic tone.
+      ? `Adjust this motivational letter based on user feedback. Make the requested changes while maintaining a professional, authentic tone that showcases the candidate's qualifications effectively.`
+      : `Write a professional, engaging motivational letter that showcases the candidate's qualifications and genuine interest in the role.
 
-When adjusting, focus on the feedback while keeping the tone conversational and real. Don't add any banned words or phrases.`
-      : `Write a natural, conversational motivational letter.
-
-The goal is to sound like you're thinking out loud, not drafting a formal letter.`;
+Focus on being authentic, specific, and compelling while maintaining a professional tone.`;
 
     const userPrompt = isAdjustment
       ? `Current motivational letter:
@@ -77,8 +79,8 @@ Job: ${body.jobDescription}
 CV: ${JSON.stringify(body.candidate, null, 2)}
 User feedback: ${body.adjustmentComments}
 
-When adjusting, focus on the feedback while keeping the tone conversational and real. Don't add any banned words or phrases.`
-      : `Write a natural, conversational motivational letter in ${body.language} for this job. Explain why you're interested in this specific role and why you'd be a good fit.
+Make the requested changes while keeping the letter professional and authentic.`
+      : `Write a compelling motivational letter in ${body.language} using the Problem-Solution approach that research shows is most effective. Focus on who the candidate is, what value they bring, and how they solve the company's challenges.
 
 JOB:
 ${body.jobDescription}
@@ -89,37 +91,52 @@ ${JSON.stringify(body.candidate, null, 2)}
 WHAT TO HIGHLIGHT:
 ${body.strongPoints?.length > 0 ? body.strongPoints.join(', ') : 'Whatever matches best'}
 
+MY PROJECT STORIES (use 2-3 most relevant ones with specific examples):
+${relevantStories.map((story, index) => `
+${index + 1}. ${story.title}
+Category: ${story.category}
+${story.metrics?.impact ? `Impact: ${story.metrics.impact}` : ''}
+Technologies: ${story.tags.join(', ')}
+
+${story.content.substring(0, 500)}...
+`).join('\n---\n')}
+
+RESEARCH-BACKED APPROACH:
+Use the Problem-Solution format that outperforms all other cover letter styles:
+
+1. **Who I Am**: Start with a brief professional identity that establishes credibility
+2. **Understanding Their Challenge**: Show you understand a specific problem/need they have (from job description)
+3. **My Solution**: Connect your background to solving their challenge with specific examples
+4. **Quantified Value**: Include measurable results from past achievements when possible
+5. **What I'll Bring**: Clear value proposition for this specific role
+
 GUIDELINES:
-- Keep it between 250-350 words.
-- Start by talking about the work and tech that interest you, not the company’s mission or location.
-- Use specific examples from your experience, like "I built a [project] using [technology]," to make it personal.
-- Be honest about why you want the job; don’t pretend to care about the company’s mission.
-- Use bullet points for "Why I'm a good fit", keeping them short and to the point.
-- Only mention technologies listed in the job description.
-- Stick to concrete examples, not vague statements.
-- Write in a calm, simple tone. No big words or fancy language.
-- Don’t exaggerate or make up details.
-- Sound like a real person talking to someone you’d like to work with—no corporate jargon or buzzwords.
-- End with a personal, conversational closing and a call to action.
+- Keep it concise (250-350 words max)
+- Lead with professional identity, not job title desires
+- Show understanding of their specific needs/challenges
+- Use concrete examples from the project stories above: "I increased X by Y%" or "I built Z that solved W"
+- Include 2-3 quantified achievements from the stories
+- Reference specific technologies and metrics from the relevant project stories
+- Connect your past success to their future needs
+- Write with confidence about your capabilities
+- End with clear next steps
 
-BANNED WORDS AND PHRASES:
-"instantly", "hands-on", "caught my attention", "to craft", "passionate", "leveraging", "honed", "knack for", "dynamic", "sophisticated", "love", "genuinely", "fantastic", "roll up my sleeves", "make an impact", "tackling", "thrilled", "eager", "cutting-edge", "exciting", "amazing", "without a hitch", "keen and quick to learn", "next-generation platform", "innovative", "state-of-the-art", "world-class", "top-notch", "unparalleled", "revolutionary", "groundbreaking", "transformative", "disruptive", "synergy", "holistic approach", "piqued my interest", "revolutionize", "bridge tech and user-experience"
-- Skip fancy adjectives; use plain, honest words.
-
-BANNED OPENINGS:
-Never start with your location ("Based in…", "From Copenhagen…", "Living in…"), excitement ("I was thrilled…", "I'm excited…", "caught my eye…"), or generic lines ("I am writing to express…").
+TONE:
+- Professional and confident
+- Solution-focused, not request-focused
+- Authentic personality while maintaining professionalism
+- Shows understanding of their world
+- Positions you as a problem-solver
 
 STRUCTURE:
-Use this as a loose guide, but let the letter flow naturally—no strict section breaks:
-- Greeting
-- Opening
-- Why this role interests you
-- Your "Why I'm a good fit" (title this "Why I'm a good fit" if it fits)
-- What unique value you bring
-- Closing
-- Signature
+- Professional greeting
+- Who you are professionally (1-2 sentences)
+- Understanding of their challenge/need
+- How your background solves their problem (with examples)
+- Specific value you'll deliver
+- Professional closing with call to action
 
-The goal is to sound like you're chatting with someone, not drafting a formal letter.`;
+Focus on being a solution provider, not a job seeker asking for something.`;
 
     const response = await openai.chat.completions.parse({
       model: OPENAI_MODELS.LATEST_MINI,

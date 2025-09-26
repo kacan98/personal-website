@@ -18,6 +18,7 @@ import BaseModal from "./BaseModal";
 import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motivational-letter.model";
 import CvLanguageSelectionComponent from "../languageSelect";
 import { useFreeformLetterAdjustment } from "../hooks/useFreeformLetterAdjustment";
+import { CVSettings } from "@/types";
 
 interface MotivationalLetterModalProps {
   open: boolean;
@@ -37,6 +38,7 @@ interface MotivationalLetterModalProps {
   setPositionDetails: (value: string) => void;
   checked: string[];
   _handleChecked: (item: string) => () => void;
+  candidate?: CVSettings;
 }
 
 
@@ -58,6 +60,7 @@ const MotivationalLetterModal = ({
   setPositionDetails,
   checked,
   _handleChecked,
+  candidate,
 }: MotivationalLetterModalProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableText, setEditableText] = useState("");
@@ -73,6 +76,8 @@ const MotivationalLetterModal = ({
   const { adjustLetterFreeform } = useFreeformLetterAdjustment({
     setMotivationalLetter: setEditableMotivationalLetter,
     positionDetails,
+    candidate,
+    strongPoints: checked,
   });
 
   // Helper functions for converting between structured and text formats

@@ -869,6 +869,7 @@ function CvPage({ jobDescription }: CvProps) {
           setPositionDetails={setPositionDetails}
           checked={checked}
           _handleChecked={handleChecked}
+          candidate={reduxCvProps}
         />
 
         <TranslationModal
