@@ -19,16 +19,16 @@ export interface Story {
 }
 
 export async function getAllStories(): Promise<Story[]> {
-  const blogDir = path.join(process.cwd(), 'blog');
+  const projectStoriesDir = path.join(process.cwd(), 'case-studies');
 
-  if (!fs.existsSync(blogDir)) {
+  if (!fs.existsSync(projectStoriesDir)) {
     return [];
   }
 
-  const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.md'));
+  const files = fs.readdirSync(projectStoriesDir).filter(file => file.endsWith('.md'));
 
   const stories: Story[] = files.map(file => {
-    const filePath = path.join(blogDir, file);
+    const filePath = path.join(projectStoriesDir, file);
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const { data: frontmatter, content } = matter(fileContent);
 

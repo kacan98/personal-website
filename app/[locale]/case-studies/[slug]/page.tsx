@@ -5,7 +5,7 @@ import path from 'path';
 import Link from 'next/link';
 import { getContainerSx } from '@/app/spacing';
 import { redirect } from 'next/navigation';
-import { CASE_STUDIES_PATH } from '@/lib/routes';
+import { PROJECT_STORIES_PATH } from '@/lib/routes';
 
 interface BlogPostProps {
   params: Promise<{ slug: string; locale: string }>;
@@ -13,7 +13,7 @@ interface BlogPostProps {
 
 async function getBlogPost(slug: string) {
   try {
-    const filePath = path.join(process.cwd(), 'blog', `${slug}.md`);
+    const filePath = path.join(process.cwd(), 'case-studies', `${slug}.md`);
 
     if (!fs.existsSync(filePath)) {
       return null;
@@ -35,7 +35,7 @@ async function getBlogPost(slug: string) {
 }
 
 export async function generateStaticParams() {
-  const blogDir = path.join(process.cwd(), 'blog');
+  const blogDir = path.join(process.cwd(), 'case-studies');
 
   if (!fs.existsSync(blogDir)) {
     return [];
@@ -54,11 +54,12 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
 
   if (!post) {
     // Redirect to case studies list instead of 404
-    redirect(`/${locale}${CASE_STUDIES_PATH}`);
+    redirect(`/${locale}${PROJECT_STORIES_PATH}`);
   }
 
   // Simple markdown to HTML conversion (basic)
   const htmlContent = post.content
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -73,7 +74,7 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
     <Container sx={{ ...getContainerSx(), py: 4 }}>
       <Breadcrumbs sx={{ mb: 4 }}>
         <Link href={`/${locale}`}>Home</Link>
-        <Link href={`/${locale}${CASE_STUDIES_PATH}`}>Project Stories</Link>
+        <Link href={`/${locale}${PROJECT_STORIES_PATH}`}>Project Stories</Link>
         <Typography color="text.primary">{post.title}</Typography>
       </Breadcrumbs>
 
@@ -109,6 +110,7 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
 
       <Box
         sx={{
+          '& h1': { mt: 4, mb: 3, fontSize: '1.75rem', fontWeight: 'bold' },
           '& h2': { mt: 4, mb: 2, fontSize: '1.5rem', fontWeight: 'bold' },
           '& h3': { mt: 3, mb: 1.5, fontSize: '1.25rem', fontWeight: 'bold' },
           '& p': { mb: 2, lineHeight: 1.7 },

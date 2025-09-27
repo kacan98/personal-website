@@ -120,5 +120,9 @@
     "chatError": "Chat Error",
     "initializing": "Initializing Karel AI...",
     "sending": "..."
+  },
+  "projectStories": {
+    "title": "Project Stories",
+    "description": "Things I've built, problems I've solved, and what I learned along the way"
   }
 }

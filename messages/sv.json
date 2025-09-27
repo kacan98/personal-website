@@ -120,5 +120,9 @@
     "chatError": "Chat Error",
     "initializing": "Initialiserar Karel AI...",
     "sending": "..."
+  },
+  "projectStories": {
+    "title": "Projektberättelser",
+    "description": "Saker jag har byggt, problem jag har löst och vad jag lärde mig längs vägen"
   }
 }

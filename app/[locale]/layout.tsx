@@ -23,7 +23,7 @@ import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { AuthProvider } from '@/contexts/AuthContext';
-import { CASE_STUDIES_PATH } from '@/lib/routes';
+import { PROJECT_STORIES_PATH } from '@/lib/routes';
 
 type Props = {
   children: React.ReactNode;
@@ -64,7 +64,7 @@ export default async function LocaleLayout({
     { name: tNav('about'), href: `/${locale}/about` },
     { name: tNav('projects'), href: `/${locale}/portfolio` },
     { name: tNav('cv'), href: `/${locale}/cv` },
-    { name: tNav('blog'), href: `/${locale}${CASE_STUDIES_PATH}` },
+    { name: tNav('blog'), href: `/${locale}${PROJECT_STORIES_PATH}` },
   ];
 
   if (settings?.specialPages?.chatbot) {

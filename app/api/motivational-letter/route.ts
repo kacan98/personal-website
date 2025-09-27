@@ -4,8 +4,8 @@ import { getOpenAIClient, OPENAI_MODELS } from '@/lib/openai-service'
 import { withAuth, createErrorResponse } from '@/lib/api-middleware'
 import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
 import { CACHE_CONFIG } from '@/lib/cache-config'
-import { findRelevantStories } from '@/lib/blog-stories'
-import { CASE_STUDIES_PATH } from '@/lib/routes'
+import { findRelevantStories } from '@/lib/project-stories'
+import { PROJECT_STORIES_PATH } from '@/lib/routes'
 import { getSettings } from '@/data/settings'
 
 export const runtime = 'nodejs';
@@ -204,8 +204,8 @@ Keep it concise (200-250 words max) and authentic. Better to be clear and direct
           relevance: story.relevance || 0,
           tags: story.tags,
           metrics: story.metrics,
-          url: `${CASE_STUDIES_PATH}/${story.id}`,
-          fullUrl: `${settings.siteUrl}${CASE_STUDIES_PATH}/${story.id}`
+          url: `${PROJECT_STORIES_PATH}/${story.id}`,
+          fullUrl: `${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}`
         };
       }) : [],
       selectionReasoning: storySelection.reasoning
