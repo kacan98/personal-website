@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import Link from 'next/link';
 import { TrendingUp, Schedule, Group } from '@mui/icons-material';
 import { BRAND_COLORS, BACKGROUND_COLORS, SHAPE_COLORS } from '@/app/colors';
+import { CASE_STUDIES_PATH } from '@/lib/routes';
 
 interface BlogPost {
   slug: string;
@@ -60,8 +61,8 @@ export function MetricsLayout({ posts }: LayoutProps) {
         const categoryColors = getCategoryColor(post.category);
 
         return (
-          <Grid size={{ xs: 12, md: 6 }} key={post.slug}>
-            <Link href={`/case-studies/${post.slug}`} style={{ textDecoration: 'none' }}>
+          <Grid size={{ xs: 12 }} key={post.slug}>
+            <Link href={`${CASE_STUDIES_PATH}/${post.slug}`} style={{ textDecoration: 'none' }}>
               <Card sx={{
                 height: '100%',
                 display: 'flex',

@@ -15,6 +15,7 @@ export interface Story {
     usersAffected?: string;
   };
   embedding?: number[];
+  relevance?: number;
 }
 
 export async function getAllStories(): Promise<Story[]> {

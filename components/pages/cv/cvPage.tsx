@@ -548,7 +548,7 @@ function CvPage({ jobDescription }: CvProps) {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 20;
     const textWidth = pageWidth - 2 * margin;
-    let currentY = 30;
+    const currentY = 30;
 
     // Set font
     pdf.setFont('helvetica', 'normal');
@@ -586,44 +586,9 @@ function CvPage({ jobDescription }: CvProps) {
       }
     };
 
-    // Add all letter sections
-    if (letterToUse.greeting) {
-      const greetingHeight = addTextWithLineBreaks(letterToUse.greeting, margin, currentY, textWidth);
-      currentY += greetingHeight + 6;
-    }
-    if (letterToUse.opening) {
-      const openingHeight = addTextWithLineBreaks(letterToUse.opening, margin, currentY, textWidth);
-      currentY += openingHeight + 6;
-    }
-    if (letterToUse.whyThisRole) {
-      const whyThisRoleHeight = addTextWithLineBreaks(letterToUse.whyThisRole, margin, currentY, textWidth);
-      currentY += whyThisRoleHeight + 6;
-    }
-    if (letterToUse.keyStrengths && letterToUse.keyStrengths.length > 0) {
-      currentY += 3;
-      pdf.setFont('helvetica', 'bold');
-      pdf.setFontSize(12);
-      addTextWithLineBreaks('Why I\'m a good fit:', margin, currentY);
-      currentY += 8;
-      pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(11);
-      letterToUse.keyStrengths.forEach((strength) => {
-        const bulletText = `• ${strength}`;
-        const strengthHeight = addTextWithLineBreaks(bulletText, margin, currentY, textWidth);
-        currentY += strengthHeight + 2;
-      });
-      currentY += 6;
-    }
-    if (letterToUse.uniqueValue) {
-      const uniqueValueHeight = addTextWithLineBreaks(letterToUse.uniqueValue, margin, currentY, textWidth);
-      currentY += uniqueValueHeight + 6;
-    }
-    if (letterToUse.closing) {
-      const closingHeight = addTextWithLineBreaks(letterToUse.closing, margin, currentY, textWidth);
-      currentY += closingHeight + 6;
-    }
-    if (letterToUse.signature) {
-      addTextWithLineBreaks(letterToUse.signature, margin, currentY, textWidth);
+    // Add letter content
+    if (letterToUse.letter) {
+      addTextWithLineBreaks(letterToUse.letter, margin, currentY, textWidth);
     }
 
     const fileName = `Motivational_Letter${prettyfiedCompanyName || ''}.pdf`;

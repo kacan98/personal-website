@@ -31,22 +31,23 @@ export interface MotivationalLetterParams extends ZodMotivationalLetterParams {
   candidate: CVSettings
 }
 
-export type MotivationalLetterResponse = {
-  greeting: string
-  opening: string
-  whyThisRole: string
-  keyStrengths: string[]
-  uniqueValue: string
-  closing: string
-  signature: string
+export type SelectedStory = {
+  id: string
+  title: string
+  category: string
+  relevance: number
+  tags: string[]
+  url: string
+  fullUrl: string
+  metrics?: {
+    impact?: string
+    timeframe?: string
+    usersAffected?: string
+  }
 }
 
-export const MotivationalLetterSchema = z.object({
-  greeting: z.string().describe("Professional greeting addressing the hiring manager"),
-  opening: z.string().describe("Brief, engaging opening paragraph showing genuine interest in the role"),
-  whyThisRole: z.string().describe("One paragraph explaining why this specific role/company appeals to you"),
-  keyStrengths: z.array(z.string()).describe("3-4 bullet points highlighting relevant skills and experiences that match the job requirements"),
-  uniqueValue: z.string().describe("A paragraph about what unique perspective or value you'd bring to the team"),
-  closing: z.string().describe("Professional closing paragraph with next steps"),
-  signature: z.string().describe("Professional sign-off")
-})
+export type MotivationalLetterResponse = {
+  letter: string
+  selectedStories?: SelectedStory[]
+  selectionReasoning?: string
+}

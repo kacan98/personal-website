@@ -4,7 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import Link from 'next/link';
 import { getContainerSx } from '@/app/spacing';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
+import { CASE_STUDIES_PATH } from '@/lib/routes';
 
 interface BlogPostProps {
   params: Promise<{ slug: string; locale: string }>;
@@ -52,7 +53,8 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
   const post = await getBlogPost(slug);
 
   if (!post) {
-    notFound();
+    // Redirect to case studies list instead of 404
+    redirect(`/${locale}${CASE_STUDIES_PATH}`);
   }
 
   // Simple markdown to HTML conversion (basic)
@@ -71,7 +73,7 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
     <Container sx={{ ...getContainerSx(), py: 4 }}>
       <Breadcrumbs sx={{ mb: 4 }}>
         <Link href={`/${locale}`}>Home</Link>
-        <Link href={`/${locale}/case-studies`}>Project Stories</Link>
+        <Link href={`/${locale}${CASE_STUDIES_PATH}`}>Project Stories</Link>
         <Typography color="text.primary">{post.title}</Typography>
       </Breadcrumbs>
 

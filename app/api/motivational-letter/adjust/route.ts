@@ -1,6 +1,5 @@
 import OpenAI from "openai"
-import { zodResponseFormat } from "openai/helpers/zod"
-import { MotivationalLetterSchema } from "../motivational-letter.model"
+import { MotivationalLetterResponse } from "../motivational-letter.model"
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
 import { OPENAI_API_KEY } from '@/lib/env'
 import { OPENAI_MODELS } from '@/lib/openai-service'
@@ -25,14 +24,14 @@ export async function POST(req: Request): Promise<Response> {
       apiKey: OPENAI_API_KEY,
     })
 
-    const response = await openai.chat.completions.parse({
+    const response = await openai.chat.completions.create({
       model: OPENAI_MODELS.LATEST,
       messages: [
         {
           role: 'system',
           content: `You are helping to adjust a motivational letter based on user feedback. Keep the same authentic, down-to-earth style:
 
-- Use simple, honest language - no corporate buzzwords like "passionate about", "honed my skills", "leverage expertise" 
+- Use simple, honest language - no corporate buzzwords like "passionate about", "honed my skills", "leverage expertise"
 - Stay short and to the point (200-300 words max)
 - Focus on real, specific skill intersections with the job
 - Be humble but confident
@@ -47,13 +46,7 @@ The goal is to improve the letter while maintaining its genuine, straightforward
           role: 'user',
           content: `Current motivational letter:
 
-GREETING: ${body.currentLetter.greeting || 'No greeting provided'}
-OPENING: ${body.currentLetter.opening || 'No opening provided'}
-WHY THIS ROLE: ${body.currentLetter.whyThisRole || 'No reason provided'}
-KEY STRENGTHS: ${body.currentLetter.keyStrengths ? body.currentLetter.keyStrengths.join(', ') : 'No strengths provided'}
-UNIQUE VALUE: ${body.currentLetter.uniqueValue || 'No unique value provided'}
-CLOSING: ${body.currentLetter.closing || 'No closing provided'}
-SIGNATURE: ${body.currentLetter.signature || 'No signature provided'}
+${body.currentLetter.letter || 'No letter provided'}
 
 Job: ${body.jobDescription}
 CV: ${JSON.stringify(body.candidate, null, 2)}
@@ -62,15 +55,24 @@ Feedback: ${body.adjustmentComments}
 Adjust the motivational letter based on the feedback while maintaining the professional structure.`,
         },
       ],
-      response_format: zodResponseFormat(
-        MotivationalLetterSchema,
-        'adjusted_motivational_letter'
-      ),
     })
 
-    return new Response(JSON.stringify(response.choices[0].message.parsed), {
-      status: 200,
-    })
+    const letterContent = response.choices[0].message.content;
+
+    if (letterContent) {
+      // Clean up em dashes and fix spacing around commas
+      const cleanedLetter = letterContent.replace(/\s*—\s*/g, ', ');
+
+      const result: MotivationalLetterResponse = {
+        letter: cleanedLetter
+      };
+
+      return new Response(JSON.stringify(result), {
+        status: 200,
+      })
+    }
+
+    throw new Error('Failed to adjust motivational letter')
   } catch (e: any) {
     return new Response(e.message, { status: 500 })
   }

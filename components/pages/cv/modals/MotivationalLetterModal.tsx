@@ -5,12 +5,16 @@ import {
   Box,
   Alert,
   SelectChangeEvent,
+  Chip,
+  Card,
+  CardContent,
 } from "@mui/material";
 import {
   GetApp as GetAppIcon,
   Edit as EditIcon,
   AutoFixHigh as AutoFixHighIcon,
   Translate as TranslateIcon,
+  CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Button from "@/components/ui/Button";
@@ -19,6 +23,8 @@ import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motiva
 import CvLanguageSelectionComponent from "../languageSelect";
 import { useFreeformLetterAdjustment } from "../hooks/useFreeformLetterAdjustment";
 import { CVSettings } from "@/types";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
 interface MotivationalLetterModalProps {
   open: boolean;
@@ -62,6 +68,8 @@ const MotivationalLetterModal = ({
   _handleChecked,
   candidate,
 }: MotivationalLetterModalProps) => {
+  const router = useRouter();
+  const locale = useLocale();
   const [isEditing, setIsEditing] = useState(false);
   const [editableText, setEditableText] = useState("");
   const [localEditableText, setLocalEditableText] = useState("");
@@ -80,77 +88,13 @@ const MotivationalLetterModal = ({
     strongPoints: checked,
   });
 
-  // Helper functions for converting between structured and text formats
+  // Simple text conversion functions
   const convertLetterToText = (letter: MotivationalLetterResponse): string => {
-    let text = '';
-    if (letter.greeting) text += letter.greeting + '\n\n';
-    if (letter.opening) text += letter.opening + '\n\n';
-    if (letter.whyThisRole) text += letter.whyThisRole + '\n\n';
-    if (letter.keyStrengths && letter.keyStrengths.length > 0) {
-      text += 'Why I am a good fit:\n' + letter.keyStrengths.map(strength => `• ${strength}`).join('\n') + '\n\n';
-    }
-    if (letter.uniqueValue) text += letter.uniqueValue + '\n\n';
-    if (letter.closing) text += letter.closing + '\n\n';
-    if (letter.signature) text += letter.signature;
-    return text.trim();
+    return letter.letter || '';
   };
 
   const convertTextToLetter = (text: string): MotivationalLetterResponse => {
-    const sections = text.split('\n\n').map(section => section.trim()).filter(section => section);
-    let greeting = '', opening = '', whyThisRole = '';
-    const keyStrengths: string[] = [];
-    let uniqueValue = '', closing = '', signature = '';
-    let keyStrengthsIndex = -1;
-
-    // Find key strengths section
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      if (section.toLowerCase().includes('key strengths:') || section.toLowerCase().includes('why i\'m a good fit:')) {
-        keyStrengthsIndex = i;
-        const lines = section.split('\n');
-        for (const line of lines) {
-          if (line.trim().startsWith('•')) {
-            keyStrengths.push(line.replace(/^•\s*/, '').trim());
-          }
-        }
-        break;
-      }
-    }
-
-    // Assign other sections
-    for (let i = 0; i < sections.length; i++) {
-      const section = sections[i];
-      if (i === keyStrengthsIndex) continue;
-
-      if (i === sections.length - 1 && section.length < 50) {
-        signature = section;
-        continue;
-      }
-
-      if (section.toLowerCase().includes('sincerely') || section.toLowerCase().includes('best regards')) {
-        closing = section;
-        continue;
-      }
-
-      if (keyStrengthsIndex === -1) {
-        if (i === 0) greeting = section;
-        else if (i === 1) opening = section;
-        else if (i === 2) whyThisRole = section;
-        else if (i === 3) uniqueValue = section;
-      } else {
-        if (i < keyStrengthsIndex) {
-          if (i === 0) greeting = section;
-          else if (i === 1) opening = section;
-          else if (i === 2) whyThisRole = section;
-        } else {
-          if (!uniqueValue) uniqueValue = section;
-          else if (!closing) closing = section;
-          else if (!signature) signature = section;
-        }
-      }
-    }
-
-    return { greeting, opening, whyThisRole, keyStrengths, uniqueValue, closing, signature };
+    return { letter: text };
   };
 
   useEffect(() => {
@@ -232,61 +176,107 @@ const MotivationalLetterModal = ({
   };
 
 
+  const renderSelectedStories = () => {
+    if (!letterToShow?.selectedStories || letterToShow.selectedStories.length === 0) return null;
+
+    return (
+      <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Stories Used in This Letter
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          The AI selected these project stories as most relevant to the job description and included them in your letter:
+        </Typography>
+
+        {letterToShow.selectionReasoning && (
+          <Typography variant="body2" sx={{ mb: 3, fontStyle: 'italic', color: 'text.secondary' }}>
+            &quot;{letterToShow.selectionReasoning}&quot;
+          </Typography>
+        )}
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {letterToShow.selectedStories.map((story) => (
+            <Card key={story.id} variant="outlined" sx={{ backgroundColor: 'rgba(0,0,0,0.02)' }}>
+              <CardContent sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <CheckCircleIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {story.title}
+                    </Typography>
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      onClick={() => router.push(`/${locale}${story.url || ''}`)}
+                      sx={{ minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}
+                    >
+                      View Story →
+                    </Button>
+                  </Box>
+                  <Chip
+                    label={`${Math.round(story.relevance * 100)}% match`}
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                  />
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <Chip label={story.category} size="small" color="secondary" />
+                  {story.metrics?.impact && (
+                    <Typography variant="caption" color="text.secondary">
+                      Impact: {story.metrics.impact}
+                    </Typography>
+                  )}
+                </Box>
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                  {story.tags.slice(0, 6).map(tag => (
+                    <Chip key={tag} label={tag} size="small" variant="outlined" />
+                  ))}
+                  {story.tags.length > 6 && (
+                    <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center', ml: 0.5 }}>
+                      +{story.tags.length - 6} more
+                    </Typography>
+                  )}
+                </Box>
+
+                {story.fullUrl && (
+                  <Box sx={{
+                    p: 1,
+                    backgroundColor: 'rgba(0,0,0,0.05)',
+                    borderRadius: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace', flexGrow: 1 }}>
+                      {story.fullUrl}
+                    </Typography>
+                    <Button
+                      variant="secondary"
+                      size="small"
+                      onClick={() => navigator.clipboard.writeText(story.fullUrl)}
+                      sx={{ minWidth: 'auto', p: 0.5, fontSize: '0.7rem' }}
+                    >
+                      Copy
+                    </Button>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </Box>
+    );
+  };
+
   const renderLetterContent = () => {
     if (!letterToShow) return null;
 
     return (
-      <Box sx={{ fontSize: '16px', lineHeight: 1.6 }}>
-        {letterToShow.greeting && (
-          <Box sx={{ whiteSpace: 'pre-line', mb: 2 }}>
-            {letterToShow.greeting}
-          </Box>
-        )}
-
-        {letterToShow.opening && (
-          <Box sx={{ whiteSpace: 'pre-line', mb: 3 }}>
-            {letterToShow.opening}
-          </Box>
-        )}
-
-        {letterToShow.whyThisRole && (
-          <Box sx={{ whiteSpace: 'pre-line', mb: 3 }}>
-            {letterToShow.whyThisRole}
-          </Box>
-        )}
-
-        {letterToShow.keyStrengths && letterToShow.keyStrengths.length > 0 && (
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h6" sx={{ mb: 1.5, fontSize: '18px', fontWeight: 600 }}>
-              Why I&apos;m a good fit:
-            </Typography>
-            <Box component="ul" sx={{ pl: 2, m: 0 }}>
-              {letterToShow.keyStrengths.map((strength, index) => (
-                <Box component="li" key={index} sx={{ mb: 0.5 }}>
-                  {strength}
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        )}
-
-        {letterToShow.uniqueValue && (
-          <Box sx={{ whiteSpace: 'pre-line', mb: 3 }}>
-            {letterToShow.uniqueValue}
-          </Box>
-        )}
-
-        {letterToShow.closing && (
-          <Box sx={{ whiteSpace: 'pre-line', mb: 2 }}>
-            {letterToShow.closing}
-          </Box>
-        )}
-
-        {letterToShow.signature && (
-          <Box sx={{ whiteSpace: 'pre-line' }}>
-            {letterToShow.signature}
-          </Box>
-        )}
+      <Box sx={{ fontSize: '16px', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+        {letterToShow.letter}
       </Box>
     );
   };
@@ -439,6 +429,9 @@ const MotivationalLetterModal = ({
                   {renderLetterContent()}
                 </Box>
               )}
+
+              {/* Selected Stories Section */}
+              {renderSelectedStories()}
 
               {/* Translation Section */}
               <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>

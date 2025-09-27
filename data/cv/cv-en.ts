@@ -10,8 +10,8 @@ export const cvConfigEn: CVSettings = {
       id: "profile",
       title: "Profile",
       paragraphs: [
-        "Full Stack Developer with 4+ years of experience building web applications and enterprise solutions. Proven track record of delivering high-impact features and significant performance improvements.\n\n",
-        "Transitioned from marketing to development, bringing user-focused perspective and cross-functional collaboration skills. Top performer in development teams with expertise in TypeScript, Angular, React, and .NET."
+        "Full Stack Developer with 4+ years of experience in building web applications and enterprise solutions. Delivered high-impact features and achieved significant performance improvements.\n\n",
+        "Transitioned from marketing to development, bringing a user-focused perspective and cross-functional collaboration skills. Consistently performed as top contributor in development teams with expertise in TypeScript, Angular, React, and .NET."
       ]
     },
     {
@@ -25,8 +25,8 @@ export const cvConfigEn: CVSettings = {
             right: "Nov 2024 - Present"
           },
           paragraphs: [
-            "- Develop full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients",
-            "- Build backend services and APIs using .NET, X++, and C# while collaborating with frontend teams",
+            "- Developing full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients",
+            "- Building backend services and APIs using .NET, X++, and C# while collaborating with frontend teams",
             "- Achieved 10x performance improvement in data transfer between frontend and backend systems"
           ]
         },
