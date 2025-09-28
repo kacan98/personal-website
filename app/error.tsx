@@ -31,7 +31,7 @@ export default function Error({
       <Typography variant="h2" sx={{ mb: 2, fontSize: { xs: '2rem', md: '3rem' } }}>
         Something went wrong!
       </Typography>
-      <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', maxWidth: 600 }}>
+      <Typography variant="body1" sx={{ mb: 4, color: BRAND_COLORS.primary, maxWidth: 600 }}>
         We&apos;re sorry, but something unexpected happened. Please try refreshing the page or contact us if the problem persists.
       </Typography>
       <Button

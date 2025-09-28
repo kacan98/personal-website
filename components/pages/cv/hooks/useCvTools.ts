@@ -44,7 +44,9 @@ export const useCvTools = ({
   const dispatch = useDispatch()
 
   const updateCvInRedux = (cv: CVSettings) => {
+    console.log('🔄 Updating CV in Redux with:', cv);
     dispatch(updateCvWithChanges(cv))
+    console.log('✅ Redux dispatch completed');
   }
 
   const { getMotivationalLetter } = useGetMotivationalLetter({

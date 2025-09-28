@@ -1,8 +1,9 @@
 import { clearCacheByPrefix, getCacheStats } from '@/lib/cache-server'
+import { withAuth, ApiResponse } from '../lib/withAuth'
 
 export const runtime = 'nodejs';
 
-export async function POST(req: Request): Promise<Response> {
+export const POST = withAuth(async (req: Request, _auth) => {
   try {
     console.log('POST /api/clear-cache - Request received')
 
@@ -29,7 +30,7 @@ export async function POST(req: Request): Promise<Response> {
 
     const afterStats = getCacheStats()
 
-    return new Response(JSON.stringify({
+    return ApiResponse.success({
       success: true,
       message: body.prefix
         ? `Cleared cache for prefix: ${body.prefix}`
@@ -38,44 +39,24 @@ export async function POST(req: Request): Promise<Response> {
         before: beforeStats,
         after: afterStats
       }
-    }), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
     })
 
   } catch (e: any) {
     console.error('POST /api/clear-cache - Error:', e)
-    return new Response(JSON.stringify({
-      error: 'Failed to clear cache',
-      details: e.message
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return ApiResponse.error('Failed to clear cache: ' + e.message, 500)
   }
-}
+});
 
-export async function GET(_req: Request): Promise<Response> {
+export const GET = withAuth(async (_req: Request, _auth) => {
   try {
     const stats = getCacheStats()
 
-    return new Response(JSON.stringify({
+    return ApiResponse.success({
       stats,
       message: 'Cache statistics retrieved successfully'
-    }), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
     })
   } catch (e: any) {
     console.error('GET /api/clear-cache - Error:', e)
-    return new Response(JSON.stringify({
-      error: 'Failed to get cache stats',
-      details: e.message
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    })
+    return ApiResponse.error('Failed to get cache stats: ' + e.message, 500)
   }
-}
+});

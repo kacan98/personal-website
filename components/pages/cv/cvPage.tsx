@@ -1,61 +1,45 @@
 "use client";
-import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
-import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motivational-letter.model";
-import PageWrapper from "@/components/pages/pageWrapper";
-import Print from "@/components/print";
-import { useAppSelector, useAppDispatch } from "@/redux/hooks";
-import { initCv } from "@/redux/slices/cv";
-import CreateIcon from '@mui/icons-material/Create';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import LogoutIcon from '@mui/icons-material/Logout';
+import React from "react";
 import {
   Backdrop,
   Box,
   CircularProgress,
   IconButton,
-  SelectChangeEvent,
   Slider,
   Snackbar,
-  SnackbarCloseReason,
-  TextField,
   Tooltip,
   Typography
 } from "@mui/material";
-import Button from "@/components/ui/Button";
-import jsPDF from "jspdf";
-import React, { useEffect, useState, useRef, useCallback, startTransition } from "react";
+import CreateIcon from '@mui/icons-material/Create';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+import PageWrapper from "@/components/pages/pageWrapper";
+import Print from "@/components/print";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { useCvTools } from "./hooks/useCvTools";
 import { useRefineCv } from "./hooks/useRefineCv";
 import CvPaper from "./paper/cvPaper";
 import { useTranslations } from 'next-intl';
 import CvSidebar from "./CvSidebar";
-import ExtensionDownload from "./ExtensionDownload";
-import ManualAdjustmentModal from "./modals/ManualAdjustmentModal";
-import MotivationalLetterModal from "./modals/MotivationalLetterModal";
-import TranslationModal from "./modals/TranslationModal";
-import PositionAnalysisModal from "./modals/PositionAnalysisModal";
-import PreferredProjectsModal from "./modals/PreferredProjectsModal";
-import { CVSettings } from "@/types";
-import { deepClone } from "./utils/cvDiffTracker";
-// Removed direct import - now using API fetch
-import { ensureCvIds } from "@/utils/cvIds";
-import { useLocale } from 'next-intl';
 import { useCvDiffAnalysis } from "./utils/cvDiffAnalyzer";
 import { useAuth } from '@/contexts/AuthContext';
-import PasswordModal from '@/components/auth/PasswordModal';
 import {
-  setCurrentPosition,
-  updateImprovementDescription,
-  toggleImprovementSelection,
   selectSelectedImprovements,
   selectImprovementsWithDescriptions,
-  markImprovementsAsUsed,
-  clearCurrentPositionImprovements
 } from '@/redux/slices/improvementDescriptions';
 import { useAdjustForPosition } from '@/hooks/useAdjustForPosition';
 import TreeProgress from '@/components/ui/TreeProgress';
-import { RankedStory } from '@/types/adjustment';
+
+// Extracted hooks and components
+import { useModalManager } from '@/hooks/useModalManager';
+import { usePdfService } from '@/services/pdfService';
+import { useCacheManagement } from '@/hooks/useCacheManagement';
+import { useCvPageState } from '@/hooks/useCvPageState';
+import { useCvEventHandlers } from '@/hooks/useCvEventHandlers';
+import { useCvEffects } from '@/hooks/useCvEffects';
+import { FloatingManualAdjustments } from './components/FloatingManualAdjustments';
+import { CvModals } from './components/CvModals';
 
 export type CvProps = {
   jobDescription?: string
@@ -63,677 +47,265 @@ export type CvProps = {
 
 function CvPage({ jobDescription }: CvProps) {
   const t = useTranslations('cv');
-  const locale = useLocale();
   const dispatch = useAppDispatch();
   const reduxCvProps = useAppSelector((state) => state.cv);
 
-  // Store original CV state using useState to trigger re-renders
-  const [originalCv, setOriginalCv] = useState<CVSettings | null>(null);
-  const [showDiff, setShowDiff] = useState(true); // Enable diff view by default
-  const [loading, setLoading] = useState(false);
+  // Authentication
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const editable = !authLoading && isAuthenticated;
 
-  // Authentication state - declare before any useEffect that uses it
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const { isAuthenticated, isLoading: authLoading, logout } = useAuth();
+  // Centralized state management
+  const state = useCvPageState();
 
-  // Only allow editing when auth is disabled OR when authenticated AND auth loading is complete
-  // During auth loading, always show as not editable to prevent hydration mismatch
-  const editable = !authLoading && isAuthenticated; // Always require authentication
+  // Modal management
+  const modals = useModalManager();
 
-  // Load original CV from data files and sync with Redux to ensure they match initially
-  useEffect(() => {
-    if (!originalCv) {
-      const loadCvData = async () => {
-        try {
-          const response = await fetch(`/api/cv/settings?locale=${locale}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch CV settings');
-          }
-          const loadedOriginalCv = await response.json();
-          const cvWithIds = ensureCvIds(loadedOriginalCv);
-          const clonedCv = deepClone(cvWithIds);
-
-          // Set original CV for comparison
-          setOriginalCv(clonedCv);
-
-          // Ensure Redux state matches the original CV exactly on initial load
-          // Only initialize if Redux CV is significantly different (not just from previous edits)
-          if (!reduxCvProps.name || reduxCvProps.name !== cvWithIds.name) {
-            dispatch(initCv(cvWithIds));
-          }
-        } catch (error) {
-          console.error('Failed to load original CV:', error);
-        }
-      };
-
-      loadCvData();
-    }
-  }, [locale]); // Only load once per locale
-
-  // Authentication modal only shows when user clicks title 5 times (no auto-show)
-
-  // Periodic auth status check (temporarily disabled - use manual refresh instead)
-  // TODO: Re-enable if cross-tab authentication detection is needed
-  // useEffect(() => {
-
-  //   const interval = setInterval(async () => {
-  //     if (!isAuthenticated) {
-  //       // Only check if currently not authenticated
-  //       try {
-  //         const response = await fetch('/api/auth/status', {
-  //           method: 'GET',
-  //           credentials: 'include',
-  //         });
-  //         const data = await response.json();
-
-  //         if (data.authenticated && !isAuthenticated) {
-  //           // Authentication detected from another tab - refresh auth state
-  //           window.location.reload();
-  //         }
-  //       } catch (error) {
-  //         console.error('Periodic auth check failed:', error);
-  //       }
-  //     }
-  //   }, 30000); // Check every 30 seconds (twice per minute)
-
-  //   return () => clearInterval(interval);
-
-  // Use Redux hasChanges flag instead of expensive diff analysis
-  const hasChanges = reduxCvProps.hasChanges || false;
-
-  // Always call the hook, but only compute when needed
-  const cvDiffAnalysis = useCvDiffAnalysis(
-    showDiff && originalCv ? originalCv : null,
-    showDiff && originalCv ? reduxCvProps : null
-  );
-  const { removedSections, modifiedSections, removedSubSections, modifiedSubSections } = cvDiffAnalysis;
-
-  // Don't auto-enable diff view - let user manually toggle it
-  // The new personalized CV should be the primary view, not a diff
-  // useEffect(() => {
-  //   if (hasChanges && !showDiff && originalCv && !loading) {
-  //     setShowDiff(true);
-  //   }
-  // }, [hasChanges, showDiff, originalCv, loading]);
-
-
-  // Modal state
-  const [manualAdjustmentModalOpen, setManualAdjustmentModalOpen] = useState(false);
-  const [motivationalLetterModalOpen, setMotivationalLetterModalOpen] = useState(false);
-  const [translationModalOpen, setTranslationModalOpen] = useState(false);
-  const [positionAnalysisModalOpen, setPositionAnalysisModalOpen] = useState(false);
-  const [preferredProjectsModalOpen, setPreferredProjectsModalOpen] = useState(false);
-  const [extensionModalOpen, setExtensionModalOpen] = useState(false);
-
-  // Existing state (simplified)
-  const [selectedLanguage, setLanguage] = useState("English");
-  const [snackbarMessage, setsnackbarMessage] = useState<string | null>(null);
-  const [titleClickedTimes, setTitleClickedTimes] = useState(0);
-
-  const [positionSummary, setPositionSummary] = useState<string>('')
-  const [positionDetails, setPositionDetails] = useState<string>('')
-  const [shouldAdjustCv, setShouldAdjustCv] = useState(false);
-  const [positionIntersection, setPositionIntersection] = useState<JobCvIntersectionResponse | null>(null)
-  // Use Redux for improvement descriptions
-  const checked = useAppSelector(selectSelectedImprovements);
+  // Redux selectors
+  const selectedImprovements = useAppSelector(selectSelectedImprovements);
   const improvementsWithDescriptions = useAppSelector(selectImprovementsWithDescriptions);
-
-  // Enhanced validation logic for refinement buttons
-  const _hasSelectedImprovements = checked.length > 0;
   const hasImprovementDescriptions = improvementsWithDescriptions.length > 0;
-  const [companyName, setCompanyName] = useState<string | null>(null);
-  const [motivationalLetter, setMotivationalLetter] = useState<MotivationalLetterResponse | null>(null);
-  const [editableMotivationalLetter, setEditableMotivationalLetter] = useState<MotivationalLetterResponse | null>(null);
-  const [currentOperation, setCurrentOperation] = useState<string>(t('discussingWithAI'));
-  const [cvAdjusted, setCvAdjusted] = useState(false);
-  const [hasManualRefinements, setHasManualRefinements] = useState(false);
-  const [hasPreferredProjects, setHasPreferredProjects] = useState(false);
-  const [_cacheStatusNotification, _setCacheStatusNotification] = useState<{
-    show: boolean;
-    fromCache: boolean;
-  } | null>(null);
-  const [lastCacheStatus, setLastCacheStatus] = useState<boolean | null>(null);
-  const [cacheStats, setCacheStats] = useState<{ activeEntries: number } | null>(null);
-  const [clearingCache, setClearingCache] = useState(false);
 
-  const [fontSize, setFontSize] = useState(12);
+  // Services
+  const pdfService = usePdfService();
 
-  // Hooks
-  const { getMotivationalLetter,
+  // Cache management
+  const cacheManager = useCacheManagement({
+    setCacheStats: state.setCacheStats,
+    setClearingCache: state.setClearingCache,
+    clearingCache: state.clearingCache,
+    setSnackbarMessage: state.setSnackbarMessage,
+    setCacheStatusNotification: state.setCacheStatusNotification,
+    setLastCacheStatus: state.setLastCacheStatus,
+  });
+
+  // CV diff analysis
+  const hasChanges = reduxCvProps.hasChanges || false;
+  const diffAnalysis = useCvDiffAnalysis(
+    state.showDiff && state.originalCv ? state.originalCv : null,
+    state.showDiff && state.originalCv ? reduxCvProps : null
+  );
+
+  // Cache operations are now handled by cacheManager
+
+  // CV Tools hook
+  const {
+    getMotivationalLetter,
     adjustMotivationalLetter,
     adjustCvBasedOnPosition,
     updatePositionIntersection,
     translateCvWithoutLoading,
     translateLetterWithoutLoading,
-    adjustSection } = useCvTools({
-      reduxCvProps,
-      positionDetails,
-      positionSummary,
-      positionIntersection,
-      setLoading,
-      setsnackbarMessage,
-      setMotivationalLetter,
-      setPositionIntersection,
-      setPositionSummary,
-      setCompanyName,
-      setLanguage,
-      setCacheStatus: (fromCache: boolean) => {
-        _setCacheStatusNotification({ show: true, fromCache });
-        setLastCacheStatus(fromCache); // Store for sidebar indicator
-        fetchCacheStats(); // Refresh cache stats after AI operation
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-          _setCacheStatusNotification(null);
-        }, 5000);
-      },
-      extractedCompanyName: companyName
-    })
+    adjustSection
+  } = useCvTools({
+    reduxCvProps,
+    positionDetails: state.positionDetails,
+    positionSummary: state.positionSummary,
+    positionIntersection: state.positionIntersection,
+    setLoading: state.setLoading,
+    setsnackbarMessage: state.setSnackbarMessage,
+    setMotivationalLetter: state.setMotivationalLetter,
+    setPositionIntersection: state.setPositionIntersection,
+    setPositionSummary: state.setPositionSummary,
+    setCompanyName: state.setCompanyName,
+    setLanguage: state.setLanguage,
+    setCacheStatus: cacheManager.setCacheStatus,
+    extractedCompanyName: state.companyName
+  });
 
-  // Use the new adjustment workflow hook
+  // Adjustment workflow
   const adjustmentWorkflow = useAdjustForPosition({
-    onCvUpdate: (stories: RankedStory[]) => {
-      // The CV is automatically updated through the API call
+    onCvUpdate: () => {
+      // CV updated
     },
     onMotivationalLetterUpdate: (letter: string) => {
-      setMotivationalLetter({ letter });
+      state.setMotivationalLetter({ letter });
     },
     onError: (error: string) => {
-      setsnackbarMessage(`Error during adjustment: ${error}`);
+      state.setSnackbarMessage(`Error during adjustment: ${error}`);
     },
     adjustCvBasedOnPosition,
     getMotivationalLetter
   });
 
-  // Refs for tracking job loading state
-  const jobDescriptionReceived = useRef(false);
-  const jobLoadingTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  // Manual adjustments modal state
-  const [isManualAdjustmentMinimized, setIsManualAdjustmentMinimized] = useState(false);
-  const [manualOtherChanges, setManualOtherChanges] = useState("");
-  const [localManualChanges, setLocalManualChanges] = useState("");
-
-  // Sync local manual changes with main state when it's cleared programmatically
-  useEffect(() => {
-    setLocalManualChanges(manualOtherChanges);
-  }, [manualOtherChanges]);
-
+  // Refinement hook
   const { refineCv } = useRefineCv({
-    originalCv: originalCv || reduxCvProps,
+    originalCv: state.originalCv || reduxCvProps,
     currentCv: reduxCvProps,
-    positionDetails,
-    setsnackbarMessage,
-    setLoading,
-    setCurrentOperation,
+    positionDetails: state.positionDetails,
+    setsnackbarMessage: state.setSnackbarMessage,
+    setLoading: state.setLoading,
+    setCurrentOperation: state.setCurrentOperation,
   });
 
+  // Event handlers
+  const eventHandlers = useCvEventHandlers({
+    // State setters
+    setLanguage: state.setLanguage,
+    setSnackbarMessage: state.setSnackbarMessage,
+    setTitleClickedTimes: state.setTitleClickedTimes,
+    setHasManualRefinements: state.setHasManualRefinements,
+    setIsManualAdjustmentMinimized: state.setIsManualAdjustmentMinimized,
 
-  const prettyfiedCompanyName = companyName ? `_${companyName.split(" ").join("_")}` : ''
+    // Current state
+    titleClickedTimes: state.titleClickedTimes,
+    isAuthenticated,
+    showPasswordModal: modals.showPasswordModal,
+    originalCv: state.originalCv,
+    editableMotivationalLetter: state.editableMotivationalLetter,
+    motivationalLetter: state.motivationalLetter,
+    checked: selectedImprovements,
+    improvementsWithDescriptions,
 
-  // These functions are no longer needed since we use computed diff analysis
-  // Modifications are automatically detected by comparing original vs current CV state
+    // Redux props
+    reduxCvProps,
 
-  // Modal handlers
-  const handleAdjustForPosition = async () => {
-    if (positionDetails && positionDetails.trim().length > 0) {
-      // Wait for auth loading to complete, then check authentication
-      if (authLoading) {
-        return; // Don't proceed while auth is still loading
-      }
+    // Utility functions
+    adjustmentWorkflow,
+    refineCv,
+    adjustMotivationalLetter: adjustMotivationalLetter as any,
+  });
 
-      if (!isAuthenticated) {
-        setShowPasswordModal(true);
-        return;
-      }
-
-      try {
-        await adjustmentWorkflow.startAdjustment(positionDetails, checked, selectedLanguage);
-        setsnackbarMessage('CV personalized with relevant projects and motivational letter generated successfully!');
-        setCvAdjusted(true);
-        setHasPreferredProjects(true);
-      } catch (error) {
-        console.error('Error during position adjustment:', error);
-        setsnackbarMessage('Error during CV personalization or letter generation');
-      }
-    }
-  };
-
-  const handleManualRefinement = async (refinementData: {
-    checkedImprovements: string[];
-    improvementInputs: { [key: string]: string };
-    missingSkills: string;
-    otherChanges: string;
-  }) => {
-    // Format improvements with AI suggestion + user experience
-    const formattedImprovements = improvementsWithDescriptions.map(item =>
-      `AI suggested: ${item.improvement}\nUser said: ${item.description}`
-    );
-
-    const refinementWithDescriptions = {
-      ...refinementData,
-      // Send formatted improvements with both AI suggestion and user response
-      checkedImprovements: formattedImprovements.length > 0 ? formattedImprovements : refinementData.checkedImprovements,
-      // Keep original structure for backward compatibility
-      improvementInputs: {
-        ...refinementData.improvementInputs,
-        ...Object.fromEntries(
-          improvementsWithDescriptions.map(item => [item.improvement, item.description])
-        )
-      }
-    };
-
-    await refineCv(refinementWithDescriptions);
-    setHasManualRefinements(true);
-    setManualAdjustmentModalOpen(false);
-
-    // Mark the used improvements
-    if (checked.length > 0) {
-      dispatch(markImprovementsAsUsed(checked));
-    }
-  };
-
-  const handleAdjustLetter = async (comments: string) => {
-    const currentLetter = editableMotivationalLetter || motivationalLetter;
-    if (currentLetter) {
-      await adjustMotivationalLetter(
-        currentLetter,
-        comments,
-        positionDetails,
-        reduxCvProps,
-        selectedLanguage
-      );
-    }
-  };
-
-  const handleTranslateBoth = async () => {
-    setLoading(true);
+  // Handle translation workflow
+  const handleTranslateBoth = React.useCallback(async () => {
+    state.setLoading(true);
     try {
-      const hasLetter = !!(motivationalLetter || editableMotivationalLetter);
-      let cvCompleted = false;
-      let letterCompleted = false;
-
-      const updateProgress = () => {
-        if (hasLetter) {
-          if (cvCompleted && letterCompleted) {
-            setCurrentOperation('Translation completed! ✓');
-          } else if (cvCompleted && !letterCompleted) {
-            setCurrentOperation('CV translated ✓ - Translating motivational letter...');
-          } else if (!cvCompleted && letterCompleted) {
-            setCurrentOperation('Motivational letter translated ✓ - Translating CV...');
-          } else {
-            setCurrentOperation('Translating CV and motivational letter...');
-          }
-        } else {
-          setCurrentOperation('Translating CV...');
-        }
-      };
-
-      updateProgress();
-
+      const hasLetter = !!(state.motivationalLetter || state.editableMotivationalLetter);
       const promises = [];
 
-      // CV translation promise
+      // CV translation
       const cvPromise = translateCvWithoutLoading({
         cvProps: reduxCvProps,
-        selectedLanguage
-      }).then((result) => {
-        cvCompleted = true;
-        updateProgress();
-        return result;
+        selectedLanguage: state.selectedLanguage
       });
-
       promises.push(cvPromise);
 
-      // Letter translation promise (only if letter exists)
+      // Letter translation if exists
       if (hasLetter) {
-        const letterToTranslate = editableMotivationalLetter || motivationalLetter;
+        const letterToTranslate = state.editableMotivationalLetter || state.motivationalLetter;
         if (letterToTranslate) {
           const letterPromise = translateLetterWithoutLoading({
             letter: letterToTranslate,
-            selectedLanguage
+            selectedLanguage: state.selectedLanguage
           }).then((result) => {
-            letterCompleted = true;
-            updateProgress();
-            setEditableMotivationalLetter(result);
+            state.setEditableMotivationalLetter(result);
             return result;
           });
-
           promises.push(letterPromise);
         }
       }
 
       await Promise.all(promises);
-
-      if (hasLetter) {
-        setsnackbarMessage(`CV and motivational letter translated to ${selectedLanguage}`);
-      } else {
-        setsnackbarMessage(`CV translated to ${selectedLanguage}`);
-      }
+      state.setSnackbarMessage(
+        hasLetter
+          ? `CV and motivational letter translated to ${state.selectedLanguage}`
+          : `CV translated to ${state.selectedLanguage}`
+      );
     } catch (error) {
-      setsnackbarMessage('Error during translation');
+      state.setSnackbarMessage('Error during translation');
     } finally {
-      setLoading(false);
-      setCurrentOperation('Discussing with AI...');
+      state.setLoading(false);
     }
-    setTranslationModalOpen(false);
-  };
+    modals.closeModal('translation');
+  }, [state, translateCvWithoutLoading, translateLetterWithoutLoading, reduxCvProps, modals.closeModal]);
 
-  // Effects
-  // Check for job ID in URL and start loading immediately
-  useEffect(() => {
-    const currentUrl = window.location.pathname;
-    const jobIdMatch = currentUrl.match(/\/cv\/([^\/]+)$/);
-
-    if (jobIdMatch && jobIdMatch[1]) {
-      // Job ID detected in URL, start loading immediately
-      setLoading(true);
-      setCurrentOperation('Personalizing CV and generating motivational letter...');
-
-      // Set a timeout to show failure toast if no job description comes within 10 seconds
-      jobLoadingTimeout.current = setTimeout(() => {
-        if (!jobDescriptionReceived.current) {
-          setLoading(false);
-          setCurrentOperation('Discussing with AI...');
-          setsnackbarMessage('Failed to load job description. Please try again.');
-        }
-      }, 10000);
-    }
-
-    return () => {
-      if (jobLoadingTimeout.current) {
-        clearTimeout(jobLoadingTimeout.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (jobDescription && jobDescription.trim().length > 0) {
-      // Mark that we received job description
-      jobDescriptionReceived.current = true;
-
-      // Clear the failure timeout
-      if (jobLoadingTimeout.current) {
-        clearTimeout(jobLoadingTimeout.current);
-        jobLoadingTimeout.current = null;
-      }
-
-      // Use startTransition to mark heavy operations as non-urgent
-      startTransition(() => {
-        setPositionDetails(jobDescription);
-        setShouldAdjustCv(true);
-      });
-      // Don't clear loading state here - let handleAdjustForPosition manage it
-    }
-  }, [jobDescription]);
-
-  useEffect(() => {
-    if (shouldAdjustCv && positionDetails && positionDetails.trim().length > 0) {
-      // Wait for auth loading to complete before checking authentication
-      if (authLoading) {
-        return; // Don't proceed while auth is still loading
-      }
-
-      // Check authentication before automatically adjusting CV
-      if (!isAuthenticated) {
-        setShowPasswordModal(true);
-        adjustmentWorkflow.resetWorkflow(); // Reset workflow state
-        return;
-      }
-      handleAdjustForPosition();
-    }
-  }, [positionDetails, shouldAdjustCv, isAuthenticated, authLoading]);
-
-  useEffect(() => {
-    if (snackbarMessage === 'CV transformed') {
-      setCvAdjusted(true);
-    }
-  }, [snackbarMessage]);
-
-  useEffect(() => {
-    if (motivationalLetter) {
-      setEditableMotivationalLetter(motivationalLetter);
-    }
-  }, [motivationalLetter]);
-
-  // Handle position updates with Redux
-  useEffect(() => {
-    if (positionDetails && positionDetails.trim().length > 10 && companyName) {
-      dispatch(setCurrentPosition({
-        positionDetails,
-        companyName
-      }));
-    }
-  }, [positionDetails, companyName, dispatch]);
-
-
-  // Utility functions
-  const handleLanguageChange = async (event: SelectChangeEvent<string>) => {
-    setLanguage(event.target.value);
-  };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setsnackbarMessage(null);
-  };
-
-  const onTitleClicked = () => {
-    // Always require authentication - show password modal after 5 clicks
-    if (!isAuthenticated && !showPasswordModal) {
-      const newClickCount = titleClickedTimes + 1;
-      setTitleClickedTimes(newClickCount);
-
-      if (newClickCount >= 5) {
-        setTitleClickedTimes(0); // Reset click counter when opening modal
-        setShowPasswordModal(true);
-      }
-    }
-  }
-
-  const handleChecked = (value: string) => () => {
-    dispatch(toggleImprovementSelection(value));
-  }
-
-  const _handleImprovementDescriptionChange = (improvementKey: string, description: string) => {
-    dispatch(updateImprovementDescription({
-      improvementKey,
-      userDescription: description,
-      selected: checked.includes(improvementKey)
-    }));
-  }
-
-  const handleCopyJsonToClipboard = async () => {
-    try {
-      const jsonData = JSON.stringify(reduxCvProps, null, 2);
-      await navigator.clipboard.writeText(jsonData);
-      setsnackbarMessage(t('jsonCopiedSuccess'));
-    } catch (error) {
-      setsnackbarMessage(t('jsonCopiedError'));
-    }
-  };
-
-  const downloadMotivationalLetterPDF = () => {
-    const letterToUse = editableMotivationalLetter || motivationalLetter;
+  // PDF download handler
+  const handleDownloadMotivationalLetterPDF = React.useCallback(() => {
+    const letterToUse = state.editableMotivationalLetter || state.motivationalLetter;
     if (!letterToUse) return;
 
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const margin = 20;
-    const textWidth = pageWidth - 2 * margin;
-    const currentY = 30;
-
-    // Set font
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(11);
-
-    // Helper function to handle Czech characters for PDF compatibility
-    const processCzechText = (text: string): string => {
-      return text
-        .replace(/č/g, 'c').replace(/Č/g, 'C')
-        .replace(/ř/g, 'r').replace(/Ř/g, 'R')
-        .replace(/š/g, 's').replace(/Š/g, 'S')
-        .replace(/ž/g, 'z').replace(/Ž/g, 'Z')
-        .replace(/ý/g, 'y').replace(/Ý/g, 'Y')
-        .replace(/á/g, 'a').replace(/Á/g, 'A')
-        .replace(/é/g, 'e').replace(/É/g, 'E')
-        .replace(/í/g, 'i').replace(/Í/g, 'I')
-        .replace(/ó/g, 'o').replace(/Ó/g, 'O')
-        .replace(/ú/g, 'u').replace(/Ú/g, 'U')
-        .replace(/ů/g, 'u').replace(/Ů/g, 'U')
-        .replace(/ď/g, 'd').replace(/Ď/g, 'D')
-        .replace(/ť/g, 't').replace(/Ť/g, 'T')
-        .replace(/ň/g, 'n').replace(/Ň/g, 'N');
-    };
-
-    // Helper function to add text with line breaks
-    const addTextWithLineBreaks = (text: string, x: number, y: number, maxWidth?: number) => {
-      const processedText = processCzechText(text);
-      if (maxWidth) {
-        const lines = pdf.splitTextToSize(processedText, maxWidth);
-        pdf.text(lines, x, y);
-        return lines.length * 5;
-      } else {
-        pdf.text(processedText, x, y);
-        return 5;
-      }
-    };
-
-    // Add letter content
-    if (letterToUse.letter) {
-      addTextWithLineBreaks(letterToUse.letter, margin, currentY, textWidth);
-    }
-
-    const fileName = `Motivational_Letter${prettyfiedCompanyName || ''}.pdf`;
-    pdf.save(fileName);
-  };
-
-  // Reset CV to original
-  const handleResetToOriginal = () => {
-    if (originalCv) {
-      dispatch(initCv(originalCv)); // This automatically sets hasChanges to false
-      setShowDiff(false); // Turn off diff view after reset
-      // Clear any adjusted CV state
-      setCvAdjusted(false);
-      setPositionIntersection(null);
-      setMotivationalLetter(null);
-    }
-  };
-
-  // Fetch cache stats
-  const fetchCacheStats = useCallback(async () => {
     try {
-      const response = await fetch('/api/cache-stats');
-      if (response.ok) {
-        const stats = await response.json();
-        setCacheStats(stats);
-      }
+      pdfService.downloadMotivationalLetterPDF(letterToUse, state.companyName);
     } catch (error) {
-      console.error('Error fetching cache stats:', error);
+      state.setSnackbarMessage('Error generating PDF');
     }
-  }, []);
+  }, [state, pdfService.downloadMotivationalLetterPDF]);
 
-  // Fetch cache stats on component mount
-  useEffect(() => {
-    fetchCacheStats();
-  }, [fetchCacheStats]);
+  // Effects
+  useCvEffects({
+    originalCv: state.originalCv,
+    setOriginalCv: state.setOriginalCv,
+    reduxCvProps,
+    jobDescription,
+    positionDetails: state.positionDetails,
+    setPositionDetails: state.setPositionDetails,
+    setShouldAdjustCv: state.setShouldAdjustCv,
+    snackbarMessage: state.snackbarMessage,
+    setCvAdjusted: state.setCvAdjusted,
+    motivationalLetter: state.motivationalLetter,
+    setEditableMotivationalLetter: state.setEditableMotivationalLetter,
+    companyName: state.companyName,
+    isAuthenticated,
+    authLoading,
+    handleAdjustForPosition: (pos, ch, lang) =>
+      eventHandlers.handleAdjustForPosition(pos, ch, lang),
+    handleFetchCacheStats: cacheManager.handleFetchCacheStats,
+    openModal: (modal: string) => modals.openModal(modal as any),
+    checked: selectedImprovements,
+    selectedLanguage: state.selectedLanguage,
+    adjustmentWorkflow,
+  });
 
-  // Clear AI cache
-  const handleClearCache = async () => {
-    setClearingCache(true);
-    try {
-      const response = await fetch('/api/clear-cache', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        // Cache cleared successfully
-        _setCacheStatusNotification(null); // Reset cache status when cache is cleared
-        setLastCacheStatus(null); // Reset sidebar indicator
-        fetchCacheStats(); // Refresh cache stats
-        setsnackbarMessage('✅ Cache cleared successfully');
-      } else {
-        console.error('Failed to clear cache');
-        setsnackbarMessage('❌ Failed to clear cache');
-      }
-    } catch (error) {
-      console.error('Error clearing cache:', error);
-      setsnackbarMessage('❌ Error clearing cache');
-    } finally {
-      setClearingCache(false);
+  // Update preferred projects state when stories are ranked
+  React.useEffect(() => {
+    if (adjustmentWorkflow.rankedStories && adjustmentWorkflow.rankedStories.length > 0) {
+      state.setHasPreferredProjects(true);
     }
-  };
+  }, [adjustmentWorkflow.rankedStories, state.setHasPreferredProjects]);
+
+  // Computed values
+  const prettyfiedCompanyName = state.companyName ? `_${state.companyName.split(" ").join("_")}` : '';
 
   return (
-    <PageWrapper title={t('pageTitle')} onTitleClicked={onTitleClicked} containerMaxWidth="md">
+    <PageWrapper title={t('pageTitle')} onTitleClicked={eventHandlers.onTitleClicked} containerMaxWidth="md">
       <Box sx={{
-        pb: manualAdjustmentModalOpen && isManualAdjustmentMinimized ? '200px' : 0,
+        pb: modals.manualAdjustmentModalOpen && state.isManualAdjustmentMinimized ? '200px' : 0,
         transition: 'padding-bottom 0.2s ease'
       }}>
-      <>
-        {/* Sidebar with action buttons */}
+        {/* Sidebar */}
         <CvSidebar
-          onAdjustForPosition={() => setManualAdjustmentModalOpen(true)}
+          onAdjustForPosition={() => modals.openModal('manualAdjustment')}
           onManualAdjustments={() => {
-            setManualAdjustmentModalOpen(true);
-            setIsManualAdjustmentMinimized(true);
+            modals.openModal('manualAdjustment');
+            state.setIsManualAdjustmentMinimized(true);
           }}
           _onManualAdjustmentsQuick={() => {
-            setManualAdjustmentModalOpen(true);
-            setIsManualAdjustmentMinimized(true);
+            modals.openModal('manualAdjustment');
+            state.setIsManualAdjustmentMinimized(true);
           }}
-          onViewMotivationalLetter={() => setMotivationalLetterModalOpen(true)}
-          onViewPositionAnalysis={() => setPositionAnalysisModalOpen(true)}
-          onViewPreferredProjects={() => setPreferredProjectsModalOpen(true)}
-          onTranslate={() => setTranslationModalOpen(true)}
-          hasMotivationalLetter={!!motivationalLetter}
-          hasPositionAnalysis={!!positionIntersection}
-          hasAdjustedCv={cvAdjusted}
-          hasManualRefinements={hasManualRefinements}
-          hasPreferredProjects={hasPreferredProjects}
+          onViewMotivationalLetter={() => modals.openModal('motivationalLetter')}
+          onViewPositionAnalysis={() => modals.openModal('positionAnalysis')}
+          onViewPreferredProjects={() => modals.openModal('preferredProjects')}
+          onTranslate={() => modals.openModal('translation')}
+          hasMotivationalLetter={!!state.motivationalLetter}
+          hasPositionAnalysis={!!state.positionIntersection}
+          hasAdjustedCv={state.cvAdjusted}
+          hasManualRefinements={state.hasManualRefinements}
+          hasPreferredProjects={state.hasPreferredProjects}
           editable={editable}
-          showDiff={showDiff}
-          onToggleDiff={() => setShowDiff(!showDiff)}
-          hasOriginalCv={!!originalCv}
+          showDiff={state.showDiff}
+          onToggleDiff={() => state.setShowDiff(!state.showDiff)}
+          hasOriginalCv={!!state.originalCv}
           hasChanges={hasChanges}
-          onResetToOriginal={handleResetToOriginal}
-          onClearCache={cacheStats && cacheStats.activeEntries > 0 ? handleClearCache : undefined}
-          lastCacheStatus={lastCacheStatus}
-          onOpenExtensionModal={() => setExtensionModalOpen(true)}
-          loading={loading}
+          onResetToOriginal={eventHandlers.handleResetToOriginal}
+          onClearCache={state.cacheStats && state.cacheStats.cvActiveEntries > 0 ? cacheManager.handleClearCache : undefined}
+          lastCacheStatus={state.lastCacheStatus}
+          onOpenExtensionModal={() => modals.openModal('extension')}
+          loading={state.loading}
           loadingButtons={{
             adjustPosition: adjustmentWorkflow.isLoading,
-            manualAdjustments: loading && currentOperation.includes('Refining'),
-            motivationalLetter: adjustmentWorkflow.isLoading && (adjustmentWorkflow.progressSteps.generatingLetter === 'active' || adjustmentWorkflow.progressSteps.personalizingCV === 'active'),
-            positionAnalysis: loading && currentOperation.includes('Analysis'),
-            translate: loading && currentOperation.includes('Translating'),
-            clearCache: clearingCache,
+            manualAdjustments: state.loading && state.currentOperation.includes('Refining'),
+            motivationalLetter: adjustmentWorkflow.isLoading,
+            positionAnalysis: state.loading && state.currentOperation.includes('Analysis'),
+            translate: state.loading && state.currentOperation.includes('Translating'),
+            clearCache: state.clearingCache,
           }}
         />
 
-        {/* Extension Download Modal */}
-        <ExtensionDownload open={extensionModalOpen} onClose={() => setExtensionModalOpen(false)} />
-
-        {/* Logout button (when authenticated) */}
+        {/* Logout button */}
         {isAuthenticated && (
           <Tooltip title="Logout" placement="left">
             <IconButton
-              onClick={async () => {
-                await logout();
-                setsnackbarMessage('Logged out successfully');
-              }}
+              onClick={eventHandlers.handleLogout}
               sx={{
                 position: 'fixed',
                 bottom: 24,
@@ -742,11 +314,7 @@ function CvPage({ jobDescription }: CvProps) {
                 backgroundColor: 'error.main',
                 color: 'white',
                 opacity: 0.7,
-                transition: 'opacity 0.2s',
-                '&:hover': {
-                  opacity: 1,
-                  backgroundColor: 'error.dark',
-                },
+                '&:hover': { opacity: 1, backgroundColor: 'error.dark' },
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 width: 40,
                 height: 40,
@@ -757,10 +325,10 @@ function CvPage({ jobDescription }: CvProps) {
           </Tooltip>
         )}
 
-        {/* JSON copy button in bottom-right corner */}
+        {/* JSON copy button */}
         <Tooltip title={t('copyJsonTooltip')} placement="left">
           <IconButton
-            onClick={handleCopyJsonToClipboard}
+            onClick={eventHandlers.handleCopyJsonToClipboard}
             sx={{
               position: 'fixed',
               bottom: 24,
@@ -769,11 +337,7 @@ function CvPage({ jobDescription }: CvProps) {
               backgroundColor: 'background.paper',
               color: 'text.secondary',
               opacity: 0.3,
-              transition: 'opacity 0.2s',
-              '&:hover': {
-                opacity: 1,
-                backgroundColor: 'background.paper',
-              },
+              '&:hover': { opacity: 1 },
               boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
               width: 40,
               height: 40,
@@ -782,7 +346,6 @@ function CvPage({ jobDescription }: CvProps) {
             <ContentCopyIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-
 
         {/* Edit mode indicator */}
         <Box sx={{ mb: 3, display: editable ? 'block' : 'none' }}>
@@ -795,8 +358,10 @@ function CvPage({ jobDescription }: CvProps) {
           <Slider
             min={9}
             max={20}
-            value={fontSize}
-            onChange={(_: Event, newValue: number | number[]) => setFontSize(Array.isArray(newValue) ? newValue[0] : newValue)}
+            value={state.fontSize}
+            onChange={(_: Event, newValue: number | number[]) =>
+              state.setFontSize(Array.isArray(newValue) ? newValue[0] : newValue)
+            }
             valueLabelDisplay="auto"
             aria-label="font size"
             defaultValue={12}
@@ -804,118 +369,108 @@ function CvPage({ jobDescription }: CvProps) {
           />
         </Box>
 
-
-        {/* Main CV Paper - Always visible */}
+        {/* Main CV Paper */}
         <Print
           printComponent={<CvPaper
             isPrintVersion
-            removedSections={removedSections}
-            removedSubSections={removedSubSections}
-            originalCv={originalCv}
-            showDiff={false} // Never show diffs in print version
+            removedSections={diffAnalysis.removedSections}
+            removedSubSections={diffAnalysis.removedSubSections}
+            originalCv={state.originalCv}
+            showDiff={false}
           />}
-          fontSize={fontSize}
-          fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName ?? ''}`}
+          fontSize={state.fontSize}
+          fileName={`${reduxCvProps.name}_CV${prettyfiedCompanyName}`}
         >
           <CvPaper
             editable={editable}
-            positionDetails={positionDetails}
+            positionDetails={state.positionDetails}
             adjustSection={adjustSection}
-            removedSections={removedSections}
-            modifiedSections={modifiedSections}
-            removedSubSections={removedSubSections}
-            modifiedSubSections={modifiedSubSections}
-            originalCv={originalCv}
-            showDiff={showDiff && !!originalCv && !loading} // Show diff only when enabled AND original CV is loaded AND not loading
+            removedSections={diffAnalysis.removedSections}
+            modifiedSections={diffAnalysis.modifiedSections}
+            removedSubSections={diffAnalysis.removedSubSections}
+            modifiedSubSections={diffAnalysis.modifiedSubSections}
+            originalCv={state.originalCv}
+            showDiff={state.showDiff && !!state.originalCv && !state.loading}
           />
         </Print>
 
-        {/* Modals */}
+        {/* All Modals */}
+        <CvModals
+          // Modal state
+          manualAdjustmentModalOpen={modals.manualAdjustmentModalOpen}
+          motivationalLetterModalOpen={modals.motivationalLetterModalOpen}
+          translationModalOpen={modals.translationModalOpen}
+          positionAnalysisModalOpen={modals.positionAnalysisModalOpen}
+          preferredProjectsModalOpen={modals.preferredProjectsModalOpen}
+          extensionModalOpen={modals.extensionModalOpen}
+          showPasswordModal={modals.showPasswordModal}
 
-        <ManualAdjustmentModal
-          open={manualAdjustmentModalOpen}
+          // Modal actions
+          closeModal={(modalType: string) => modals.closeModal(modalType as any)}
+          openModal={(modalType: string) => modals.openModal(modalType as any)}
+
+          // Data
+          checked={selectedImprovements}
+          motivationalLetter={state.motivationalLetter}
+          editableMotivationalLetter={state.editableMotivationalLetter}
+          positionIntersection={state.positionIntersection}
+          reduxCvProps={reduxCvProps}
+          companyName={state.companyName}
+          positionDetails={state.positionDetails}
+          selectedLanguage={state.selectedLanguage}
+          rankedStories={adjustmentWorkflow.rankedStories || []}
+
+          // State setters
+          setEditableMotivationalLetter={state.setEditableMotivationalLetter}
+          setPositionDetails={state.setPositionDetails}
+          setIsManualAdjustmentMinimized={state.setIsManualAdjustmentMinimized}
+          setManualOtherChanges={state.setManualOtherChanges}
+
+          // Current state
+          isManualAdjustmentMinimized={state.isManualAdjustmentMinimized}
+          manualOtherChanges={state.manualOtherChanges}
+          loading={state.loading}
+
+          // Event handlers
+          handleManualRefinement={eventHandlers.handleManualRefinement}
+          handleAdjustForPosition={eventHandlers.handleAdjustForPosition}
+          handleDownloadMotivationalLetterPDF={handleDownloadMotivationalLetterPDF}
+          handleAdjustLetter={eventHandlers.handleAdjustLetter}
+          handleTranslateBoth={handleTranslateBoth}
+          getMotivationalLetter={getMotivationalLetter}
+          handleLanguageChange={eventHandlers.handleLanguageChange}
+          handleChecked={eventHandlers.handleChecked}
+          updatePositionIntersection={updatePositionIntersection}
+          setsnackbarMessage={state.setSnackbarMessage}
+        />
+
+        {/* Floating Manual Adjustments */}
+        <FloatingManualAdjustments
+          isVisible={modals.manualAdjustmentModalOpen && state.isManualAdjustmentMinimized}
+          checked={selectedImprovements}
+          hasImprovementDescriptions={hasImprovementDescriptions}
+          improvementsWithDescriptions={improvementsWithDescriptions}
+          localManualChanges={state.localManualChanges}
+          manualOtherChanges={state.manualOtherChanges}
+          loading={state.loading}
+          positionDetails={state.positionDetails}
+          onLocalManualChangesChange={state.setLocalManualChanges}
+          onManualOtherChangesChange={state.setManualOtherChanges}
           onClose={() => {
-            setManualAdjustmentModalOpen(false);
-            setIsManualAdjustmentMinimized(false);
+            state.setIsManualAdjustmentMinimized(false);
+            modals.closeModal('manualAdjustment');
           }}
-          checkedImprovements={checked}
-          onRefineCV={handleManualRefinement}
-          isLoading={loading}
-          _companyName={companyName}
-          positionDetails={positionDetails}
-          setPositionDetails={setPositionDetails}
-          onAdjustForPosition={handleAdjustForPosition}
-          isMinimized={isManualAdjustmentMinimized}
-          onToggleMinimize={() => setIsManualAdjustmentMinimized(prev => !prev)}
-          otherChanges={manualOtherChanges}
-          setOtherChanges={setManualOtherChanges}
-        />
-
-        <MotivationalLetterModal
-          open={motivationalLetterModalOpen}
-          onClose={() => setMotivationalLetterModalOpen(false)}
-          motivationalLetter={motivationalLetter}
-          editableMotivationalLetter={editableMotivationalLetter}
-          setEditableMotivationalLetter={setEditableMotivationalLetter}
-          onDownloadPDF={downloadMotivationalLetterPDF}
-          onAdjustLetter={handleAdjustLetter}
-          onTranslateLetter={handleTranslateBoth}
-          onGenerateLetter={getMotivationalLetter}
-          selectedLanguage={selectedLanguage}
-          handleLanguageChange={handleLanguageChange}
-          isLoading={loading}
-          companyName={companyName}
-          positionDetails={positionDetails}
-          setPositionDetails={setPositionDetails}
-          checked={checked}
-          _handleChecked={handleChecked}
-          candidate={reduxCvProps}
-        />
-
-        <TranslationModal
-          open={translationModalOpen}
-          onClose={() => setTranslationModalOpen(false)}
-          selectedLanguage={selectedLanguage}
-          handleLanguageChange={handleLanguageChange}
-          onTranslateBoth={handleTranslateBoth}
-          hasMotivationalLetter={!!motivationalLetter}
-          isLoading={loading}
-        />
-
-        <PositionAnalysisModal
-          open={positionAnalysisModalOpen}
-          onClose={() => setPositionAnalysisModalOpen(false)}
-          positionIntersection={positionIntersection}
-          checked={checked}
-          _handleChecked={handleChecked}
-          _onOpenManualAdjustments={() => {
-            setPositionAnalysisModalOpen(false);
-            setManualAdjustmentModalOpen(true);
+          onApplyChanges={async () => {
+            if (state.manualOtherChanges.trim() || hasImprovementDescriptions) {
+              await eventHandlers.handleManualRefinement({
+                checkedImprovements: selectedImprovements,
+                improvementInputs: {},
+                missingSkills: "",
+                otherChanges: state.manualOtherChanges.trim(),
+              });
+            }
           }}
-          onOpenQuickAdjustments={() => {
-            setPositionAnalysisModalOpen(false);
-            setManualAdjustmentModalOpen(true);
-            setIsManualAdjustmentMinimized(true);
-          }}
-          _companyName={companyName}
-          positionDetails={positionDetails}
-          setPositionDetails={setPositionDetails}
-          onAnalyzePosition={updatePositionIntersection}
-          isLoading={loading}
-          setsnackbarMessage={setsnackbarMessage}
-        />
-
-        <PreferredProjectsModal
-          open={preferredProjectsModalOpen}
-          onClose={() => setPreferredProjectsModalOpen(false)}
-          positionDetails={positionDetails}
-          existingRankedStories={adjustmentWorkflow.rankedStories}
-        />
-
-        {/* Password Modal */}
-        <PasswordModal
-          open={showPasswordModal}
-          onClose={() => setShowPasswordModal(false)}
+          onRefreshAnalysis={updatePositionIntersection}
         />
 
         {/* Loading backdrop */}
@@ -924,184 +479,31 @@ function CvPage({ jobDescription }: CvProps) {
             color: '#fff',
             display: 'flex',
             flexDirection: 'column',
-            zIndex: 1201, // Above sidebar (1000)
+            zIndex: 1201,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
           }}
-          open={loading || adjustmentWorkflow.isLoading}
+          open={state.loading || adjustmentWorkflow.isLoading}
         >
           {adjustmentWorkflow.isLoading ? (
-            <>
-              <TreeProgress steps={adjustmentWorkflow.progressSteps} />
-              <Typography variant="h6" sx={{ mt: 2 }}>
-                {adjustmentWorkflow.currentOperation || 'Processing...'}
-              </Typography>
-            </>
+            <TreeProgress steps={adjustmentWorkflow.progressSteps} />
           ) : (
             <>
               <CircularProgress color="inherit" />
               <Typography variant="h6" sx={{ mt: 2 }}>
-                {currentOperation}
+                {state.currentOperation}
               </Typography>
             </>
           )}
         </Backdrop>
 
-        {/* Floating Manual Adjustments Input */}
-        {manualAdjustmentModalOpen && isManualAdjustmentMinimized && (
-          <Box
-            sx={{
-              position: 'fixed',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '100%',
-              maxWidth: 'md',
-              zIndex: 1300,
-              backgroundColor: 'background.paper',
-              borderRadius: 2,
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-              border: '1px solid',
-              borderColor: 'divider',
-              p: 3,
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-              <Box>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <EditNoteIcon color="primary" fontSize="small" />
-                  CV Adjustments
-                </Typography>
-                {checked.length > 0 && (
-                  <Typography variant="caption" sx={{ color: 'text.secondary', ml: 3 }}>
-                    {checked.length} position improvement{checked.length !== 1 ? 's' : ''} selected
-                    {hasImprovementDescriptions && (
-                      <span style={{ color: '#1976d2', fontWeight: 500 }}>
-                        , {improvementsWithDescriptions.length} with descriptions
-                      </span>
-                    )}
-                  </Typography>
-                )}
-              </Box>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant="outline"
-                  size="small"
-                  onClick={() => {
-                    setIsManualAdjustmentMinimized(false);
-                    setManualAdjustmentModalOpen(false);
-                  }}
-                  disabled={loading}
-                >
-                  Close
-                </Button>
-                <Button
-                  variant="primary"
-                  size="small"
-                  loading={loading}
-                  onClick={async () => {
-                    if (manualOtherChanges.trim() || hasImprovementDescriptions) {
-                      await handleManualRefinement({
-                        checkedImprovements: checked,
-                        improvementInputs: {},
-                        missingSkills: "",
-                        otherChanges: manualOtherChanges.trim(),
-                      });
-
-                      // Clear all improvements and close the panel
-                      dispatch(clearCurrentPositionImprovements());
-                      setManualOtherChanges('');
-                      setManualAdjustmentModalOpen(false);
-                      setIsManualAdjustmentMinimized(false);
-
-                      // Request new analysis if we have position details
-                      if (positionDetails && positionDetails.trim().length >= 10) {
-                        await updatePositionIntersection();
-                      }
-                    }
-                  }}
-                  disabled={(!manualOtherChanges.trim() && !hasImprovementDescriptions) || loading}
-                >
-                  {hasImprovementDescriptions ? `Apply Changes (${improvementsWithDescriptions.length} improvements)` : 'Apply Changes'}
-                </Button>
-              </Box>
-            </Box>
-
-            {/* Display selected improvements with descriptions */}
-            {hasImprovementDescriptions && (
-              <Box sx={{ mb: 3, p: 2, backgroundColor: 'rgba(25, 118, 210, 0.05)', borderRadius: 1, border: '1px solid rgba(25, 118, 210, 0.2)' }}>
-                <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
-                  Selected Improvements with Your Experience:
-                </Typography>
-                {improvementsWithDescriptions.map((item, index) => (
-                  <Box key={index} sx={{ mb: 2, pb: 2, borderBottom: index < improvementsWithDescriptions.length - 1 ? '1px solid rgba(0,0,0,0.1)' : 'none' }}>
-                    <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                      • {item.improvement}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', pl: 2 }}>
-                      &ldquo;{item.description}&rdquo;
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            )}
-
-            <TextField
-              multiline
-              rows={3}
-              fullWidth
-              placeholder="Describe the changes you want to make to your CV... (Ctrl+Enter to apply)"
-              variant="outlined"
-              value={localManualChanges}
-              onChange={(e) => {
-                const value = e.target.value;
-                setLocalManualChanges(value);
-                // Update the main state immediately for button validation and real-time features
-                setManualOtherChanges(value);
-              }}
-              onKeyDown={async (e) => {
-                if (e.ctrlKey && e.key === 'Enter') {
-                  e.preventDefault();
-                  if ((manualOtherChanges.trim() || hasImprovementDescriptions) && !loading) {
-                    await handleManualRefinement({
-                      checkedImprovements: checked,
-                      improvementInputs: {},
-                      missingSkills: "",
-                      otherChanges: manualOtherChanges.trim(),
-                    });
-
-                    // Clear all improvements and close the panel
-                    dispatch(clearCurrentPositionImprovements());
-                    setManualOtherChanges('');
-                    setManualAdjustmentModalOpen(false);
-                    setIsManualAdjustmentMinimized(false);
-
-                    // Request new analysis if we have position details
-                    if (positionDetails && positionDetails.trim().length >= 10) {
-                      await updatePositionIntersection();
-                    }
-                  }
-                }
-              }}
-              sx={{
-                '& .MuiInputBase-root': {
-                  fontSize: '14px',
-                  lineHeight: 1.5,
-                },
-              }}
-            />
-          </Box>
-        )}
-
-
-        {/* Snackbar for messages */}
+        {/* Snackbar */}
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          open={snackbarMessage !== null}
+          open={state.snackbarMessage !== null}
           autoHideDuration={6000}
-          onClose={handleClose}
-          message={snackbarMessage}
-          color="error"
+          onClose={eventHandlers.handleClose}
+          message={state.snackbarMessage}
         />
-      </>
       </Box>
     </PageWrapper>
   );

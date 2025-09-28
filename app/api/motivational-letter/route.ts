@@ -120,7 +120,9 @@ Decide: Are any of these stories worth including, or should I focus on CV experi
   const letterGenerationMessages = [
     {
       role: 'system' as const,
-      content: `Write an authentic, conversational motivational letter. Focus on storytelling and genuine human connection rather than corporate sales language. Make it sound like the candidate is having a thoughtful conversation about their work experience.`
+      content: `Write an authentic, conversational motivational letter. Focus on storytelling and genuine human connection rather than corporate sales language. Make it sound like the candidate is having a thoughtful conversation about their work experience.
+
+CRITICAL ACCURACY REQUIREMENT: When referencing project stories, you MUST be completely accurate. Only mention technical details that are explicitly stated in the provided story content. Do not infer, embellish, or add plausible-sounding technical details that aren't actually in the source material. If the story says "SQL optimization", don't add specifics about indexes, DTOs, or cursors unless those exact terms appear in the story.`
     },
     {
       role: 'user' as const,
@@ -139,6 +141,14 @@ ${requestedStories.length > 0 ? `DETAILED PROJECT STORIES:
 ${requestedStories.map((storyIndex, i) => {
   const story = relevantStories[storyIndex];
   const settings = getSettings();
+  
+  // Extract key facts from the story for accurate summarization
+  const storyLines = story.content.split('\n');
+  const keyFacts = storyLines
+    .filter(line => line.trim().length > 0 && !line.startsWith('#'))
+    .slice(0, 10)  // First 10 non-header lines usually contain the key facts
+    .join('\n');
+  
   return `
 Story ${i + 1}: ${story.title}
 Category: ${story.category}
@@ -148,36 +158,62 @@ ${story.metrics?.usersAffected ? `Users affected: ${story.metrics.usersAffected}
 Technologies: ${story.tags.join(', ')}
 Full story URL: ${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}
 
-Full story: ${story.content}
+KEY FACTS TO USE (only mention these specific details):
+${keyFacts}
+
+FULL STORY FOR CONTEXT (DO NOT add details from here that aren't in the key facts above):
+${story.content}
 `;
 }).join('\n\n')}` : 'NOTE: Focus on CV experience and job requirements - no specific project stories were deemed relevant enough to include.'}
 
 WRITING STYLE & STRUCTURE:
-Write conversationally but professionally - like explaining to a colleague over coffee.
+Write conversationally - like you're explaining your experience to a colleague. Each section should flow naturally into the next.
 
-Format:
-1. "Dear [Company] Team," + what caught your eye about this specific role
-2. ONE relevant story: problem → solution → result (break complex stories into 2-3 paragraphs)
-3. Brief skills/experience summary (separate paragraph)
-4. Closing question about their current work
-5. Professional signature: enthusiasm statement + "Best regards," + "${body.candidate.name}"
+Format with smooth transitions:
+1. Opening (2-3 sentences): "Dear [Company] Team," + what specific problem they're solving that interests you
+2. Story setup (2-3 sentences): Bridge from their problem to your similar experience
+3. Story details (2-3 SHORT paragraphs, 2-3 sentences each): Problem → Action → Result
+4. Skills bridge (1-2 sentences): Link the story lesson to your broader experience
+5. Closing (2-3 sentences): Specific question + enthusiasm
+
+PARAGRAPH RULES:
+- Maximum 3 sentences per paragraph
+- Each paragraph = one clear idea
+- Use single-sentence paragraphs for impact
+- Break at natural pauses where someone would breathe
+
+TRANSITION EXAMPLES:
+- Opening → Story: "I've worked on similar problems at..."
+- Story → Skills: "This kind of work is what I do best..."  
+- Skills → Closing: "I'd love to bring this experience to..."
 
 Guidelines:
-- Keep sentences short and direct: "I built X. It did Y. Result was Z."
-- Break technical stories into logical chunks for readability
-- Include company-specific details to show research
-- Avoid corporate buzzwords and trying to sound impressive
-- When mentioning project stories, include links like: "I built a calculator (full story: https://example.com) that..."
+- Short, punchy sentences (max 15 words when possible)
+- Start new paragraph after every 2-3 sentences
+- Use linking phrases: "That's why...", "This taught me...", "Which is why..."
+- When mentioning project stories, include link: "(full story: URL)"
+- CRITICAL: Only use technical details EXPLICITLY in the provided story
+- NO fabricated details (no "DTOs", "cursors", etc unless in source)
+- Use simple, everyday words: say "worked on" not "tackled", "fixed" not "remediated", "built" not "architected"
+- Avoid corporate buzzwords and fancy vocabulary - write like you're talking to a friend
 
-Example ending:
-"If you're open to a chat, I'd love to hear about [specific question].
+Example rhythm:
+"Your challenge with X caught my attention. I've solved similar problems.
 
-I'm excited about the opportunity to contribute to [company] and help [value].
+At Company, we had [problem]. Users were [impact].
+
+I discovered [root cause]. So I [action].
+
+The result: [outcome].
+
+This kind of [type] work is what I do best. I've spent X years [relevant experience].
+
+I'd love to hear about [specific question]. [Enthusiasm statement].
 
 Best regards,
-[Full Name]"
+[Name]"
 
-Keep it 300-350 words max. Be clear and authentic, not clever.`
+Target: 250-300 words. Readable in 45 seconds.`
     }
   ];
 

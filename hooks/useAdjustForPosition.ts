@@ -59,8 +59,14 @@ export const useAdjustForPosition = ({
     const result: StoryRankingResponse = await response.json();
     setStepCompleted('analyzing');
 
+    // Add delay before moving to next step
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     setStepActive('ranking');
     setCurrentOperation('Ranking project stories...');
+
+    // Add delay to show ranking step
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     setRankedStories(result.selectedStories);
     setStepCompleted('ranking');

@@ -15,7 +15,7 @@ import {
   RestartAlt as RestartAltIcon,
   Extension as ExtensionIcon,
   Storage as StorageIcon,
-  AutoAwesome as AutoAwesomeIcon,
+  EmojiEvents as EmojiEventsIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -232,8 +232,8 @@ const CvSidebar = ({
     },
     {
       id: 'preferred-projects',
-      label: 'Preferred Projects',
-      icon: <AutoAwesomeIcon />,
+      label: 'Top Projects',
+      icon: <EmojiEventsIcon />,
       onClick: onViewPreferredProjects || (() => {}),
       disabled: (loadingButtons.preferredProjects || false) && !hasPreferredProjects,
       visible: hasAdjustedCv || (loadingButtons.preferredProjects || false),
@@ -274,12 +274,12 @@ const CvSidebar = ({
       id: 'clear-cache',
       label: lastCacheStatus !== null
         ? `Clear AI Cache (${lastCacheStatus ? 'Recently used cache' : 'Fresh AI responses'})`
-        : 'Clear AI Cache',
+        : onClearCache ? 'Clear AI Cache' : 'Cache Empty',
       icon: <StorageIcon />,
       onClick: onClearCache || (() => {}),
       disabled: !onClearCache,
-      visible: !!onClearCache,
-      completed: false,
+      visible: true, // Always show the button
+      completed: false, // Never show as completed (green)
       loading: loadingButtons.clearCache || false,
     },
     {

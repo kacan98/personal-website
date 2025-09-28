@@ -121,7 +121,6 @@ export const useAdjustCvBasedOnPosition = ({
       }
 
       if (companyName) setCompanyName(companyName)
-      setsnackbarMessage('CV transformed')
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setsnackbarMessage('Error transforming CV: ' + errorMessage)

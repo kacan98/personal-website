@@ -167,19 +167,35 @@ export function clearCacheByPrefix(prefix: string): void {
 export function getCacheStats() {
   let totalSize = 0;
   let expiredCount = 0;
+  let cvRelatedSize = 0;
+  let cvRelatedActiveCount = 0;
   const now = Date.now();
 
-  for (const entry of cache.values()) {
+  // CV-related prefixes that the clear button targets
+  const cvPrefixes = ['personalize-cv:', 'position-summary:', 'motivational-letter:', 'job-cv-intersection:'];
+
+  for (const [key, entry] of cache.entries()) {
     totalSize++;
-    if (now - entry.timestamp > entry.ttl) {
+    const isExpired = now - entry.timestamp > entry.ttl;
+    if (isExpired) {
       expiredCount++;
+    }
+
+    // Check if this is a CV-related cache entry
+    const isCvRelated = cvPrefixes.some(prefix => key.startsWith(prefix));
+    if (isCvRelated) {
+      cvRelatedSize++;
+      if (!isExpired) {
+        cvRelatedActiveCount++;
+      }
     }
   }
 
   return {
     totalEntries: totalSize,
     expiredEntries: expiredCount,
-    activeEntries: totalSize - expiredCount
+    activeEntries: totalSize - expiredCount,
+    cvActiveEntries: cvRelatedActiveCount // New field for CV-specific entries
   };
 }
 

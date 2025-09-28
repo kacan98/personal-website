@@ -15,7 +15,9 @@ interface ButtonProps extends Omit<MuiButtonProps, 'variant'> {
   loading?: boolean;
 }
 
-const StyledButton = styled(MuiButton)<{
+const StyledButton = styled(MuiButton, {
+  shouldForwardProp: (prop) => !['customvariant', 'isactive', 'isloading'].includes(prop as string),
+})<{
   customvariant: CustomButtonVariant;
   isactive?: boolean;
   isloading?: boolean;
