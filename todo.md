@@ -1,15 +1,6 @@
-I think we shuld include some loop in AI that makes sure we do not add anything untruthful. Maybe ask first what the AI would add or change and then verify that it is true and first then modify the CV.
-
 Also it should be possible to chat with the current CV and ask like "Why are you a good fit for this job?" and it should answer based on the CV content back and forth.
 
-## Story Collection for Better Motivational Letters
-Goal: Collect real project stories so GPT can write more personalized, specific letters
-
-### Stories to capture:
-✅ Playwright job scraper (LinkedIn/Instagram automation)
-✅ 10x performance improvement at Dynaway
-✅ Git-to-JIRA Bridge
-✅ AnkeriMedia startup (50+ meetings)
-✅ Portfolio/AI platform
-✅ Property Investment Calculator
-⬜ Review App (R8tit)
+- [ ] Split up the CV adjustment code into multiple files. It's wayyyyyy too much in one file now.
+- [ ] Add testing. The CV is... quite wobly and complex now and... breaking it is easier and easier.
+- [ ] In the CV show the ULR of the items in lists. Like the project URL, or the company URL when editing! There should be two fields visible when I click the item. Now there is only one.
+- [ ] Fix the input fields (e.g. CV Adjust) because the input field there is hard tied to state and it takes a very long time from pressing a key to seeing the result. It should be debounced.

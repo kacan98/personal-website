@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
+import { Button as MuiButton, ButtonProps as MuiButtonProps, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { BRAND_COLORS } from '@/app/colors';
 
@@ -12,21 +12,29 @@ interface ButtonProps extends Omit<MuiButtonProps, 'variant'> {
   isActive?: boolean;
   target?: string;
   rel?: string;
+  loading?: boolean;
 }
 
-const StyledButton = styled(MuiButton)<{ 
-  customvariant: CustomButtonVariant; 
-  isactive?: string;
-}>(({ customvariant, isactive }) => {
+const StyledButton = styled(MuiButton)<{
+  customvariant: CustomButtonVariant;
+  isactive?: boolean;
+  isloading?: boolean;
+}>(({ customvariant, isactive, isloading }) => {
   const baseStyles = {
     borderRadius: '12px',
     fontWeight: 500,
     textTransform: 'none' as const,
     fontSize: '0.95rem',
     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative' as const,
+    cursor: isloading ? 'default' : 'pointer',
     '&:focus-visible': {
       outline: `2px solid ${BRAND_COLORS.accent}`,
       outlineOffset: '2px',
+    },
+    '&:disabled': {
+      backgroundColor: isloading ? undefined : 'rgba(0, 0, 0, 0.12)',
+      color: isloading ? undefined : undefined,
     },
   };
 
@@ -81,7 +89,7 @@ const StyledButton = styled(MuiButton)<{
       };
     
     case 'nav':
-      const isActiveState = isactive === 'true';
+      const isActiveState = isactive;
       return {
         ...baseStyles,
         borderRadius: '20px',
@@ -115,29 +123,40 @@ const StyledButton = styled(MuiButton)<{
   }
 });
 
-export const Button: React.FC<ButtonProps> = ({ 
-  variant = 'primary', 
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
   isActive = false,
+  loading = false,
   target,
   rel,
-  children, 
-  ...props 
+  children,
+  ...props
 }) => {
-  // If target is provided, render as a link component
-  const componentProps = target ? { 
-    component: 'a' as const,
-    target,
-    rel
-  } : {};
-
   return (
     <StyledButton
       customvariant={variant}
-      isactive={isActive ? 'true' : undefined}
-      {...componentProps}
+      isactive={isActive}
+      isloading={loading}
+      disabled={loading || props.disabled}
+      href={target}
+      rel={rel}
       {...props}
     >
-      {children}
+      <span style={{ opacity: loading ? 0.3 : 1 }}>
+        {children}
+      </span>
+      {loading && (
+        <CircularProgress
+          size={16}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: variant === 'primary' ? '#ffffff' : BRAND_COLORS.accent,
+          }}
+        />
+      )}
     </StyledButton>
   );
 };

@@ -146,28 +146,7 @@ export const cvSv: CVSettings = {
     {
       id: "personal-projects",
       title: "Personliga Projekt",
-      bulletPoints: [
-        {
-          iconName: "gitHub",
-          text: "Git-till-JIRA Bridge - Automatiserat tidsspårningssystem som synkroniserar Git commits till JIRA (React/Node.js)",
-          url: "https://log-bridge.vercel.app"
-        },
-        {
-          iconName: "gitHub",
-          text: "Fastighetsinvesteringskalkylator - React/Redux finansiellt analysverktyg",
-          url: "https://kacan98.github.io/buying-vs-renting/"
-        },
-        {
-          iconName: "gitHub",
-          text: "Recensionsapp - Enkel rating app med databaslagring (Angular/.NET/Azure)",
-          url: "https://github.com/kacan98/r8tit"
-        },
-        {
-          iconName: "gitHub",
-          text: "Tjeckien Reseguide - Astro-baserad reseguide",
-          url: "https://czech-guide.vercel.app/en/"
-        }
-      ]
+      bulletPoints: [] // Will be populated dynamically from Project Stories
     }
   ]
 };

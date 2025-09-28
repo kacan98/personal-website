@@ -23,9 +23,7 @@ export function getCvData(locale: string) {
   }
 }
 
-export function getCvSettings(locale: string) {
-  return getCvData(locale);
-}
+// getCvSettings moved to cv-server.ts to avoid fs imports in client-side code
 
 export function getJobsData(locale: string) {
   switch (locale) {

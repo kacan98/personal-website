@@ -35,9 +35,10 @@ import ManualAdjustmentModal from "./modals/ManualAdjustmentModal";
 import MotivationalLetterModal from "./modals/MotivationalLetterModal";
 import TranslationModal from "./modals/TranslationModal";
 import PositionAnalysisModal from "./modals/PositionAnalysisModal";
+import PreferredProjectsModal from "./modals/PreferredProjectsModal";
 import { CVSettings } from "@/types";
 import { deepClone } from "./utils/cvDiffTracker";
-import { getCvSettings } from "@/data";
+// Removed direct import - now using API fetch
 import { ensureCvIds } from "@/utils/cvIds";
 import { useLocale } from 'next-intl';
 import { useCvDiffAnalysis } from "./utils/cvDiffAnalyzer";
@@ -52,6 +53,9 @@ import {
   markImprovementsAsUsed,
   clearCurrentPositionImprovements
 } from '@/redux/slices/improvementDescriptions';
+import { useAdjustForPosition } from '@/hooks/useAdjustForPosition';
+import TreeProgress from '@/components/ui/TreeProgress';
+import { RankedStory } from '@/types/adjustment';
 
 export type CvProps = {
   jobDescription?: string
@@ -79,22 +83,30 @@ function CvPage({ jobDescription }: CvProps) {
   // Load original CV from data files and sync with Redux to ensure they match initially
   useEffect(() => {
     if (!originalCv) {
-      try {
-        const loadedOriginalCv = getCvSettings(locale);
-        const cvWithIds = ensureCvIds(loadedOriginalCv);
-        const clonedCv = deepClone(cvWithIds);
+      const loadCvData = async () => {
+        try {
+          const response = await fetch(`/api/cv/settings?locale=${locale}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch CV settings');
+          }
+          const loadedOriginalCv = await response.json();
+          const cvWithIds = ensureCvIds(loadedOriginalCv);
+          const clonedCv = deepClone(cvWithIds);
 
-        // Set original CV for comparison
-        setOriginalCv(clonedCv);
+          // Set original CV for comparison
+          setOriginalCv(clonedCv);
 
-        // Ensure Redux state matches the original CV exactly on initial load
-        // Only initialize if Redux CV is significantly different (not just from previous edits)
-        if (!reduxCvProps.name || reduxCvProps.name !== cvWithIds.name) {
-          dispatch(initCv(cvWithIds));
+          // Ensure Redux state matches the original CV exactly on initial load
+          // Only initialize if Redux CV is significantly different (not just from previous edits)
+          if (!reduxCvProps.name || reduxCvProps.name !== cvWithIds.name) {
+            dispatch(initCv(cvWithIds));
+          }
+        } catch (error) {
+          console.error('Failed to load original CV:', error);
         }
-      } catch (error) {
-        console.error('Failed to load original CV:', error);
-      }
+      };
+
+      loadCvData();
     }
   }, [locale]); // Only load once per locale
 
@@ -150,6 +162,7 @@ function CvPage({ jobDescription }: CvProps) {
   const [motivationalLetterModalOpen, setMotivationalLetterModalOpen] = useState(false);
   const [translationModalOpen, setTranslationModalOpen] = useState(false);
   const [positionAnalysisModalOpen, setPositionAnalysisModalOpen] = useState(false);
+  const [preferredProjectsModalOpen, setPreferredProjectsModalOpen] = useState(false);
   const [extensionModalOpen, setExtensionModalOpen] = useState(false);
 
   // Existing state (simplified)
@@ -174,29 +187,16 @@ function CvPage({ jobDescription }: CvProps) {
   const [currentOperation, setCurrentOperation] = useState<string>(t('discussingWithAI'));
   const [cvAdjusted, setCvAdjusted] = useState(false);
   const [hasManualRefinements, setHasManualRefinements] = useState(false);
+  const [hasPreferredProjects, setHasPreferredProjects] = useState(false);
   const [_cacheStatusNotification, _setCacheStatusNotification] = useState<{
     show: boolean;
     fromCache: boolean;
   } | null>(null);
   const [lastCacheStatus, setLastCacheStatus] = useState<boolean | null>(null);
   const [cacheStats, setCacheStats] = useState<{ activeEntries: number } | null>(null);
+  const [clearingCache, setClearingCache] = useState(false);
 
   const [fontSize, setFontSize] = useState(12);
-
-  // Refs for tracking job loading state
-  const jobDescriptionReceived = useRef(false);
-  const jobLoadingTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  // Manual adjustments modal state
-  const [isManualAdjustmentMinimized, setIsManualAdjustmentMinimized] = useState(false);
-  const [manualOtherChanges, setManualOtherChanges] = useState("");
-  const [localManualChanges, setLocalManualChanges] = useState("");
-
-  // Sync local manual changes with main state when it's cleared programmatically
-  useEffect(() => {
-    setLocalManualChanges(manualOtherChanges);
-  }, [manualOtherChanges]);
-
 
   // Hooks
   const { getMotivationalLetter,
@@ -229,6 +229,35 @@ function CvPage({ jobDescription }: CvProps) {
       extractedCompanyName: companyName
     })
 
+  // Use the new adjustment workflow hook
+  const adjustmentWorkflow = useAdjustForPosition({
+    onCvUpdate: (stories: RankedStory[]) => {
+      // The CV is automatically updated through the API call
+    },
+    onMotivationalLetterUpdate: (letter: string) => {
+      setMotivationalLetter({ letter });
+    },
+    onError: (error: string) => {
+      setsnackbarMessage(`Error during adjustment: ${error}`);
+    },
+    adjustCvBasedOnPosition,
+    getMotivationalLetter
+  });
+
+  // Refs for tracking job loading state
+  const jobDescriptionReceived = useRef(false);
+  const jobLoadingTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Manual adjustments modal state
+  const [isManualAdjustmentMinimized, setIsManualAdjustmentMinimized] = useState(false);
+  const [manualOtherChanges, setManualOtherChanges] = useState("");
+  const [localManualChanges, setLocalManualChanges] = useState("");
+
+  // Sync local manual changes with main state when it's cleared programmatically
+  useEffect(() => {
+    setLocalManualChanges(manualOtherChanges);
+  }, [manualOtherChanges]);
+
   const { refineCv } = useRefineCv({
     originalCv: originalCv || reduxCvProps,
     currentCv: reduxCvProps,
@@ -247,31 +276,24 @@ function CvPage({ jobDescription }: CvProps) {
   // Modal handlers
   const handleAdjustForPosition = async () => {
     if (positionDetails && positionDetails.trim().length > 0) {
-    // Wait for auth loading to complete, then check authentication
-    if (authLoading) {
-      return; // Don't proceed while auth is still loading
-    }
+      // Wait for auth loading to complete, then check authentication
+      if (authLoading) {
+        return; // Don't proceed while auth is still loading
+      }
 
-    if (!isAuthenticated) {
-      setShowPasswordModal(true);
-      return;
-    }
+      if (!isAuthenticated) {
+        setShowPasswordModal(true);
+        return;
+      }
 
-      // Run CV adjustment and motivational letter generation in parallel
-      setLoading(true);
-      setCurrentOperation('Personalizing CV and generating motivational letter...');
       try {
-        await Promise.all([
-          adjustCvBasedOnPosition(),
-          getMotivationalLetter(positionDetails, checked, selectedLanguage)
-        ]);
-        setsnackbarMessage('CV personalized and motivational letter generated successfully!');
+        await adjustmentWorkflow.startAdjustment(positionDetails, checked, selectedLanguage);
+        setsnackbarMessage('CV personalized with relevant projects and motivational letter generated successfully!');
         setCvAdjusted(true);
+        setHasPreferredProjects(true);
       } catch (error) {
+        console.error('Error during position adjustment:', error);
         setsnackbarMessage('Error during CV personalization or letter generation');
-      } finally {
-        setLoading(false);
-        setCurrentOperation('Discussing with AI...');
       }
     }
   };
@@ -454,8 +476,7 @@ function CvPage({ jobDescription }: CvProps) {
       // Check authentication before automatically adjusting CV
       if (!isAuthenticated) {
         setShowPasswordModal(true);
-        setLoading(false); // Stop the loading spinner
-        setCurrentOperation('Discussing with AI...');
+        adjustmentWorkflow.resetWorkflow(); // Reset workflow state
         return;
       }
       handleAdjustForPosition();
@@ -627,6 +648,7 @@ function CvPage({ jobDescription }: CvProps) {
 
   // Clear AI cache
   const handleClearCache = async () => {
+    setClearingCache(true);
     try {
       const response = await fetch('/api/clear-cache', {
         method: 'POST',
@@ -637,7 +659,7 @@ function CvPage({ jobDescription }: CvProps) {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Cache cleared:', result);
+        // Cache cleared successfully
         _setCacheStatusNotification(null); // Reset cache status when cache is cleared
         setLastCacheStatus(null); // Reset sidebar indicator
         fetchCacheStats(); // Refresh cache stats
@@ -649,6 +671,8 @@ function CvPage({ jobDescription }: CvProps) {
     } catch (error) {
       console.error('Error clearing cache:', error);
       setsnackbarMessage('❌ Error clearing cache');
+    } finally {
+      setClearingCache(false);
     }
   };
 
@@ -672,11 +696,13 @@ function CvPage({ jobDescription }: CvProps) {
           }}
           onViewMotivationalLetter={() => setMotivationalLetterModalOpen(true)}
           onViewPositionAnalysis={() => setPositionAnalysisModalOpen(true)}
+          onViewPreferredProjects={() => setPreferredProjectsModalOpen(true)}
           onTranslate={() => setTranslationModalOpen(true)}
           hasMotivationalLetter={!!motivationalLetter}
           hasPositionAnalysis={!!positionIntersection}
           hasAdjustedCv={cvAdjusted}
           hasManualRefinements={hasManualRefinements}
+          hasPreferredProjects={hasPreferredProjects}
           editable={editable}
           showDiff={showDiff}
           onToggleDiff={() => setShowDiff(!showDiff)}
@@ -686,6 +712,15 @@ function CvPage({ jobDescription }: CvProps) {
           onClearCache={cacheStats && cacheStats.activeEntries > 0 ? handleClearCache : undefined}
           lastCacheStatus={lastCacheStatus}
           onOpenExtensionModal={() => setExtensionModalOpen(true)}
+          loading={loading}
+          loadingButtons={{
+            adjustPosition: adjustmentWorkflow.isLoading,
+            manualAdjustments: loading && currentOperation.includes('Refining'),
+            motivationalLetter: adjustmentWorkflow.isLoading && (adjustmentWorkflow.progressSteps.generatingLetter === 'active' || adjustmentWorkflow.progressSteps.personalizingCV === 'active'),
+            positionAnalysis: loading && currentOperation.includes('Analysis'),
+            translate: loading && currentOperation.includes('Translating'),
+            clearCache: clearingCache,
+          }}
         />
 
         {/* Extension Download Modal */}
@@ -823,7 +858,7 @@ function CvPage({ jobDescription }: CvProps) {
           editableMotivationalLetter={editableMotivationalLetter}
           setEditableMotivationalLetter={setEditableMotivationalLetter}
           onDownloadPDF={downloadMotivationalLetterPDF}
-          _onAdjustLetter={handleAdjustLetter}
+          onAdjustLetter={handleAdjustLetter}
           onTranslateLetter={handleTranslateBoth}
           onGenerateLetter={getMotivationalLetter}
           selectedLanguage={selectedLanguage}
@@ -870,6 +905,13 @@ function CvPage({ jobDescription }: CvProps) {
           setsnackbarMessage={setsnackbarMessage}
         />
 
+        <PreferredProjectsModal
+          open={preferredProjectsModalOpen}
+          onClose={() => setPreferredProjectsModalOpen(false)}
+          positionDetails={positionDetails}
+          existingRankedStories={adjustmentWorkflow.rankedStories}
+        />
+
         {/* Password Modal */}
         <PasswordModal
           open={showPasswordModal}
@@ -884,12 +926,23 @@ function CvPage({ jobDescription }: CvProps) {
             flexDirection: 'column',
             zIndex: 1201, // Above sidebar (1000)
           }}
-          open={loading}
+          open={loading || adjustmentWorkflow.isLoading}
         >
-          <CircularProgress color="inherit" />
-          <Typography variant="h6" sx={{ mt: 2 }}>
-            {currentOperation}
-          </Typography>
+          {adjustmentWorkflow.isLoading ? (
+            <>
+              <TreeProgress steps={adjustmentWorkflow.progressSteps} />
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                {adjustmentWorkflow.currentOperation || 'Processing...'}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <CircularProgress color="inherit" />
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                {currentOperation}
+              </Typography>
+            </>
+          )}
         </Backdrop>
 
         {/* Floating Manual Adjustments Input */}
@@ -936,12 +989,14 @@ function CvPage({ jobDescription }: CvProps) {
                     setIsManualAdjustmentMinimized(false);
                     setManualAdjustmentModalOpen(false);
                   }}
+                  disabled={loading}
                 >
                   Close
                 </Button>
                 <Button
                   variant="primary"
                   size="small"
+                  loading={loading}
                   onClick={async () => {
                     if (manualOtherChanges.trim() || hasImprovementDescriptions) {
                       await handleManualRefinement({
@@ -965,7 +1020,7 @@ function CvPage({ jobDescription }: CvProps) {
                   }}
                   disabled={(!manualOtherChanges.trim() && !hasImprovementDescriptions) || loading}
                 >
-                  {loading ? 'Refining...' : hasImprovementDescriptions ? `Apply Changes (${improvementsWithDescriptions.length} improvements)` : 'Apply Changes'}
+                  {hasImprovementDescriptions ? `Apply Changes (${improvementsWithDescriptions.length} improvements)` : 'Apply Changes'}
                 </Button>
               </Box>
             </Box>

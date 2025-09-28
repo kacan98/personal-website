@@ -15,7 +15,7 @@ export const useAdjustMotivationalLetter = ({
     language: string = 'English'
   ) => {
     try {
-      const response = await fetch('/api/motivational-letter', {
+      const response = await fetch('/api/motivational-letter/adjust', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

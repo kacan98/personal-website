@@ -1,6 +1,6 @@
 "use client";
 import { usePicture } from "@/hooks/usePicture";
-import { getCVPicture } from "@/data";
+import { getCVPicture } from "@/data/images";
 import {
   Avatar,
   Box,

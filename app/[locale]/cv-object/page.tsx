@@ -1,6 +1,5 @@
 'use client';
 
-import { getCvSettings } from "@/data";
 import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CopyButton from "./CopyButton";
@@ -8,9 +7,16 @@ import { CVSettings } from "@/types";
 
 function Page() {
   const [cvSettings, setCvSettings] = useState<CVSettings | null>(null);
-  
+
   useEffect(() => {
-    setCvSettings(getCvSettings('en'));
+    const loadCvSettings = async () => {
+      const response = await fetch('/api/cv/settings?locale=en');
+      if (response.ok) {
+        const settings = await response.json();
+        setCvSettings(settings);
+      }
+    };
+    loadCvSettings();
   }, []);
   
   if (!cvSettings) {

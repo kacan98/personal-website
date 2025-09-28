@@ -1,5 +1,5 @@
 import { ChatPOSTBody } from "@/app/api/chat/chatAPI.model";
-import { getCvSettings } from "@/data";
+import { getSettings } from "@/data";
 import projectsSimple from "@/data/projects-simple.json";
 import { getOpenAIClient, extractContentFromChunk } from "@/lib/openai-service";
 
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { chatHistory, language } = body as ChatPOSTBody;
 
-    const cvSettings = getCvSettings(language || 'en');
+    const cvSettings = getSettings();
 
     // Determine language instruction
     const languageInstruction = language === 'da' 

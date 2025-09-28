@@ -5,23 +5,19 @@ import {
   Box,
   Alert,
   SelectChangeEvent,
-  Chip,
-  Card,
-  CardContent,
 } from "@mui/material";
 import {
   GetApp as GetAppIcon,
   Edit as EditIcon,
   AutoFixHigh as AutoFixHighIcon,
   Translate as TranslateIcon,
-  CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motivational-letter.model";
 import CvLanguageSelectionComponent from "../languageSelect";
-import { useFreeformLetterAdjustment } from "../hooks/useFreeformLetterAdjustment";
+import { StoryCard } from "../components/StoryCard";
 import { CVSettings } from "@/types";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
@@ -33,7 +29,7 @@ interface MotivationalLetterModalProps {
   editableMotivationalLetter: MotivationalLetterResponse | null;
   setEditableMotivationalLetter: (letter: MotivationalLetterResponse | null) => void;
   onDownloadPDF: () => void;
-  _onAdjustLetter: (comments: string) => Promise<void>;
+  onAdjustLetter: (comments: string) => Promise<void>;
   onTranslateLetter: () => Promise<void>;
   onGenerateLetter: (positionDetails: string, checkedItems: string[], language: string) => Promise<void>;
   selectedLanguage: string;
@@ -55,7 +51,7 @@ const MotivationalLetterModal = ({
   editableMotivationalLetter,
   setEditableMotivationalLetter,
   onDownloadPDF,
-  _onAdjustLetter,
+  onAdjustLetter,
   onTranslateLetter,
   onGenerateLetter,
   selectedLanguage,
@@ -80,13 +76,6 @@ const MotivationalLetterModal = ({
 
   const letterToShow = editableMotivationalLetter || motivationalLetter;
 
-  // Hook for freeform letter adjustment
-  const { adjustLetterFreeform } = useFreeformLetterAdjustment({
-    setMotivationalLetter: setEditableMotivationalLetter,
-    positionDetails,
-    candidate,
-    strongPoints: checked,
-  });
 
   // Simple text conversion functions
   const convertLetterToText = (letter: MotivationalLetterResponse): string => {
@@ -159,11 +148,8 @@ const MotivationalLetterModal = ({
 
     setIsAdjusting(true);
     try {
-      // Get current letter as text
-      const currentLetterText = convertLetterToText(letterToShow);
-
-      // Use freeform adjustment
-      await adjustLetterFreeform(currentLetterText, adjustmentComments.trim());
+      // Use the proper onAdjustLetter function passed from parent
+      await onAdjustLetter(adjustmentComments.trim());
 
       // Clear the input
       setAdjustmentComments('');
@@ -195,76 +181,51 @@ const MotivationalLetterModal = ({
         )}
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {letterToShow.selectedStories.map((story) => (
-            <Card key={story.id} variant="outlined" sx={{ backgroundColor: 'rgba(0,0,0,0.02)' }}>
-              <CardContent sx={{ p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CheckCircleIcon sx={{ fontSize: 16, color: 'success.main' }} />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {story.title}
-                    </Typography>
-                    <Button
-                      variant="secondary"
-                      size="small"
-                      onClick={() => router.push(`/${locale}${story.url || ''}`)}
-                      sx={{ minWidth: 'auto', p: 0.5, fontSize: '0.75rem' }}
-                    >
-                      View Story →
-                    </Button>
-                  </Box>
-                  <Chip
-                    label={`${Math.round(story.relevance * 100)}% match`}
+          {letterToShow.selectedStories.map((story, index) => (
+            <Box key={story.id}>
+              <StoryCard
+                story={{
+                  id: story.id,
+                  title: story.title,
+                  url: story.url || '',
+                  category: story.category,
+                  relevance: story.relevance,
+                  metrics: story.metrics,
+                  tags: story.tags,
+                  reasoning: (story as any).reasoning
+                }}
+                index={index}
+                isHighlighted={false}
+                showViewButton={true}
+                showMatchPercentage={true}
+                showTags={true}
+                maxTags={6}
+                variant="compact"
+              />
+              {story.fullUrl && (
+                <Box sx={{
+                  mt: 1,
+                  p: 1,
+                  backgroundColor: 'rgba(0,0,0,0.05)',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace', flexGrow: 1 }}>
+                    {story.fullUrl}
+                  </Typography>
+                  <Button
+                    variant="secondary"
                     size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
+                    onClick={() => navigator.clipboard.writeText(story.fullUrl)}
+                    sx={{ minWidth: 'auto', p: 0.5, fontSize: '0.7rem' }}
+                  >
+                    Copy
+                  </Button>
                 </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <Chip label={story.category} size="small" color="secondary" />
-                  {story.metrics?.impact && (
-                    <Typography variant="caption" color="text.secondary">
-                      Impact: {story.metrics.impact}
-                    </Typography>
-                  )}
-                </Box>
-
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                  {story.tags.slice(0, 6).map(tag => (
-                    <Chip key={tag} label={tag} size="small" variant="outlined" />
-                  ))}
-                  {story.tags.length > 6 && (
-                    <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center', ml: 0.5 }}>
-                      +{story.tags.length - 6} more
-                    </Typography>
-                  )}
-                </Box>
-
-                {story.fullUrl && (
-                  <Box sx={{
-                    p: 1,
-                    backgroundColor: 'rgba(0,0,0,0.05)',
-                    borderRadius: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1
-                  }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace', flexGrow: 1 }}>
-                      {story.fullUrl}
-                    </Typography>
-                    <Button
-                      variant="secondary"
-                      size="small"
-                      onClick={() => navigator.clipboard.writeText(story.fullUrl)}
-                      sx={{ minWidth: 'auto', p: 0.5, fontSize: '0.7rem' }}
-                    >
-                      Copy
-                    </Button>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
+              )}
+            </Box>
           ))}
         </Box>
       </Box>
@@ -509,6 +470,7 @@ const MotivationalLetterModal = ({
                 <Button
                   variant="primary"
                   startIcon={<AutoFixHighIcon />}
+                  loading={isAdjusting}
                   onClick={handleAdjustWithComments}
                   disabled={!adjustmentComments.trim() || isAdjusting || isLoading}
                   sx={{
@@ -517,7 +479,7 @@ const MotivationalLetterModal = ({
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  {isAdjusting ? 'Adjusting...' : 'Apply Changes'}
+                  Apply Changes
                 </Button>
               </Box>
             </Box>

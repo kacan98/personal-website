@@ -144,28 +144,7 @@ export const cvConfigEn: CVSettings = {
     {
       id: "personal-projects",
       title: "Personal Projects",
-      bulletPoints: [
-        {
-          iconName: "gitHub",
-          text: "Git-to-JIRA Bridge - Automated time tracking system syncing Git commits to JIRA (React/Node.js)",
-          url: "https://log-bridge.vercel.app"
-        },
-        {
-          iconName: "gitHub",
-          text: "Property Investment Calculator - React/Redux financial analysis tool",
-          url: "https://kacan98.github.io/buying-vs-renting/"
-        },
-        {
-          iconName: "gitHub",
-          text: "Review App - Simple rating app with database storage (Angular/.NET/Azure)",
-          url: "https://github.com/kacan98/r8tit"
-        },
-        {
-          iconName: "gitHub",
-          text: "Czech Republic Travel Guide - Astro-based travel guide",
-          url: "https://czech-guide.vercel.app/en/"
-        }
-      ]
+      bulletPoints: [] // Will be populated dynamically from Project Stories
     }
   ]
 };

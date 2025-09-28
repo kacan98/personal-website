@@ -1,4 +1,4 @@
-import { getCvSettings } from "@/data";
+import { getCvSettings } from "@/data/cv-server";
 import { notFound, redirect } from "next/navigation";
 
 interface ResumePageProps {

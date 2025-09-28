@@ -56,12 +56,12 @@ const getCategoryColor = (category: string) => {
 // Metrics Focus Layout
 export function MetricsLayout({ posts }: LayoutProps) {
   return (
-    <Grid container spacing={5}>
+    <Grid container spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}>
       {posts.map((post) => {
         const categoryColors = getCategoryColor(post.category);
 
         return (
-          <Grid size={{ xs: 12 }} key={post.slug}>
+          <Grid size={{ xs: 12, md: 6, xl: 4 }} key={post.slug}>
             <Link href={`${PROJECT_STORIES_PATH}/${post.slug}`} style={{ textDecoration: 'none' }}>
               <Card sx={{
                 height: '100%',
@@ -111,12 +111,12 @@ export function MetricsLayout({ posts }: LayoutProps) {
                   </Typography>
                 </Box>
 
-                <CardContent sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <CardContent sx={{ p: { xs: 2, sm: 3 }, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   {/* Metrics Section */}
                   {post.metrics && (
                     <Box className="metrics-container" sx={{
-                      mb: 3,
-                      p: 2.5,
+                      mb: { xs: 2, sm: 3 },
+                      p: { xs: 2, sm: 2.5 },
                       borderRadius: 2,
                       background: categoryColors.light,
                       border: `1px solid ${categoryColors.border}`,
@@ -132,7 +132,7 @@ export function MetricsLayout({ posts }: LayoutProps) {
                       }}>
                         Project Impact
                       </Typography>
-                      <Stack spacing={1}>
+                      <Stack spacing={{ xs: 0.75, sm: 1 }}>
                         {post.metrics.impact && (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <TrendingUp sx={{ fontSize: 16, color: categoryColors.main }} />

@@ -1,7 +1,7 @@
 import { EditableText } from "@/components/editableText";
 import { usePicture } from "@/hooks/usePicture";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
-import { getCVPicture } from "@/data";
+import { getCVPicture } from "@/data/images";
 import { CvSection, CVSettings } from "@/types";
 import { Avatar, Box, Grid, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";

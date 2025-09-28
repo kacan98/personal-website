@@ -5,10 +5,10 @@ import NavBar from "@/components/menu/navBar";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
 import { BRAND_COLORS } from "../colors";
 import {
-  getCvSettings,
   getGalleries,
   getSettings,
 } from "@/data";
+import { getCvSettings } from "@/data/cv-server";
 import "@fontsource/cormorant-garamond";
 import "@fontsource/open-sans";
 import "@fontsource/urbanist";
@@ -56,7 +56,7 @@ export default async function LocaleLayout({
 
   const settings = getSettings();
   const _galleriesData = getGalleries();
-  const cvSettings = getCvSettings(locale);
+  const cvSettings = await getCvSettings(locale);
 
   const tNav = await getTranslations('navigation');
   

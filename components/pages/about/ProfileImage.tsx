@@ -1,5 +1,5 @@
 import { Box, Avatar } from "@mui/material";
-import { getCVPicture } from "@/data";
+import { getCVPicture } from "@/data/images";
 
 export default async function ProfileImage() {
     const image = getCVPicture();

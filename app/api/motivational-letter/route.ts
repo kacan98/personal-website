@@ -138,6 +138,7 @@ ${body.strongPoints?.length > 0 ? body.strongPoints.join(', ') : 'Whatever fits 
 ${requestedStories.length > 0 ? `DETAILED PROJECT STORIES:
 ${requestedStories.map((storyIndex, i) => {
   const story = relevantStories[storyIndex];
+  const settings = getSettings();
   return `
 Story ${i + 1}: ${story.title}
 Category: ${story.category}
@@ -145,39 +146,38 @@ ${story.metrics?.impact ? `Impact: ${story.metrics.impact}` : ''}
 ${story.metrics?.timeframe ? `Timeline: ${story.metrics.timeframe}` : ''}
 ${story.metrics?.usersAffected ? `Users affected: ${story.metrics.usersAffected}` : ''}
 Technologies: ${story.tags.join(', ')}
+Full story URL: ${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}
 
 Full story: ${story.content}
 `;
 }).join('\n\n')}` : 'NOTE: Focus on CV experience and job requirements - no specific project stories were deemed relevant enough to include.'}
 
-WRITING STYLE:
-Write conversationally but professionally. Think "explaining to a colleague over coffee" not "corporate marketing brochure."
+WRITING STYLE & STRUCTURE:
+Write conversationally but professionally - like explaining to a colleague over coffee.
 
-- Keep sentences short and punchy. One idea per sentence.
-- Cut unnecessary adjectives and superlatives ("rare", "deeply", "genuinely")
-- Start simple: "I saw your [role] and [specific thing] caught my eye"
-- Pick ONE clear example instead of cramming multiple projects
-- Be direct: "I built X. It did Y. Result was Z."
-- Include what was actually tricky, but don't overcomplicate
-- Sound like a real person, not trying to impress
+Format:
+1. "Dear [Company] Team," + what caught your eye about this specific role
+2. ONE relevant story: problem → solution → result (break complex stories into 2-3 paragraphs)
+3. Brief skills/experience summary (separate paragraph)
+4. Closing question about their current work
+5. Professional signature: enthusiasm statement + "Best regards," + "${body.candidate.name}"
 
-WHAT TO AVOID:
-- Long, complex sentences with multiple clauses
-- Corporate buzzwords ("synergies", "leverage", "paradigm", "ecosystem")
-- Overly technical jargon without context
-- Assumptions about their challenges ("trade-offs you're wrestling with")
-- Generic statements that could apply to any job
-- Trying to sound impressive
+Guidelines:
+- Keep sentences short and direct: "I built X. It did Y. Result was Z."
+- Break technical stories into logical chunks for readability
+- Include company-specific details to show research
+- Avoid corporate buzzwords and trying to sound impressive
+- When mentioning project stories, include links like: "I built a calculator (full story: https://example.com) that..."
 
-STRUCTURE GOAL:
-Write as one flowing conversation, not rigid sections. Keep it tight:
+Example ending:
+"If you're open to a chat, I'd love to hear about [specific question].
 
-1. Simple intro - what caught your eye about this specific role
-2. ONE relevant story with clear problem → solution → result
-3. Brief mention of relevant skills/experience
-4. Simple closing question about their current work
+I'm excited about the opportunity to contribute to [company] and help [value].
 
-Keep it concise (200-250 words max) and authentic. Better to be clear and direct than clever and complex.`
+Best regards,
+[Full Name]"
+
+Keep it 300-350 words max. Be clear and authentic, not clever.`
     }
   ];
 

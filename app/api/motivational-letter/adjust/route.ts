@@ -25,7 +25,7 @@ export async function POST(req: Request): Promise<Response> {
     })
 
     const response = await openai.chat.completions.create({
-      model: OPENAI_MODELS.LATEST,
+      model: OPENAI_MODELS.LATEST_MINI,
       messages: [
         {
           role: 'system',

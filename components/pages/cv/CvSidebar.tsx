@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Box, Tooltip, IconButton } from "@mui/material";
+import { Box, Tooltip, IconButton, CircularProgress } from "@mui/material";
 import { BRAND_COLORS } from "@/app/colors";
 import {
   Work as WorkIcon,
@@ -15,6 +15,7 @@ import {
   RestartAlt as RestartAltIcon,
   Extension as ExtensionIcon,
   Storage as StorageIcon,
+  AutoAwesome as AutoAwesomeIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -25,6 +26,7 @@ interface SidebarActionButtonProps {
   onClick: () => void;
   disabled?: boolean;
   completed?: boolean;
+  loading?: boolean;
 }
 
 const CompactSidebarActionButton = ({
@@ -32,14 +34,15 @@ const CompactSidebarActionButton = ({
   label,
   onClick,
   disabled = false,
-  completed = false
+  completed = false,
+  loading = false
 }: SidebarActionButtonProps) => {
   return (
     <Tooltip title={label} placement="left" arrow>
       <span>
         <IconButton
           onClick={onClick}
-          disabled={disabled}
+          disabled={disabled || loading}
           sx={{
             width: 36, // Reduced from 48
             height: 36, // Reduced from 48
@@ -47,41 +50,64 @@ const CompactSidebarActionButton = ({
             position: 'relative',
             backgroundColor: disabled
               ? 'rgba(0, 0, 0, 0.04)'
+              : loading
+              ? 'rgba(25, 118, 210, 0.08)'
               : completed
               ? 'rgba(16, 185, 129, 0.15)'
               : 'rgba(25, 118, 210, 0.12)',
             color: disabled
               ? 'text.disabled'
+              : loading
+              ? 'primary.main'
               : completed
               ? '#10b981'
               : 'primary.main',
             border: '1px solid', // Reduced border thickness
             borderColor: disabled
               ? 'rgba(0, 0, 0, 0.12)'
+              : loading
+              ? 'primary.main'
               : completed
               ? '#10b981'
               : 'primary.main',
             transition: 'all 0.2s ease',
+            cursor: loading ? 'default' : 'pointer',
             '&:hover': {
               backgroundColor: disabled
                 ? 'rgba(0, 0, 0, 0.04)'
+                : loading
+                ? 'rgba(25, 118, 210, 0.08)'
                 : completed
                 ? 'rgba(16, 185, 129, 0.25)'
                 : 'primary.main',
               color: disabled
                 ? 'text.disabled'
+                : loading
+                ? 'primary.main'
                 : completed
                 ? '#10b981'
                 : 'primary.contrastText',
-              transform: disabled ? 'none' : 'scale(1.05)',
+              transform: (disabled || loading) ? 'none' : 'scale(1.05)',
             },
             '&:active': {
-              transform: disabled ? 'none' : 'scale(0.95)',
+              transform: (disabled || loading) ? 'none' : 'scale(0.95)',
             },
           }}
         >
           {icon}
-          {completed && (
+          {loading && (
+            <CircularProgress
+              size={18}
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                color: 'primary.main',
+              }}
+            />
+          )}
+          {completed && !loading && (
             <CheckCircleIcon
               sx={{
                 position: 'absolute',
@@ -109,12 +135,14 @@ interface CvSidebarProps {
   _onManualAdjustmentsQuick: () => void;
   onViewMotivationalLetter: () => void;
   onViewPositionAnalysis: () => void;
+  onViewPreferredProjects?: () => void;
   onTranslate: () => void;
   onOpenExtensionModal?: () => void;
   hasMotivationalLetter: boolean;
   hasPositionAnalysis: boolean;
   hasAdjustedCv: boolean;
   hasManualRefinements: boolean;
+  hasPreferredProjects?: boolean;
   editable: boolean;
   showDiff: boolean;
   onToggleDiff: () => void;
@@ -123,6 +151,17 @@ interface CvSidebarProps {
   onResetToOriginal?: () => void;
   onClearCache?: () => void;
   lastCacheStatus?: boolean | null;
+  loading?: boolean;
+  loadingButtons?: {
+    adjustPosition?: boolean;
+    manualAdjustments?: boolean;
+    motivationalLetter?: boolean;
+    positionAnalysis?: boolean;
+    preferredProjects?: boolean;
+    translate?: boolean;
+    resetToOriginal?: boolean;
+    clearCache?: boolean;
+  };
 }
 
 const CvSidebar = ({
@@ -131,12 +170,14 @@ const CvSidebar = ({
   _onManualAdjustmentsQuick,
   onViewMotivationalLetter,
   onViewPositionAnalysis,
+  onViewPreferredProjects,
   onTranslate,
   onOpenExtensionModal,
   hasMotivationalLetter,
   hasPositionAnalysis,
   hasAdjustedCv,
   hasManualRefinements,
+  hasPreferredProjects = false,
   editable,
   showDiff,
   onToggleDiff,
@@ -144,7 +185,9 @@ const CvSidebar = ({
   hasChanges,
   onResetToOriginal,
   onClearCache,
-  lastCacheStatus
+  lastCacheStatus,
+  loading = false,
+  loadingButtons = {}
 }: CvSidebarProps) => {
   const sidebarButtons = [
     {
@@ -155,6 +198,7 @@ const CvSidebar = ({
       disabled: false,
       visible: true,
       completed: hasAdjustedCv,
+      loading: loadingButtons.adjustPosition || false,
     },
     {
       id: 'manual-adjustments',
@@ -164,24 +208,37 @@ const CvSidebar = ({
       disabled: false,
       visible: true,
       completed: hasManualRefinements,
+      loading: loadingButtons.manualAdjustments || false,
     },
     {
       id: 'motivational-letter',
       label: 'Motivational Letter',
       icon: <EmailIcon />,
       onClick: onViewMotivationalLetter,
-      disabled: false,
-      visible: hasMotivationalLetter,
+      disabled: (loadingButtons.motivationalLetter || false) && !hasMotivationalLetter,
+      visible: hasMotivationalLetter || (loadingButtons.motivationalLetter || false),
       completed: hasMotivationalLetter,
+      loading: loadingButtons.motivationalLetter || false,
     },
     {
       id: 'position-analysis',
       label: 'Position Analysis',
       icon: <AnalyticsIcon />,
       onClick: onViewPositionAnalysis,
-      disabled: false,
-      visible: hasAdjustedCv,
+      disabled: (loadingButtons.positionAnalysis || false) && !hasPositionAnalysis,
+      visible: hasAdjustedCv || (loadingButtons.positionAnalysis || false),
       completed: hasPositionAnalysis,
+      loading: loadingButtons.positionAnalysis || false,
+    },
+    {
+      id: 'preferred-projects',
+      label: 'Preferred Projects',
+      icon: <AutoAwesomeIcon />,
+      onClick: onViewPreferredProjects || (() => {}),
+      disabled: (loadingButtons.preferredProjects || false) && !hasPreferredProjects,
+      visible: hasAdjustedCv || (loadingButtons.preferredProjects || false),
+      completed: hasPreferredProjects,
+      loading: loadingButtons.preferredProjects || false,
     },
     {
       id: 'translate',
@@ -191,6 +248,7 @@ const CvSidebar = ({
       disabled: false,
       visible: true,
       completed: false,
+      loading: loadingButtons.translate || false,
     },
     {
       id: 'show-changes',
@@ -200,6 +258,7 @@ const CvSidebar = ({
       disabled: !hasOriginalCv || !hasChanges,
       visible: hasChanges && hasOriginalCv,
       completed: showDiff,
+      loading: false,
     },
     {
       id: 'reset-to-original',
@@ -209,6 +268,7 @@ const CvSidebar = ({
       disabled: !hasChanges || !onResetToOriginal,
       visible: hasChanges && !!onResetToOriginal,
       completed: false,
+      loading: loadingButtons.resetToOriginal || false,
     },
     {
       id: 'clear-cache',
@@ -220,6 +280,7 @@ const CvSidebar = ({
       disabled: !onClearCache,
       visible: !!onClearCache,
       completed: false,
+      loading: loadingButtons.clearCache || false,
     },
     {
       id: 'chrome-extension',
@@ -229,6 +290,7 @@ const CvSidebar = ({
       disabled: false,
       visible: !!onOpenExtensionModal,
       completed: false,
+      loading: false,
     },
   ];
 
@@ -314,6 +376,7 @@ const CvSidebar = ({
                   onClick={button.onClick}
                   disabled={button.disabled}
                   completed={button.completed}
+                  loading={button.loading}
                 />
               );
             }
@@ -330,43 +393,64 @@ const CvSidebar = ({
                   <span>
                     <IconButton
                       onClick={button.onClick}
-                      disabled={button.disabled}
+                      disabled={button.disabled || button.loading}
                       sx={{
                         width: 36, // Reduced size
                         height: 36, // Reduced size
                         borderRadius: 1.5,
                         position: 'relative',
-                        backgroundColor: lastCacheStatus === true
+                        cursor: button.loading ? 'default' : 'pointer',
+                        backgroundColor: button.loading
+                          ? 'rgba(25, 118, 210, 0.08)'
+                          : lastCacheStatus === true
                           ? 'rgba(255, 152, 0, 0.15)'
                           : lastCacheStatus === false
                           ? `rgba(${BRAND_COLORS.accentRgb}, 0.15)`
                           : `rgba(${BRAND_COLORS.accentRgb}, 0.15)`,
-                        color: lastCacheStatus === true
+                        color: button.loading
+                          ? 'primary.main'
+                          : lastCacheStatus === true
                           ? '#ff9800'
                           : lastCacheStatus === false
                           ? BRAND_COLORS.accent
                           : BRAND_COLORS.accent,
                         border: '1px solid',
-                        borderColor: lastCacheStatus === true
+                        borderColor: button.loading
+                          ? 'primary.main'
+                          : lastCacheStatus === true
                           ? '#ff9800'
                           : lastCacheStatus === false
                           ? BRAND_COLORS.accent
                           : BRAND_COLORS.accent,
                         transition: 'all 0.2s ease',
                         '&:hover': {
-                          backgroundColor: lastCacheStatus === true
+                          backgroundColor: button.loading
+                            ? 'rgba(25, 118, 210, 0.08)'
+                            : lastCacheStatus === true
                             ? 'rgba(255, 152, 0, 0.25)'
                             : lastCacheStatus === false
                             ? `rgba(${BRAND_COLORS.accentRgb}, 0.25)`
                             : `rgba(${BRAND_COLORS.accentRgb}, 0.25)`,
-                          transform: 'scale(1.05)',
+                          transform: button.loading ? 'none' : 'scale(1.05)',
                         },
                         '&:active': {
-                          transform: 'scale(0.95)',
+                          transform: button.loading ? 'none' : 'scale(0.95)',
                         },
                       }}
                     >
                       <StorageIcon fontSize="small" />
+                      {button.loading && (
+                        <CircularProgress
+                          size={18}
+                          sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            color: 'primary.main',
+                          }}
+                        />
+                      )}
                     </IconButton>
                   </span>
                 </Tooltip>
@@ -383,6 +467,7 @@ const CvSidebar = ({
                   onClick={button.onClick}
                   disabled={button.disabled}
                   completed={button.completed}
+                  loading={button.loading}
                 />
               );
             }
