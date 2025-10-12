@@ -1555,8 +1555,6 @@ embedding:
 
 # Automating Time Tracking: From Git Commits to Jira Logs
 
-*[Watch the demo on YouTube](https://www.youtube.com/watch?v=GcPJUR0wq_M)*
-
 <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7380996038213648384?collapsed=1" height="542" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
 
 I had to register hours for every day that I worked, and it was a very manual process. I'd have to remember to go into Jira, find the task I'd been working on, and log the number of hours. If I forgot, I'd have to go through my commits or pull requests and do some detective work. I heard similar complaints from my colleagues, so I decided to use my coding skills to automate most of this process.
