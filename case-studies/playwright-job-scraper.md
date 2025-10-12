@@ -9,6 +9,7 @@ tags:
   - web scraping
   - automation
 category: automation
+date: 2024-06-01
 metrics:
   impact: 'Filtered 30 jobs/minute, prioritized fresh opportunities'
   timeframe: Learning project

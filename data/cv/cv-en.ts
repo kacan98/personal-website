@@ -144,7 +144,33 @@ export const cvConfigEn: CVSettings = {
     {
       id: "personal-projects",
       title: "Personal Projects",
-      bulletPoints: [] // Will be populated dynamically from Project Stories
+      bulletPoints: [
+        {
+          iconName: "science",
+          text: "AI-Powered Job Application Platform - Reduced application time by 80%",
+          url: "https://kcancara.vercel.app/case-studies/ai-job-application-platform"
+        },
+        {
+          iconName: "science",
+          text: "10x Performance Improvement - Reduced query time from 30s to 3s",
+          url: "https://kcancara.vercel.app/case-studies/10x-performance-improvement"
+        },
+        {
+          iconName: "gitHub",
+          text: "Git-to-Jira Bridge - Automated 10+ hours/month of time tracking",
+          url: "https://kcancara.vercel.app/case-studies/git-jira-bridge"
+        },
+        {
+          iconName: "science",
+          text: "LinkedIn Job Filtering - Automated job scraping with Playwright",
+          url: "https://kcancara.vercel.app/case-studies/playwright-job-scraper"
+        },
+        {
+          iconName: "translate",
+          text: "Magic Bookmarks - Universal environment navigation tool",
+          url: "https://kcancara.vercel.app/case-studies/magic-bookmarks"
+        }
+      ]
     }
   ]
 };

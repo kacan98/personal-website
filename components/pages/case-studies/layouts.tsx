@@ -61,7 +61,7 @@ export function MetricsLayout({ posts }: LayoutProps) {
         const categoryColors = getCategoryColor(post.category);
 
         return (
-          <Grid size={{ xs: 12, md: 6, xl: 4 }} key={post.slug}>
+          <Grid size={{ xs: 12 }} key={post.slug}>
             <Link href={`${PROJECT_STORIES_PATH}/${post.slug}`} style={{ textDecoration: 'none' }}>
               <Card sx={{
                 height: '100%',

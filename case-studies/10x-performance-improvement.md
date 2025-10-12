@@ -10,6 +10,7 @@ tags:
   - performance optimization
   - pagination
 category: performance
+date: 2025-06-01
 metrics:
   impact: Reduced sync time from 20+ minutes to minutes
   timeframe: Backend optimization project

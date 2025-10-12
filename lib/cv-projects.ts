@@ -34,18 +34,20 @@ interface RankedStory {
  */
 function convertStoriesToCVProjects(rankedStories: RankedStory[], locale: string): CVProject[] {
   return rankedStories.map(story => {
-    // Create a concise description from title + key tags + impact
-    const keyTags = story.tags
-      .filter(tag => ['React', 'TypeScript', 'Angular', '.NET', 'Node.js', 'Redux', 'Next.js', 'Python', 'SQL'].includes(tag))
-      .slice(0, 3)
-      .join('/');
+    // Create a concise description with just the impact metric
+    const impact = story.metrics?.impact || story.title;
+    const description = translateImpact(impact, locale);
 
-    // Translate impact and description based on locale
-    const impact = story.metrics?.impact ? ` - ${translateImpact(story.metrics.impact, locale)}` : '';
-    const description = `${translateProjectTitle(story.title, locale)}${keyTags ? ` (${keyTags})` : ''}${impact}`;
+    // Select icon based on category
+    let iconName = "science"; // default
+    if (story.category === 'automation') {
+      iconName = "gitHub";
+    } else if (story.id === 'magic-bookmarks') {
+      iconName = "translate";
+    }
 
     return {
-      iconName: "gitHub", // Default to GitHub icon for all projects
+      iconName,
       text: description,
       url: story.fullUrl
     };
@@ -61,7 +63,7 @@ function translateProjectTitle(title: string, locale: string): string {
   const translations: Record<string, Record<string, string>> = {
     'da': {
       'Real-Time Property Investment Calculator': 'Real-Time Ejendomsinvestering Beregner',
-      'Git-to-JIRA Bridge': 'Git-til-JIRA Bridge',
+      'Git-to-Jira Bridge': 'Git-til-Jira Bridge',
       'AI Job Application Platform': 'AI Job Ansøgning Platform',
       'Playwright Job Scraper': 'Playwright Job Scraper',
       'Ankerimdia Startup': 'Ankerimdia Startup',
@@ -69,7 +71,7 @@ function translateProjectTitle(title: string, locale: string): string {
     },
     'sv': {
       'Real-Time Property Investment Calculator': 'Real-Time Fastighetsinvestering Kalkylator',
-      'Git-to-JIRA Bridge': 'Git-till-JIRA Bridge',
+      'Git-to-Jira Bridge': 'Git-till-Jira Bridge',
       'AI Job Application Platform': 'AI Jobbansökan Plattform',
       'Playwright Job Scraper': 'Playwright Job Scraper',
       'Ankerimdia Startup': 'Ankerimdia Startup',
@@ -89,18 +91,20 @@ function translateImpact(impact: string, locale: string): string {
   // Basic translations for common impact phrases
   const translations: Record<string, Record<string, string>> = {
     'da': {
-      'Helps users make informed financial decisions': 'Hjælper brugere med at træffe informerede finansielle beslutninger',
-      'Automates time tracking for development teams': 'Automatiserer tidssporing for udviklingsteams',
-      'Streamlines job application process': 'Strømliner jobansøgningsprocessen',
-      'Improved sync performance by 10x': 'Forbedrede sync ydeevne med 10x',
-      'Used by thousands of users': 'Bruges af tusindvis af brugere'
+      'Interactive buy vs rent calculator with real-time financial projections': 'Interaktiv beregner til sammenligning af køb og leje',
+      'Automated time tracking by syncing Git commits to Jira': 'Automatiseret tidssporing via Git og Jira',
+      'Reduced sync time from 20+ minutes to minutes': 'Accelererede app-synkronisering fra 20+ min til få minutter',
+      'Apply for 10 jobs in 30 minutes vs hours manually': 'AI-værktøj der reducerer ansøgningstid med 80%',
+      'Filtered 30 jobs/minute, prioritized fresh opportunities': 'Automatisk scraping og filtrering af LinkedIn job',
+      'Streamlines navigation across development environments': 'Genveje til at skifte mellem test- og produktionsmiljøer'
     },
     'sv': {
-      'Helps users make informed financial decisions': 'Hjälper användare att fatta informerade finansiella beslut',
-      'Automates time tracking for development teams': 'Automatiserar tidsspårning för utvecklingsteam',
-      'Streamlines job application process': 'Effektiviserar jobbansökningsprocessen',
-      'Improved sync performance by 10x': 'Förbättrade sync-prestanda med 10x',
-      'Used by thousands of users': 'Används av tusentals användare'
+      'Interactive buy vs rent calculator with real-time financial projections': 'Interaktiv kalkylator för köp- och hyraanalys',
+      'Automated time tracking by syncing Git commits to Jira': 'Automatiserad tidsspårning via Git och Jira',
+      'Reduced sync time from 20+ minutes to minutes': 'Accelererade appsynkronisering från 20+ min till några minuter',
+      'Apply for 10 jobs in 30 minutes vs hours manually': 'AI-verktyg som minskar ansökningstid med 80%',
+      'Filtered 30 jobs/minute, prioritized fresh opportunities': 'Automatisk skrapning och filtrering av LinkedIn-jobb',
+      'Streamlines navigation across development environments': 'Genvägar för att växla mellan test- och produktionsmiljöer'
     }
   };
 
@@ -172,9 +176,9 @@ export async function getCVProjectsSection(locale: string = 'en'): Promise<CVPro
   const stories = await getAllStories();
   const settings = getSettings();
 
-  // Simple fallback: get technical stories
+  // Simple fallback: get technical stories (exclude business category)
   const cvRelevantStories = stories
-    .filter(story => story.category === 'technical')
+    .filter(story => story.category !== 'business')
     .sort((a, b) => {
       // Prioritize stories with impact metrics
       if (a.metrics?.impact && !b.metrics?.impact) return -1;
@@ -182,21 +186,23 @@ export async function getCVProjectsSection(locale: string = 'en'): Promise<CVPro
       // Then by title alphabetically
       return a.title.localeCompare(b.title);
     })
-    .slice(0, 4); // Limit to 4 projects for CV
+    .slice(0, 5); // Limit to 5 projects for CV
 
   const bulletPoints: CVProject[] = cvRelevantStories.map(story => {
-    // Create a concise description from title + key tags + impact
-    const keyTags = story.tags
-      .filter(tag => ['React', 'TypeScript', 'Angular', '.NET', 'Node.js', 'Redux', 'Next.js', 'Python', 'SQL'].includes(tag))
-      .slice(0, 3)
-      .join('/');
+    // Create a concise description with just the impact metric
+    const impact = story.metrics?.impact || story.title;
+    const description = translateImpact(impact, locale);
 
-    // Translate impact and description based on locale
-    const impact = story.metrics?.impact ? ` - ${translateImpact(story.metrics.impact, locale)}` : '';
-    const description = `${translateProjectTitle(story.title, locale)}${keyTags ? ` (${keyTags})` : ''}${impact}`;
+    // Select icon based on category
+    let iconName = "science"; // default
+    if (story.category === 'automation') {
+      iconName = "gitHub";
+    } else if (story.id === 'magic-bookmarks') {
+      iconName = "translate";
+    }
 
     return {
-      iconName: "gitHub",
+      iconName,
       text: description,
       url: `${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}`
     };
@@ -215,11 +221,11 @@ export async function getCVProjectsSection(locale: string = 'en'): Promise<CVPro
 function getProjectsTitleByLocale(locale: string): string {
   switch (locale) {
     case 'da':
-      return 'Personlige Projekter';
+      return 'Arbejdseksempler';
     case 'sv':
-      return 'Personliga Projekt';
+      return 'Arbetsexempel';
     case 'en':
     default:
-      return 'Personal Projects';
+      return 'Work Examples';
   }
 }

@@ -7,8 +7,9 @@ tags:
   - financial calculations
   - real-time visualization
 category: technical
+date: 2024-06-01
 metrics:
-  impact: Helps users make informed financial decisions worth hundreds of thousands
+  impact: Interactive buy vs rent calculator with real-time financial projections
   timeframe: Personal project with social media feedback
 embedding:
   - -0.028577754274010658

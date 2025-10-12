@@ -10,6 +10,7 @@ tags:
   - Chrome Extension
   - JWT auth
 category: fullstack
+date: 2024-12-01
 metrics:
   impact: Apply for 10 jobs in 30 minutes vs hours manually
   timeframe: Multi-week development project

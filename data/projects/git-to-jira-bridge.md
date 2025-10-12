@@ -1,9 +1,9 @@
 ---
-title: "Git-to-JIRA Bridge"
-description: "Full-stack time tracking system that automatically syncs development hours from Git commits to JIRA worklogs, eliminating manual time reporting."
+title: "Git-to-Jira Bridge"
+description: "Full-stack time tracking system that automatically syncs development hours from Git commits to Jira worklogs, eliminating manual time reporting."
 image: "/images/projects/git-to-jira-bridge.png"
-imageAlt: "Git-to-JIRA Bridge dashboard showing time tracking interface"
-tech: ["TypeScript", "React", "Node.js", "Express", "Git API", "JIRA API", "Vercel", "CSV Processing"]
+imageAlt: "Git-to-Jira Bridge dashboard showing time tracking interface"
+tech: ["TypeScript", "React", "Node.js", "Express", "Git API", "Jira API", "Vercel", "CSV Processing"]
 links:
   - title: "Deployment"
     url: "https://log-bridge.vercel.app"
@@ -17,11 +17,11 @@ order: 1
 
 ## Overview
 
-Git-to-JIRA Bridge is a comprehensive time tracking solution that bridges the gap between actual development work and time reporting requirements. Built to solve the tedious task of manual time logging, this system automatically captures development hours from Git activity and seamlessly syncs them to JIRA worklogs.
+Git-to-Jira Bridge is a comprehensive time tracking solution that bridges the gap between actual development work and time reporting requirements. Built to solve the tedious task of manual time logging, this system automatically captures development hours from Git activity and seamlessly syncs them to Jira worklogs.
 
 ## The Problem
 
-Manual time tracking is disruptive and time-consuming for developers. Traditional approaches interrupt the development flow and often result in inaccurate or forgotten time entries, making JIRA time reporting a painful administrative burden.
+Manual time tracking is disruptive and time-consuming for developers. Traditional approaches interrupt the development flow and often result in inaccurate or forgotten time entries, making Jira time reporting a painful administrative burden.
 
 ## The Solution
 
@@ -35,24 +35,24 @@ A 3-step automated workflow:
 
 2. **✏️ Smart Editing** - Intelligent time entry management:
    - Automatic task ID extraction from branch names using regex patterns
-   - Auto-populated JIRA task details when connected
+   - Auto-populated Jira task details when connected
    - Weekly/daily views with drag-and-drop editing
    - Bulk operations for recurring tasks
 
-3. **🚀 One-Click Sync** - Seamless JIRA integration:
+3. **🚀 One-Click Sync** - Seamless Jira integration:
    - Secure authentication with personal access tokens
    - Automatic worklog creation with proper task linking
-   - Support for both JIRA Cloud and Server instances
+   - Support for both Jira Cloud and Server instances
 
 ## Technical Architecture
 
 **Frontend**: React-based web interface with TypeScript for type safety and modern UI patterns
 **Backend**: Express.js API designed for serverless deployment on Vercel
 **Background Tracker**: Standalone desktop application for continuous Git monitoring
-**Data Flow**: Real-time Git monitoring → CSV generation → Web interface → JIRA API integration
+**Data Flow**: Real-time Git monitoring → CSV generation → Web interface → Jira API integration
 
 ```
-Data Sources → Web Interface → JIRA
+Data Sources → Web Interface → Jira
      ↓              ↓           ↓
 Background      Edit/Review   Worklogs
 GitHub API      Time Entries   API Sync
@@ -63,7 +63,7 @@ CSV Upload      Task Details   Cloud/Server
 
 - **Privacy-First**: All data stored locally in browser or CSV files, no server-side data persistence
 - **Flexible Input**: Multiple data sources accommodate different workflows
-- **Smart Automation**: Automatic task ID extraction and JIRA task detail population
+- **Smart Automation**: Automatic task ID extraction and Jira task detail population
 - **Cross-Platform**: Desktop tracker works on Windows, Mac, and Linux
 - **Real-Time Monitoring**: Detects file changes, commits, and branch checkouts
 - **Secure Authentication**: HTTP-only cookies and secure token handling
@@ -73,7 +73,7 @@ CSV Upload      Task Details   Cloud/Server
 
 - **95% Time Saved**: Eliminates daily manual time entry tasks
 - **100% Accuracy**: Captures actual development time vs. estimates
-- **Seamless Integration**: Works with existing Git and JIRA workflows
+- **Seamless Integration**: Works with existing Git and Jira workflows
 - **Zero Disruption**: Background monitoring doesn't interrupt development flow
 
 ## Technical Highlights

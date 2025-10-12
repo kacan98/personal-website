@@ -146,7 +146,33 @@ export const cvSv: CVSettings = {
     {
       id: "personal-projects",
       title: "Personliga Projekt",
-      bulletPoints: [] // Will be populated dynamically from Project Stories
+      bulletPoints: [
+        {
+          iconName: "science",
+          text: "AI-Driven Jobbansökningsplattform - Minskade ansökningstid med 80%",
+          url: "https://kcancara.vercel.app/case-studies/ai-job-application-platform"
+        },
+        {
+          iconName: "science",
+          text: "10x Prestandaförbättring - Minskade förfrågningstid från 30s till 3s",
+          url: "https://kcancara.vercel.app/case-studies/10x-performance-improvement"
+        },
+        {
+          iconName: "gitHub",
+          text: "Git-till-Jira Bro - Automatiserade 10+ timmar/månad tidsspårning",
+          url: "https://kcancara.vercel.app/case-studies/git-jira-bridge"
+        },
+        {
+          iconName: "science",
+          text: "LinkedIn Jobbfiltrering - Automatiserad jobbskrapning med Playwright",
+          url: "https://kcancara.vercel.app/case-studies/playwright-job-scraper"
+        },
+        {
+          iconName: "translate",
+          text: "Magic Bookmarks - Universellt miljönavigeringsverktyg",
+          url: "https://kcancara.vercel.app/case-studies/magic-bookmarks"
+        }
+      ]
     }
   ]
 };

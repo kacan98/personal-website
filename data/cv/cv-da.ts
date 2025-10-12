@@ -146,7 +146,33 @@ export const cvConfigDa: CVSettings = {
     {
       id: "personal-projects",
       title: "Personlige Projekter",
-      bulletPoints: [] // Will be populated dynamically from Project Stories
+      bulletPoints: [
+        {
+          iconName: "science",
+          text: "AI-Drevet Jobansøgningsplatform - Reducerede ansøgningstid med 80%",
+          url: "https://kcancara.vercel.app/case-studies/ai-job-application-platform"
+        },
+        {
+          iconName: "science",
+          text: "10x Præstationsforbedring - Reducerede forespørgselstid fra 30s til 3s",
+          url: "https://kcancara.vercel.app/case-studies/10x-performance-improvement"
+        },
+        {
+          iconName: "gitHub",
+          text: "Git-til-Jira Bro - Automatiserede 10+ timer/måned tidssporing",
+          url: "https://kcancara.vercel.app/case-studies/git-jira-bridge"
+        },
+        {
+          iconName: "science",
+          text: "LinkedIn Job-filtrering - Automatiseret jobscraping med Playwright",
+          url: "https://kcancara.vercel.app/case-studies/playwright-job-scraper"
+        },
+        {
+          iconName: "translate",
+          text: "Magic Bookmarks - Universelt miljønavigeringsværktøj",
+          url: "https://kcancara.vercel.app/case-studies/magic-bookmarks"
+        }
+      ]
     }
   ]
 };

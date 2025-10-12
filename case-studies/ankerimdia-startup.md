@@ -7,6 +7,7 @@ tags:
   - business development
   - market research
 category: business
+date: 2019-01-01
 metrics:
   impact: '50+ meetings, 5 paying customers (10% conversion rate)'
   timeframe: University startup project

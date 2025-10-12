@@ -1,16 +1,17 @@
 ---
-title: 'Automating Time Tracking: Git-to-JIRA Bridge'
+title: 'Automating Time Tracking: Git-to-Jira Bridge'
 tags:
   - React
   - Node.js
   - GitHub API
-  - JIRA REST API
+  - Jira REST API
   - Windows executable
   - time tracking
   - automation
 category: automation
+date: 2025-06-01
 metrics:
-  impact: Reduced daily time tracking from 15 minutes to 30 seconds
+  impact: Automated time tracking by syncing Git commits to Jira
   timeframe: Active development project
 embedding:
   - -0.03953730687499046
@@ -1551,25 +1552,27 @@ embedding:
   - -0.018838031217455864
 ---
 
-# Automating Time Tracking: From Git Commits to JIRA Logs
+# Automating Time Tracking: From Git Commits to Jira Logs
 
 *[Watch the demo on YouTube](https://www.youtube.com/watch?v=GcPJUR0wq_M)*
 
-I had to register hours for every day that I worked, and it was a very manual process. I'd have to remember to go into JIRA, find the task I'd been working on, and log the number of hours. If I forgot, I'd have to go through my commits or pull requests and do some detective work. I heard similar complaints from my colleagues, so I decided to use my coding skills to automate most of this process.
+<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7380996038213648384?collapsed=1" height="542" width="504" frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+
+I had to register hours for every day that I worked, and it was a very manual process. I'd have to remember to go into Jira, find the task I'd been working on, and log the number of hours. If I forgot, I'd have to go through my commits or pull requests and do some detective work. I heard similar complaints from my colleagues, so I decided to use my coding skills to automate most of this process.
 
 ## The Problem with Manual Time Tracking
 
-The daily routine was frustrating: open JIRA, search for the correct task ID, estimate how many hours I'd spent on it, and log the time. Multiply this by every task, every day, and it becomes a significant time sink. Worse, when you forget to log time immediately, you end up playing detective with your own commit history.
+The daily routine was frustrating: open Jira, search for the correct task ID, estimate how many hours I'd spent on it, and log the time. Multiply this by every task, every day, and it becomes a significant time sink. Worse, when you forget to log time immediately, you end up playing detective with your own commit history.
 
 My colleagues had the same problem. We were all developers - surely there had to be a better way to connect our actual work (commits) with our time tracking requirements.
 
 ## Building the Solution
 
-I created [Log Bridge](https://log-bridge.vercel.app), a tool that automatically bridges Git commits with JIRA time logs. The setup takes about 2 minutes - you just need to connect your GitHub and JIRA accounts with personal access tokens.
+I created [Log Bridge](https://log-bridge.vercel.app), a tool that automatically bridges Git commits with Jira time logs. The setup takes about 2 minutes - you just need to connect your GitHub and Jira accounts with personal access tokens.
 
 Here's how it works:
 
-**Automatic Day Analysis**: Select any day and the tool shows all your commits for that period. It groups commits by pull request and automatically detects JIRA task IDs from branch names or PR titles using regex patterns.
+**Automatic Day Analysis**: Select any day and the tool shows all your commits for that period. It groups commits by pull request and automatically detects Jira task IDs from branch names or PR titles using regex patterns.
 
 **Smart Time Estimation**: Based on your first and last commits of the day, it estimates what you worked on and for how long. If I had commits from 9 AM to 3 PM on a specific task, it assumes I worked on that task during that timeframe.
 
@@ -1577,7 +1580,7 @@ Here's how it works:
 
 **Repetitive Task Management**: I added buttons for repetitive tasks I found myself logging over and over - meetings, code reviews, administrative work. These can be quickly added to any day.
 
-**Batch Upload to JIRA**: Once your week is complete, click "Send Week to JIRA" and all entries are automatically uploaded to your JIRA timesheet.
+**Batch Upload to Jira**: Once your week is complete, click "Send Week to Jira" and all entries are automatically uploaded to your Jira timesheet.
 
 ## Background Tracking
 
@@ -1587,10 +1590,10 @@ This creates a CSV file with detailed activity logs that can be dragged and drop
 
 ## Technical Implementation
 
-The system uses GitHub's API to fetch commit history and pull request data, regex patterns to extract JIRA task IDs from branch names and PR titles, and JIRA's REST API to automatically create time log entries. The background tracker is built as a Windows executable that monitors file system changes and git repository states.
+The system uses GitHub's API to fetch commit history and pull request data, regex patterns to extract Jira task IDs from branch names and PR titles, and Jira's REST API to automatically create time log entries. The background tracker is built as a Windows executable that monitors file system changes and git repository states.
 
 **Impact**: What used to take 10-15 minutes of manual work every day now takes about 30 seconds. My colleagues who use it report similar time savings and much more accurate time tracking.
 
 **Live demo**: [log-bridge.vercel.app](https://log-bridge.vercel.app)
 
-**Tech used**: React, Node.js, GitHub API, JIRA REST API, Windows executable for background tracking
+**Tech used**: React, Node.js, GitHub API, Jira REST API, Windows executable for background tracking

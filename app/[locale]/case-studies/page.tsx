@@ -12,6 +12,7 @@ interface BlogPost {
   title: string;
   tags: string[];
   category: string;
+  date?: string;
   metrics?: {
     impact?: string;
     timeframe?: string;
@@ -29,7 +30,7 @@ async function getProjectStories(): Promise<BlogPost[]> {
 
   const files = fs.readdirSync(projectStoriesDir).filter(file => file.endsWith('.md'));
 
-  return files.map(file => {
+  const posts = files.map(file => {
     const filePath = path.join(projectStoriesDir, file);
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const { data: frontmatter, content } = matter(fileContent);
@@ -39,9 +40,18 @@ async function getProjectStories(): Promise<BlogPost[]> {
       title: frontmatter.title || 'Untitled',
       tags: frontmatter.tags || [],
       category: frontmatter.category || 'uncategorized',
+      date: frontmatter.date,
       metrics: frontmatter.metrics,
       excerpt: content.substring(0, 200).replace(/\n/g, ' ').trim() + '...'
     };
+  });
+
+  // Sort by date (newest first)
+  return posts.sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 }
 
