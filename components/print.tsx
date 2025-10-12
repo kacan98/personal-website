@@ -18,7 +18,7 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
   const handlePrint = useReactToPrint({
     contentRef,
     documentTitle: fileName || "download",
-    pageStyle: `@page { size: A4; margin: 0; margin-top:10px }`,
+    pageStyle: `@page { size: A4; margin: 5mm 8mm 8mm 8mm; }`,
   });
 
   const customThemeProviderProps: Partial<CustomThemeProviderProps> = {
@@ -48,14 +48,14 @@ export const Print: React.FC<ExportProps> = ({ children, printComponent, fileNam
           width: "210mm",
           padding: 0,
           margin: 0,
-          overflow: "hidden",
+          overflow: "visible",
           visibility: "hidden",
         }}
       >
         <Box
           ref={contentRef}
           sx={{
-            width: "210mm",
+            width: "100%",
             padding: 0,
             margin: 0,
           }}

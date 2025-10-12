@@ -28,35 +28,21 @@ export const BRAND_GRADIENTS = {
   subtle: `linear-gradient(135deg, ${BACKGROUND_COLORS.primary}, ${BACKGROUND_COLORS.surface})`,
 } as const;
 
-// Varied colors for interesting shapes - modern but diverse
+// Monochrome purple palette with minimal accent colors
 export const SHAPE_COLORS = {
-  // Warm metallics
-  gold: "#d4af37",         // Elegant gold
-  copper: "#b87333",       // Warm copper
-  rose: "#e8b4b8",         // Rose gold tint
-  
-  // Cool metallics  
-  silver: "#c0c0c0",       // Classic silver
-  platinum: "#e6e6fa",     // Cool platinum
-  steel: "#708090",        // Blue-gray steel
-  
-  // Subtle accent colors (desaturated, sophisticated)
-  teal: "#5f9ea0",         // Muted teal
-  coral: "#cd5c5c",        // Soft coral
-  sage: "#9caf88",         // Sage green
+  // Purple variants for monochrome scheme
+  lightPurple: "#c084fc",  // Light purple for accents
+  deepPurple: "#7c3aed",   // Deep purple for contrast
   lavender: "#b19cd9",     // Soft lavender
-  
+
+  // Single warm accent for contrast
+  gold: "#d4af37",         // Elegant gold
+
   // RGB versions for rgba() functions
-  goldRgb: "212, 175, 55",
-  copperRgb: "184, 115, 51", 
-  roseRgb: "232, 180, 184",
-  silverRgb: "192, 192, 192",
-  platinumRgb: "230, 230, 250",
-  steelRgb: "112, 128, 144",
-  tealRgb: "95, 158, 160",
-  coralRgb: "205, 92, 92",
-  sageRgb: "156, 175, 136",
+  lightPurpleRgb: "192, 132, 252",
+  deepPurpleRgb: "124, 58, 237",
   lavenderRgb: "177, 156, 217",
+  goldRgb: "212, 175, 55",
 } as const;
 
 // Helper functions for common rgba values
@@ -68,18 +54,16 @@ export const BRAND_RGBA = {
   surface: `rgba(${BRAND_COLORS.darkRgb}, 0.8)`,
 } as const;
 
-// Shape rgba values for varied colors
+// Shape rgba values for monochrome palette
 export const SHAPE_RGBA = {
-  goldGlow: `rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
-  goldBorder: `rgba(${SHAPE_COLORS.goldRgb}, 0.3)`,
-  tealGlow: `rgba(${SHAPE_COLORS.tealRgb}, 0.4)`,
-  tealBorder: `rgba(${SHAPE_COLORS.tealRgb}, 0.3)`,
-  coralGlow: `rgba(${SHAPE_COLORS.coralRgb}, 0.4)`,
-  coralBorder: `rgba(${SHAPE_COLORS.coralRgb}, 0.3)`,
-  sageGlow: `rgba(${SHAPE_COLORS.sageRgb}, 0.4)`,
-  sageBorder: `rgba(${SHAPE_COLORS.sageRgb}, 0.3)`,
+  lightPurpleGlow: `rgba(${SHAPE_COLORS.lightPurpleRgb}, 0.4)`,
+  lightPurpleBorder: `rgba(${SHAPE_COLORS.lightPurpleRgb}, 0.3)`,
+  deepPurpleGlow: `rgba(${SHAPE_COLORS.deepPurpleRgb}, 0.4)`,
+  deepPurpleBorder: `rgba(${SHAPE_COLORS.deepPurpleRgb}, 0.3)`,
   lavenderGlow: `rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
   lavenderBorder: `rgba(${SHAPE_COLORS.lavenderRgb}, 0.3)`,
+  goldGlow: `rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
+  goldBorder: `rgba(${SHAPE_COLORS.goldRgb}, 0.3)`,
 } as const;
 
 // Diff colors for text changes and modifications

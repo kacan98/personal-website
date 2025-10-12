@@ -70,21 +70,27 @@ export function getTheme({
       fontSize,
       h1: {
         fontSize: "2rem",
+        fontWeight: 700,
       },
       h2: {
         fontSize: "1.7rem",
+        fontWeight: 700,
       },
       h3: {
         fontSize: "1.5rem",
+        fontWeight: 700,
       },
       h4: {
         fontSize: "1.25rem",
+        fontWeight: 700,
       },
       h5: {
-        fontSize: "1.2rem",
+        fontSize: "1.05rem",
+        fontWeight: 700,
       },
       h6: {
-        fontSize: "1.1rem",
+        fontSize: "1rem",
+        fontWeight: 700,
       },
     };
   }

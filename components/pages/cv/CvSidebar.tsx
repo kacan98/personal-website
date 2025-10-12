@@ -16,6 +16,7 @@ import {
   Extension as ExtensionIcon,
   Storage as StorageIcon,
   EmojiEvents as EmojiEventsIcon,
+  SmartToy as SmartToyIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -138,6 +139,8 @@ interface CvSidebarProps {
   onViewPreferredProjects?: () => void;
   onTranslate: () => void;
   onOpenExtensionModal?: () => void;
+  onToggleAiIntroduction?: () => void;
+  showAiIntroduction?: boolean;
   hasMotivationalLetter: boolean;
   hasPositionAnalysis: boolean;
   hasAdjustedCv: boolean;
@@ -173,6 +176,8 @@ const CvSidebar = ({
   onViewPreferredProjects,
   onTranslate,
   onOpenExtensionModal,
+  onToggleAiIntroduction,
+  showAiIntroduction = false,
   hasMotivationalLetter,
   hasPositionAnalysis,
   hasAdjustedCv,
@@ -186,7 +191,6 @@ const CvSidebar = ({
   onResetToOriginal,
   onClearCache,
   lastCacheStatus,
-  loading = false,
   loadingButtons = {}
 }: CvSidebarProps) => {
   const sidebarButtons = [
@@ -290,6 +294,16 @@ const CvSidebar = ({
       disabled: false,
       visible: !!onOpenExtensionModal,
       completed: false,
+      loading: false,
+    },
+    {
+      id: 'ai-introduction',
+      label: showAiIntroduction ? 'Hide AI Introduction' : 'Edit AI Introduction',
+      icon: <SmartToyIcon />,
+      onClick: onToggleAiIntroduction || (() => {}),
+      disabled: false,
+      visible: !!onToggleAiIntroduction,
+      completed: showAiIntroduction,
       loading: false,
     },
   ];

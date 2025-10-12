@@ -8,7 +8,6 @@ export const cvConfigEn: CVSettings = {
   mainColumn: [
     {
       id: "profile",
-      title: "Profile",
       paragraphs: [
         "Full Stack Developer with 4+ years of experience in building web applications and enterprise solutions. Delivered high-impact features and achieved significant performance improvements.\n\n",
         "Transitioned from marketing to development, bringing a user-focused perspective and cross-functional collaboration skills. Consistently performed as top contributor in development teams with expertise in TypeScript, Angular, React, and .NET."

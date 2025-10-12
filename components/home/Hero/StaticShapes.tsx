@@ -284,9 +284,9 @@ function TorusShape({ size }: { size: number }) {
           width: '100%',
           height: '100%',
           borderRadius: '50%',
-          background: `linear-gradient(135deg, ${SHAPE_COLORS.teal}, ${SHAPE_COLORS.steel})`,
-          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.tealRgb}, 0.4)`,
-          border: `2px solid rgba(${SHAPE_COLORS.tealRgb}, 0.3)`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.lightPurple}, ${SHAPE_COLORS.deepPurple})`,
+          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lightPurpleRgb}, 0.4)`,
+          border: `2px solid rgba(${SHAPE_COLORS.lightPurpleRgb}, 0.3)`,
           position: 'relative',
           overflow: 'hidden',
           '&::before': {
@@ -297,7 +297,7 @@ function TorusShape({ size }: { size: number }) {
             width: '50%',
             height: '50%',
             borderRadius: '50%',
-            background: `rgba(${SHAPE_COLORS.tealRgb}, 0.3)`,
+            background: `rgba(${SHAPE_COLORS.lightPurpleRgb}, 0.3)`,
           },
           '&::after': {
             content: '""',
@@ -317,7 +317,7 @@ function TorusShape({ size }: { size: number }) {
 
 function KnotShape({ size }: { size: number }) {
   const prefersReducedMotion = useReducedMotion();
-  
+
   return (
     <motion.div
       animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
@@ -335,10 +335,10 @@ function KnotShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.platinum})`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.gold}, ${SHAPE_COLORS.lavender})`,
           borderRadius: '40% 60% 65% 35% / 30% 45% 55% 70%',
-          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
-          border: `2px solid rgba(${SHAPE_COLORS.lavenderRgb}, 0.3)`,
+          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
+          border: `2px solid rgba(${SHAPE_COLORS.goldRgb}, 0.3)`,
         }}
       />
     </motion.div>
@@ -347,7 +347,7 @@ function KnotShape({ size }: { size: number }) {
 
 function BoxShape({ size }: { size: number }) {
   const prefersReducedMotion = useReducedMotion();
-  
+
   return (
     <motion.div
       animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
@@ -365,10 +365,10 @@ function BoxShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.accent})`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.gold}, ${BRAND_COLORS.accent})`,
           borderRadius: '8px',
-          boxShadow: `0 0 25px rgba(${BRAND_COLORS.secondaryRgb}, 0.4)`,
-          border: `2px solid rgba(${BRAND_COLORS.secondaryRgb}, 0.3)`,
+          boxShadow: `0 0 25px rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
+          border: `2px solid rgba(${SHAPE_COLORS.goldRgb}, 0.3)`,
         }}
       />
     </motion.div>
@@ -377,7 +377,7 @@ function BoxShape({ size }: { size: number }) {
 
 function HeartShape({ size }: { size: number }) {
   const prefersReducedMotion = useReducedMotion();
-  
+
   return (
     <motion.div
       animate={prefersReducedMotion ? {} : {
@@ -399,11 +399,11 @@ function HeartShape({ size }: { size: number }) {
         sx={{
           width: '100%',
           height: '100%',
-          background: `linear-gradient(135deg, ${SHAPE_COLORS.coral}, ${SHAPE_COLORS.rose})`,
+          background: `linear-gradient(135deg, ${SHAPE_COLORS.deepPurple}, ${SHAPE_COLORS.gold})`,
           clipPath: 'polygon(50% 85%, 15% 45%, 15% 25%, 35% 15%, 50% 25%, 65% 15%, 85% 25%, 85% 45%)',
           borderRadius: '20px 20px 0 0',
-          border: `2px solid rgba(${SHAPE_COLORS.coralRgb}, 0.3)`,
-          filter: `drop-shadow(0 0 25px rgba(${SHAPE_COLORS.coralRgb}, 0.4))`,
+          border: `2px solid rgba(${SHAPE_COLORS.deepPurpleRgb}, 0.3)`,
+          filter: `drop-shadow(0 0 25px rgba(${SHAPE_COLORS.deepPurpleRgb}, 0.4))`,
         }}
       />
     </motion.div>
@@ -412,7 +412,7 @@ function HeartShape({ size }: { size: number }) {
 
 function CrossShape({ size }: { size: number }) {
   const prefersReducedMotion = useReducedMotion();
-  
+
   return (
     <motion.div
       animate={prefersReducedMotion ? {} : { rotateZ: -360 }}
@@ -442,7 +442,7 @@ function CrossShape({ size }: { size: number }) {
             left: '35%',
             width: '30%',
             height: '100%',
-            background: `linear-gradient(180deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.platinum})`,
+            background: `linear-gradient(180deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.deepPurple})`,
             borderRadius: '15px',
             boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
           }}
@@ -455,9 +455,9 @@ function CrossShape({ size }: { size: number }) {
             left: '0%',
             width: '100%',
             height: '30%',
-            background: `linear-gradient(90deg, ${SHAPE_COLORS.lavender}, ${SHAPE_COLORS.platinum})`,
+            background: `linear-gradient(90deg, ${SHAPE_COLORS.deepPurple}, ${SHAPE_COLORS.gold})`,
             borderRadius: '15px',
-            boxShadow: `0 0 25px rgba(${SHAPE_COLORS.lavenderRgb}, 0.4)`,
+            boxShadow: `0 0 25px rgba(${SHAPE_COLORS.goldRgb}, 0.4)`,
           }}
         />
       </Box>

@@ -38,12 +38,12 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const t = useTranslations('navigation');
   const locale = useLocale();
-  
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const weAreHome = pathname === "/" || pathname === `/${locale}`;
-  
+
   // Handle client-side mounting to prevent hydration issues
   useEffect(() => {
     setMounted(true);

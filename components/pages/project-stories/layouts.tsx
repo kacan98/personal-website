@@ -26,9 +26,9 @@ interface LayoutProps {
 const getCategoryColor = (category: string) => {
   switch (category) {
     case 'performance': return {
-      main: SHAPE_COLORS.teal,
-      light: `rgba(${SHAPE_COLORS.tealRgb}, 0.1)`,
-      border: `rgba(${SHAPE_COLORS.tealRgb}, 0.3)`
+      main: SHAPE_COLORS.deepPurple,
+      light: `rgba(${SHAPE_COLORS.deepPurpleRgb}, 0.1)`,
+      border: `rgba(${SHAPE_COLORS.deepPurpleRgb}, 0.3)`
     };
     case 'automation': return {
       main: BRAND_COLORS.accent,

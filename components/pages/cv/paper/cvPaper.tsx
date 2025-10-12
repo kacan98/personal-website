@@ -62,9 +62,18 @@ export function CvPaper({
 
 
   return (
-    <Grid container spacing={0}>
+    <Grid container spacing={0} sx={{
+      '@media print': {
+        overflow: 'visible',
+        wordWrap: 'break-word',
+        overflowWrap: 'break-word',
+      }
+    }}>
       <Grid size={isCvDesktop ? 4 : 12}>
-        <Box display="flex" flexDirection="column" alignItems="left" sx={{ p: 2, pr: 3 }}>
+        <Box display="flex" flexDirection="column" alignItems="left" sx={{
+          pr: 1,
+          '@media print': { overflow: 'visible' }
+        }}>
           <Box
             display="flex"
             alignItems="center"
@@ -133,7 +142,7 @@ export function CvPaper({
               const isNewSection = !isDeleted && currentIndex >= (originalCv?.sideColumn?.length ?? 0);
 
               return (
-                <Box key={sectionId || renderIndex} mb={2.5}>
+                <Box key={sectionId || renderIndex} mb={1}>
                   <CvSectionComponent
                     sideOrMain="sideColumn"
                     sectionIndex={renderIndex}
@@ -165,7 +174,10 @@ export function CvPaper({
         </Box>
       </Grid>
       <Grid size={isCvDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
-        <Box sx={{ p: 2 }}>
+        <Box sx={{
+          pl: 1,
+          '@media print': { overflow: 'visible' }
+        }}>
           {(() => {
             // Get merged sections including deleted ones for diff viewing
             const mergedSections = originalCv && showDiff
@@ -194,7 +206,7 @@ export function CvPaper({
               const isNewSection = !isDeleted && currentIndex >= (originalCv?.mainColumn?.length ?? 0);
 
               return (
-                <Box key={sectionId || renderIndex} sx={{ mt: renderIndex === 1 ? 4 : 0 }}>
+                <Box key={sectionId || renderIndex} mb={1}>
                   <CvSectionComponent
                     sideOrMain="mainColumn"
                     sectionIndex={renderIndex}

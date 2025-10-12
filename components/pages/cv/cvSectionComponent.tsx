@@ -139,14 +139,27 @@ export function CvSectionComponent({
       {/* Status indicators removed - revert moved to context menu */}
 
       {/* Content */}
-      {(title || editable) && (
+      {title && (
         <SuperEditableText
           query={["title"]}
           variant="h4"
           mb={1}
+          sx={{
+            fontWeight: 'bold',
+            '@media print': {
+              pageBreakAfter: 'avoid',
+              breakAfter: 'avoid',
+              '&::after': {
+                content: '""',
+                display: 'block',
+                height: '75px',
+                marginBottom: '-75px'
+              }
+            }
+          }}
           text={title || ""}
           originalText={isNew && showDiff ? "" : originalSection?.title}
-          autoEdit={(!title || title.trim() === "")}
+          autoEdit={false}
           onAutoDelete={() => {
             // Delete the entire section when title is empty
             // We need to implement section deletion logic here

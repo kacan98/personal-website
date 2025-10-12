@@ -8,7 +8,6 @@ export const cvSv: CVSettings = {
   mainColumn: [
     {
       id: "profile",
-      title: "Profil",
       paragraphs: [
         "Full Stack Utvecklare med 4+ års erfarenhet av att bygga webbapplikationer och företagslösningar. Levererat högimpaktfunktioner och betydande prestandaförbättringar.\n\n",
         "Övergick till utveckling från marknadsföring, vilket ger ett användarfokuserat perspektiv och tvärfunktionella samarbetsförmågor. Konsekvent presterat som toppbidragsgivare i utvecklingsteam med expertis i TypeScript, Angular, React och .NET."

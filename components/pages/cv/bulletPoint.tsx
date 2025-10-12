@@ -7,7 +7,7 @@ import { BulletPoint } from "@/types";
 import { Grid, ListItem, ListItemIcon, ListItemText, Box } from "@mui/material";
 import React from "react";
 import { IconPicker } from "./IconPicker";
-import { BRAND_COLORS } from "@/app/colors";
+import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
 
 export const CvBulletPoint = React.memo(function CvBulletPoint({
     bulletPoint,
@@ -42,7 +42,16 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
     };
     return (
         <>
-            <ListItem sx={{ pt: 0, pb: 1, px: 0, display: 'block' }}>
+            <ListItem sx={{
+                pt: 0,
+                pb: 1,
+                px: 0,
+                display: 'block',
+                '@media print': {
+                    pageBreakInside: 'avoid',
+                    breakInside: 'avoid'
+                }
+            }}>
                 <Grid container spacing={2} alignItems="flex-start" wrap={"nowrap"}>
                     <ListItemIcon sx={{
                         minWidth: 'auto',
@@ -54,7 +63,16 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                             '& svg': {
                                 color: 'secondary.main',
                             }
-                        })
+                        }),
+                        // Print-specific styling for icons
+                        '@media print': {
+                            ...(!!bulletPoint.url && isPrintVersion && {
+                                color: `${SHAPE_COLORS.lightPurple} !important`,
+                                '& svg': {
+                                    color: `${SHAPE_COLORS.lightPurple} !important`,
+                                }
+                            })
+                        }
                     }}>
                         {editable && !isPrintVersion ? (
                             <IconPicker
@@ -94,9 +112,9 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                                 '@media print': {
                                     ...(!!bulletPoint.url && isPrintVersion && {
                                         '& a': {
-                                            color: `${BRAND_COLORS.accent} !important`,
+                                            color: `${SHAPE_COLORS.lightPurple} !important`,
                                             textDecoration: 'underline !important',
-                                            textDecorationColor: `${BRAND_COLORS.accent} !important`,
+                                            textDecorationColor: `${SHAPE_COLORS.lightPurple} !important`,
                                             textDecorationThickness: '1.5px !important',
                                         }
                                     })

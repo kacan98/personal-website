@@ -1,38 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run dev:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm run lint)",
-      "Bash(npm audit:*)",
-      "Bash(find:*)",
-      "Bash(npm install:*)",
-      "Bash(npx tsc:*)",
-      "Bash(rm:*)",
-      "Bash(dir:*)",
-      "WebSearch",
-      "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:dev.to)",
-      "WebFetch(domain:blog.gitbutler.com)",
-      "WebFetch(domain:www.ksred.com)",
-      "WebFetch(domain:github.com)",
-      "Bash(grep:*)",
-      "Bash(git add:*)",
-      "Bash(curl:*)",
-      "Bash(/dev/null)",
-      "WebFetch(domain:docs.browsermcp.io)",
-      "Bash(sed:*)",
-      "mcp__browsermcp__browser*",
-      "mcp__browsermcp__browser_click",
-      "mcp__browsermcp__browser_navigate",
-      "mcp__browsermcp__browser_type",
-      "mcp__browsermcp__browser_screenshot",
-      "mcp__browsermcp__browser_snapshot",
-      "mcp__browsermcp__browser_wait",
-      "mcp__browsermcp__browser_get_console_logs",
-      "mcp__browsermcp__browser_go_back",
-      "Bash(npm run type-check:*)"
+      "WebFetch(domain:developer.chrome.com)",
+      "WebFetch(domain:support.claude.com)",
+      "WebFetch(domain:idsc2025.substack.com)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }

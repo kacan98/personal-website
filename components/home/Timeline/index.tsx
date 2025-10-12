@@ -47,9 +47,9 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
   }, [isRevealed]);
 
   return (
-    <Box 
+    <Box
       ref={itemRef}
-      sx={{ 
+      sx={{
         position: 'relative',
         mb: { xs: 6, md: 8 },
         pl: { xs: 6, md: 0 },
@@ -74,7 +74,7 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
       <Grid container spacing={4} alignItems="center">
         <Grid
           size={{ xs: 12, md: 6 }}
-          sx={{ 
+          sx={{
             order: { xs: 1, md: index % 2 === 0 ? 1 : 2 },
             textAlign: 'left'
           }}>
@@ -183,41 +183,26 @@ function TimelineItemComponent({ item, index }: { item: TimelineItem; index: num
             </Box>
           </Box>
         </Grid>
-        
-        {/* Hide this column on mobile (xs), only show on md+ */}
+
+        {/* Empty decorative column - no duplicate content */}
         <Grid
           size={{ xs: 12, md: 6 }}
-          sx={{ 
+          sx={{
             order: { xs: 2, md: index % 2 === 0 ? 2 : 1 },
-            display: { xs: 'none', md: 'block' } // Hide on mobile
+            display: { xs: 'none', md: 'block' }
           }}>
-          <Box sx={{ 
-            height: '250px',
-            background: `rgba(${(index + 1) * 60 + 100}, ${200 - index * 30}, ${255 - index * 40}, 0.1)`,
-            borderRadius: 3,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: `1px solid rgba(${(index + 1) * 60 + 100}, ${200 - index * 30}, ${255 - index * 40}, 0.2)`,
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.02)',
-            }
-          }}>
-            {item.visual || (
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography sx={{ 
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  mb: 1
-                }}>
-                  {item.company}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.3)' }}>
-                  {item.period}
-                </Typography>
-              </Box>
-            )}
-          </Box>
+          {/* Optional: Could add item.visual here if provided */}
+          {item.visual && (
+            <Box sx={{
+              height: '250px',
+              borderRadius: 3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              {item.visual}
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Box>
@@ -282,7 +267,7 @@ export default function Timeline({ items, title }: TimelineProps) {
       )}
       
       <Box sx={{ position: 'relative', maxWidth: '1000px', mx: 'auto' }}>
-        {/* Timeline line - hide on mobile where right column is hidden */}
+        {/* Timeline line */}
         <Box sx={{
           position: 'absolute',
           left: { xs: '20px', md: '50%' },
