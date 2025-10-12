@@ -77,8 +77,8 @@ export function CvPaper({
           >
             {imageUrl && <Avatar
               src={imageUrl}
-              sx={{ 
-                width: 70, 
+              sx={{
+                width: 70,
                 height: 70,
                 flexShrink: 0
               }}
@@ -110,11 +110,11 @@ export function CvPaper({
             const mergedSections = originalCv && showDiff
               ? getMergedSectionsForRendering(originalCv.sideColumn || [], reduxCv.sideColumn || [], 'sideColumn')
               : (reduxCv.sideColumn || []).map((section, index) => ({
-                  section,
-                  sectionId: section.id || getSectionKey('sideColumn', index),
-                  isDeleted: false,
-                  isFromOriginal: false
-                }));
+                section,
+                sectionId: section.id || getSectionKey('sideColumn', index),
+                isDeleted: false,
+                isFromOriginal: false
+              }));
 
             return mergedSections.map(({ section, sectionId, isDeleted }, renderIndex) => {
               const isRemoved = isDeleted || removedSections.has(sectionId);
@@ -137,22 +137,22 @@ export function CvPaper({
                   <CvSectionComponent
                     sideOrMain="sideColumn"
                     sectionIndex={renderIndex}
-                  section={section}
-                  editable={editable}
-                  isPrintVersion={isPrintVersion}
-                  positionDetails={positionDetails}
-                  adjustSection={adjustSection}
-                  isRemoved={isRemoved}
-                  isModified={isModified}
-                  isNew={isNewSection}
-                  onRemoveSection={onRemoveSection}
-                  onRestoreSection={onRestoreSection}
-                  onSectionAdjusted={onSectionAdjusted}
-                  sectionKey={sectionId}
-                  onRemoveSubSection={onRemoveSubSection}
-                  onRestoreSubSection={onRestoreSubSection}
-                  onSubSectionAdjusted={onSubSectionAdjusted}
-                  removedSubSections={removedSubSections}
+                    section={section}
+                    editable={editable}
+                    isPrintVersion={isPrintVersion}
+                    positionDetails={positionDetails}
+                    adjustSection={adjustSection}
+                    isRemoved={isRemoved}
+                    isModified={isModified}
+                    isNew={isNewSection}
+                    onRemoveSection={onRemoveSection}
+                    onRestoreSection={onRestoreSection}
+                    onSectionAdjusted={onSectionAdjusted}
+                    sectionKey={sectionId}
+                    onRemoveSubSection={onRemoveSubSection}
+                    onRestoreSubSection={onRestoreSubSection}
+                    onSubSectionAdjusted={onSubSectionAdjusted}
+                    removedSubSections={removedSubSections}
                     modifiedSubSections={modifiedSubSections}
                     originalSection={originalSection}
                     showDiff={showDiff && !isPrintVersion}
@@ -171,11 +171,11 @@ export function CvPaper({
             const mergedSections = originalCv && showDiff
               ? getMergedSectionsForRendering(originalCv.mainColumn || [], reduxCv.mainColumn || [], 'mainColumn')
               : (reduxCv.mainColumn || []).map((section, index) => ({
-                  section,
-                  sectionId: section.id || getSectionKey('mainColumn', index),
-                  isDeleted: false,
-                  isFromOriginal: false
-                }));
+                section,
+                sectionId: section.id || getSectionKey('mainColumn', index),
+                isDeleted: false,
+                isFromOriginal: false
+              }));
 
             return mergedSections.map(({ section, sectionId, isDeleted }, renderIndex) => {
               const isRemoved = isDeleted || removedSections.has(sectionId);
@@ -198,24 +198,24 @@ export function CvPaper({
                   <CvSectionComponent
                     sideOrMain="mainColumn"
                     sectionIndex={renderIndex}
-                  sectionId={sectionId}
-                  section={section}
-                  editable={editable}
-                  isPrintVersion={isPrintVersion}
-                  positionDetails={positionDetails}
-                  adjustSection={adjustSection}
-                  isRemoved={isRemoved}
-                  isModified={isModified}
-                  isNew={isNewSection}
-                  onRemoveSection={onRemoveSection}
-                  onRestoreSection={onRestoreSection}
-                  onSectionAdjusted={onSectionAdjusted}
-                  sectionKey={sectionId}
-                  onRemoveSubSection={onRemoveSubSection}
-                  onRestoreSubSection={onRestoreSubSection}
-                  onSubSectionAdjusted={onSubSectionAdjusted}
-                  removedSubSections={removedSubSections}
-                  modifiedSubSections={modifiedSubSections}
+                    sectionId={sectionId}
+                    section={section}
+                    editable={editable}
+                    isPrintVersion={isPrintVersion}
+                    positionDetails={positionDetails}
+                    adjustSection={adjustSection}
+                    isRemoved={isRemoved}
+                    isModified={isModified}
+                    isNew={isNewSection}
+                    onRemoveSection={onRemoveSection}
+                    onRestoreSection={onRestoreSection}
+                    onSectionAdjusted={onSectionAdjusted}
+                    sectionKey={sectionId}
+                    onRemoveSubSection={onRemoveSubSection}
+                    onRestoreSubSection={onRestoreSubSection}
+                    onSubSectionAdjusted={onSubSectionAdjusted}
+                    removedSubSections={removedSubSections}
+                    modifiedSubSections={modifiedSubSections}
                     originalSection={originalSection}
                     showDiff={showDiff && !isPrintVersion}
                   />

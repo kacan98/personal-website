@@ -33,7 +33,6 @@
       "mcp__browsermcp__browser_go_back",
       "Bash(npm run type-check:*)"
     ],
-    "deny": [],
-    "defaultMode": "acceptEdits"
+    "deny": []
   }
 }

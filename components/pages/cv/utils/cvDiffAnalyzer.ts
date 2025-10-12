@@ -147,7 +147,7 @@ export function getMergedSectionsForRendering(
 
   // Simple index-based approach: add all current sections
   currentSections.forEach((section, index) => {
-    const sectionId = getSectionKey(columnType, index);
+    const sectionId = section.id || getSectionKey(columnType, index);
     merged.push({
       section,
       sectionId,
@@ -160,7 +160,7 @@ export function getMergedSectionsForRendering(
   originalSections.forEach((originalSection, index) => {
     // If current sections is shorter, these sections were deleted
     if (index >= currentSections.length) {
-      const sectionId = getSectionKey(columnType, index);
+      const sectionId = originalSection.id || getSectionKey(columnType, index);
       merged.push({
         section: originalSection,
         sectionId,

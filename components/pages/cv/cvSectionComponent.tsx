@@ -392,8 +392,8 @@ export function CvSectionComponent({
           const isSubRemoved = onRemoveSubSection && removedSubSections?.has(subSectionId);
           const isSubModified = onSubSectionAdjusted && modifiedSubSections?.has(subSectionId);
 
-          // Skip removed subsections in print version
-          if (isPrintVersion && isSubRemoved) {
+          // Skip manually removed subsections
+          if (isSubRemoved) {
             return null;
           }
 

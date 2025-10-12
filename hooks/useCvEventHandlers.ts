@@ -9,7 +9,7 @@ import {
 } from '@/redux/slices/improvementDescriptions';
 import { CVSettings } from '@/types';
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model';
-import { useModalManager } from './useModalManager';
+import { ModalType } from './useModalManager';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface EventHandlersConfig {
@@ -33,6 +33,10 @@ interface EventHandlersConfig {
   // Redux props
   reduxCvProps: CVSettings;
 
+  // Modal functions (passed from parent)
+  openModal: (modalType: ModalType) => void;
+  closeModal: (modalType: ModalType) => void;
+
   // Utility functions
   adjustmentWorkflow: any;
   refineCv: (data: any) => Promise<void>;
@@ -41,7 +45,6 @@ interface EventHandlersConfig {
 
 export function useCvEventHandlers(config: EventHandlersConfig) {
   const dispatch = useAppDispatch();
-  const { openModal, closeModal } = useModalManager();
   const { logout } = useAuth();
 
   // Language change handler
@@ -68,7 +71,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
       if (newClickCount >= 5) {
         config.setTitleClickedTimes(0);
-        openModal('password');
+        config.openModal('password');
       }
     }
   }, [
@@ -76,14 +79,14 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     config.showPasswordModal,
     config.titleClickedTimes,
     config.setTitleClickedTimes,
-    openModal
+    config.openModal
   ]);
 
   // Position adjustment handler
   const handleAdjustForPosition = useCallback(async (positionDetails: string, checked: string[], selectedLanguage: string) => {
     if (positionDetails && positionDetails.trim().length > 0) {
       if (!config.isAuthenticated) {
-        openModal('password');
+        config.openModal('password');
         return;
       }
 
@@ -99,7 +102,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     config.isAuthenticated,
     config.adjustmentWorkflow.startAdjustment,
     config.setSnackbarMessage,
-    openModal
+    config.openModal
   ]);
 
   // Manual refinement handler
@@ -127,7 +130,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
     await config.refineCv(refinementWithDescriptions);
     config.setHasManualRefinements(true);
-    closeModal('manualAdjustment');
+    config.closeModal('manualAdjustment');
 
     // Mark the used improvements
     if (config.checked.length > 0) {
@@ -138,7 +141,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     config.refineCv,
     config.setHasManualRefinements,
     config.checked,
-    closeModal,
+    config.closeModal,
     dispatch
   ]);
 

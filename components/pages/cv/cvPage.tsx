@@ -159,6 +159,10 @@ function CvPage({ jobDescription }: CvProps) {
     // Redux props
     reduxCvProps,
 
+    // Modal functions
+    openModal: modals.openModal,
+    closeModal: modals.closeModal,
+
     // Utility functions
     adjustmentWorkflow,
     refineCv,
