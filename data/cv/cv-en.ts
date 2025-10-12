@@ -27,7 +27,7 @@ export const cvConfigEn: CVSettings = {
           paragraphs: [
             "- Developing full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients",
             "- Building backend services and APIs using .NET, X++, and C# while collaborating with frontend teams",
-            "- Achieved 10x performance improvement in data transfer between frontend and backend systems"
+            "- Achieved 10x performance improvement reducing sync time from 20+ minutes to under 2 minutes"
           ]
         },
         {
@@ -38,8 +38,9 @@ export const cvConfigEn: CVSettings = {
           },
           paragraphs: [
             "- Built TypeScript and Angular web applications serving 100+ companies",
-            "- Consistently delivered highest story points in team sprints while enhancing CI/CD pipelines",
-            "- Served as Scrum Master for 5-person development team"
+            "- Consistently ranked as top performer in development team sprints",
+            "- Served as Scrum Master for 5-person development team",
+            "- Enhanced CI/CD pipelines and automated deployment workflows"
           ]
         },
         {
@@ -66,6 +67,19 @@ export const cvConfigEn: CVSettings = {
             "- Built company website, created marketing materials, and conducted direct outreach to potential clients",
             "- Successfully secured 50+ meetings with decision-makers and closed 5 paying customers"
           ]
+        }
+      ]
+    },
+    {
+      id: "education",
+      title: "Education",
+      subSections: [
+        {
+          title: "Professional Bachelor in Marketing and Sales",
+          subtitles: {
+            left: "UCN",
+            right: ""
+          }
         }
       ]
     }
@@ -129,6 +143,10 @@ export const cvConfigEn: CVSettings = {
       bulletPoints: [
         {
           iconName: "translate",
+          text: "Czech (native)"
+        },
+        {
+          iconName: "translate",
           text: "English (fluent)"
         },
         {
@@ -148,27 +166,27 @@ export const cvConfigEn: CVSettings = {
         {
           iconName: "science",
           text: "AI-Powered Job Application Platform - Reduced application time by 80%",
-          url: "https://kcancara.vercel.app/case-studies/ai-job-application-platform"
+          url: "https://kcancara.vercel.app/project-stories/ai-job-application-platform"
         },
         {
           iconName: "science",
-          text: "10x Performance Improvement - Reduced query time from 30s to 3s",
-          url: "https://kcancara.vercel.app/case-studies/10x-performance-improvement"
+          text: "10x Performance Improvement - Reduced sync time from 20+ min to <2 min",
+          url: "https://kcancara.vercel.app/project-stories/10x-performance-improvement"
         },
         {
           iconName: "gitHub",
-          text: "Git-to-Jira Bridge - Automated 10+ hours/month of time tracking",
-          url: "https://kcancara.vercel.app/case-studies/git-jira-bridge"
+          text: "Git-to-Jira Bridge - Saves ~1 hour/month per developer in time tracking",
+          url: "https://kcancara.vercel.app/project-stories/git-jira-bridge"
         },
         {
           iconName: "science",
           text: "LinkedIn Job Filtering - Automated job scraping with Playwright",
-          url: "https://kcancara.vercel.app/case-studies/playwright-job-scraper"
+          url: "https://kcancara.vercel.app/project-stories/playwright-job-scraper"
         },
         {
           iconName: "translate",
           text: "Magic Bookmarks - Universal environment navigation tool",
-          url: "https://kcancara.vercel.app/case-studies/magic-bookmarks"
+          url: "https://kcancara.vercel.app/project-stories/magic-bookmarks"
         }
       ]
     }

@@ -7,10 +7,12 @@ tags:
   - CSS Modules
   - Developer Tools
 category: technical
-date: 2025-11-01
+date: 2025-10-01
 metrics:
   impact: 'Streamlines navigation across development environments'
   timeframe: '5-hour rapid development'
+liveUrl: https://magic-bookmarks.vercel.app/
+sourceUrl: https://github.com/kacan98/magic-bookmarks
 ---
 
 # One Bookmark for All Your Environments

@@ -19,7 +19,7 @@ export interface Story {
 }
 
 export async function getAllStories(): Promise<Story[]> {
-  const projectStoriesDir = path.join(process.cwd(), 'case-studies');
+  const projectStoriesDir = path.join(process.cwd(), 'project-stories');
 
   if (!fs.existsSync(projectStoriesDir)) {
     return [];

@@ -1,7 +1,7 @@
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { getContainerSx } from '@/app/spacing';
 import SectionHeader from '@/components/ui/SectionHeader';
-import { MetricsLayout } from '@/components/pages/case-studies/layouts';
+import { MetricsLayout } from '@/components/pages/project-stories/layouts';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -22,7 +22,7 @@ interface BlogPost {
 }
 
 async function getProjectStories(): Promise<BlogPost[]> {
-  const projectStoriesDir = path.join(process.cwd(), 'case-studies');
+  const projectStoriesDir = path.join(process.cwd(), 'project-stories');
 
   if (!fs.existsSync(projectStoriesDir)) {
     return [];
@@ -55,21 +55,25 @@ async function getProjectStories(): Promise<BlogPost[]> {
   });
 }
 
-export default async function CaseStudiesPage() {
+export default async function ProjectStoriesPage() {
   const posts = await getProjectStories();
   const t = await getTranslations('projectStories');
 
   return (
     <Container sx={{ ...getContainerSx(), py: 6 }}>
-      {/* Header */}
-      <SectionHeader
-        title={t('title')}
-        description={t('description')}
-        size="large"
-      />
+      {/* Header with max width for better readability */}
+      <Box sx={{ maxWidth: '70ch', mx: 'auto', mb: 4 }}>
+        <SectionHeader
+          title={t('title')}
+          description={t('description')}
+          size="large"
+        />
+      </Box>
 
-      {/* Metrics Layout */}
-      <MetricsLayout posts={posts} />
+      {/* Metrics Layout - constrained to same width as individual stories */}
+      <Box sx={{ maxWidth: '70ch', mx: 'auto' }}>
+        <MetricsLayout posts={posts} />
+      </Box>
     </Container>
   );
 }

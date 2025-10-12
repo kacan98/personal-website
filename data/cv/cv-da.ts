@@ -10,8 +10,8 @@ export const cvConfigDa: CVSettings = {
       id: "profile",
       title: "Profil",
       paragraphs: [
-        "Full Stack Udvikler med 4+ års erfaring med at bygge webapplikationer og virksomhedsløsninger. Dokumenteret track record med at levere funktioner med stor indvirkning og betydelige ydeevneforbedringer.\n\n",
-        "Skiftet til udvikling fra marketing, hvilket giver en unik bruger-fokuseret tilgang og tværfaglige samarbejdsevner. Hurtig læring og konsistent levering — ofte med højest story points i teamsprints trods selvlært baggrund."
+        "Full Stack Udvikler med 4+ års erfaring med at bygge webapplikationer og virksomhedsløsninger. Leveret funktioner med stor indvirkning og betydelige ydeevneforbedringer.\n\n",
+        "Skiftet til udvikling fra marketing, hvilket giver et bruger-fokuseret perspektiv og tværfaglige samarbejdsevner. Konsekvent præsteret som top-bidragyder i udviklingsteams med ekspertise i TypeScript, Angular, React og .NET."
       ]
     },
     {
@@ -25,10 +25,9 @@ export const cvConfigDa: CVSettings = {
             right: "Nov 2024 - Nu"
           },
           paragraphs: [
-            "- Udvikler backend-tjenester og API'er i X++, C# og .NET til virksomheds-ERP-software. Integrerer med Microsoft Graph.",
-            "- Samarbejder med frontend- og infrastrukturteams for at levere end-to-end-løsninger",
-            "- Fokuserer på præstationsforbedringer, debugging og kundespecifikke funktioner",
-            "- Opnåede 10x hastigheds-forbedring af dataoverførsel mellem frontend og backend"
+            "- Udvikler full-stack løsninger til Microsoft Dynamics 365 Finance and Operations for virksomhedskunder",
+            "- Bygger backend-tjenester og API'er ved brug af .NET, X++ og C# mens jeg samarbejder med frontend-teams",
+            "- Opnåede 10x ydeevneforbedring ved at reducere synkroniseringstid fra 20+ minutter til under 2 minutter"
           ]
         },
         {
@@ -38,10 +37,10 @@ export const cvConfigDa: CVSettings = {
             right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
-            "- Byggede TypeScript og Angular webapplikationer der betjener 200+ virksomheder",
-            "- Bidrog med det højeste antal story points i mange sprints",
-            "- Tog til orde for brugervenlighed og designsimplicitet i funktionsdiskussioner\n",
-            "- Ledede daglige og ugentlige Scrum-møder for et 5-personers udviklingshold som Scrum Master."
+            "- Byggede TypeScript og Angular webapplikationer der betjener 100+ virksomheder",
+            "- Konsekvent rangeret som top-performer i udviklingshold sprints",
+            "- Fungerede som Scrum Master for 5-personers udviklingshold",
+            "- Forbedrede CI/CD pipelines og automatiserede deployment-workflows"
           ]
         },
         {
@@ -68,6 +67,19 @@ export const cvConfigDa: CVSettings = {
             "- Byggede virksomhedens hjemmeside, skabte marketingmaterialer og udførte direkte opsøgning til potentielle kunder",
             "- Sikrede succesfuldt 50+ møder med beslutningstagere og lukkede 5 betalende kunder"
           ]
+        }
+      ]
+    },
+    {
+      id: "education",
+      title: "Uddannelse",
+      subSections: [
+        {
+          title: "Professionsbachelor i Marketing og Salg",
+          subtitles: {
+            left: "UCN",
+            right: ""
+          }
         }
       ]
     }
@@ -131,6 +143,10 @@ export const cvConfigDa: CVSettings = {
       bulletPoints: [
         {
           iconName: "translate",
+          text: "Tjekkisk (modersmål)"
+        },
+        {
+          iconName: "translate",
           text: "Engelsk (flydende)"
         },
         {
@@ -150,27 +166,27 @@ export const cvConfigDa: CVSettings = {
         {
           iconName: "science",
           text: "AI-Drevet Jobansøgningsplatform - Reducerede ansøgningstid med 80%",
-          url: "https://kcancara.vercel.app/case-studies/ai-job-application-platform"
+          url: "https://kcancara.vercel.app/project-stories/ai-job-application-platform"
         },
         {
           iconName: "science",
-          text: "10x Præstationsforbedring - Reducerede forespørgselstid fra 30s til 3s",
-          url: "https://kcancara.vercel.app/case-studies/10x-performance-improvement"
+          text: "10x Præstationsforbedring - Reducerede synkroniseringstid fra 20+ min til <2 min",
+          url: "https://kcancara.vercel.app/project-stories/10x-performance-improvement"
         },
         {
           iconName: "gitHub",
-          text: "Git-til-Jira Bro - Automatiserede 10+ timer/måned tidssporing",
-          url: "https://kcancara.vercel.app/case-studies/git-jira-bridge"
+          text: "Git-til-Jira Bro - Sparer ~1 time/måned per udvikler i tidssporing",
+          url: "https://kcancara.vercel.app/project-stories/git-jira-bridge"
         },
         {
           iconName: "science",
           text: "LinkedIn Job-filtrering - Automatiseret jobscraping med Playwright",
-          url: "https://kcancara.vercel.app/case-studies/playwright-job-scraper"
+          url: "https://kcancara.vercel.app/project-stories/playwright-job-scraper"
         },
         {
           iconName: "translate",
           text: "Magic Bookmarks - Universelt miljønavigeringsværktøj",
-          url: "https://kcancara.vercel.app/case-studies/magic-bookmarks"
+          url: "https://kcancara.vercel.app/project-stories/magic-bookmarks"
         }
       ]
     }

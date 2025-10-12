@@ -22,11 +22,12 @@ export type EditableTextExtraProps = {
     onRestore?: () => void;
     autoEdit?: boolean;
     onAutoDelete?: () => void;
+    placeholder?: string;
 };
 
 export type EditableTextProps = EditableTextExtraProps & TypographyProps
 
-export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, onRestore, autoEdit = false, onAutoDelete, ...typographyProps }: EditableTextProps) {
+export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, onRestore, autoEdit = false, onAutoDelete, placeholder, ...typographyProps }: EditableTextProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState("");
     const [isNarrowContainer, setIsNarrowContainer] = useState(false);
@@ -112,6 +113,7 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    placeholder={placeholder}
                 />
                 <Box
                     display="flex"
@@ -205,7 +207,7 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
     } else {
         return (
             <Typography {...typographyProps} onClick={handleStartEdit}>
-                {text}
+                {text || (placeholder && <span style={{ opacity: 0.5, fontStyle: 'italic' }}>{placeholder}</span>)}
             </Typography>
         );
     }

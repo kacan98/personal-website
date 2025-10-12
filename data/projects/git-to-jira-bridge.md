@@ -71,7 +71,7 @@ CSV Upload      Task Details   Cloud/Server
 
 ## Business Impact
 
-- **95% Time Saved**: Eliminates daily manual time entry tasks
+- **Time Savings**: Saves approximately 1 hour per month per developer
 - **100% Accuracy**: Captures actual development time vs. estimates
 - **Seamless Integration**: Works with existing Git and Jira workflows
 - **Zero Disruption**: Background monitoring doesn't interrupt development flow

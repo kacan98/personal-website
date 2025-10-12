@@ -13,6 +13,7 @@ date: 2025-06-01
 metrics:
   impact: Automated time tracking by syncing Git commits to Jira
   timeframe: Active development project
+liveUrl: https://log-bridge.vercel.app
 embedding:
   - -0.03953730687499046
   - 0.04331619292497635
@@ -1592,7 +1593,7 @@ This creates a CSV file with detailed activity logs that can be dragged and drop
 
 The system uses GitHub's API to fetch commit history and pull request data, regex patterns to extract Jira task IDs from branch names and PR titles, and Jira's REST API to automatically create time log entries. The background tracker is built as a Windows executable that monitors file system changes and git repository states.
 
-**Impact**: What used to take 10-15 minutes of manual work every day now takes about 30 seconds. My colleagues who use it report similar time savings and much more accurate time tracking.
+**Impact**: Saves approximately an hour per month per developer by automating time tracking. What used to be manual daily Jira logging now happens automatically from Git commits. My colleagues who use it report similar time savings and much more accurate time tracking.
 
 **Live demo**: [log-bridge.vercel.app](https://log-bridge.vercel.app)
 

@@ -47,9 +47,9 @@ const StyledButton = styled(MuiButton, {
         backgroundColor: BRAND_COLORS.accent,
         color: '#ffffff',
         '&:hover': {
-          backgroundColor: 'rgba(168, 85, 247, 0.9)',
+          backgroundColor: `rgba(${BRAND_COLORS.accentRgb}, 0.9)`,
           transform: 'translateY(-1px)',
-          boxShadow: '0 4px 12px rgba(168, 85, 247, 0.3)',
+          boxShadow: `0 4px 12px rgba(${BRAND_COLORS.accentRgb}, 0.3)`,
         },
         '&:active': {
           transform: 'translateY(0)',
@@ -100,7 +100,7 @@ const StyledButton = styled(MuiButton, {
         minHeight: 40,
         color: isActiveState ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
         backgroundColor: isActiveState ? BRAND_COLORS.accent : 'transparent',
-        border: isActiveState ? `1px solid rgba(168, 85, 247, 0.3)` : '1px solid transparent',
+        border: isActiveState ? `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.3)` : '1px solid transparent',
         position: 'relative',
         overflow: 'hidden',
         '&::before': isActiveState ? {
@@ -114,7 +114,7 @@ const StyledButton = styled(MuiButton, {
           borderRadius: '20px',
         } : {},
         '&:hover': {
-          backgroundColor: isActiveState ? 'rgba(168, 85, 247, 0.9)' : 'rgba(255, 255, 255, 0.08)',
+          backgroundColor: isActiveState ? `rgba(${BRAND_COLORS.accentRgb}, 0.9)` : 'rgba(255, 255, 255, 0.08)',
           color: '#ffffff',
           transform: 'translateY(-1px)',
         },

@@ -60,7 +60,6 @@ const ChatBotUI = () => {
             if (data === '[DONE]') {
               const newMessages = [...messageHistory, { content: fullContent, role: "assistant" as const }];
               setMessages(newMessages);
-              localStorage.setItem("chatMessages", JSON.stringify(newMessages));
               setStreamingMessage("");
               setLoading(false);
               return;
@@ -85,35 +84,29 @@ const ChatBotUI = () => {
     }
   };
 
-  // Handle client-side mounting and localStorage
+  // Handle client-side mounting - always start fresh
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("chatMessages");
-    if (stored) {
-      setMessages(JSON.parse(stored));
-    } else {
-      // If no stored messages, get introduction from API
-      sendMessage([]);
-    }
+    // Always get a fresh introduction on mount
+    sendMessage([]);
   }, []);
 
   // Handle locale changes - clear messages and get new introduction
   useEffect(() => {
     if (!mounted) return; // Don't run on initial mount
-    
+
     if (locale !== previousLocale) {
       // Clear current messages
       setMessages([]);
       setInput("");
       setStreamingMessage("");
       setError(null);
-      localStorage.removeItem("chatMessages");
-      
+
       // Get introduction in new language (with small delay to ensure state is updated)
       setTimeout(() => {
         sendMessage([]);
       }, 100);
-      
+
       // Update previous locale
       setPreviousLocale(locale);
     }
@@ -131,14 +124,13 @@ const ChatBotUI = () => {
 
   const handleSend = () => {
     if (!input.trim()) return;
-    
+
     const userMessage = { content: input.trim(), role: "user" as const };
     const newMessages = [...messages, userMessage];
-    
+
     setMessages(newMessages);
-    localStorage.setItem("chatMessages", JSON.stringify(newMessages));
     setInput("");
-    
+
     sendMessage(newMessages);
   };
 
@@ -148,7 +140,6 @@ const ChatBotUI = () => {
     setInput("");
     setStreamingMessage("");
     setError(null);
-    localStorage.removeItem("chatMessages");
     // Get a fresh introduction from the API
     sendMessage([]);
   };

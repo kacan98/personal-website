@@ -11,6 +11,7 @@ date: 2024-06-01
 metrics:
   impact: Interactive buy vs rent calculator with real-time financial projections
   timeframe: Personal project with social media feedback
+liveUrl: https://kacan98.github.io/buying-vs-renting/
 embedding:
   - -0.028577754274010658
   - 0.01388812530785799
