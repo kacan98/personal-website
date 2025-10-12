@@ -65,11 +65,24 @@ export function analyzeCvDifferences(
         ? findSectionById(currentSections, originalSection.id)
         : currentSections[index];
 
-      if (!currentSection || !currentSection.title || currentSection.title.trim() === '') {
-        // Section is missing or empty - consider it removed
+      if (!currentSection) {
+        // Section completely missing - consider it removed
         analysis.removedSections.add(sectionId);
         analysis.hasChanges = true;
       } else {
+        // Section exists - check if it has any content (title, paragraphs, bullet points, or subsections)
+        const hasTitle = currentSection.title && currentSection.title.trim() !== '';
+        const hasParagraphs = currentSection.paragraphs && currentSection.paragraphs.some((p: string) => p && p.trim() !== '');
+        const hasBulletPoints = currentSection.bulletPoints && currentSection.bulletPoints.some((bp: any) => bp.text && bp.text.trim() !== '');
+        const hasSubSections = currentSection.subSections && currentSection.subSections.length > 0;
+
+        const hasAnyContent = hasTitle || hasParagraphs || hasBulletPoints || hasSubSections;
+
+        if (!hasAnyContent) {
+          // Section exists but is completely empty - consider it removed
+          analysis.removedSections.add(sectionId);
+          analysis.hasChanges = true;
+        } else {
         // Check if section content has actually changed (more granular than full JSON comparison)
         // Normalize sections by removing/ignoring IDs for comparison to avoid false positives
         const normalizeSection = (section: any) => {
@@ -106,6 +119,7 @@ export function analyzeCvDifferences(
               analysis.modifiedSubSections.add(subSectionId);
             }
           });
+        }
         }
       }
     });

@@ -121,13 +121,14 @@ export function CvSubSectionComponent({
         variant="h5"
         text={subSection.title || ""}
         originalText={originalSubSection?.title}
-        autoEdit={(!subSection.title || subSection.title.trim() === "")}
+        autoEdit={(!subSection.title || subSection.title.trim() === "") && !isRemoved}
         onAutoDelete={() => {
           // Delete the entire subsection when title is empty
-          // We need to implement subsection deletion logic here
+          dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex] }));
         }}
         onDelete={editable ? () => {
-          dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'title'], newValue: "" }));
+          // Delete the entire subsection, not just the title
+          dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex] }));
         } : undefined}
         onRestore={editable && originalSubSection?.title && subSection.title !== originalSubSection.title ? () => {
           // Restore just the subsection title
@@ -164,35 +165,69 @@ export function CvSubSectionComponent({
           />
         </Box>
       )}
-      {subSection.paragraphs &&
-        subSection.paragraphs.map((paragraph, idx) => {
-          const originalText = originalSubSection?.paragraphs?.[idx];
-          const isCompletelyNew = !originalText && idx >= (originalSubSection?.paragraphs?.length || 0);
+      {(() => {
+        // Create a merged list of paragraphs showing both current and deleted items
+        const maxLength = Math.max(
+          subSection.paragraphs?.length || 0,
+          originalSubSection?.paragraphs?.length || 0
+        );
 
+        const mergedParagraphs = [];
+        for (let i = 0; i < maxLength; i++) {
+          const currentParagraph = subSection.paragraphs?.[i];
+          const originalParagraph = originalSubSection?.paragraphs?.[i];
+
+          // Show item if it exists in current OR if it existed in original (to show deletions)
+          if (currentParagraph || originalParagraph) {
+            const isEmpty = !currentParagraph || currentParagraph.trim() === "";
+            const isDeleted = isEmpty && originalParagraph;
+
+            // In print version, skip deleted items
+            if (isPrintVersion && isDeleted) {
+              continue;
+            }
+
+            mergedParagraphs.push({
+              index: i,
+              current: currentParagraph || "",
+              original: originalParagraph,
+              isEmpty,
+              isDeleted,
+              isNewItem: currentParagraph && !originalParagraph
+            });
+          }
+        }
+
+        return mergedParagraphs.map(({ index, current, original, isDeleted, isNewItem }) => {
           return (
             <SuperEditableText
-              query={['paragraphs', idx]}
-              key={idx}
+              query={['paragraphs', index]}
+              key={`subsection-paragraph-${index}-${(current || original || "").substring(0, 20)}`}
               variant="body1"
               gutterBottom
-              text={paragraph}
-              // For completely new paragraphs, pass empty string as original to trigger full green highlighting
-              originalText={isCompletelyNew && showDiff ? "" : originalText}
-              autoEdit={(!paragraph || paragraph.trim() === "")}
-              onAutoDelete={() => {
-                // Remove paragraph from array
-                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', idx] }));
-              }}
-              onDelete={editable ? () => {
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', idx], newValue: "" }));
+              text={isDeleted ? "" : current}
+              originalText={showDiff ? (isDeleted ? original : (isNewItem ? "" : original)) : undefined}
+              autoEdit={(!current || current.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
+              onAutoDelete={
+                // Only use onAutoDelete when NOT in diff mode or when there's no original
+                // Otherwise it would remove the item from array, causing index shifts
+                showDiff && original ? undefined : () => {
+                  // Remove paragraph from array
+                  dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', index] }));
+                }
+              }
+              onDelete={editable && !isDeleted ? () => {
+                // Delete paragraph by setting it to empty string
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', index], newValue: "" }));
               } : undefined}
-              onRestore={editable && originalText && paragraph !== originalText ? () => {
-                // Restore just this paragraph
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', idx], newValue: originalText }));
+              onRestore={editable && original && (isDeleted || current !== original) ? () => {
+                // Restore individual paragraph by setting its text back to the original
+                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'paragraphs', index], newValue: original }));
               } : undefined}
             />
           );
-        })}
+        });
+      })()}
 
       {/* Add new paragraph button */}
       {editable && subSection.paragraphs && (
@@ -276,11 +311,15 @@ export function CvSubSectionComponent({
               isPrintVersion={isPrintVersion}
               originalBulletPoint={showDiff ? (isNew ? { iconName: "", text: "" } : original) : undefined}  // Empty iconName and text for new items to trigger green highlighting
               showDiff={showDiff}
-              autoEdit={(!current?.text || current.text.trim() === "")}
-              onAutoDelete={() => {
-                // Remove bullet point from array
-                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index] }));
-              }}
+              autoEdit={(!current?.text || current.text.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
+              onAutoDelete={
+                // Only use onAutoDelete when NOT in diff mode or when there's no original
+                // Otherwise it would remove the item from array, causing index shifts
+                showDiff && original ? undefined : () => {
+                  // Remove bullet point from array
+                  dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index] }));
+                }
+              }
               onDelete={editable && !isDeleted ? () => {
                 // Delete bullet point by clearing both text and icon
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subSectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));

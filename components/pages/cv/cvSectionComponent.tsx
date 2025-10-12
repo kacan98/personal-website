@@ -162,10 +162,11 @@ export function CvSectionComponent({
           autoEdit={false}
           onAutoDelete={() => {
             // Delete the entire section when title is empty
-            // We need to implement section deletion logic here
+            dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex] }));
           }}
           onDelete={editable ? () => {
-            dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'title'], newValue: "" }));
+            // Delete the entire section, not just the title
+            dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex] }));
           } : undefined}
           onRestore={editable && originalSection?.title && title !== originalSection.title ? () => {
             // Restore just the title
@@ -246,11 +247,15 @@ export function CvSectionComponent({
               gutterBottom
               text={isDeleted ? "" : current}  // For deleted items, show empty current text
               originalText={showDiff ? (isDeleted ? original : ((isNewItem || isNew) ? "" : original)) : undefined}  // Empty string for new items or items in new sections
-              autoEdit={(!current || current.trim() === "")}
-              onAutoDelete={() => {
-                // Remove paragraph from array
-                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'paragraphs', index] }));
-              }}
+              autoEdit={(!current || current.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
+              onAutoDelete={
+                // Only use onAutoDelete when NOT in diff mode or when there's no original
+                // Otherwise it would remove the item from array, causing index shifts
+                showDiff && original ? undefined : () => {
+                  // Remove paragraph from array
+                  dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'paragraphs', index] }));
+                }
+              }
               onDelete={editable && !isDeleted ? () => {
                 // Delete paragraph by setting it to empty string
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: "" }));
@@ -346,11 +351,15 @@ export function CvSectionComponent({
               isPrintVersion={isPrintVersion}
               originalBulletPoint={showDiff ? ((isNewItem || isNew) ? { iconName: "", text: "" } : original) : undefined}  // Empty for new items or items in new sections
               showDiff={showDiff}
-              autoEdit={(!current?.text || current.text.trim() === "")}
-              onAutoDelete={() => {
-                // Remove bullet point from array
-                dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'bulletPoints', index] }));
-              }}
+              autoEdit={(!current?.text || current.text.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
+              onAutoDelete={
+                // Only use onAutoDelete when NOT in diff mode or when there's no original
+                // Otherwise it would remove the item from array, causing index shifts
+                showDiff && original ? undefined : () => {
+                  // Remove bullet point from array
+                  dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'bulletPoints', index] }));
+                }
+              }
               onDelete={editable && !isDeleted ? () => {
                 // Delete bullet point by setting its text to empty string
                 dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
@@ -405,10 +414,10 @@ export function CvSectionComponent({
           const isSubRemoved = onRemoveSubSection && removedSubSections?.has(subSectionId);
           const isSubModified = onSubSectionAdjusted && modifiedSubSections?.has(subSectionId);
 
-          // Skip manually removed subsections
-          if (isSubRemoved) {
-            return null;
-          }
+          // Don't skip removed subsections - show them with red background in diff mode
+          // if (isSubRemoved) {
+          //   return null;
+          // }
 
           // Simple index-based matching for subsections
           const originalSubSection = originalSection?.subSections?.[index];
