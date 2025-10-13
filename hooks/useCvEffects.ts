@@ -1,10 +1,8 @@
 import { useEffect, useRef, startTransition } from 'react';
 import { useLocale } from 'next-intl';
 import { useAppDispatch } from '@/redux/hooks';
-import { initCv } from '@/redux/slices/cv';
 import { setCurrentPosition } from '@/redux/slices/improvementDescriptions';
 import { CVSettings } from '@/types';
-import { ensureCvIds } from '@/utils/cvIds';
 import { deepClone } from '../components/pages/cv/utils/cvDiffTracker';
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model';
 
@@ -48,35 +46,15 @@ export function useCvEffects(config: CvEffectsConfig) {
   const adjustmentInProgress = useRef(false);
   const lastProcessedPosition = useRef<string | null>(null);
 
-  // Load original CV from data files
+  // Initialize originalCv from Redux (which already has IDs from StoreProvider)
   useEffect(() => {
-    if (!config.originalCv) {
-      const loadCvData = async () => {
-        try {
-          const response = await fetch(`/api/cv/settings?locale=${locale}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch CV settings');
-          }
-          const loadedOriginalCv = await response.json();
-          const cvWithIds = ensureCvIds(loadedOriginalCv);
-          const clonedCv = deepClone(cvWithIds);
-
-          // Set original CV for comparison
-          config.setOriginalCv(clonedCv);
-
-          // Ensure Redux state matches the original CV exactly on initial load
-          // Only initialize if Redux CV is significantly different (not just from previous edits)
-          if (!config.reduxCvProps.name || config.reduxCvProps.name !== cvWithIds.name) {
-            dispatch(initCv(cvWithIds));
-          }
-        } catch (error) {
-          console.error('Failed to load original CV:', error);
-        }
-      };
-
-      loadCvData();
+    if (!config.originalCv && config.reduxCvProps.name) {
+      // Clone the Redux CV as the original for comparison
+      // Redux already has IDs applied in StoreProvider, so no need to ensure them again
+      const clonedCv = deepClone(config.reduxCvProps);
+      config.setOriginalCv(clonedCv);
     }
-  }, [locale, config, dispatch]);
+  }, [config.reduxCvProps, config.originalCv, config.setOriginalCv]);
 
   // Check for job ID in URL and start loading immediately
   useEffect(() => {
