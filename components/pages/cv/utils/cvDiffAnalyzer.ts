@@ -72,7 +72,7 @@ export function analyzeCvDifferences(
       } else {
         // Section exists - check if it has any content (title, paragraphs, bullet points, or subsections)
         const hasTitle = currentSection.title && currentSection.title.trim() !== '';
-        const hasParagraphs = currentSection.paragraphs && currentSection.paragraphs.some((p: string) => p && p.trim() !== '');
+        const hasParagraphs = currentSection.paragraphs && currentSection.paragraphs.some((p) => p.text && p.text.trim() !== '');
         const hasBulletPoints = currentSection.bulletPoints && currentSection.bulletPoints.some((bp: any) => bp.text && bp.text.trim() !== '');
         const hasSubSections = currentSection.subSections && currentSection.subSections.length > 0;
 

@@ -16,7 +16,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 import PageWrapper from "@/components/pages/pageWrapper";
 import Print from "@/components/print";
-import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { useCvTools } from "./hooks/useCvTools";
 import { useRefineCv } from "./hooks/useRefineCv";
 import CvPaper from "./paper/cvPaper";
@@ -38,6 +38,7 @@ import { useCacheManagement } from '@/hooks/useCacheManagement';
 import { useCvPageState } from '@/hooks/useCvPageState';
 import { useCvEventHandlers } from '@/hooks/useCvEventHandlers';
 import { useCvEffects } from '@/hooks/useCvEffects';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { FloatingManualAdjustments } from './components/FloatingManualAdjustments';
 import { CvModals } from './components/CvModals';
 
@@ -50,7 +51,6 @@ const DEFAULT_AI_INTRODUCTION = "Ok. let's have a look at this candidate. It see
 
 function CvPage({ jobDescription }: CvProps) {
   const t = useTranslations('cv');
-  const _dispatch = useAppDispatch();
   const reduxCvProps = useAppSelector((state) => state.cv);
 
   // Local state for AI introduction (only visible when authenticated)
@@ -133,6 +133,14 @@ function CvPage({ jobDescription }: CvProps) {
     },
     adjustCvBasedOnPosition,
     getMotivationalLetter
+  });
+
+  // Document title management - updates browser tab based on loading state and company name
+  useDocumentTitle({
+    isLoading: adjustmentWorkflow.isLoading,
+    progressSteps: adjustmentWorkflow.progressSteps,
+    companyName: state.companyName,
+    baseTitle: 'CV'
   });
 
   // Refinement hook

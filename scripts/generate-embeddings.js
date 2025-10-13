@@ -17,6 +17,7 @@ const openai = new OpenAI({
 });
 
 const BLOG_DIR = path.join(process.cwd(), 'blog');
+const PROJECT_STORIES_DIR = path.join(process.cwd(), 'project-stories');
 
 async function createEmbedding(text) {
   const response = await openai.embeddings.create({
@@ -26,14 +27,25 @@ async function createEmbedding(text) {
   return response.data[0].embedding;
 }
 
-async function generateEmbeddingsForAllPosts() {
-  console.log('🚀 Generating embeddings for blog posts...');
+async function generateEmbeddingsForDirectory(directory, directoryName) {
+  console.log(`🚀 Generating embeddings for ${directoryName}...`);
 
-  // Get all markdown files in blog directory
-  const files = fs.readdirSync(BLOG_DIR).filter(file => file.endsWith('.md'));
+  // Check if directory exists
+  if (!fs.existsSync(directory)) {
+    console.log(`⚠️  ${directoryName} directory not found, skipping...`);
+    return;
+  }
+
+  // Get all markdown files in directory
+  const files = fs.readdirSync(directory).filter(file => file.endsWith('.md'));
+
+  if (files.length === 0) {
+    console.log(`ℹ️  No markdown files found in ${directoryName}`);
+    return;
+  }
 
   for (const file of files) {
-    const filePath = path.join(BLOG_DIR, file);
+    const filePath = path.join(directory, file);
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const { data: frontmatter, content } = matter(fileContent);
 
@@ -71,7 +83,12 @@ async function generateEmbeddingsForAllPosts() {
     }
   }
 
-  console.log('🎉 Embedding generation complete!');
+  console.log(`🎉 ${directoryName} embedding generation complete!`);
+}
+
+async function generateEmbeddingsForAllPosts() {
+  await generateEmbeddingsForDirectory(BLOG_DIR, 'blog posts');
+  await generateEmbeddingsForDirectory(PROJECT_STORIES_DIR, 'project stories');
 }
 
 async function main() {

@@ -8,10 +8,8 @@ export const cvSv: CVSettings = {
   mainColumn: [
     {
       id: "profile",
-      paragraphs: [
-        "Full Stack Utvecklare med 4+ års erfarenhet av att bygga webbapplikationer och företagslösningar. Levererat högimpaktfunktioner och betydande prestandaförbättringar.\n\n",
-        "Övergick till utveckling från marknadsföring, vilket ger ett användarfokuserat perspektiv och tvärfunktionella samarbetsförmågor. Konsekvent presterat som toppbidragsgivare i utvecklingsteam med expertis i TypeScript, Angular, React och .NET."
-      ]
+      paragraphs: [{ text: "Full Stack Utvecklare med 4+ års erfarenhet av att bygga webbapplikationer och företagslösningar. Levererat högimpaktfunktioner och betydande prestandaförbättringar.\n\n" },
+      { text: "Övergick till utveckling från marknadsföring, vilket ger ett användarfokuserat perspektiv och tvärfunktionella samarbetsförmågor. Konsekvent presterat som toppbidragsgivare i utvecklingsteam med expertis i TypeScript, Angular, React och .NET." }]
     },
     {
       id: "work-experience",
@@ -23,11 +21,9 @@ export const cvSv: CVSettings = {
             left: "Dynaway",
             right: "Nov 2024 - Nuvarande"
           },
-          paragraphs: [
-            "- Utvecklar full-stack lösningar för Microsoft Dynamics 365 Finance and Operations för företagskunder",
-            "- Bygger backend-tjänster och API:er med .NET, X++ och C# samtidigt som jag samarbetar med frontend-team",
-            "- Uppnådde 10x prestandaförbättring genom att reducera synkroniseringstid från 20+ minuter till under 2 minuter"
-          ]
+          paragraphs: [{ text: "- Utvecklar full-stack lösningar för Microsoft Dynamics 365 Finance and Operations för företagskunder" },
+      { text: "- Bygger backend-tjänster och API:er med .NET, X++ och C# samtidigt som jag samarbetar med frontend-team" },
+      { text: "- Uppnådde 10x prestandaförbättring genom att reducera synkroniseringstid från 20+ minuter till under 2 minuter" }]
         },
         {
           title: "Frontend Webbutvecklare",
@@ -35,12 +31,10 @@ export const cvSv: CVSettings = {
             left: "Dynaway",
             right: "Jul 2022 - Nov 2024"
           },
-          paragraphs: [
-            "- Byggde TypeScript och Angular webbapplikationer som betjänar 100+ företag",
-            "- Konsekvent rankad som topprestanda i utvecklingsteamsprints",
-            "- Fungerade som Scrum Master för 5-personers utvecklingsteam",
-            "- Förbättrade CI/CD pipelines och automatiserade distributionsarbetsflöden"
-          ]
+          paragraphs: [{ text: "- Byggde TypeScript och Angular webbapplikationer som betjänar 100+ företag" },
+      { text: "- Konsekvent rankad som topprestanda i utvecklingsteamsprints" },
+      { text: "- Fungerade som Scrum Master för 5-personers utvecklingsteam" },
+      { text: "- Förbättrade CI/CD pipelines och automatiserade distributionsarbetsflöden" }]
         },
         {
           title: "Webbutvecklare inom Marknadsföring",
@@ -48,12 +42,10 @@ export const cvSv: CVSettings = {
             left: "Dynaway",
             right: "Nov 2020 - Jul 2022"
           },
-          paragraphs: [
-            "- Utökade företagets webbplats med anpassade moduler och omskrev förstasidan för att bättre kommunicera värdeproposition",
-            "- Samarbetade med team över avdelningar för att förstå affärsbehov och översätta dem till webblösningar",
-            "- Designade kundinföringsguider och automatiserade e-postarbetsflöden i HubSpot för att förbättra leadgenerering",
-            "- Etablerade videokultur för företaget och skapade produktdemonstrationsinnehåll som stödde försäljning och marknadsföring"
-          ]
+          paragraphs: [{ text: "- Utökade företagets webbplats med anpassade moduler och omskrev förstasidan för att bättre kommunicera värdeproposition" },
+      { text: "- Samarbetade med team över avdelningar för att förstå affärsbehov och översätta dem till webblösningar" },
+      { text: "- Designade kundinföringsguider och automatiserade e-postarbetsflöden i HubSpot för att förbättra leadgenerering" },
+      { text: "- Etablerade videokultur för företaget och skapade produktdemonstrationsinnehåll som stödde försäljning och marknadsföring" }]
         },
         {
           title: "Medgrundare",
@@ -61,11 +53,9 @@ export const cvSv: CVSettings = {
             left: "AnkeriMedia",
             right: "Nov 2019 - Jul 2020"
           },
-          paragraphs: [
-            "- Medgrundade marknadsföringstjänster startup inriktat på tjeckiska fastighetsbyråer",
-            "- Byggde företagets webbplats, skapade marknadsföringsmaterial och genomförde direkt uppsökning till potentiella kunder",
-            "- Säkrade framgångsrikt 50+ möten med beslutsfattare och stängde 5 betalande kunder"
-          ]
+          paragraphs: [{ text: "- Medgrundade marknadsföringstjänster startup inriktat på tjeckiska fastighetsbyråer" },
+      { text: "- Byggde företagets webbplats, skapade marknadsföringsmaterial och genomförde direkt uppsökning till potentiella kunder" },
+      { text: "- Säkrade framgångsrikt 50+ möten med beslutsfattare och stängde 5 betalande kunder" }]
         }
       ]
     },

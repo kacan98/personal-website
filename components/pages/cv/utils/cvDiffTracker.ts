@@ -134,9 +134,11 @@ export function compareCvSections(
   }
   
   // Compare paragraphs
+  const origParagraphTexts = orig.paragraphs?.map(p => p.text) || [];
+  const modParagraphTexts = mod.paragraphs?.map(p => p.text) || [];
   changes.push(...compareTextArrays(
-    orig.paragraphs,
-    mod.paragraphs,
+    origParagraphTexts,
+    modParagraphTexts,
     [...sectionPath, 'paragraphs']
   ));
   

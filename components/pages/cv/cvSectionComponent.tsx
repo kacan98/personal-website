@@ -2,16 +2,11 @@ import { EditableText, EditableTextProps } from "@/components/editableText";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv, removeArrayItem } from "@/redux/slices/cv";
 import { CvSection } from "@/types";
-import {
-  Box,
-  alpha,
-  IconButton,
-  Tooltip
-} from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
+import { Box, alpha } from "@mui/material";
 import { useState, useCallback } from "react";
-import { CvBulletPoint } from "./bulletPoint";
 import { CvSubSectionComponent } from "./cvSubSectionComponent";
+import { EditableParagraphList } from "./EditableParagraphList";
+import { EditableBulletPointList } from "./EditableBulletPointList";
 
 export function CvSectionComponent({
   sectionIndex,
@@ -148,13 +143,7 @@ export function CvSectionComponent({
             fontWeight: 'bold',
             '@media print': {
               pageBreakAfter: 'avoid',
-              breakAfter: 'avoid',
-              '&::after': {
-                content: '""',
-                display: 'block',
-                height: '75px',
-                marginBottom: '-75px'
-              }
+              breakAfter: 'avoid'
             }
           }}
           text={title || ""}
@@ -204,211 +193,27 @@ export function CvSectionComponent({
           />
         </Box>
       )}
-      {(() => {
-        // Create a merged list of paragraphs showing both current and deleted items
-        const maxLength = Math.max(
-          paragraphs?.length || 0,
-          originalSection?.paragraphs?.length || 0
-        );
+      <EditableParagraphList
+        paragraphs={paragraphs}
+        originalParagraphs={originalSection?.paragraphs}
+        baseQuery={[sideOrMain, sectionIndex, 'paragraphs']}
+        editable={editable}
+        showDiff={showDiff}
+        isPrintVersion={isPrintVersion}
+        isRemoved={isRemoved}
+        isNew={isNew}
+      />
 
-        const mergedParagraphs = [];
-        for (let i = 0; i < maxLength; i++) {
-          const currentParagraph = paragraphs?.[i];
-          const originalParagraph = originalSection?.paragraphs?.[i];
-
-          // Show item if it exists in current OR if it existed in original (to show deletions)
-          if (currentParagraph || originalParagraph) {
-            const isEmpty = !currentParagraph || currentParagraph.trim() === "";
-            const isDeleted = isEmpty && originalParagraph;
-
-            // In print version, skip deleted items
-            if (isPrintVersion && isDeleted) {
-              continue;
-            }
-
-            mergedParagraphs.push({
-              index: i,
-              current: currentParagraph || "",
-              original: originalParagraph,
-              isEmpty,
-              isDeleted,
-              isNewItem: currentParagraph && !originalParagraph
-            });
-          }
-        }
-
-        return mergedParagraphs.map(({ index, current, original, isDeleted, isNewItem }) => {
-
-          return (
-            <SuperEditableText
-              query={['paragraphs', index]}
-              key={`paragraph-${index}-${(current || original || "").substring(0, 20)}`}
-              variant="body1"
-              gutterBottom
-              text={isDeleted ? "" : current}  // For deleted items, show empty current text
-              originalText={showDiff ? (isDeleted ? original : ((isNewItem || isNew) ? "" : original)) : undefined}  // Empty string for new items or items in new sections
-              autoEdit={(!current || current.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
-              onAutoDelete={
-                // Only use onAutoDelete when NOT in diff mode or when there's no original
-                // Otherwise it would remove the item from array, causing index shifts
-                showDiff && original ? undefined : () => {
-                  // Remove paragraph from array
-                  dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'paragraphs', index] }));
-                }
-              }
-              onDelete={editable && !isDeleted ? () => {
-                // Delete paragraph by setting it to empty string
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: "" }));
-              } : undefined}
-              onRestore={editable && original && (isDeleted || current !== original) ? () => {
-                // Restore individual paragraph by setting its text back to the original
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', index], newValue: original }));
-              } : undefined}
-            />
-          );
-        });
-      })()}
-
-      {/* Add new paragraph button */}
-      {editable && paragraphs && (
-        // Show button if there are no paragraphs OR if all existing paragraphs have content
-        paragraphs.length === 0 ||
-        !paragraphs.some(p => !p || p.trim() === "")
-      ) && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
-          <Tooltip title="Add paragraph">
-            <IconButton
-              onClick={() => {
-                const newIndex = paragraphs?.length || 0;
-                dispatch(updateCv({
-                  query: [sideOrMain, sectionIndex, 'paragraphs', newIndex],
-                  newValue: ""
-                }));
-              }}
-              size="small"
-              sx={{
-                border: '1px dashed',
-                borderColor: 'divider',
-                backgroundColor: 'transparent',
-                color: 'text.secondary',
-                '&:hover': {
-                  backgroundColor: 'action.hover',
-                  borderStyle: 'solid',
-                },
-              }}
-            >
-              <AddIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      )}
-
-      {(() => {
-        // Create a merged list of bullet points showing both current and deleted items
-        const maxLength = Math.max(
-          bulletPoints?.length || 0,
-          originalSection?.bulletPoints?.length || 0
-        );
-
-        const mergedBulletPoints = [];
-        for (let i = 0; i < maxLength; i++) {
-          const currentPoint = bulletPoints?.[i];
-          const originalPoint = originalSection?.bulletPoints?.[i];
-
-          // Show item if it exists in current OR if it existed in original (to show deletions)
-          if (currentPoint || originalPoint) {
-            const isEmpty = !currentPoint?.text || currentPoint.text.trim() === "";
-            const isDeleted = isEmpty && originalPoint?.text;
-
-            // In print version, skip deleted items
-            if (isPrintVersion && isDeleted) {
-              continue;
-            }
-
-            mergedBulletPoints.push({
-              index: i,
-              current: currentPoint,
-              original: originalPoint,
-              isEmpty,
-              isDeleted,
-              isNewItem: currentPoint && !originalPoint
-            });
-          }
-        }
-
-        return mergedBulletPoints.map(({ index, current, original, isDeleted, isNewItem }) => {
-          // For deleted items, show empty current text so DiffText can handle the strikethrough properly
-          const displayPoint = isDeleted
-            ? { ...(original || { iconName: "default", text: "", id: `temp-${index}` }), text: "" }  // Empty text for deleted
-            : current || { iconName: "default", text: "", id: `temp-${index}` };
-
-          return (
-            <CvBulletPoint
-              key={`bullet-${index}`}
-              bulletPoint={displayPoint}
-              editable={editable && !isDeleted}
-              baseQuery={[sideOrMain, sectionIndex, 'bulletPoints', index]}
-              isPrintVersion={isPrintVersion}
-              originalBulletPoint={showDiff ? ((isNewItem || isNew) ? { iconName: "", text: "" } : original) : undefined}  // Empty for new items or items in new sections
-              showDiff={showDiff}
-              autoEdit={(!current?.text || current.text.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
-              onAutoDelete={
-                // Only use onAutoDelete when NOT in diff mode or when there's no original
-                // Otherwise it would remove the item from array, causing index shifts
-                showDiff && original ? undefined : () => {
-                  // Remove bullet point from array
-                  dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex, 'bulletPoints', index] }));
-                }
-              }
-              onDelete={editable && !isDeleted ? () => {
-                // Delete bullet point by setting its text to empty string
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: "" }));
-              } : undefined}
-              onRestore={editable && original && (isDeleted || current?.text !== original?.text) ? () => {
-                // Restore individual bullet point by setting its text back to the original
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'text'], newValue: original.text || "" }));
-                dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'bulletPoints', index, 'iconName'], newValue: original.iconName || "" }));
-              } : undefined}
-            />
-          );
-        });
-      })()}
-      {/* Add new bullet point button */}
-      {editable && bulletPoints && bulletPoints.length > 0 && (
-        // Show button only if all existing bullet points have content
-        !bulletPoints.some(bp => !bp.text || bp.text.trim() === "")
-      ) && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1, mb: 2, opacity: 0.3, transition: 'opacity 0.2s', '&:hover': { opacity: 0.8 } }}>
-          <Tooltip title="Add bullet point">
-            <IconButton
-              onClick={() => {
-                const newIndex = bulletPoints?.length || 0;
-                dispatch(updateCv({
-                  query: [sideOrMain, sectionIndex, 'bulletPoints', newIndex, 'text'],
-                  newValue: ""
-                }));
-                dispatch(updateCv({
-                  query: [sideOrMain, sectionIndex, 'bulletPoints', newIndex, 'iconName'],
-                  newValue: "default"
-                }));
-              }}
-              size="small"
-              sx={{
-                border: '1px dashed',
-                borderColor: 'divider',
-                backgroundColor: 'transparent',
-                color: 'text.secondary',
-                '&:hover': {
-                  backgroundColor: 'action.hover',
-                  borderStyle: 'solid',
-                },
-              }}
-            >
-              <AddIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      )}
+      <EditableBulletPointList
+        bulletPoints={bulletPoints}
+        originalBulletPoints={originalSection?.bulletPoints}
+        baseQuery={[sideOrMain, sectionIndex, 'bulletPoints']}
+        editable={editable}
+        showDiff={showDiff}
+        isPrintVersion={isPrintVersion}
+        isRemoved={isRemoved}
+        isNew={isNew}
+      />
       {subSections && (subSections.map((subSection, index) => {
           const subSectionId = subSection.id || `${sectionKey}-sub-${index}`;
           const isSubRemoved = onRemoveSubSection && removedSubSections?.has(subSectionId);

@@ -8,10 +8,8 @@ export const cvConfigEn: CVSettings = {
   mainColumn: [
     {
       id: "profile",
-      paragraphs: [
-        "Full Stack Developer with 4+ years of experience in building web applications and enterprise solutions. Delivered high-impact features and achieved significant performance improvements.\n\n",
-        "Transitioned from marketing to development, bringing a user-focused perspective and cross-functional collaboration skills. Consistently performed as top contributor in development teams with expertise in TypeScript, Angular, React, and .NET."
-      ]
+      paragraphs: [{ text: "Full Stack Developer with 4+ years of experience in building web applications and enterprise solutions. Delivered high-impact features and achieved significant performance improvements.\n\n" },
+      { text: "Transitioned from marketing to development, bringing a user-focused perspective and cross-functional collaboration skills. Consistently performed as top contributor in development teams with expertise in TypeScript, Angular, React, and .NET." }]
     },
     {
       id: "work-experience",
@@ -23,11 +21,9 @@ export const cvConfigEn: CVSettings = {
             left: "Dynaway",
             right: "Nov 2024 - Present"
           },
-          paragraphs: [
-            "- Developing full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients",
-            "- Building backend services and APIs using .NET, X++, and C# while collaborating with frontend teams",
-            "- Achieved 10x performance improvement reducing sync time from 20+ minutes to under 2 minutes"
-          ]
+          paragraphs: [{ text: "- Developing full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients" },
+      { text: "- Building backend services and APIs using .NET, X++, and C# while collaborating with frontend teams" },
+      { text: "- Achieved 10x performance improvement reducing sync time from 20+ minutes to under 2 minutes" }]
         },
         {
           title: "Frontend Web Developer",
@@ -35,12 +31,10 @@ export const cvConfigEn: CVSettings = {
             left: "Dynaway",
             right: "Jul 2022 - Nov 2024"
           },
-          paragraphs: [
-            "- Built TypeScript and Angular web applications serving 100+ companies",
-            "- Consistently ranked as top performer in development team sprints",
-            "- Served as Scrum Master for 5-person development team",
-            "- Enhanced CI/CD pipelines and automated deployment workflows"
-          ]
+          paragraphs: [{ text: "- Built TypeScript and Angular web applications serving 100+ companies" },
+      { text: "- Consistently ranked as top performer in development team sprints" },
+      { text: "- Served as Scrum Master for 5-person development team" },
+      { text: "- Enhanced CI/CD pipelines and automated deployment workflows" }]
         },
         {
           title: "Web Developer in Marketing",
@@ -48,12 +42,10 @@ export const cvConfigEn: CVSettings = {
             left: "Dynaway",
             right: "Nov 2020 - Jul 2022"
           },
-          paragraphs: [
-            "- Extended company website with custom modules and rewrote front page for better value communication",
-            "- Collaborated across departments to translate business needs into web solutions",
-            "- Designed customer onboarding guides and automated email workflows in HubSpot",
-            "- Created product demonstration videos supporting sales and marketing efforts"
-          ]
+          paragraphs: [{ text: "- Extended company website with custom modules and rewrote front page for better value communication" },
+      { text: "- Collaborated across departments to translate business needs into web solutions" },
+      { text: "- Designed customer onboarding guides and automated email workflows in HubSpot" },
+      { text: "- Created product demonstration videos supporting sales and marketing efforts" }]
         },
         {
           title: "Co-Founder",
@@ -61,11 +53,9 @@ export const cvConfigEn: CVSettings = {
             left: "AnkeriMedia",
             right: "Nov 2019 - Jul 2020"
           },
-          paragraphs: [
-            "- Co-founded marketing services startup targeting Czech real estate agencies",
-            "- Built company website, created marketing materials, and conducted direct outreach to potential clients",
-            "- Successfully secured 50+ meetings with decision-makers and closed 5 paying customers"
-          ]
+          paragraphs: [{ text: "- Co-founded marketing services startup targeting Czech real estate agencies" },
+      { text: "- Built company website, created marketing materials, and conducted direct outreach to potential clients" },
+      { text: "- Successfully secured 50+ meetings with decision-makers and closed 5 paying customers" }]
         }
       ]
     },

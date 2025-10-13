@@ -1,4 +1,4 @@
-import { CVSettings, CvSection, CvSubSection, BulletPoint } from '@/types';
+import { CVSettings, CvSection, CvSubSection, BulletPoint, Paragraph } from '@/types';
 
 /**
  * Generate a stable ID based on title/content
@@ -6,6 +6,16 @@ import { CVSettings, CvSection, CvSubSection, BulletPoint } from '@/types';
 function generateStableId(content: string): string {
   // Use a simple hash of the title/key content that's stable
   return content.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'untitled';
+}
+
+/**
+ * Assign unique IDs to paragraphs if they don't have them
+ */
+function ensureParagraphIds(paragraphs: Paragraph[], parentId: string): Paragraph[] {
+  return paragraphs.map((paragraph, index) => ({
+    ...paragraph,
+    id: paragraph.id || `${parentId}-para-${index}`
+  }));
 }
 
 /**
@@ -28,6 +38,7 @@ function ensureSubSectionIds(subSection: CvSubSection, parentId: string, index: 
   return {
     ...subSection,
     id: subSectionId,
+    paragraphs: subSection.paragraphs ? ensureParagraphIds(subSection.paragraphs, subSectionId) : undefined,
     bulletPoints: subSection.bulletPoints ? ensureBulletPointIds(subSection.bulletPoints, subSectionId) : undefined
   };
 }
@@ -41,6 +52,7 @@ function ensureSectionIds(section: CvSection, column: 'main' | 'side', index: nu
   return {
     ...section,
     id: sectionId,
+    paragraphs: section.paragraphs ? ensureParagraphIds(section.paragraphs, sectionId) : undefined,
     bulletPoints: section.bulletPoints ? ensureBulletPointIds(section.bulletPoints, sectionId) : undefined,
     subSections: section.subSections ? section.subSections.map((sub, subIndex) => ensureSubSectionIds(sub, sectionId, subIndex)) : undefined
   };
