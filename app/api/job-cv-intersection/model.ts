@@ -1,7 +1,7 @@
 import { CVSettings } from '@/types'
 import { z } from 'zod'
 
-export const jobCvIntersectionAPIEndpointName = 'api/job-cv-intersection'
+export const jobCvIntersectionAPIEndpointName = '/api/job-cv-intersection'
 
 export type JobCvIntersectionParams = {
   candidate: CVSettings

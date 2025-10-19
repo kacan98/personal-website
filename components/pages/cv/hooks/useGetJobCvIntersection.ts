@@ -48,11 +48,21 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
 
       const res = await fetch(jobCvIntersectionAPIEndpointName, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           candidate: reduxCvProps,
           jobDescription: positionDetails
         } as JobCvIntersectionParams),
       })
+
+      if (!res.ok) {
+        const errorText = await res.text()
+        console.error(`API call failed with status ${res.status}:`, errorText)
+        throw new Error(`API call failed with status ${res.status}: ${errorText}`)
+      }
+
       const body: JobCvIntersectionResponse = await res.json()
       setPositionIntersection(body)
 
@@ -99,8 +109,9 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
           // Continue normally even if auto-fill fails
         }
       }
-    } catch {
-      setsnackbarMessage('Error getting a intersection')
+    } catch (error) {
+      console.error('Error getting CV-job intersection:', error)
+      setsnackbarMessage(`Error getting position analysis: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
 
     setLoading(false)

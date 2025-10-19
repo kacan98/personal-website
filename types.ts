@@ -15,6 +15,8 @@ export interface CvSubSection {
   subtitles?: {
     left?: string;
     right?: string;
+    leftUrl?: string;
+    rightUrl?: string;
   };
   paragraphs?: Paragraph[];
   bulletPoints?: BulletPoint[];
@@ -30,6 +32,7 @@ export type BulletPoint = {
   iconName: string;
   text: string;
   url?: string;
+  description?: string;
 };
 
 export type Paragraph = {

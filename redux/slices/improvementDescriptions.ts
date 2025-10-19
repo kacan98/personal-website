@@ -215,6 +215,36 @@ const improvementDescriptionsSlice = createSlice({
       }
     },
 
+    // Clear specific improvement (for individual dismissal)
+    clearSpecificImprovement: (state, action: PayloadAction<string>) => {
+      const improvementKey = action.payload
+      const currentPosition = state.positions[state.currentPositionHash]
+      if (currentPosition && currentPosition.improvements[improvementKey]) {
+        delete currentPosition.improvements[improvementKey]
+        currentPosition.timestamp = Date.now()
+        saveToStorage(state.positions)
+      }
+    },
+
+    // Clear used improvements (automatically clean up after CV adjustment)
+    clearUsedImprovements: (state) => {
+      const currentPosition = state.positions[state.currentPositionHash]
+      if (currentPosition) {
+        const improvementsToKeep: { [key: string]: ImprovementDescription } = {}
+
+        Object.entries(currentPosition.improvements).forEach(([key, improvement]) => {
+          // Keep improvements that are selected but not yet used
+          if (improvement.selected && !improvement.usedInCV) {
+            improvementsToKeep[key] = improvement
+          }
+        })
+
+        currentPosition.improvements = improvementsToKeep
+        currentPosition.timestamp = Date.now()
+        saveToStorage(state.positions)
+      }
+    },
+
     // Bulk update improvements with auto-filled data
     bulkUpdateImprovements: (state, action: PayloadAction<{
       autoFilledImprovements: { [improvementKey: string]: {
@@ -260,6 +290,8 @@ export const {
   markImprovementsAsUsed,
   cleanupOldPositions,
   clearCurrentPositionImprovements,
+  clearSpecificImprovement,
+  clearUsedImprovements,
   bulkUpdateImprovements
 } = improvementDescriptionsSlice.actions
 

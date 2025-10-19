@@ -13,13 +13,15 @@ import {
   selectImprovementsWithDescriptions,
   updateImprovementDescription,
   selectCurrentPosition,
-  bulkUpdateImprovements
+  bulkUpdateImprovements,
+  clearSpecificImprovement
 } from "@/redux/slices/improvementDescriptions";
 import { autoFillImprovementsAPIEndpointName, AutoFillImprovementsParams, AutoFillImprovementsResponse } from '@/app/api/auto-fill-improvements/model';
 import {
   Analytics as AnalyticsIcon,
   TrendingUp as TrendingUpIcon,
   AutoAwesome as AutoAwesomeIcon,
+  Clear as ClearIcon,
 } from "@mui/icons-material";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
@@ -456,11 +458,37 @@ const PositionAnalysisModal = ({
                   />
                   {checked.includes(missing.description) && (
                     <Box sx={{ mt: 1, ml: 4 }}>
-                      <ImprovementDescriptionInput
-                        improvementKey={missing.description}
-                        placeholder="Describe your experience with this skill or requirement..."
-                        disabled={isAutoFilling}
-                      />
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                        <Box sx={{ flex: 1 }}>
+                          <ImprovementDescriptionInput
+                            improvementKey={missing.description}
+                            placeholder="Describe your experience with this skill or requirement..."
+                            disabled={isAutoFilling}
+                          />
+                        </Box>
+                        <Button
+                          variant="outline"
+                          size="small"
+                          onClick={() => {
+                            dispatch(clearSpecificImprovement(missing.description));
+                          }}
+                          sx={{
+                            minWidth: '40px',
+                            width: '40px',
+                            height: '40px',
+                            p: 0,
+                            color: 'error.main',
+                            borderColor: 'error.main',
+                            '&:hover': {
+                              backgroundColor: 'error.main',
+                              color: 'white',
+                            }
+                          }}
+                          disabled={isAutoFilling}
+                        >
+                          <ClearIcon fontSize="small" />
+                        </Button>
+                      </Box>
                     </Box>
                   )}
                 </Box>

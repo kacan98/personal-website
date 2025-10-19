@@ -4,10 +4,18 @@ import { SUPPORTED_ICONS } from "@/components/icon";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv } from "@/redux/slices/cv";
 import { BulletPoint } from "@/types";
-import { Grid, ListItem, ListItemIcon, ListItemText, Box } from "@mui/material";
+import { Grid, ListItem, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
 import React from "react";
 import { IconPicker } from "./IconPicker";
 import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
+
+// Helper function to ensure URL has protocol
+const ensureProtocol = (url: string): string => {
+    if (!url) return url;
+    if (url.startsWith('mailto:')) return url;
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    return `https://${url}`;
+};
 
 export const CvBulletPoint = React.memo(function CvBulletPoint({
     bulletPoint,
@@ -40,6 +48,9 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
             newValue: newIconName
         }));
     };
+
+    // Ensure URL has protocol for proper linking
+    const safeUrl = bulletPoint.url ? ensureProtocol(bulletPoint.url) : undefined;
     return (
         <>
             <ListItem sx={{
@@ -125,9 +136,9 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                                 condition={!!bulletPoint.url && (isPrintVersion || !editable)}
                                 wrapper={(c) =>
                                     bulletPoint.url!.startsWith("mailto:") ? (
-                                        <a href={bulletPoint.url!}>{c}</a>
+                                        <a href={safeUrl}>{c}</a>
                                     ) : (
-                                        <a href={bulletPoint.url!} target="_blank" rel="noreferrer">
+                                        <a href={safeUrl} target="_blank" rel="noreferrer">
                                             {c}
                                         </a>
                                     )
@@ -150,20 +161,40 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                         {/* URL field in edit mode */}
                         {editable && !isPrintVersion && (
                             <Box sx={{ mt: 0.5 }}>
-                                <EditableText
-                                    query={[...baseQuery, 'url']}
-                                    text={bulletPoint.url || ''}
-                                    editable={editable}
-                                    originalText={originalBulletPoint?.url}
-                                    showDiff={showDiff}
-                                    placeholder="Add URL (optional)"
-                                    variant="caption"
-                                    sx={{
-                                        color: 'text.secondary',
-                                        fontStyle: 'italic',
-                                        fontSize: '0.75rem',
-                                    }}
-                                />
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            fontSize: '0.7rem',
+                                            color: 'text.secondary',
+                                            fontWeight: 500,
+                                            minWidth: '30px'
+                                        }}
+                                    >
+                                        URL:
+                                    </Typography>
+                                    <EditableText
+                                        query={[...baseQuery, 'url']}
+                                        text={bulletPoint.url || ''}
+                                        placeholder="https://example.com"
+                                        editable={editable}
+                                        originalText={originalBulletPoint?.url}
+                                        showDiff={showDiff}
+                                        variant="caption"
+                                        sx={{
+                                            fontSize: '0.75rem',
+                                            color: 'text.secondary',
+                                            fontStyle: 'italic',
+                                            flex: 1
+                                        }}
+                                        onDelete={editable ? () => {
+                                            dispatch(updateCv({ query: [...baseQuery, 'url'], newValue: "" }));
+                                        } : undefined}
+                                        onRestore={editable && originalBulletPoint?.url && bulletPoint.url !== originalBulletPoint.url ? () => {
+                                            dispatch(updateCv({ query: [...baseQuery, 'url'], newValue: originalBulletPoint.url || "" }));
+                                        } : undefined}
+                                    />
+                                </Box>
                             </Box>
                         )}
                     </Box>

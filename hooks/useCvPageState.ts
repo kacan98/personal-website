@@ -22,6 +22,7 @@ export function useCvPageState() {
 
   // Authentication
   const [titleClickedTimes, setTitleClickedTimes] = useState(0);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   // Position and job details
   const [positionSummary, setPositionSummary] = useState<string>('');
@@ -79,6 +80,8 @@ export function useCvPageState() {
     // Authentication
     titleClickedTimes,
     setTitleClickedTimes,
+    loggingOut,
+    setLoggingOut,
 
     // Position and job
     positionSummary,

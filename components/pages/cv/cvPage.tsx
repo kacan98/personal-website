@@ -153,14 +153,15 @@ function CvPage({ jobDescription }: CvProps) {
     setCurrentOperation: state.setCurrentOperation,
   });
 
-  // Event handlers
-  const eventHandlers = useCvEventHandlers({
+  // Event handlers config (memoized to prevent infinite re-renders)
+  const eventHandlersConfig = React.useMemo(() => ({
     // State setters
     setLanguage: state.setLanguage,
     setSnackbarMessage: state.setSnackbarMessage,
     setTitleClickedTimes: state.setTitleClickedTimes,
     setHasManualRefinements: state.setHasManualRefinements,
     setIsManualAdjustmentMinimized: state.setIsManualAdjustmentMinimized,
+    setLoggingOut: state.setLoggingOut,
 
     // Current state
     titleClickedTimes: state.titleClickedTimes,
@@ -183,7 +184,30 @@ function CvPage({ jobDescription }: CvProps) {
     adjustmentWorkflow,
     refineCv,
     adjustMotivationalLetter: adjustMotivationalLetter as any,
-  });
+  }), [
+    state.setLanguage,
+    state.setSnackbarMessage,
+    state.setTitleClickedTimes,
+    state.setHasManualRefinements,
+    state.setIsManualAdjustmentMinimized,
+    state.setLoggingOut,
+    state.titleClickedTimes,
+    isAuthenticated,
+    modals.showPasswordModal,
+    state.originalCv,
+    state.editableMotivationalLetter,
+    state.motivationalLetter,
+    selectedImprovements,
+    improvementsWithDescriptions,
+    reduxCvProps,
+    modals.openModal,
+    modals.closeModal,
+    adjustmentWorkflow,
+    refineCv,
+    adjustMotivationalLetter,
+  ]);
+
+  const eventHandlers = useCvEventHandlers(eventHandlersConfig);
 
   // Handle translation workflow
   const handleTranslateBoth = React.useCallback(async () => {
@@ -330,9 +354,10 @@ function CvPage({ jobDescription }: CvProps) {
 
         {/* Logout button */}
         {isAuthenticated && (
-          <Tooltip title="Logout" placement="left">
+          <Tooltip title={state.loggingOut ? "Logging out..." : "Logout"} placement="left">
             <IconButton
               onClick={eventHandlers.handleLogout}
+              disabled={state.loggingOut}
               sx={{
                 position: 'fixed',
                 bottom: 24,
@@ -340,14 +365,18 @@ function CvPage({ jobDescription }: CvProps) {
                 zIndex: 998,
                 backgroundColor: 'error.main',
                 color: 'white',
-                opacity: 0.7,
-                '&:hover': { opacity: 1, backgroundColor: 'error.dark' },
+                opacity: state.loggingOut ? 0.5 : 0.7,
+                '&:hover': { opacity: state.loggingOut ? 0.5 : 1, backgroundColor: 'error.dark' },
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 width: 40,
                 height: 40,
               }}
             >
-              <LogoutIcon fontSize="small" />
+              {state.loggingOut ? (
+                <CircularProgress size={20} sx={{ color: 'white' }} />
+              ) : (
+                <LogoutIcon fontSize="small" />
+              )}
             </IconButton>
           </Tooltip>
         )}

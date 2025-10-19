@@ -19,6 +19,7 @@ interface EventHandlersConfig {
   setTitleClickedTimes: (count: number) => void;
   setHasManualRefinements: (has: boolean) => void;
   setIsManualAdjustmentMinimized: (minimized: boolean) => void;
+  setLoggingOut: (loading: boolean) => void;
 
   // Current state values
   titleClickedTimes: number;
@@ -33,9 +34,9 @@ interface EventHandlersConfig {
   // Redux props
   reduxCvProps: CVSettings;
 
-  // Modal functions (passed from parent)
-  openModal: (modalType: ModalType) => void;
-  closeModal: (modalType: ModalType) => void;
+  // Modal functions
+  openModal: (modal: ModalType) => void;
+  closeModal: (modal: ModalType) => void;
 
   // Utility functions
   adjustmentWorkflow: any;
@@ -46,6 +47,10 @@ interface EventHandlersConfig {
 export function useCvEventHandlers(config: EventHandlersConfig) {
   const dispatch = useAppDispatch();
   const { logout } = useAuth();
+
+  // Use modal functions from config instead of creating a new instance
+  const openModal = config.openModal;
+  const closeModal = config.closeModal;
 
   // Language change handler
   const handleLanguageChange = useCallback(async (event: SelectChangeEvent<string>) => {
@@ -71,7 +76,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
       if (newClickCount >= 5) {
         config.setTitleClickedTimes(0);
-        config.openModal('password');
+        openModal('password');
       }
     }
   }, [
@@ -79,14 +84,14 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     config.showPasswordModal,
     config.titleClickedTimes,
     config.setTitleClickedTimes,
-    config.openModal
+    openModal
   ]);
 
   // Position adjustment handler
   const handleAdjustForPosition = useCallback(async (positionDetails: string, checked: string[], selectedLanguage: string) => {
     if (positionDetails && positionDetails.trim().length > 0) {
       if (!config.isAuthenticated) {
-        config.openModal('password');
+        openModal('password');
         return;
       }
 
@@ -100,9 +105,9 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     }
   }, [
     config.isAuthenticated,
-    config.adjustmentWorkflow.startAdjustment,
+    config.adjustmentWorkflow,
     config.setSnackbarMessage,
-    config.openModal
+    openModal
   ]);
 
   // Manual refinement handler
@@ -130,7 +135,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
     await config.refineCv(refinementWithDescriptions);
     config.setHasManualRefinements(true);
-    config.closeModal('manualAdjustment');
+    closeModal('manualAdjustment');
 
     // Mark the used improvements
     if (config.checked.length > 0) {
@@ -141,7 +146,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     config.refineCv,
     config.setHasManualRefinements,
     config.checked,
-    config.closeModal,
+    closeModal,
     dispatch
   ]);
 
@@ -198,8 +203,15 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
   // Logout handler
   const handleLogout = useCallback(async () => {
-    await logout();
-    config.setSnackbarMessage('Logged out successfully');
+    config.setLoggingOut(true);
+    try {
+      await logout();
+      config.setSnackbarMessage('Logged out successfully');
+    } catch (error) {
+      config.setSnackbarMessage('Error during logout');
+    } finally {
+      config.setLoggingOut(false);
+    }
   }, [logout, config]);
 
   return {

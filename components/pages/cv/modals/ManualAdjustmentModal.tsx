@@ -51,6 +51,8 @@ const ManualAdjustmentModal = ({
   const [internalIsMinimized, setInternalIsMinimized] = useState(false);
   const [localOtherChanges, setLocalOtherChanges] = useState("");
   const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const positionDetailsDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [localPositionDetails, setLocalPositionDetails] = useState("");
   const [localImprovementInputs, setLocalImprovementInputs] = useState<{ [key: string]: string }>({});
   const improvementDebounceRefs = useRef<{ [key: string]: NodeJS.Timeout | undefined }>({});
 
@@ -67,6 +69,13 @@ const ManualAdjustmentModal = ({
     }
   }, [otherChanges, localOtherChanges]);
 
+  // Initialize local position details
+  useEffect(() => {
+    if (localPositionDetails === "" && positionDetails !== "") {
+      setLocalPositionDetails(positionDetails);
+    }
+  }, [positionDetails, localPositionDetails]);
+
   // Debounced handler for otherChanges updates
   const _handleOtherChangesDebounced = useCallback((value: string) => {
     setLocalOtherChanges(value);
@@ -82,11 +91,29 @@ const ManualAdjustmentModal = ({
     }, 150);
   }, [setOtherChanges]);
 
+  // Debounced handler for position details updates
+  const handlePositionDetailsDebounced = useCallback((value: string) => {
+    setLocalPositionDetails(value);
+
+    // Clear existing timeout
+    if (positionDetailsDebounceRef.current) {
+      clearTimeout(positionDetailsDebounceRef.current);
+    }
+
+    // Set new timeout to update actual state after 200ms
+    positionDetailsDebounceRef.current = setTimeout(() => {
+      setPositionDetails(value);
+    }, 200);
+  }, [setPositionDetails]);
+
   // Clean up timeouts on unmount
   useEffect(() => {
     return () => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
+      }
+      if (positionDetailsDebounceRef.current) {
+        clearTimeout(positionDetailsDebounceRef.current);
       }
       // Clean up improvement debounce timeouts
       Object.values(improvementDebounceRefs.current).forEach(timeout => {
@@ -179,7 +206,7 @@ const ManualAdjustmentModal = ({
     onClose();
   };
 
-  const hasJobDescription = useMemo(() => positionDetails.trim().length > 10, [positionDetails]);
+  const hasJobDescription = useMemo(() => localPositionDetails.trim().length > 10, [localPositionDetails]);
   const _hasOtherChanges = useMemo(() => otherChanges.trim().length > 0, [otherChanges]);
 
   const actions = (
@@ -217,8 +244,8 @@ const ManualAdjustmentModal = ({
             label="Job Description"
             placeholder="Paste the job description here. Your CV will be automatically optimized for this position..."
             variant="outlined"
-            value={positionDetails}
-            onChange={(e) => setPositionDetails(e.target.value)}
+            value={localPositionDetails}
+            onChange={(e) => handlePositionDetailsDebounced(e.target.value)}
             sx={{
               '& .MuiInputBase-root': {
                 fontSize: '14px',
@@ -226,14 +253,14 @@ const ManualAdjustmentModal = ({
               },
             }}
           />
-          {positionDetails && positionDetails.length > 0 && (
+          {localPositionDetails && localPositionDetails.length > 0 && (
             <Typography
               variant="caption"
-              color={positionDetails.length > 10 ? 'success.main' : 'text.secondary'}
+              color={localPositionDetails.length > 10 ? 'success.main' : 'text.secondary'}
               sx={{ mt: 1, display: 'block' }}
             >
-              {positionDetails.length} characters
-              {positionDetails.length <= 10 && ' (minimum 10 characters required)'}
+              {localPositionDetails.length} characters
+              {localPositionDetails.length <= 10 && ' (minimum 10 characters required)'}
             </Typography>
           )}
         </Box>

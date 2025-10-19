@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Box, Typography, TextField } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import Button from '@/components/ui/Button';
 import { useAppDispatch } from '@/redux/hooks';
-import { clearCurrentPositionImprovements } from '@/redux/slices/improvementDescriptions';
+import { clearUsedImprovements } from '@/redux/slices/improvementDescriptions';
 
 interface FloatingManualAdjustmentsProps {
   isVisible: boolean;
@@ -40,14 +40,48 @@ export function FloatingManualAdjustments({
   onRefreshAnalysis,
 }: FloatingManualAdjustmentsProps) {
   const dispatch = useAppDispatch();
+  const [localInputValue, setLocalInputValue] = useState(localManualChanges);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  // Initialize local value with props
+  useEffect(() => {
+    if (localInputValue !== localManualChanges) {
+      setLocalInputValue(localManualChanges);
+    }
+  }, [localManualChanges]);
+
+  // Debounced handler for input changes
+  const handleInputChange = useCallback((value: string) => {
+    setLocalInputValue(value);
+
+    // Clear existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+
+    // Set new timeout to update parent state after 200ms
+    debounceTimeoutRef.current = setTimeout(() => {
+      onLocalManualChangesChange(value);
+      onManualOtherChangesChange(value);
+    }, 200);
+  }, [onLocalManualChangesChange, onManualOtherChangesChange]);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (!isVisible) return null;
 
   const handleApplyChanges = async () => {
     await onApplyChanges();
 
-    // Clear all improvements and close the panel
-    dispatch(clearCurrentPositionImprovements());
+    // Clear used improvements (those that were applied) and close the panel
+    dispatch(clearUsedImprovements());
     onManualOtherChangesChange('');
     onClose();
 
@@ -169,12 +203,8 @@ export function FloatingManualAdjustments({
         fullWidth
         placeholder="Describe the changes you want to make to your CV... (Ctrl+Enter to apply)"
         variant="outlined"
-        value={localManualChanges}
-        onChange={(e) => {
-          const value = e.target.value;
-          onLocalManualChangesChange(value);
-          onManualOtherChangesChange(value);
-        }}
+        value={localInputValue}
+        onChange={(e) => handleInputChange(e.target.value)}
         onKeyDown={handleKeyDown}
         sx={{
           '& .MuiInputBase-root': {
