@@ -14,12 +14,22 @@ export default function Page({ params }: PageProps) {
   const { jobId } = use(params);
 
   const [pageText, setPageText] = React.useState("");
+  const [jobUrl, setJobUrl] = React.useState("");
 
   useEffect(() => {
     // Listen for the response from the content script
     const handleMessage = (event: MessageEvent) => {
       if (event.data.action === "RECEIVED_SAVED_TEXT") {
-        setPageText(event.data.text);
+        const data = event.data.text;
+
+        // Handle both old string format and new object format
+        if (typeof data === 'string') {
+          setPageText(data);
+          setJobUrl('');
+        } else if (data && typeof data === 'object') {
+          setPageText(data.description || '');
+          setJobUrl(data.url || '');
+        }
       }
     };
 
@@ -34,5 +44,5 @@ export default function Page({ params }: PageProps) {
     };
   }, [jobId]);
 
-  return <CvPage jobDescription={pageText} />;
+  return <CvPage jobDescription={pageText} jobUrl={jobUrl} />;
 }

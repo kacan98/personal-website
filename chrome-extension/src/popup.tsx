@@ -176,11 +176,18 @@ const Popup = () => {
 
   const openCVTool = (textToStore?: string) => {
     const jobDescription = textToStore || pageText;
-    // Store the current job description content right before opening the CV tool
-    chrome.storage.local.set({ [jobIdRef.current]: jobDescription }, () => {
-      // Only open the CV tool after the storage operation completes
-      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-        const currentTabUrl = tabs[0]?.url;
+    // Get current tab URL and store both description and URL
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      const currentTabUrl = tabs[0]?.url || '';
+
+      // Store job description and URL as an object
+      chrome.storage.local.set({
+        [jobIdRef.current]: {
+          description: jobDescription,
+          url: currentTabUrl
+        }
+      }, async () => {
+        // Only open the CV tool after the storage operation completes
         if (currentTabUrl) {
           const newWindowDetails = await chrome.windows.create({
             url: currentTabUrl,
@@ -290,11 +297,17 @@ const Popup = () => {
                   // Only auto-open if the setting is enabled
                   if (items.autoOpen) {
                     console.log("Popup: Auto-open is enabled, opening CV tool");
-                    // Store the current job description content right before opening the CV tool
-                    chrome.storage.local.set({ [jobIdRef.current]: selectedText }, () => {
-                      // Only open the CV tool after the storage operation completes
-                      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-                        const currentTabUrl = tabs[0]?.url;
+                    // Store job description and URL
+                    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+                      const currentTabUrl = tabs[0]?.url || '';
+
+                      chrome.storage.local.set({
+                        [jobIdRef.current]: {
+                          description: selectedText,
+                          url: currentTabUrl
+                        }
+                      }, async () => {
+                        // Only open the CV tool after the storage operation completes
                         if (currentTabUrl) {
                           const newWindowDetails = await chrome.windows.create({
                             url: currentTabUrl,
