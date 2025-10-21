@@ -519,7 +519,7 @@ export default function ApplicationsPage() {
                     onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
                     label="Status"
                   >
-                    {Object.entries(APPLICATION_STATUSES).map(([key, value]) => (
+                    {Object.values(APPLICATION_STATUSES).map((value) => (
                       <MenuItem key={value} value={value}>
                         {STATUS_CONFIG[value as ApplicationStatus].label}
                       </MenuItem>

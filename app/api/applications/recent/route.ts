@@ -4,7 +4,7 @@ import { jobApplications } from '@/app/db/schema';
 import { desc } from 'drizzle-orm';
 import { withAuth } from '@/lib/api-helpers';
 
-export const GET = withAuth(async (request: NextRequest) => {
+export const GET = withAuth(async (_request: NextRequest) => {
   try {
 
     // Fetch last 10 applications
