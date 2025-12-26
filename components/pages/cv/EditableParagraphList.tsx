@@ -81,7 +81,7 @@ export function EditableParagraphList({
       isEmpty,
       isDeleted,
       isNewItem,
-      id: currentPara.id
+      id: currentPara.id ?? undefined
     });
   });
 

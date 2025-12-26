@@ -12,7 +12,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 
@@ -22,7 +22,7 @@ interface PasswordModalProps {
 }
 
 export default function PasswordModal({ open, onClose }: PasswordModalProps): JSX.Element {
-  const [password, setPassword] = useState('');
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [remainingAttempts, setRemainingAttempts] = useState<number | undefined>();
@@ -45,6 +45,7 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
 
+    const password = passwordRef.current?.value || '';
     if (!password.trim()) {
       setError('Password is required');
       return;
@@ -58,7 +59,9 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
 
       if (result.success) {
         // Success - close modal and reset state
-        setPassword('');
+        if (passwordRef.current) {
+          passwordRef.current.value = '';
+        }
         setError('');
         setRemainingAttempts(undefined);
         onClose();
@@ -66,7 +69,10 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
         // Failed - show error
         setError(result.message);
         setRemainingAttempts(result.remainingAttempts);
-        setPassword(''); // Clear password on failure
+        // Clear password on failure
+        if (passwordRef.current) {
+          passwordRef.current.value = '';
+        }
       }
     } catch (error) {
       setError('An unexpected error occurred');
@@ -77,7 +83,9 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
   };
 
   const handleClose = (): void => {
-    setPassword('');
+    if (passwordRef.current) {
+      passwordRef.current.value = '';
+    }
     setError('');
     setRemainingAttempts(undefined);
     onClose();
@@ -125,8 +133,7 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
             fullWidth
             type="password"
             label="Admin Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            inputRef={passwordRef}
             disabled={isLoading}
             placeholder="Enter admin password"
             sx={{ mb: 2 }}
@@ -157,7 +164,7 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps): JS
             <Button
               type="submit"
               variant="contained"
-              disabled={isLoading || !password.trim()}
+              disabled={isLoading}
               startIcon={isLoading ? <CircularProgress size={16} /> : undefined}
             >
               {isLoading ? 'Authenticating...' : 'Login'}

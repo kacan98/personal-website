@@ -1,9 +1,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Box, Typography, TextField } from '@mui/material';
+import { Box, Typography, TextField, FormControlLabel, Checkbox } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Button from '@/components/ui/Button';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { clearUsedImprovements } from '@/redux/slices/improvementDescriptions';
+import { setIncludeOriginalCv, setIncludePositionDetails } from '@/redux/slices/ui';
 
 interface FloatingManualAdjustmentsProps {
   isVisible: boolean;
@@ -22,6 +24,7 @@ interface FloatingManualAdjustmentsProps {
   onClose: () => void;
   onApplyChanges: () => Promise<void>;
   onRefreshAnalysis: () => Promise<void>;
+  onOpenModal: () => void;
 }
 
 export function FloatingManualAdjustments({
@@ -38,8 +41,11 @@ export function FloatingManualAdjustments({
   onClose,
   onApplyChanges,
   onRefreshAnalysis,
+  onOpenModal,
 }: FloatingManualAdjustmentsProps) {
   const dispatch = useAppDispatch();
+  const includeOriginalCv = useAppSelector(state => state.ui?.includeOriginalCv ?? false);
+  const includePositionDetails = useAppSelector(state => state.ui?.includePositionDetails ?? false);
   const [localInputValue, setLocalInputValue] = useState(localManualChanges);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -78,16 +84,23 @@ export function FloatingManualAdjustments({
   if (!isVisible) return null;
 
   const handleApplyChanges = async () => {
-    await onApplyChanges();
+    try {
+      await onApplyChanges();
 
-    // Clear used improvements (those that were applied) and close the panel
-    dispatch(clearUsedImprovements());
-    onManualOtherChangesChange('');
-    onClose();
+      // Only close modal if changes were applied successfully
+      // Clear used improvements (those that were applied) and close the panel
+      dispatch(clearUsedImprovements());
+      onManualOtherChangesChange('');
+      onClose();
 
-    // Request new analysis if we have position details
-    if (positionDetails && positionDetails.trim().length >= 10) {
-      await onRefreshAnalysis();
+      // Request new analysis if we have position details
+      if (positionDetails && positionDetails.trim().length >= 10) {
+        await onRefreshAnalysis();
+      }
+    } catch (error) {
+      // Modal stays open on error so user can see the error message and retry
+      console.error('Failed to apply changes:', error);
+      // Error is shown in snackbar via onApplyChanges callback
     }
   };
 
@@ -120,7 +133,7 @@ export function FloatingManualAdjustments({
     >
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Box>
+        <Box sx={{ flex: 1 }}>
           <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <EditNoteIcon color="primary" fontSize="small" />
             CV Adjustments
@@ -128,11 +141,6 @@ export function FloatingManualAdjustments({
           {checked.length > 0 && (
             <Typography variant="caption" sx={{ color: 'text.secondary', ml: 3 }}>
               {checked.length} position improvement{checked.length !== 1 ? 's' : ''} selected
-              {hasImprovementDescriptions && (
-                <span style={{ color: '#1976d2', fontWeight: 500 }}>
-                  , {improvementsWithDescriptions.length} with descriptions
-                </span>
-              )}
             </Typography>
           )}
         </Box>
@@ -162,37 +170,34 @@ export function FloatingManualAdjustments({
         </Box>
       </Box>
 
-      {/* Selected Improvements Display */}
+      {/* Selected Improvements Button */}
       {hasImprovementDescriptions && (
-        <Box sx={{
-          mb: 3,
-          p: 2,
-          backgroundColor: 'rgba(25, 118, 210, 0.05)',
-          borderRadius: 1,
-          border: '1px solid rgba(25, 118, 210, 0.2)'
-        }}>
-          <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
-            Selected Improvements with Your Experience:
-          </Typography>
-          {improvementsWithDescriptions.map((item, index) => (
-            <Box
-              key={index}
-              sx={{
-                mb: 2,
-                pb: 2,
-                borderBottom: index < improvementsWithDescriptions.length - 1
-                  ? '1px solid rgba(0,0,0,0.1)'
-                  : 'none'
-              }}
-            >
-              <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                • {item.improvement}
+        <Box sx={{ mb: 2 }}>
+          <Button
+            variant="outline"
+            size="small"
+            onClick={onOpenModal}
+            startIcon={<InfoOutlinedIcon />}
+            fullWidth
+            sx={{
+              justifyContent: 'flex-start',
+              textAlign: 'left',
+              backgroundColor: 'rgba(25, 118, 210, 0.05)',
+              borderColor: 'rgba(25, 118, 210, 0.3)',
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.1)',
+              }
+            }}
+          >
+            <Box>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {improvementsWithDescriptions.length} improvement{improvementsWithDescriptions.length !== 1 ? 's' : ''} with your experience
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', pl: 2 }}>
-                &ldquo;{item.description}&rdquo;
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Click to view or edit in the analysis modal
               </Typography>
             </Box>
-          ))}
+          </Button>
         </Box>
       )}
 
@@ -213,6 +218,47 @@ export function FloatingManualAdjustments({
           },
         }}
       />
+
+      {/* AI Context Options */}
+      <Box sx={{ mt: 2, p: 1.5, backgroundColor: 'rgba(25, 118, 210, 0.04)', borderRadius: 1 }}>
+        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: 'primary.main' }}>
+          Send to AI alongside current CV:
+        </Typography>
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={includeOriginalCv}
+              onChange={(e) => dispatch(setIncludeOriginalCv(e.target.checked))}
+              size="small"
+            />
+          }
+          label={
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              Original CV (as baseline to avoid hallucinations)
+            </Typography>
+          }
+          sx={{ display: 'flex', mb: 1 }}
+        />
+
+        {positionDetails && positionDetails.trim().length > 10 && (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={includePositionDetails}
+                onChange={(e) => dispatch(setIncludePositionDetails(e.target.checked))}
+                size="small"
+              />
+            }
+            label={
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Position details (for better context, optional)
+              </Typography>
+            }
+            sx={{ display: 'flex' }}
+          />
+        )}
+      </Box>
     </Box>
   );
 }

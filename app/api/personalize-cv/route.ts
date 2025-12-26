@@ -162,7 +162,7 @@ async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<
     }
   }
 
-  // Get the personalized CV
+  // Get the personalized CV (already validated by OpenAI Structured Outputs!)
   const personalizedCV = results[resultIndex]
 
   const response: CvUpgradeResponse = {

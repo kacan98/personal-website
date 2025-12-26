@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { CVSettings } from '@/types';
 import { RefineCvRequest, RefineCvResponseData, refineCvAPIEndpointName } from '@/app/api/refine-cv/model';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { updateCvWithChanges } from '@/redux/slices/cv';
 
 interface UseRefineCvProps {
@@ -29,6 +29,8 @@ export const useRefineCv = ({
   setCurrentOperation,
 }: UseRefineCvProps) => {
   const dispatch = useAppDispatch();
+  const includeOriginalCv = useAppSelector(state => state.ui?.includeOriginalCv ?? false);
+  const includePositionDetails = useAppSelector(state => state.ui?.includePositionDetails ?? false);
   const [refinementHistory, setRefinementHistory] = useState<string[]>([]);
 
   const refineCv = useCallback(async (refinementData: RefinementData) => {
@@ -37,16 +39,18 @@ export const useRefineCv = ({
       setCurrentOperation('Refining your CV based on your feedback...');
 
       const requestBody: RefineCvRequest = {
-        originalCv,
+        // Only include originalCv if Redux state says to include it
+        originalCv: includeOriginalCv === true ? originalCv : undefined,
         currentCv,
         checkedImprovements: refinementData.checkedImprovements.length > 0 ? refinementData.checkedImprovements : undefined,
         improvementInputs: Object.keys(refinementData.improvementInputs).length > 0 ? refinementData.improvementInputs : undefined,
         missingSkills: refinementData.missingSkills.trim() || undefined,
         otherChanges: refinementData.otherChanges.trim() || undefined,
-        positionContext: positionDetails || undefined,
+        // Only include position details if user has checked the option
+        positionContext: includePositionDetails && positionDetails ? positionDetails : undefined,
       };
 
-      console.log('Refining CV with data:', requestBody);
+      console.log('Refining CV with data (includeOriginalCv:', includeOriginalCv, ', includePositionDetails:', includePositionDetails, '):', requestBody);
 
       const response = await fetch(refineCvAPIEndpointName, {
         method: 'POST',
@@ -91,7 +95,7 @@ export const useRefineCv = ({
       setLoading(false);
       setCurrentOperation('Discussing with AI...');
     }
-  }, [originalCv, currentCv, positionDetails, dispatch, setLoading, setsnackbarMessage, setCurrentOperation]);
+  }, [originalCv, currentCv, positionDetails, includeOriginalCv, includePositionDetails, dispatch, setLoading, setsnackbarMessage, setCurrentOperation]);
 
   return {
     refineCv,

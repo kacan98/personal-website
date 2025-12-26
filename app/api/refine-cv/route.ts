@@ -1,10 +1,33 @@
-import { CVSettings } from '@/types'
+import { CVSettingsSchema, CVSettingsSchemaForOpenAI } from '@/types'
 import { OpenAI } from 'openai'
-import { RefineCvParams, RefineCvRequest, RefineCvResponseData } from './model'
+import { zodResponseFormat } from 'openai/helpers/zod.mjs'
+import { RefineCvRequest, RefineCvResponseData } from './model'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
 import { OPENAI_API_KEY } from '@/lib/env'
+import { OPENAI_MODELS } from '@/lib/openai-service'
 
 export const runtime = 'nodejs';
+
+/**
+ * Convert undefined to null recursively for OpenAI compatibility
+ * OpenAI Structured Outputs requires all fields to be present (but can be null)
+ */
+function undefinedToNull<T>(obj: T): T {
+  if (obj === null || obj === undefined) {
+    return null as T
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(undefinedToNull) as T
+  }
+  if (typeof obj === 'object') {
+    const result: any = {}
+    for (const key in obj) {
+      result[key] = undefinedToNull(obj[key])
+    }
+    return result
+  }
+  return obj
+}
 
 export async function POST(req: Request): Promise<Response> {
   try {
@@ -33,9 +56,9 @@ export async function POST(req: Request): Promise<Response> {
       })
     }
 
-    // Validate request
+    // Validate request using Zod schema
     try {
-      RefineCvParams.parse(body)
+      RefineCvRequest.parse(body)
       console.log('POST /api/refine-cv - Request validation passed')
     } catch (e) {
       console.error('POST /api/refine-cv - Request validation failed:', e)
@@ -100,7 +123,7 @@ IMPORTANT GUIDELINES:
   * "User said:" shows the candidate's actual experience related to that suggestion
   * Focus on incorporating the "User said" content into the CV, using the AI suggestion as context
 - Incorporate the user's actual experiences naturally into the CV by enhancing existing sections or adding relevant details
-- Use the ORIGINAL CV as reference for the candidate's baseline experience to avoid making up information
+${body.originalCv ? '- Use the ORIGINAL CV as reference for the candidate\'s baseline experience to avoid making up information' : '- Work only with the CURRENT CV - do not reference any original baseline'}
 - Maintain the professional tone and structure of the CV
 - Don't make up or exaggerate any experience beyond what's explicitly provided by the user
 - Ensure all changes are truthful and based on the provided information
@@ -113,33 +136,44 @@ Please return the refined CV in the same JSON format.`
     console.log('POST /api/refine-cv - About to call OpenAI API')
     let completion
     try {
-      completion = await openai.chat.completions.parse({
-        model: 'gpt-5-mini',
-        messages: [
-          {
-            role: 'user',
-            content: 'You are an expert CV writer helping to refine a candidate\'s CV based on specific feedback and additional information.',
-          },
-          {
-            role: 'user',
-            content: `ORIGINAL CV (reference for candidate's actual experience):\n${JSON.stringify(body.originalCv, null, 2)}`,
-          },
-          {
-            role: 'user',
-            content: `CURRENT CV (starting point - apply refinements to this version):\n${JSON.stringify(body.currentCv, null, 2)}`,
-          },
-          {
-            role: 'user',
-            content: refinementInstructions,
-          },
-          {
-            role: 'user',
-            content: 'Please refine the CV and return it in the exact same JSON format. Make thoughtful improvements while staying truthful to the candidate\'s actual experience.',
-          },
-        ],
-        response_format: {
-          type: 'json_object',
+      // Build messages array conditionally based on whether originalCv is provided
+      const messages: Array<{ role: 'user', content: string }> = [
+        {
+          role: 'user',
+          content: 'You are an expert CV writer helping to refine a candidate\'s CV based on specific feedback and additional information.',
         },
+      ];
+
+      // Only include original CV if provided
+      if (body.originalCv) {
+        messages.push({
+          role: 'user',
+          content: `ORIGINAL CV (reference for candidate's actual experience):\n${JSON.stringify(undefinedToNull(body.originalCv), null, 2)}`,
+        });
+      }
+
+      // Always include current CV
+      messages.push({
+        role: 'user',
+        content: `CURRENT CV (starting point - apply refinements to this version):\n${JSON.stringify(undefinedToNull(body.currentCv), null, 2)}`,
+      });
+
+      // Add refinement instructions
+      messages.push({
+        role: 'user',
+        content: refinementInstructions,
+      });
+
+      // Add final instruction
+      messages.push({
+        role: 'user',
+        content: 'Please refine the CV. Make thoughtful improvements while staying truthful to the candidate\'s actual experience.',
+      });
+
+      completion = await openai.chat.completions.parse({
+        model: OPENAI_MODELS.LATEST_MINI,
+        messages,
+        response_format: zodResponseFormat(CVSettingsSchemaForOpenAI, 'refined_cv'),
       })
       console.log('POST /api/refine-cv - OpenAI API call completed successfully')
     } catch (e) {
@@ -161,19 +195,24 @@ Please return the refined CV in the same JSON format.`
       })
     }
 
-    let refinedCv: CVSettings
-    try {
-      refinedCv = JSON.parse(completion.choices[0].message.content)
-    } catch (e) {
-      console.error('POST /api/refine-cv - Failed to parse OpenAI response:', e)
+    // Get the parsed response (OpenAI guarantees it matches CVSettingsSchemaForOpenAI structure)
+    const openaiResponse = completion.choices[0].message.parsed
+
+    if (!openaiResponse) {
+      console.error('POST /api/refine-cv - No parsed CV from OpenAI')
       return new Response(JSON.stringify({
-        error: 'Failed to parse refined CV from OpenAI response',
-        details: e instanceof Error ? e.message : 'Invalid JSON from OpenAI'
+        error: 'OpenAI did not return a parsed CV',
+        details: 'The response was empty or refused'
       }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       })
     }
+
+    // Parse through full schema to ensure all fields have their default values
+    const refinedCv = CVSettingsSchema.parse(openaiResponse)
+
+    console.log('POST /api/refine-cv - OpenAI response received and validated by Structured Outputs')
 
     // Generate a summary of changes applied
     const changesApplied: string[] = []

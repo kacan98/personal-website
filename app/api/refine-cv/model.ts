@@ -1,9 +1,10 @@
-import { CVSettings } from '@/types'
+import { CVSettingsSchema } from '@/types'
 import { z } from 'zod'
 
-export const RefineCvParams = z.object({
-  originalCv: z.record(z.any()), // Original CV as baseline
-  currentCv: z.record(z.any()), // Current (potentially modified) CV
+// Request schema - uses CVSettingsSchema for validation
+export const RefineCvRequest = z.object({
+  originalCv: CVSettingsSchema.optional(), // Original CV as baseline (optional - can be omitted to focus on current CV only)
+  currentCv: CVSettingsSchema, // Current (potentially modified) CV
   checkedImprovements: z.array(z.string()).optional(), // Selected improvements from position analysis
   improvementInputs: z.record(z.string()).optional(), // User inputs for specific improvements
   missingSkills: z.string().nullable().optional(), // Skills/experience user has but missing from CV
@@ -11,23 +12,15 @@ export const RefineCvParams = z.object({
   positionContext: z.string().nullable().optional(), // Optional position context for relevance
 })
 
-export type RefineCvParams = z.infer<typeof RefineCvParams>
+export type RefineCvRequest = z.infer<typeof RefineCvRequest>
 
-export interface RefineCvRequest extends RefineCvParams {
-  originalCv: CVSettings
-  currentCv: CVSettings
-}
-
+// Response schema - uses CVSettingsSchema for validation
 export const RefineCvResponse = z.object({
-  cv: z.record(z.unknown()), // Refined CV
+  cv: CVSettingsSchema, // Refined CV - fully validated!
   changesApplied: z.array(z.string()).optional(), // List of changes that were applied
   refinementSummary: z.string().nullable().optional(), // Summary of what was changed
 })
 
-export type RefineCvResponse = z.infer<typeof RefineCvResponse>
-
-export interface RefineCvResponseData extends RefineCvResponse {
-  cv: CVSettings
-}
+export type RefineCvResponseData = z.infer<typeof RefineCvResponse>
 
 export const refineCvAPIEndpointName = '/api/refine-cv'

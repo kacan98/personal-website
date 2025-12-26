@@ -7,6 +7,7 @@ import { Avatar, Box, Grid, useMediaQuery } from "@mui/material";
 import { CvSectionComponent } from "../cvSectionComponent";
 import { useLocale } from 'next-intl';
 import { getMergedSectionsForRendering } from "../utils/cvDiffAnalyzer";
+import { useCallback } from "react";
 
 
 type CvPaperProps = {
@@ -48,7 +49,8 @@ export function CvPaper({
 }: CvPaperProps) {
   const locale = useLocale();
   const reduxCv = useAppSelector((state) => state.cv);
-  const { imageUrl } = usePicture(() => getCVPicture(locale));
+  const fetchPicture = useCallback(() => getCVPicture(locale), [locale]);
+  const { imageUrl } = usePicture(fetchPicture);
   // Custom breakpoint at 800px - we'll call it "CV breakpoint"
   // For print version, always use desktop layout regardless of media query
   const mediaQueryResult = useMediaQuery('(min-width:700px)');
@@ -117,14 +119,14 @@ export function CvPaper({
             // Get merged sections including deleted ones for diff viewing
             const mergedSections = originalCv && showDiff
               ? getMergedSectionsForRendering(originalCv.sideColumn || [], reduxCv.sideColumn || [], 'sideColumn')
-              : (reduxCv.sideColumn || []).map((section, index) => ({
+              : (reduxCv.sideColumn || []).map((section: CvSection, index: number) => ({
                 section,
                 sectionId: section.id || getSectionKey('sideColumn', index),
                 isDeleted: false,
                 isFromOriginal: false
               }));
 
-            return mergedSections.map(({ section, sectionId, isDeleted }, renderIndex) => {
+            return mergedSections.map(({ section, sectionId, isDeleted }: { section: CvSection; sectionId: string; isDeleted: boolean }, renderIndex: number) => {
               const isRemoved = isDeleted || removedSections.has(sectionId);
               const isModified = !isDeleted && modifiedSections.has(sectionId);
 
@@ -134,7 +136,7 @@ export function CvPaper({
               }
 
               // Find original section by index position for simpler matching
-              const currentIndex = reduxCv.sideColumn?.findIndex(s => s === section) ?? -1;
+              const currentIndex = reduxCv.sideColumn?.findIndex((s: CvSection) => s === section) ?? -1;
               const originalSection = currentIndex >= 0 ? originalCv?.sideColumn?.[currentIndex] : undefined;
 
               // Check if this is a completely new section (doesn't exist at this index in original)
@@ -181,14 +183,14 @@ export function CvPaper({
             // Get merged sections including deleted ones for diff viewing
             const mergedSections = originalCv && showDiff
               ? getMergedSectionsForRendering(originalCv.mainColumn || [], reduxCv.mainColumn || [], 'mainColumn')
-              : (reduxCv.mainColumn || []).map((section, index) => ({
+              : (reduxCv.mainColumn || []).map((section: CvSection, index: number) => ({
                 section,
                 sectionId: section.id || getSectionKey('mainColumn', index),
                 isDeleted: false,
                 isFromOriginal: false
               }));
 
-            return mergedSections.map(({ section, sectionId, isDeleted }, renderIndex) => {
+            return mergedSections.map(({ section, sectionId, isDeleted }: { section: CvSection; sectionId: string; isDeleted: boolean }, renderIndex: number) => {
               const isRemoved = isDeleted || removedSections.has(sectionId);
               const isModified = !isDeleted && modifiedSections.has(sectionId);
 
@@ -198,7 +200,7 @@ export function CvPaper({
               }
 
               // Find original section by index position for simpler matching
-              const currentIndex = reduxCv.mainColumn?.findIndex(s => s === section) ?? -1;
+              const currentIndex = reduxCv.mainColumn?.findIndex((s: CvSection) => s === section) ?? -1;
               const originalSection = currentIndex >= 0 ? originalCv?.mainColumn?.[currentIndex] : undefined;
 
               // Check if this is a completely new section (doesn't exist at this index in original)

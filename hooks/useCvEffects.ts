@@ -47,14 +47,19 @@ export function useCvEffects(config: CvEffectsConfig) {
   const lastProcessedPosition = useRef<string | null>(null);
 
   // Initialize originalCv from Redux (which already has IDs from StoreProvider)
+  // Only set originalCv on first load, never update it after that
+  const originalCvInitialized = useRef(false);
+
   useEffect(() => {
-    if (!config.originalCv && config.reduxCvProps.name) {
+    if (!originalCvInitialized.current && !config.originalCv && config.reduxCvProps.name) {
       // Clone the Redux CV as the original for comparison
       // Redux already has IDs applied in StoreProvider, so no need to ensure them again
       const clonedCv = deepClone(config.reduxCvProps);
+      console.log('[useCvEffects] Setting originalCv for first time');
       config.setOriginalCv(clonedCv);
+      originalCvInitialized.current = true;
     }
-  }, [config.reduxCvProps, config.originalCv, config.setOriginalCv]);
+  }, [config.reduxCvProps.name, config.originalCv, config.setOriginalCv]); // Only watch for name change and originalCv, not entire reduxCvProps
 
   // Check for job ID in URL and start loading immediately
   useEffect(() => {

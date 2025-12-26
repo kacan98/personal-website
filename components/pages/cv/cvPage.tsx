@@ -42,6 +42,8 @@ import { useCvEffects } from '@/hooks/useCvEffects';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { FloatingManualAdjustments } from './components/FloatingManualAdjustments';
 import { CvModals } from './components/CvModals';
+import { DebugStateModal } from './components/DebugStateModal';
+import { useSessionLog } from '@/hooks/useSessionLog';
 
 export type CvProps = {
   jobDescription?: string;
@@ -59,6 +61,12 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
   const [aiIntroduction, setAiIntroduction] = React.useState(DEFAULT_AI_INTRODUCTION);
   const [showAiIntroductionEditor, setShowAiIntroductionEditor] = React.useState(false);
   const [aiIntroductionDraft, setAiIntroductionDraft] = React.useState(DEFAULT_AI_INTRODUCTION);
+
+  // Local state for debug modal
+  const [showDebugState, setShowDebugState] = React.useState(false);
+
+  // Session logging
+  const { events: sessionEvents, logEvent } = useSessionLog();
 
   // Authentication
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -154,6 +162,42 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
     setLoading: state.setLoading,
     setCurrentOperation: state.setCurrentOperation,
   });
+
+  // Session logging effects
+  React.useEffect(() => {
+    if (state.cvAdjusted && !adjustmentWorkflow.isLoading) {
+      logEvent('CV Adjusted for Position', {
+        company: state.companyName || 'Unknown',
+        language: state.selectedLanguage,
+      }, 'success');
+    }
+  }, [state.cvAdjusted, adjustmentWorkflow.isLoading, state.companyName, state.selectedLanguage, logEvent]);
+
+  React.useEffect(() => {
+    if (state.hasManualRefinements) {
+      logEvent('Manual Refinements Applied', {}, 'success');
+    }
+  }, [state.hasManualRefinements, logEvent]);
+
+  React.useEffect(() => {
+    if (state.positionIntersection) {
+      logEvent('Position Analysis Completed', {
+        company: state.companyName || 'Unknown',
+      }, 'success');
+    }
+  }, [state.positionIntersection, state.companyName, logEvent]);
+
+  React.useEffect(() => {
+    if (state.motivationalLetter) {
+      logEvent('Motivational Letter Generated', {}, 'success');
+    }
+  }, [state.motivationalLetter, logEvent]);
+
+
+  // Log page load
+  React.useEffect(() => {
+    logEvent('CV Page Loaded', { authenticated: isAuthenticated }, 'info');
+  }, [isAuthenticated, logEvent]);
 
   // Event handlers config (memoized to prevent infinite re-renders)
   const eventHandlersConfig = React.useMemo(() => ({
@@ -359,6 +403,7 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
               setAiIntroductionDraft(aiIntroduction);
             }
           }}
+          onOpenDebugState={() => setShowDebugState(true)}
           showAiIntroduction={showAiIntroductionEditor}
           hasMotivationalLetter={!!state.motivationalLetter}
           hasPositionAnalysis={!!state.positionIntersection}
@@ -619,6 +664,10 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
             }
           }}
           onRefreshAnalysis={updatePositionIntersection}
+          onOpenModal={() => {
+            state.setIsManualAdjustmentMinimized(false);
+            modals.openModal('positionAnalysis');
+          }}
         />
 
         {/* Loading backdrop */}
@@ -643,6 +692,30 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
             </>
           )}
         </Backdrop>
+
+        {/* Debug State Modal */}
+        <DebugStateModal
+          open={showDebugState}
+          onClose={() => setShowDebugState(false)}
+          currentCv={reduxCvProps}
+          originalCv={state.originalCv}
+          hasChanges={hasChanges}
+          pageState={{
+            loading: state.loading,
+            currentOperation: state.currentOperation,
+            cvAdjusted: state.cvAdjusted,
+            hasManualRefinements: state.hasManualRefinements,
+            showDiff: state.showDiff,
+            positionDetails: state.positionDetails,
+            companyName: state.companyName,
+            selectedLanguage: state.selectedLanguage,
+            hasMotivationalLetter: !!state.motivationalLetter,
+            hasPositionAnalysis: !!state.positionIntersection,
+            adjustmentWorkflowIsLoading: adjustmentWorkflow.isLoading,
+            adjustmentWorkflowError: adjustmentWorkflow.error,
+          }}
+          sessionEvents={sessionEvents}
+        />
 
         {/* Snackbar */}
         <Snackbar

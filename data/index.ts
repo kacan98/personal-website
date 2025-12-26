@@ -9,32 +9,43 @@ export * from './images';
 // Import the data directly
 import { cvEn, cvDa, cvSv } from './cv';
 import { jobsEn, jobsDa, jobsSv, JobExperience } from './jobs';
+import { Locale, routing } from '@/i18n/routing';
+import { CVSettings, CVSettingsSchema } from '@/types';
 
-// Simple getters that match the locale pattern used elsewhere in the app
-export function getCvData(locale: string) {
-  switch (locale) {
-    case 'da':
-      return cvDa;
-    case 'sv':
-      return cvSv;
-    case 'en':
-    default:
-      return cvEn;
-  }
+// Locale-to-CV data mapping
+const cvDataByLocale = {
+  en: cvEn,
+  da: cvDa,
+  sv: cvSv,
+} as const;
+
+// Parse CV data immediately on load - data is always returned as CVSettings (fully parsed)
+export function getCvData(locale: string): CVSettings {
+  // Validate locale and fallback to default
+  const validLocale = routing.locales.includes(locale as Locale)
+    ? (locale as Locale)
+    : routing.defaultLocale as Locale;
+
+  // Parse through Zod to fill in default null values
+  return CVSettingsSchema.parse(cvDataByLocale[validLocale]);
 }
 
 // getCvSettings moved to cv-server.ts to avoid fs imports in client-side code
 
-export function getJobsData(locale: string) {
-  switch (locale) {
-    case 'da':
-      return jobsDa;
-    case 'sv':
-      return jobsSv;
-    case 'en':
-    default:
-      return jobsEn;
-  }
+// Locale-to-jobs data mapping
+const jobsDataByLocale: Record<Locale, JobExperience[]> = {
+  en: jobsEn,
+  da: jobsDa,
+  sv: jobsSv,
+};
+
+export function getJobsData(locale: string): JobExperience[] {
+  // Validate locale and fallback to default
+  const validLocale = routing.locales.includes(locale as Locale)
+    ? (locale as Locale)
+    : routing.defaultLocale as Locale;
+
+  return jobsDataByLocale[validLocale];
 }
 
 // Convert jobs to timeline format - simple utility function

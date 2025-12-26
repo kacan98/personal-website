@@ -1,4 +1,4 @@
-import { CVSettings, CvSection } from '@/types';
+import { CVSettings, CvSection, CvSubSection } from '@/types';
 
 export interface TextChange {
   type: 'added' | 'removed' | 'modified';
@@ -93,58 +93,58 @@ export function compareTextArrays(
  * Compare two CV sections and return all text changes
  */
 export function compareCvSections(
-  originalSection: CvSection | undefined,
-  modifiedSection: CvSection | undefined,
+  originalSection: CvSection | CvSubSection | undefined,
+  modifiedSection: CvSection | CvSubSection | undefined,
   sectionPath: string[]
 ): TextChange[] {
   const changes: TextChange[] = [];
-  
+
   if (!originalSection && !modifiedSection) return changes;
-  
-  const orig = originalSection || {} as CvSection;
-  const mod = modifiedSection || {} as CvSection;
+
+  const orig = (originalSection || {}) as any;
+  const mod = (modifiedSection || {}) as any;
   
   // Compare title
   if (orig.title !== mod.title) {
     changes.push({
       type: 'modified',
-      originalText: orig.title,
-      newText: mod.title,
+      originalText: orig.title ?? undefined,
+      newText: mod.title ?? undefined,
       path: [...sectionPath, 'title']
     });
   }
-  
+
   // Compare subtitles
   if (orig.subtitles?.left !== mod.subtitles?.left) {
     changes.push({
       type: 'modified',
-      originalText: orig.subtitles?.left,
-      newText: mod.subtitles?.left,
+      originalText: orig.subtitles?.left ?? undefined,
+      newText: mod.subtitles?.left ?? undefined,
       path: [...sectionPath, 'subtitles', 'left']
     });
   }
-  
+
   if (orig.subtitles?.right !== mod.subtitles?.right) {
     changes.push({
       type: 'modified',
-      originalText: orig.subtitles?.right,
-      newText: mod.subtitles?.right,
+      originalText: orig.subtitles?.right ?? undefined,
+      newText: mod.subtitles?.right ?? undefined,
       path: [...sectionPath, 'subtitles', 'right']
     });
   }
   
   // Compare paragraphs
-  const origParagraphTexts = orig.paragraphs?.map(p => p.text) || [];
-  const modParagraphTexts = mod.paragraphs?.map(p => p.text) || [];
+  const origParagraphTexts = orig.paragraphs?.map((p: any) => p.text) || [];
+  const modParagraphTexts = mod.paragraphs?.map((p: any) => p.text) || [];
   changes.push(...compareTextArrays(
     origParagraphTexts,
     modParagraphTexts,
     [...sectionPath, 'paragraphs']
   ));
-  
+
   // Compare bullet points
-  const origBulletTexts = orig.bulletPoints?.map(bp => bp.text) || [];
-  const modBulletTexts = mod.bulletPoints?.map(bp => bp.text) || [];
+  const origBulletTexts = orig.bulletPoints?.map((bp: any) => bp.text) || [];
+  const modBulletTexts = mod.bulletPoints?.map((bp: any) => bp.text) || [];
   changes.push(...compareTextArrays(
     origBulletTexts,
     modBulletTexts,
@@ -153,7 +153,7 @@ export function compareCvSections(
   
   // Compare subsections
   if (orig.subSections && mod.subSections) {
-    orig.subSections.forEach((origSub, index) => {
+    orig.subSections.forEach((origSub: any, index: number) => {
       const modSub = mod.subSections?.[index];
       changes.push(...compareCvSections(
         origSub,

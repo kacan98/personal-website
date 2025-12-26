@@ -133,13 +133,21 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
       }
     };
 
-    await config.refineCv(refinementWithDescriptions);
-    config.setHasManualRefinements(true);
-    closeModal('manualAdjustment');
+    try {
+      await config.refineCv(refinementWithDescriptions);
+      config.setHasManualRefinements(true);
 
-    // Mark the used improvements
-    if (config.checked.length > 0) {
-      dispatch(markImprovementsAsUsed(config.checked));
+      // Mark the used improvements
+      if (config.checked.length > 0) {
+        dispatch(markImprovementsAsUsed(config.checked));
+      }
+
+      // Only close modal if refinement was successful
+      closeModal('manualAdjustment');
+    } catch (error) {
+      // Modal stays open on error so user can see the error message and retry
+      console.error('Manual refinement failed:', error);
+      // Error is shown in snackbar via refineCv callback
     }
   }, [
     config.improvementsWithDescriptions,

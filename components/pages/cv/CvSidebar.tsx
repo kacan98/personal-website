@@ -17,6 +17,7 @@ import {
   Storage as StorageIcon,
   EmojiEvents as EmojiEventsIcon,
   SmartToy as SmartToyIcon,
+  BugReport as BugReportIcon,
 } from "@mui/icons-material";
 import { useState, useEffect, ReactElement } from "react";
 
@@ -140,6 +141,7 @@ interface CvSidebarProps {
   onTranslate: () => void;
   onOpenExtensionModal?: () => void;
   onToggleAiIntroduction?: () => void;
+  onOpenDebugState?: () => void;
   showAiIntroduction?: boolean;
   hasMotivationalLetter: boolean;
   hasPositionAnalysis: boolean;
@@ -177,6 +179,7 @@ const CvSidebar = ({
   onTranslate,
   onOpenExtensionModal,
   onToggleAiIntroduction,
+  onOpenDebugState,
   showAiIntroduction = false,
   hasMotivationalLetter,
   hasPositionAnalysis,
@@ -304,6 +307,16 @@ const CvSidebar = ({
       disabled: false,
       visible: !!onToggleAiIntroduction,
       completed: showAiIntroduction,
+      loading: false,
+    },
+    {
+      id: 'debug-state',
+      label: 'Debug State',
+      icon: <BugReportIcon />,
+      onClick: onOpenDebugState || (() => {}),
+      disabled: false,
+      visible: !!onOpenDebugState && process.env.NEXT_PUBLIC_DEV === 'true',
+      completed: false,
       loading: false,
     },
   ];

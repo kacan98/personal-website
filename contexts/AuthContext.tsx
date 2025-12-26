@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const checkAuthStatus = async (): Promise<void> => {
+  const checkAuthStatus = useCallback(async (): Promise<void> => {
     try {
       const response = await fetch('/api/auth/status', {
         method: 'GET',
@@ -43,9 +43,9 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const login = async (password: string): Promise<{ success: boolean; message: string; remainingAttempts?: number }> => {
+  const login = useCallback(async (password: string): Promise<{ success: boolean; message: string; remainingAttempts?: number }> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -75,9 +75,9 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         message: 'Network error occurred'
       };
     }
-  };
+  }, []);
 
-  const logout = async (): Promise<void> => {
+  const logout = useCallback(async (): Promise<void> => {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
@@ -90,20 +90,20 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       // Still set to false even if request fails
       setIsAuthenticated(false);
     }
-  };
+  }, []);
 
   // Check auth status on mount
   useEffect(() => {
     checkAuthStatus();
-  }, []);
+  }, [checkAuthStatus]);
 
-  const value: AuthContextType = {
+  const value: AuthContextType = useMemo(() => ({
     isAuthenticated,
     isLoading,
     login,
     logout,
     checkAuthStatus,
-  };
+  }), [isAuthenticated, isLoading, login, logout, checkAuthStatus]);
 
   return (
     <AuthContext.Provider value={value}>

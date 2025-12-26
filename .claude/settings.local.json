@@ -33,7 +33,8 @@
       "mcp__browsermcp__browser_go_back",
       "Bash(npm run type-check:*)",
       "mcp__browsermcp__browser_press_key",
-      "WebFetch(domain:orm.drizzle.team)"
+      "WebFetch(domain:orm.drizzle.team)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
