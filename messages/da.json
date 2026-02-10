@@ -52,16 +52,20 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer"
+      "tagline": "Full-Stack Developer",
+      "headline": "Jeg bygger webapps og AI-automatiseringer, der sparer teams for reelle timer hver uge.",
+      "subheadline": "Til virksomhedsejere: Jeg designer praktiske AI-workflows til lead-opfølgning, interne processer og gentagne administrative opgaver.",
+      "primaryCta": "Book en gratis automationssamtale",
+      "secondaryCta": "Se erfaring og resultater"
     },
     "about": {
       "fullStack": {
-        "header": "Full-Stack Developer",
-        "content": "Jeg arbejder med virksomhedssoftware, som hundredvis af firmaer bruger dagligt. Jeg skriver kode i TypeScript, .NET og X++, og prøver at gøre tingene hurtigere og mindre buggy."
+        "header": "Full-Stack udvikler med produktionserfaring",
+        "content": "Jeg bygger og vedligeholder virksomhedssoftware, som hundredvis af virksomheder bruger dagligt. Fokus: stabil levering, tydelig arkitektur og målbare forbedringer."
       },
       "aiEnhanced": {
-        "header": "AI-Enhanced Development",
-        "content": "Jeg bruger AI coding tools hver dag, fordi de hjælper mig med at skrive kode hurtigere og fange fejl, jeg ville gå glip af. Prøver altid nye værktøjer for at se, om de gør mit liv lettere."
+        "header": "AI-forstærket udvikling",
+        "content": "Jeg bruger AI-værktøjer hver dag til at udvikle hurtigere, forbedre testdækning og levere uden at gå på kompromis med kvaliteten."
       },
       "problemSolver": {
         "header": "Problemløser",
@@ -73,29 +77,30 @@
       }
     },
     "timeline": {
-      "title": "Karriererejse"
+      "title": "Erfaring og dokumenterede resultater"
     }
   },
   "contact": {
-    "title": "Lad os arbejde sammen",
-    "subtitle": "Klar til at arbejde sammen? Jeg vil gerne høre fra dig.",
+    "title": "Lad os gøre dine workflows enklere",
+    "subtitle": "Har du brug for en udvikler, der både kan bygge produkter og automatisere manuelt arbejde? Jeg svarer typisk inden for 24 timer.",
     "email": {
       "label": "Email",
-      "description": "Bedste måde at nå mig"
+      "description": "Bedst til projektforespørgsler"
     },
     "linkedin": {
-      "label": "LinkedIn", 
-      "description": "Professionelt netværk"
+      "label": "LinkedIn",
+      "description": "Baggrund, anbefalinger og erfaring"
     },
     "github": {
       "label": "GitHub",
-      "description": "Kode og projekter"
+      "description": "Kodeeksempler og teknisk niveau"
     },
     "portfolio": {
       "label": "Portfolio",
-      "description": "Se mit arbejde"
+      "description": "Udvalgte projekter og cases"
     },
-    "sendEmail": "Send mig en email"
+    "sendEmail": "Start samtalen",
+    "prompt": "Fortæl mig, hvad du vil automatisere, så foreslår jeg det første skridt med størst effekt."
   },
   "loading": {
     "messages": [

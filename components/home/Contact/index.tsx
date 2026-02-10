@@ -203,6 +203,17 @@ export default function Contact({
           viewport={{ once: true, margin: "-50px" }}
         >
           <Box sx={{ textAlign: 'center', mt: { xs: 6, md: 8 } }}>
+            <Typography
+              variant="body1"
+              sx={{
+                mb: 2,
+                color: 'rgba(255, 255, 255, 0.8)',
+                maxWidth: '680px',
+                mx: 'auto'
+              }}
+            >
+              {t('prompt')}
+            </Typography>
             <Button
               component="a"
               href="mailto:karel.cancara@gmail.com"

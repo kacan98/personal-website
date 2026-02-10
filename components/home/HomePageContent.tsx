@@ -205,7 +205,10 @@ function AboutSectionItem({ section, id, index }: { section: AboutSection; id: s
 }
 
 interface HomePageContentProps {
-  heroTagline: string;
+  heroHeadline: string;
+  heroSubheadline: string;
+  heroPrimaryCta: string;
+  heroSecondaryCta: string;
   aboutMe: Record<string, AboutSection>;
   careerTimeline: TimelineItem[];
   timelineTitle: string;
@@ -214,7 +217,10 @@ interface HomePageContentProps {
 }
 
 export default function HomePageContent({ 
-  heroTagline, 
+  heroHeadline,
+  heroSubheadline,
+  heroPrimaryCta,
+  heroSecondaryCta,
   aboutMe, 
   careerTimeline, 
   timelineTitle,
@@ -226,7 +232,14 @@ export default function HomePageContent({
       {/* Hero Section - normal scrolling */}
       <Box id="hero" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
         <ContentContainer fullWidth>
-          <Hero firstName="Karel" lastName="Čančara" tagLine={heroTagline} />
+          <Hero
+            firstName="Karel"
+            lastName="Čančara"
+            headline={heroHeadline}
+            subheadline={heroSubheadline}
+            primaryCta={heroPrimaryCta}
+            secondaryCta={heroSecondaryCta}
+          />
         </ContentContainer>
         <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, py: { xs: 2, md: 4 } }}>
           <SocialIcons direction={"column"} socials={socials} />

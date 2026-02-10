@@ -52,16 +52,20 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer"
+      "tagline": "Full-Stack Developer",
+      "headline": "Jag bygger webbappar och AI-automationer som sparar team riktiga timmar varje vecka.",
+      "subheadline": "För företagare: Jag designar praktiska AI-drivna arbetsflöden för lead-uppföljning, interna processer och repetitiv administration.",
+      "primaryCta": "Boka ett gratis automationssamtal",
+      "secondaryCta": "Se erfarenhet och resultat"
     },
     "about": {
       "fullStack": {
-        "header": "Full-Stack Developer",
-        "content": "Jag jobbar på företagsprogramvara som hundratals företag använder dagligen. Jag skriver kod i TypeScript, .NET och X++, och försöker göra saker snabbare och mindre buggiga."
+        "header": "Full-stackutvecklare med produktionserfarenhet",
+        "content": "Jag bygger och underhåller företagsprogramvara som används av hundratals företag dagligen. Fokus: stabil leverans, tydlig arkitektur och mätbara förbättringar."
       },
       "aiEnhanced": {
-        "header": "AI-Enhanced Development",
-        "content": "Jag använder AI coding tools varje dag eftersom de hjälper mig att skriva kod snabbare och fånga misstag jag skulle missa. Testar alltid nya verktyg för att se om de gör mitt liv enklare."
+        "header": "AI-förstärkt utveckling",
+        "content": "Jag använder AI-verktyg varje dag för att utveckla snabbare, förbättra testtäckning och leverera utan att kompromissa med kvaliteten."
       },
       "problemSolver": {
         "header": "Problemlösare",
@@ -73,29 +77,30 @@
       }
     },
     "timeline": {
-      "title": "Karriärresa"
+      "title": "Erfarenhet och bevisad leverans"
     }
   },
   "contact": {
-    "title": "Låt oss jobba tillsammans",
-    "subtitle": "Redo att arbeta tillsammans? Jag skulle gärna höra från dig.",
+    "title": "Låt oss förenkla dina arbetsflöden",
+    "subtitle": "Behöver du en utvecklare som både kan bygga produkter och automatisera manuellt arbete? Jag svarar oftast inom 24 timmar.",
     "email": {
       "label": "E-post",
-      "description": "Bästa sättet att nå mig"
+      "description": "Bäst för projektförfrågningar"
     },
     "linkedin": {
-      "label": "LinkedIn", 
-      "description": "Professionellt nätverk"
+      "label": "LinkedIn",
+      "description": "Bakgrund, rekommendationer och erfarenhet"
     },
     "github": {
       "label": "GitHub",
-      "description": "Kod och projekt"
+      "description": "Kodexempel och tekniskt djup"
     },
     "portfolio": {
       "label": "Portfolio",
-      "description": "Se mitt arbete"
+      "description": "Utvalda projekt och case"
     },
-    "sendEmail": "Skicka mig ett e-post"
+    "sendEmail": "Starta samtalet",
+    "prompt": "Berätta vad du vill automatisera, så föreslår jag första steget med högst effekt."
   },
   "loading": {
     "messages": [

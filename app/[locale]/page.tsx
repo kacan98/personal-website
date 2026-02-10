@@ -53,7 +53,10 @@ export default async function App({ params }: { params: Promise<{ locale: string
 
   return (
     <HomePageContent 
-      heroTagline={t('hero.tagline')}
+      heroHeadline={t('hero.headline')}
+      heroSubheadline={t('hero.subheadline')}
+      heroPrimaryCta={t('hero.primaryCta')}
+      heroSecondaryCta={t('hero.secondaryCta')}
       aboutMe={aboutMe}
       careerTimeline={careerTimeline}
       timelineTitle={t('timeline.title')}

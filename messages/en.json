@@ -52,16 +52,20 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer"
+      "tagline": "Full-Stack Developer",
+      "headline": "I build web apps and AI automations that save teams real hours every week.",
+      "subheadline": "For business owners: I design practical AI-powered workflows for lead follow-up, internal ops, and repetitive admin so your team can focus on high-value work.",
+      "primaryCta": "Book a free automation call",
+      "secondaryCta": "See experience & results"
     },
     "about": {
       "fullStack": {
-        "header": "Full-Stack Developer",
-        "content": "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy."
+        "header": "Full-Stack Developer trusted in production",
+        "content": "I build and maintain enterprise software used by hundreds of companies every day. My focus is stable delivery, clear architecture, and measurable improvements in speed and reliability."
       },
       "aiEnhanced": {
-        "header": "AI-Enhanced Development",
-        "content": "I use AI coding tools every day because they help me write code faster and catch mistakes I'd miss. Always trying out new tools to see if they make my life easier."
+        "header": "AI-Enhanced Delivery",
+        "content": "I use AI tools daily to accelerate development, improve test coverage, and ship faster without sacrificing code quality or maintainability."
       },
       "problemSolver": {
         "header": "Problem Solver",
@@ -73,29 +77,30 @@
       }
     },
     "timeline": {
-      "title": "Career Journey"
+      "title": "Experience & proof of delivery"
     }
   },
   "contact": {
-    "title": "Let's get in touch",
-    "subtitle": "Ready to work together? I'd love to hear from you.",
+    "title": "Let's make your workflows simpler",
+    "subtitle": "Need a developer who can both build products and automate manual work? I usually reply within 24 hours.",
     "email": {
       "label": "Email",
-      "description": "Best way to reach me"
+      "description": "Best for project inquiries"
     },
     "linkedin": {
-      "label": "LinkedIn", 
-      "description": "Professional network"
+      "label": "LinkedIn",
+      "description": "Background, recommendations, and work history"
     },
     "github": {
       "label": "GitHub",
-      "description": "Code and projects"
+      "description": "Code samples and technical depth"
     },
     "portfolio": {
       "label": "Portfolio",
-      "description": "See my work"
+      "description": "Selected projects and case studies"
     },
-    "sendEmail": "Send me an email"
+    "sendEmail": "Start the conversation",
+    "prompt": "Tell me what you want to automate, and I’ll suggest the highest-impact first step."
   },
   "loading": {
     "messages": [
