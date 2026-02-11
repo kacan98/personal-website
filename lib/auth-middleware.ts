@@ -1,13 +1,9 @@
 import { NextRequest } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
-import { JWT_SECRET, CV_ADMIN_PASSWORD } from './env';
+import { getJwtSecret, getCvAdminPassword } from './env';
 
-function getJwtSecret(): Uint8Array {
-  if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET environment variable is required');
-  }
-
-  return new TextEncoder().encode(JWT_SECRET);
+function getJwtSecretBytes(): Uint8Array {
+  return new TextEncoder().encode(getJwtSecret());
 }
 
 // Session duration configuration
@@ -28,7 +24,7 @@ export async function createAuthToken(): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DURATION_DAYS}d`)
-    .sign(getJwtSecret());
+    .sign(getJwtSecretBytes());
 
   return token;
 }
@@ -38,7 +34,7 @@ export async function createAuthToken(): Promise<string> {
  */
 export async function verifyAuthToken(token: string): Promise<boolean> {
   try {
-    await jwtVerify(token, getJwtSecret());
+    await jwtVerify(token, getJwtSecretBytes());
     return true;
   } catch (error) {
     console.log('Token verification failed:', error);
@@ -50,11 +46,13 @@ export async function verifyAuthToken(token: string): Promise<boolean> {
  * Validate password for CV admin access
  */
 export function validatePassword(password: string): boolean {
-  if (!CV_ADMIN_PASSWORD) {
-    console.error('CV_ADMIN_PASSWORD environment variable not set!');
+  try {
+    const adminPassword = getCvAdminPassword();
+    return password === adminPassword;
+  } catch (error) {
+    console.error('CV admin password validation failed:', error);
     return false;
   }
-  return password === CV_ADMIN_PASSWORD;
 }
 
 /**
