@@ -1,32 +1,30 @@
 import type { Metadata } from "next";
 import { BACKGROUND_COLORS } from "./colors";
-
-const siteUrl = "https://kcancara.vercel.app";
+import { discoveryLinks, discoveryProfile } from "@/lib/profile-discovery";
 
 const personStructuredData = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Karel Čančara",
-  url: siteUrl,
-  image: `${siteUrl}/user.png`,
-  sameAs: ["https://www.linkedin.com/in/kcancara"],
-  email: "mailto:karel.cancara@gmail.com",
-  jobTitle: "Full-Stack Developer",
-  knowsAbout: ["TypeScript", "React", "Next.js", ".NET", "AI-assisted software development"],
+  name: discoveryProfile.name,
+  url: discoveryProfile.siteUrl,
+  image: discoveryLinks.image,
+  sameAs: [discoveryProfile.linkedInUrl],
+  email: discoveryLinks.emailMailto,
+  jobTitle: discoveryProfile.jobTitle,
+  knowsAbout: discoveryProfile.knowsAbout,
 };
 
 const websiteStructuredData = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Karel Čančara Portfolio",
-  url: siteUrl,
-  inLanguage: ["en", "da", "sv"],
+  name: `${discoveryProfile.name} Portfolio`,
+  url: discoveryProfile.siteUrl,
+  inLanguage: discoveryProfile.languages,
 };
 
 export const metadata: Metadata = {
-  title: "Karel Čančara - Full-Stack Developer",
-  description:
-    "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 100+ companies.",
+  title: `${discoveryProfile.name} - ${discoveryProfile.jobTitle}`,
+  description: discoveryProfile.siteDescription,
 };
 
 export default function RootLayout({

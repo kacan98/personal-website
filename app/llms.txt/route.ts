@@ -1,27 +1,24 @@
-const siteUrl = "https://kcancara.vercel.app";
+import { discoveryLinks, discoveryProfile } from "@/lib/profile-discovery";
 
 export const dynamic = "force-static";
 
 export function GET() {
   const content = [
-    "# Karel Čančara",
+    `# ${discoveryProfile.name}`,
     "",
-    "Full-stack developer focused on TypeScript, React, .NET, and AI-enhanced product development.",
+    discoveryProfile.headline,
     "",
     "## Canonical profile",
-    `- ${siteUrl}/profile`,
+    `- ${discoveryLinks.profile}`,
     "",
     "## Key pages",
-    `- ${siteUrl}/en`,
-    `- ${siteUrl}/en/about`,
-    `- ${siteUrl}/en/portfolio`,
-    `- ${siteUrl}/en/cv`,
+    ...discoveryProfile.keyPages.map((path) => `- ${discoveryProfile.siteUrl}${path}`),
     "",
     "## External",
-    "- https://www.linkedin.com/in/kcancara",
+    `- ${discoveryProfile.linkedInUrl}`,
     "",
     "## Contact",
-    "- mailto:karel.cancara@gmail.com",
+    `- ${discoveryLinks.emailMailto}`,
   ].join("\n");
 
   return new Response(content, {
