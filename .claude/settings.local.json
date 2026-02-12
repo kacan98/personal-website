@@ -33,9 +33,14 @@
       "mcp__browsermcp__browser_go_back",
       "Bash(npm run type-check:*)",
       "mcp__browsermcp__browser_press_key",
-      "WebFetch(domain:orm.drizzle.team)"
+      "WebFetch(domain:orm.drizzle.team)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "browsermcp"
+  ]
 }

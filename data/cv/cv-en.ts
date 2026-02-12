@@ -158,7 +158,7 @@ export const cvConfigEn: CVSettings = {
         {
           iconName: "autoAwesome",
           text: "AI Job Application Platform",
-          description: "Next.js 15 platform with GPT-5 integration for CV customization & cover letters. Multi-language support.",
+          description: "Built Next.js 15 platform with GPT-5 integration for CV customization & cover letters. Multi-language support.",
           url: "https://kacan98.com"
         },
         {
@@ -170,7 +170,7 @@ export const cvConfigEn: CVSettings = {
         {
           iconName: "calculate",
           text: "Property Investment Calculator",
-          description: "Real-time buy-vs-rent analysis tool with complex financial modeling. React, Redux, TypeScript.",
+          description: "Created real-time buy-vs-rent analysis tool with complex financial modeling. React, Redux, TypeScript.",
           url: "https://kacan98.github.io/buying-vs-renting/"
         }
       ]

@@ -65,6 +65,7 @@ export default async function LocaleLayout({
     { name: tNav('projects'), href: `/${locale}/portfolio` },
     { name: tNav('cv'), href: `/${locale}/cv` },
     { name: tNav('blog'), href: `/${locale}${PROJECT_STORIES_PATH}` },
+    { name: tNav('tools'), href: `/${locale}/tools` },
   ];
 
   if (settings?.specialPages?.chatbot) {

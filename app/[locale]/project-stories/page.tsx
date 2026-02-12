@@ -5,7 +5,7 @@ import { MetricsLayout } from '@/components/pages/project-stories/layouts';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, getLocale } from 'next-intl/server';
 
 interface BlogPost {
   slug: string;
@@ -58,6 +58,7 @@ async function getProjectStories(): Promise<BlogPost[]> {
 export default async function ProjectStoriesPage() {
   const posts = await getProjectStories();
   const t = await getTranslations('projectStories');
+  const locale = await getLocale();
 
   return (
     <Container sx={{ ...getContainerSx(), py: 6 }}>
@@ -72,7 +73,7 @@ export default async function ProjectStoriesPage() {
 
       {/* Metrics Layout - constrained to same width as individual stories */}
       <Box sx={{ maxWidth: '70ch', mx: 'auto' }}>
-        <MetricsLayout posts={posts} />
+        <MetricsLayout posts={posts} locale={locale} />
       </Box>
     </Container>
   );

@@ -164,7 +164,7 @@ export const cvSv: CVSettings = {
         },
         {
           iconName: "gitHub",
-          text: "Git-till-Jira Bro - Sparar ~1 timme/månad per utvecklare i tidsspårning",
+          text: "Git-till-Jira Bro - Sparade ~1 timme/månad per utvecklare i tidsspårning",
           url: "https://kcancara.vercel.app/project-stories/git-jira-bridge"
         },
         {
@@ -174,7 +174,7 @@ export const cvSv: CVSettings = {
         },
         {
           iconName: "translate",
-          text: "Magic Bookmarks - Universellt miljönavigeringsverktyg",
+          text: "Magic Bookmarks - Byggde universellt miljönavigeringsverktyg",
           url: "https://kcancara.vercel.app/project-stories/magic-bookmarks"
         }
       ]

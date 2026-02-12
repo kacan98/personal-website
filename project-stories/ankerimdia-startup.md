@@ -9,7 +9,10 @@ tags:
 category: business
 date: 2019-01-01
 metrics:
-  impact: '50+ meetings, 5 paying customers (10% conversion rate)'
+  impact:
+    en: Acquired 5 paying customers from 50+ meetings
+    da: Sikrede 5 betalende kunder fra 50+ møder
+    sv: Förvärvade 5 betalande kunder från 50+ möten
   timeframe: University startup project
 embedding:
   - -0.03780784085392952

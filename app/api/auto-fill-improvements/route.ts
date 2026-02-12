@@ -2,6 +2,10 @@ import { OpenAI } from 'openai'
 import { AutoFillImprovementsParams, AutoFillImprovementsResponse } from './model'
 import { checkAuthFromRequest } from '@/lib/auth-middleware'
 import { OPENAI_API_KEY } from '@/lib/env'
+import { ADMIN_USER_ID } from '@/lib/constants'
+import { db } from '@/app/db'
+import { improvementMemories } from '@/app/db/schema'
+import { eq } from 'drizzle-orm'
 
 export const runtime = 'nodejs';
 
@@ -52,8 +56,14 @@ export async function POST(req: Request): Promise<Response> {
       })
     }
 
+    // Fetch improvement memories from database
+    const memories = await db
+      .select()
+      .from(improvementMemories)
+      .where(eq(improvementMemories.userId, ADMIN_USER_ID))
+
     // Early return if no historical data
-    if (Object.keys(body.historicalPositions).length === 0) {
+    if (memories.length === 0) {
       console.log('POST /api/auto-fill-improvements - No historical data available')
       return new Response(JSON.stringify({
         autoFilledImprovements: {}
@@ -62,33 +72,16 @@ export async function POST(req: Request): Promise<Response> {
       })
     }
 
-    // Extract all historical improvement descriptions
+    // Transform database memories into format for AI prompt
     const historicalDescriptions: Array<{
       improvement: string
       description: string
-      positionTitle: string
-    }> = []
-
-    Object.values(body.historicalPositions).forEach(position => {
-      Object.entries(position.improvements).forEach(([improvement, data]) => {
-        if (data.userDescription.trim().length > 0) {
-          historicalDescriptions.push({
-            improvement,
-            description: data.userDescription.trim(),
-            positionTitle: position.positionTitle
-          })
-        }
-      })
-    })
-
-    if (historicalDescriptions.length === 0) {
-      console.log('POST /api/auto-fill-improvements - No historical descriptions found')
-      return new Response(JSON.stringify({
-        autoFilledImprovements: {}
-      } as AutoFillImprovementsResponse), {
-        headers: { 'Content-Type': 'application/json' }
-      })
-    }
+      usageCount: number
+    }> = memories.map(memory => ({
+      improvement: memory.improvementKey,
+      description: memory.userDescription,
+      usageCount: memory.usageCount
+    }))
 
     const openai = new OpenAI({
       apiKey: OPENAI_API_KEY,
@@ -104,7 +97,7 @@ HISTORICAL USER EXPERIENCE DESCRIPTIONS:
 ${historicalDescriptions.map((hist, i) =>
   `${i + 1}. Improvement: "${hist.improvement}"
      User's experience: "${hist.description}"
-     From position: ${hist.positionTitle}`
+     Times used: ${hist.usageCount}`
 ).join('\n\n')}
 
 TASK:
