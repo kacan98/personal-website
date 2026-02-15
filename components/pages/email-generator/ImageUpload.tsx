@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { CloudUpload, Delete, Edit, Download } from "@mui/icons-material";
 import { BRAND_COLORS } from "@/app/colors";
-import { removeBackground } from "@imgly/background-removal";
+import { useRemoveBackground } from "../hooks/useRemoveBackground";
 
 type ImageUploadProps = {
   label: string;
@@ -21,6 +21,7 @@ type ImageUploadProps = {
   showRemoveBackground?: boolean;
   showCropButton?: boolean;
   onCropClick?: () => void;
+  showDownloadButton?: boolean;
   maxWidth?: string;
   maxHeight?: string;
   showSizeSelector?: boolean;
@@ -35,20 +36,25 @@ export default function ImageUpload({
   showRemoveBackground = false,
   showCropButton = false,
   onCropClick,
+  showDownloadButton = true,
   maxWidth = "200px",
   maxHeight = "200px",
   showSizeSelector = false,
   imageSize = 80,
   onImageSizeChange,
 }: ImageUploadProps) {
-  const [removingBackground, setRemovingBackground] = useState(false);
-  const [backgroundRemovalStatus, setBackgroundRemovalStatus] = useState("");
-  const [backgroundRemovalProgress, setBackgroundRemovalProgress] = useState(0);
-  const [backgroundRemovalError, setBackgroundRemovalError] = useState<string>("");
   const [backgroundRemoved, setBackgroundRemoved] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [localImageSize, setLocalImageSize] = useState(imageSize);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    removingBackground,
+    backgroundRemovalStatus,
+    backgroundRemovalProgress,
+    backgroundRemovalError,
+    removeBackgroundFromImage,
+  } = useRemoveBackground();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -106,108 +112,10 @@ export default function ImageUpload({
   const handleRemoveBackground = async () => {
     if (!image) return;
 
-    setRemovingBackground(true);
-    setBackgroundRemovalProgress(0);
-    setBackgroundRemovalStatus("Preparing image...");
-    setBackgroundRemovalError(""); // Clear any previous errors
-
-    try {
-      // Convert data URL to blob
-      const response = await fetch(image);
-      if (!response.ok) {
-        throw new Error(`Failed to load image: ${response.statusText}`);
-      }
-      const blob = await response.blob();
-
-      setBackgroundRemovalProgress(10);
-      setBackgroundRemovalStatus("Downloading AI model (first time only, ~50MB)...");
-
-      let simulatedProgress = 10;
-      let progressSpeed = 1;
-      const progressInterval = setInterval(() => {
-        if (simulatedProgress < 30) {
-          progressSpeed = 1;
-        } else if (simulatedProgress < 60) {
-          progressSpeed = 0.5;
-        } else {
-          progressSpeed = 0.3;
-        }
-
-        simulatedProgress += progressSpeed;
-        if (simulatedProgress <= 85) {
-          setBackgroundRemovalProgress(Math.floor(simulatedProgress));
-        }
-      }, 500);
-
-      let callbackTriggered = false;
-
-      const result = await removeBackground(blob, {
-        proxyToWorker: true, // IMPORTANT: Run in web worker to prevent UI freeze
-        progress: (key, current, total) => {
-          console.log("Progress callback:", key, current, total);
-
-          if (!callbackTriggered) {
-            callbackTriggered = true;
-            clearInterval(progressInterval);
-          }
-
-          // Handle different progress keys
-          if (key.includes("fetch") || key.includes("download")) {
-            if (total > 0) {
-              const percent = Math.round((current / total) * 70) + 10;
-              setBackgroundRemovalProgress(percent);
-              const mb = (current / 1024 / 1024).toFixed(1);
-              const totalMb = (total / 1024 / 1024).toFixed(1);
-              setBackgroundRemovalStatus(`Downloading AI model: ${mb}MB / ${totalMb}MB...`);
-            } else {
-              setBackgroundRemovalStatus(`Downloading AI model...`);
-            }
-          } else if (key.includes("compute") || key.includes("inference")) {
-            if (total > 0) {
-              const percent = Math.round((current / total) * 15) + 80;
-              setBackgroundRemovalProgress(percent);
-              setBackgroundRemovalStatus(`Processing image with AI... ${Math.round((current / total) * 100)}%`);
-            } else {
-              setBackgroundRemovalStatus(`Processing image with AI...`);
-            }
-          } else {
-            // Fallback for any other progress events
-            if (total > 0) {
-              const percent = Math.round((current / total) * 85) + 10;
-              setBackgroundRemovalProgress(Math.min(percent, 95));
-              setBackgroundRemovalStatus(`Processing: ${key}...`);
-            } else {
-              setBackgroundRemovalStatus(`Processing...`);
-            }
-          }
-        },
-      });
-
-      clearInterval(progressInterval);
-
-      setBackgroundRemovalProgress(95);
-      setBackgroundRemovalStatus("Finishing up...");
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        onImageChange(reader.result as string);
-        setBackgroundRemovalProgress(100);
-        setBackgroundRemovalStatus("Complete!");
-        setBackgroundRemoved(true); // Mark that background was removed
-        setTimeout(() => {
-          setRemovingBackground(false);
-          setBackgroundRemovalStatus("");
-          setBackgroundRemovalProgress(0);
-        }, 1000);
-      };
-      reader.readAsDataURL(result);
-    } catch (error) {
-      console.error("Failed to remove background:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      setBackgroundRemovalError(`Failed: ${errorMessage}. This feature requires internet connection to download the AI model (~50MB first time).`);
-      setRemovingBackground(false);
-      setBackgroundRemovalStatus("");
-      setBackgroundRemovalProgress(0);
+    const result = await removeBackgroundFromImage(image);
+    if (result) {
+      onImageChange(result);
+      setBackgroundRemoved(true);
     }
   };
 
@@ -393,7 +301,7 @@ export default function ImageUpload({
           )}
 
           <Stack direction="row" spacing={1} sx={{ justifyContent: "center", mt: 2, flexWrap: "wrap" }}>
-            {showRemoveBackground && (
+            {showRemoveBackground && !backgroundRemoved && (
               <Button
                 size="small"
                 variant="outlined"
@@ -411,7 +319,7 @@ export default function ImageUpload({
                 Remove Background
               </Button>
             )}
-            {backgroundRemoved && (
+            {backgroundRemoved && showDownloadButton && (
               <Button
                 size="small"
                 variant="outlined"

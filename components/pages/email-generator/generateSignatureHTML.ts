@@ -1,11 +1,13 @@
 import type { SignatureData } from "./types";
 import { getFontStack, getFontImport, getBorderRadius, createColoredIcon, getSocialPlatform } from "./utils";
 
-export const generateSignatureHTML = (data: SignatureData): string => {
+export const generateSignatureHTML = (data: SignatureData, options?: { includeImage?: boolean; minimal?: boolean }): string => {
   const { name, title, company, email, phone, website, profileImage, croppedImage, imageSize, imageShape, imagePosition, companyLogo, font, socialLinks, colors } = data;
   const fontFamily = getFontStack(font);
   const fontImport = getFontImport(font);
   const lineHeight = "1.4";
+  const includeImage = options?.includeImage !== false;
+  const minimal = options?.minimal || false;
 
   const socialIconsHtml = socialLinks
     .map((link) => {
@@ -20,20 +22,13 @@ export const generateSignatureHTML = (data: SignatureData): string => {
 
   // Use croppedImage if available, otherwise fall back to profileImage
   const imageToUse = croppedImage || profileImage;
-  const profileImageHtml = imageToUse
+  const profileImageHtml = (includeImage && imageToUse)
     ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
         <img src="${imageToUse}" alt="${name}" width="${imageSize}" height="${imageSize}" style="width: ${imageSize}px; height: ${imageSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
       </td>`
     : "";
 
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  ${fontImport ? `<link href="${fontImport}" rel="stylesheet">` : ""}
-</head>
-<body style="margin: 0; padding: 0; font-family: ${fontFamily};">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${fontFamily};">
+  const signatureBody = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${fontFamily};">
     <tr>
       ${profileImageHtml}
       <td style="vertical-align: ${imagePosition === "top" ? "top" : "middle"}; padding: 0;">
@@ -95,7 +90,21 @@ export const generateSignatureHTML = (data: SignatureData): string => {
         </table>
       </td>
     </tr>
-  </table>
+  </table>`;
+
+  // For minimal/Gmail mode, skip the DOCTYPE and wrapper
+  if (minimal) {
+    return signatureBody;
+  }
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  ${fontImport ? `<link href="${fontImport}" rel="stylesheet">` : ""}
+</head>
+<body style="margin: 0; padding: 0; font-family: ${fontFamily};">
+  ${signatureBody}
 </body>
 </html>`;
 };

@@ -12,7 +12,7 @@ import {
 import { CloudUpload, Download, Delete } from "@mui/icons-material";
 import PageWrapper from "../pageWrapper";
 import { BRAND_COLORS } from "@/app/colors";
-import { removeBackground } from "@imgly/background-removal";
+import { useRemoveBackground } from "../hooks/useRemoveBackground";
 
 type BackgroundRemovalPageContentProps = {
   title: string;
@@ -24,11 +24,15 @@ export default function BackgroundRemovalPageContent({
 }: BackgroundRemovalPageContentProps) {
   const [originalImage, setOriginalImage] = useState<string>("");
   const [processedImage, setProcessedImage] = useState<string>("");
-  const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState("");
   const [imageInfo, setImageInfo] = useState<{ width: number; height: number; size: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {
+    removingBackground: processing,
+    backgroundRemovalStatus: status,
+    backgroundRemovalProgress: progress,
+    removeBackgroundFromImage,
+  } = useRemoveBackground();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -92,89 +96,11 @@ export default function BackgroundRemovalPageContent({
   const processImage = async (imageData: string) => {
     if (!imageData) return;
 
-    setProcessing(true);
-    setProgress(0);
-    setStatus("Preparing image...");
-
-    try {
-      const blob = await fetch(imageData).then((r) => r.blob());
-
-      setProgress(10);
-      setStatus("Downloading AI model (first time only, ~50MB)...");
-
-      // Improved simulated progress - continuously moves forward
-      let simulatedProgress = 10;
-      let progressSpeed = 1; // Start slow
-      const progressInterval = setInterval(() => {
-        if (simulatedProgress < 30) {
-          progressSpeed = 1; // Slow at start
-        } else if (simulatedProgress < 60) {
-          progressSpeed = 0.5; // Slower in middle
-        } else {
-          progressSpeed = 0.3; // Very slow near end
-        }
-
-        simulatedProgress += progressSpeed;
-        if (simulatedProgress <= 85) {
-          setProgress(Math.floor(simulatedProgress));
-        }
-      }, 500); // Update every 500ms for smoother progress
-
-      let callbackTriggered = false;
-
-      const result = await removeBackground(blob, {
-        proxyToWorker: true, // IMPORTANT: Run in web worker to prevent UI freeze
-        progress: (key, current, total) => {
-          console.log("Progress callback:", key, current, total);
-
-          if (!callbackTriggered) {
-            callbackTriggered = true;
-            clearInterval(progressInterval);
-          }
-
-          // Handle different progress keys
-          if (key.includes("fetch") || key.includes("download")) {
-            const percent = Math.round((current / total) * 70) + 10;
-            setProgress(percent);
-            const mb = (current / 1024 / 1024).toFixed(1);
-            const totalMb = (total / 1024 / 1024).toFixed(1);
-            setStatus(`Downloading AI model: ${mb}MB / ${totalMb}MB...`);
-          } else if (key.includes("compute") || key.includes("inference")) {
-            const percent = Math.round((current / total) * 15) + 80;
-            setProgress(percent);
-            setStatus(`Processing image with AI... ${Math.round((current / total) * 100)}%`);
-          } else {
-            // Fallback for any other progress events
-            const percent = Math.round((current / total) * 85) + 10;
-            setProgress(Math.min(percent, 95));
-            setStatus(`Processing: ${key}...`);
-          }
-        },
-      });
-
-      clearInterval(progressInterval);
-
-      setProgress(95);
-      setStatus("Finishing up...");
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProcessedImage(reader.result as string);
-        setProgress(100);
-        setStatus("Complete!");
-        setTimeout(() => {
-          setProcessing(false);
-          setStatus("");
-          setProgress(0);
-        }, 1000);
-      };
-      reader.readAsDataURL(result);
-    } catch (error) {
-      console.error("Failed to remove background:", error);
+    const result = await removeBackgroundFromImage(imageData);
+    if (result) {
+      setProcessedImage(result);
+    } else {
       alert("Failed to remove background. Please try again.");
-      setProcessing(false);
-      setStatus("");
-      setProgress(0);
     }
   };
 
@@ -192,8 +118,6 @@ export default function BackgroundRemovalPageContent({
   const handleClear = () => {
     setOriginalImage("");
     setProcessedImage("");
-    setProgress(0);
-    setStatus("");
     setImageInfo(null);
   };
 
@@ -316,17 +240,6 @@ export default function BackgroundRemovalPageContent({
                       },
                     }}
                   />
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: BRAND_COLORS.secondary,
-                      display: "block",
-                      mt: 0.5,
-                      textAlign: "center",
-                    }}
-                  >
-                    {progress}%
-                  </Typography>
                 </Box>
               )}
 

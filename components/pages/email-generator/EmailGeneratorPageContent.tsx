@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { removeBackground } from "@imgly/background-removal";
 import Cropper from "react-easy-crop";
 import type { Area } from "react-easy-crop";
 import {
@@ -34,12 +33,17 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  CircularProgress,
 } from "@mui/material";
 import { ExpandMore, Clear, LightMode, DarkMode } from "@mui/icons-material";
 import { ContentCopy, Delete, Add, Refresh } from "@mui/icons-material";
 import PageWrapper from "../pageWrapper";
 import { BRAND_COLORS } from "@/app/colors";
 import ImageUpload from "./ImageUpload";
+import { compressImageForGmail, estimateBase64Size } from "./imageCompression";
+import { generateSignatureHTML } from "./generateSignatureHTML";
+import { getCachedPngIcon } from "./svgToPng";
+import { createColoredIcon, getSocialPlatform } from "./utils";
 
 type SignatureFont = "Arial" | "Helvetica" | "Verdana" | "Georgia" | "Open Sans" | "Roboto";
 
@@ -180,173 +184,41 @@ const DEFAULT_SIGNATURE_DATA: SignatureData = {
   },
 };
 
-const getFontStack = (font: SignatureFont): string => {
-  const fontStacks: Record<SignatureFont, string> = {
-    Arial: "Arial, Helvetica, sans-serif",
-    Helvetica: "Helvetica, Arial, sans-serif",
-    Verdana: "Verdana, Geneva, sans-serif",
-    Georgia: "Georgia, 'Times New Roman', serif",
-    "Open Sans": "'Open Sans', Arial, sans-serif",
-    Roboto: "Roboto, Arial, sans-serif",
-  };
-  return fontStacks[font];
-};
-
-const getFontImport = (font: SignatureFont): string => {
-  const googleFonts: Record<SignatureFont, string> = {
-    Arial: "",
-    Helvetica: "",
-    Verdana: "",
-    Georgia: "",
-    "Open Sans":
-      "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap",
-    Roboto: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
-  };
-  return googleFonts[font];
-};
-
-const getBorderRadius = (shape: ImageShape): string => {
-  switch (shape) {
-    case "circle":
-      return "50%";
-    case "rounded":
-      return "8px";
-    case "square":
-      return "0";
-    default:
-      return "50%";
-  }
-};
-
-const generateSignatureHTML = (data: SignatureData): string => {
-  const { name, title, company, email, phone, website, profileImage, croppedImage, imageSize, imageShape, imagePosition, companyLogo, font, socialLinks, colors } = data;
-  const fontFamily = getFontStack(font);
-  const fontImport = getFontImport(font);
-  const lineHeight = "1.4";
-
-  // Helper function to create colored icon SVG
-  const createColoredIcon = (platform: typeof SOCIAL_PLATFORMS[0], color: string) => {
-    // Decode the data URI to get the actual SVG
-    const svgContent = decodeURIComponent(platform.icon.replace('data:image/svg+xml,', ''));
-
-    // Replace the fill color (matches fill='#hexcolor' or fill='%23hexcolor')
-    const coloredSvg = svgContent.replace(/fill='[^']*'/g, `fill='${color}'`);
-
-    // Re-encode for data URI
-    return `data:image/svg+xml,${encodeURIComponent(coloredSvg)}`;
-  };
-
-  const socialIconsHtml = socialLinks
-    .map((link) => {
-      const platform = SOCIAL_PLATFORMS.find((p) => p.name === link.platform);
-      if (!platform || !link.url) return "";
-      const iconSrc = createColoredIcon(platform, colors.iconColor);
-      return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank">
-        <img src="${iconSrc}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
-      </a>`;
-    })
-    .join("");
-
-  // Use croppedImage if available, otherwise fall back to profileImage
-  const imageToUse = croppedImage || profileImage;
-  const profileImageHtml = imageToUse
-    ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
-        <img src="${imageToUse}" alt="${name}" width="${imageSize}" height="${imageSize}" style="width: ${imageSize}px; height: ${imageSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
-      </td>`
-    : "";
-
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  ${fontImport ? `<link href="${fontImport}" rel="stylesheet">` : ""}
-</head>
-<body style="margin: 0; padding: 0; font-family: ${fontFamily};">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${fontFamily};">
-    <tr>
-      ${profileImageHtml}
-      <td style="vertical-align: ${imagePosition === "top" ? "top" : "middle"}; padding: 0;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
-          <tr>
-            <td style="padding: 0 0 4px 0;">
-              <span style="font-size: 16px; font-weight: 700; color: ${colors.nameColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${name}</span>
-            </td>
-          </tr>
-          ${title ? `<tr>
-            <td style="padding: 0 0 2px 0;">
-              <span style="font-size: 14px; color: ${colors.titleColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${title}</span>
-            </td>
-          </tr>` : ""}
-          ${company ? `<tr>
-            <td style="padding: 0 0 10px 0;">
-              <span style="font-size: 14px; color: ${colors.titleColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${company}</span>
-            </td>
-          </tr>` : ""}
-          ${email ? `<tr>
-            <td style="padding: 0 0 3px 0;">
-              <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="mailto:${email}" style="color: ${colors.linkColor}; text-decoration: none;">${email}</a>
-              </span>
-            </td>
-          </tr>` : ""}
-          ${phone ? `<tr>
-            <td style="padding: 0 0 3px 0;">
-              <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="tel:${phone.replace(/\s/g, "")}" style="color: ${colors.linkColor}; text-decoration: none;">${phone}</a>
-              </span>
-            </td>
-          </tr>` : ""}
-          ${website ? `<tr>
-            <td style="padding: 0 0 10px 0;">
-              <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank">${website.replace(/^https?:\/\//, "")}</a>
-              </span>
-            </td>
-          </tr>` : ""}
-          ${
-            socialIconsHtml
-              ? `<tr>
-            <td style="padding: 0;">
-              ${socialIconsHtml}
-            </td>
-          </tr>`
-              : ""
-          }
-          ${
-            companyLogo
-              ? `<tr>
-            <td style="padding: 10px 0 0 0;">
-              <img src="${companyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
-            </td>
-          </tr>`
-              : ""
-          }
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-
-};
-
 export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageContentProps) {
   const t = useTranslations('emailGenerator');
   const [signatureData, setSignatureData] = useState<SignatureData>(DEFAULT_SIGNATURE_DATA);
   const [showCopyAlert, setShowCopyAlert] = useState(false);
+  const [copying, setCopying] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [removingBackground, setRemovingBackground] = useState(false);
-  const [backgroundRemovalStatus, setBackgroundRemovalStatus] = useState("");
-  const [backgroundRemovalProgress, setBackgroundRemovalProgress] = useState(0);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
-  const [localFocusX, setLocalFocusX] = useState(50);
-  const [localFocusY, setLocalFocusY] = useState(50);
   const [showCropDialog, setShowCropDialog] = useState(false);
   const [tempCrop, setTempCrop] = useState({ x: 0, y: 0 });
   const [tempZoom, setTempZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-  const profileInputRef = useRef<HTMLInputElement>(null);
-  const companyLogoInputRef = useRef<HTMLInputElement>(null);
+
+  // Use requestAnimationFrame for smooth updates synced with browser refresh rate
+  const cropUpdateFrameRef = useRef<number | null>(null);
+  const zoomUpdateFrameRef = useRef<number | null>(null);
+
+  // Throttled crop change handler using RAF for smooth 60fps without delay
+  const handleCropChange = useCallback((crop: { x: number; y: number }) => {
+    if (cropUpdateFrameRef.current) {
+      cancelAnimationFrame(cropUpdateFrameRef.current);
+    }
+    cropUpdateFrameRef.current = requestAnimationFrame(() => {
+      setTempCrop(crop);
+    });
+  }, []);
+
+  // Throttled zoom change handler using RAF for smooth 60fps without delay
+  const handleZoomChange = useCallback((zoom: number) => {
+    if (zoomUpdateFrameRef.current) {
+      cancelAnimationFrame(zoomUpdateFrameRef.current);
+    }
+    zoomUpdateFrameRef.current = requestAnimationFrame(() => {
+      setTempZoom(zoom);
+    });
+  }, []);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -394,20 +266,98 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     }
   }, [signatureData]);
 
-  // Sync local slider states when signatureData changes externally
-  useEffect(() => {
-    setLocalFocusX(signatureData.imageFocusX);
-    setLocalFocusY(signatureData.imageFocusY);
-  }, [signatureData.imageFocusX, signatureData.imageFocusY]);
-
-  const generatedHTML = generateSignatureHTML(signatureData);
-
   const handleCopy = async () => {
+    setCopying(true);
     try {
-      await navigator.clipboard.writeText(generatedHTML);
+      // Compress image if present
+      let finalSignatureData = { ...signatureData };
+
+      const imageToCompress = signatureData.croppedImage || signatureData.profileImage;
+      if (imageToCompress) {
+        console.log('Original image size:', estimateBase64Size(imageToCompress), 'KB');
+
+        // Compress image for Gmail (60x60, JPEG quality 0.8, white background)
+        const compressedImage = await compressImageForGmail(imageToCompress, 60, 0.8, '#FFFFFF');
+        console.log('Compressed image size:', estimateBase64Size(compressedImage), 'KB');
+
+        // Update signature data with compressed image
+        finalSignatureData = {
+          ...signatureData,
+          profileImage: compressedImage,
+          croppedImage: '', // Clear cropped image since we're using compressed version
+        };
+      }
+
+      // Convert social icons from SVG to PNG for Gmail compatibility
+      const pngIconPromises = signatureData.socialLinks.map(async (link) => {
+        const platform = getSocialPlatform(link.platform);
+        if (!platform || !link.url) return null;
+
+        // Get the colored SVG icon
+        const svgIcon = createColoredIcon(platform, signatureData.colors.iconColor);
+
+        // Convert to PNG
+        const pngIcon = await getCachedPngIcon(svgIcon, 24, 24);
+
+        return {
+          url: link.url,
+          platform: link.platform,
+          pngIcon,
+        };
+      });
+
+      const pngIcons = (await Promise.all(pngIconPromises)).filter(Boolean);
+
+      // Generate social icons HTML with PNG icons
+      const socialIconsHtml = pngIcons
+        .map((iconData) => {
+          if (!iconData) return '';
+          return `<a href="${iconData.url}" style="display: inline-block; margin-right: 8px;" target="_blank">
+            <img src="${iconData.pngIcon}" alt="${iconData.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
+          </a>`;
+        })
+        .join('');
+
+      console.log('Converted', pngIcons.length, 'social icons to PNG');
+
+      // Generate HTML with compressed image (we'll manually add PNG icons)
+      let htmlWithCompressedImage = generateSignatureHTML(finalSignatureData, { minimal: true });
+
+      // Replace the social icons section with PNG icons
+      // Find the social icons section and replace it
+      const socialIconsRegex = /<tr>\s*<td style="padding: 0;">[\s\S]*?<\/td>\s*<\/tr>/;
+      const socialIconsReplacement = socialIconsHtml
+        ? `<tr>
+            <td style="padding: 0;">
+              ${socialIconsHtml}
+            </td>
+          </tr>`
+        : '';
+
+      // Only replace if we have social icons
+      if (socialIconsHtml && htmlWithCompressedImage.match(socialIconsRegex)) {
+        htmlWithCompressedImage = htmlWithCompressedImage.replace(
+          socialIconsRegex,
+          socialIconsReplacement
+        );
+      }
+
+      // Copy as both HTML and plain text so it renders properly in Gmail
+      const htmlBlob = new Blob([htmlWithCompressedImage], { type: 'text/html' });
+      const textBlob = new Blob([htmlWithCompressedImage], { type: 'text/plain' });
+
+      const clipboardItem = new ClipboardItem({
+        'text/html': htmlBlob,
+        'text/plain': textBlob,
+      });
+
+      await navigator.clipboard.write([clipboardItem]);
       setShowCopyAlert(true);
     } catch (err) {
       console.error("Failed to copy:", err);
+      alert("Failed to copy signature. Please try again.");
+    } finally {
+      setCopying(false);
     }
   };
 
@@ -441,37 +391,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     };
     setSignatureData(cleared);
     localStorage.removeItem(STORAGE_KEY);
-  };
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSignatureData({ ...signatureData, profileImage: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSignatureData({ ...signatureData, profileImage: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleDragOver = (event: React.DragEvent) => {
-    event.preventDefault();
-  };
-
-  const handleRemoveImage = () => {
-    setSignatureData({ ...signatureData, profileImage: "" });
   };
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
@@ -555,91 +474,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     setShowCropDialog(false);
     setTempCrop(signatureData.crop || { x: 0, y: 0 });
     setTempZoom(signatureData.zoom || 1);
-  };
-
-  const handleRemoveBackground = async () => {
-    if (!signatureData.profileImage) return;
-
-    setRemovingBackground(true);
-    setBackgroundRemovalProgress(0);
-    setBackgroundRemovalStatus(t('preparingImage'));
-
-    try {
-      const blob = await fetch(signatureData.profileImage).then((r) => r.blob());
-
-      setBackgroundRemovalProgress(10);
-      setBackgroundRemovalStatus(t('downloadingModel'));
-
-      // Improved simulated progress - continuously moves forward
-      let simulatedProgress = 10;
-      let progressSpeed = 1; // Start slow
-      const progressInterval = setInterval(() => {
-        if (simulatedProgress < 30) {
-          progressSpeed = 1; // Slow at start
-        } else if (simulatedProgress < 60) {
-          progressSpeed = 0.5; // Slower in middle
-        } else {
-          progressSpeed = 0.3; // Very slow near end
-        }
-
-        simulatedProgress += progressSpeed;
-        if (simulatedProgress <= 85) {
-          setBackgroundRemovalProgress(Math.floor(simulatedProgress));
-        }
-      }, 500); // Update every 500ms for smoother progress
-
-      let callbackTriggered = false;
-
-      const result = await removeBackground(blob, {
-        publicPath: "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/",
-        proxyToWorker: true, // Use web worker to prevent UI freeze
-        progress: (key, current, total) => {
-          // If real callback triggers, stop simulation
-          if (!callbackTriggered) {
-            callbackTriggered = true;
-            clearInterval(progressInterval);
-          }
-
-          // Track download progress
-          if (key === "fetch:model" || key === "fetch:wasm" || key === "fetch") {
-            const percent = Math.round((current / total) * 70) + 10; // 10-80%
-            setBackgroundRemovalProgress(percent);
-            const mb = (current / 1024 / 1024).toFixed(1);
-            const totalMb = (total / 1024 / 1024).toFixed(1);
-            setBackgroundRemovalStatus(t('downloadingProgress', { current: mb, total: totalMb }));
-          } else if (key === "compute:inference" || key === "compute") {
-            const percent = Math.round((current / total) * 15) + 80; // 80-95%
-            setBackgroundRemovalProgress(percent);
-            setBackgroundRemovalStatus(t('processingImage'));
-          }
-        },
-      });
-
-      // Clean up interval when processing completes
-      clearInterval(progressInterval);
-
-      setBackgroundRemovalProgress(95);
-      setBackgroundRemovalStatus(t('finishingUp'));
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSignatureData({ ...signatureData, profileImage: reader.result as string });
-        setBackgroundRemovalProgress(100);
-        setBackgroundRemovalStatus(t('complete'));
-        setTimeout(() => {
-          setRemovingBackground(false);
-          setBackgroundRemovalStatus("");
-          setBackgroundRemovalProgress(0);
-        }, 1000);
-      };
-      reader.readAsDataURL(result);
-    } catch (error) {
-      console.error("Failed to remove background:", error);
-      alert(t('backgroundRemovalError'));
-      setRemovingBackground(false);
-      setBackgroundRemovalStatus("");
-      setBackgroundRemovalProgress(0);
-    }
   };
 
   const handleAddSocialLink = () => {
@@ -943,6 +777,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                   image={signatureData.companyLogo}
                   onImageChange={(image) => setSignatureData({ ...signatureData, companyLogo: image })}
                   showRemoveBackground={true}
+                  showDownloadButton={false}
                   maxWidth="200px"
                   maxHeight="80px"
                 />
@@ -1312,8 +1147,9 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
               <Button
                 variant="contained"
                 fullWidth
-                startIcon={<ContentCopy />}
+                startIcon={copying ? <CircularProgress size={20} sx={{ color: 'white' }} /> : <ContentCopy />}
                 onClick={handleCopy}
+                disabled={copying}
                 sx={{
                   backgroundColor: BRAND_COLORS.accent,
                   "&:hover": {
@@ -1321,7 +1157,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                   },
                 }}
               >
-                {t('copySignature')}
+                {copying ? 'Compressing & Copying...' : t('copySignature')}
               </Button>
             </Box>
           </Paper>
@@ -1372,8 +1208,8 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                 zoom={tempZoom}
                 aspect={1}
                 cropShape={signatureData.imageShape === "circle" ? "round" : "rect"}
-                onCropChange={setTempCrop}
-                onZoomChange={setTempZoom}
+                onCropChange={handleCropChange}
+                onZoomChange={handleZoomChange}
                 onCropComplete={onCropComplete}
                 style={{
                   containerStyle: {
