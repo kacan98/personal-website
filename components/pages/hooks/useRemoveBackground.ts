@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { removeBackground } from '@imgly/background-removal';
 
@@ -33,28 +35,26 @@ export const useRemoveBackground = (): UseRemoveBackgroundReturn => {
       setBackgroundRemovalProgress(10);
       setBackgroundRemovalStatus('Downloading AI model (first time only, ~50MB)...');
 
-      // Improved simulated progress - continuously moves forward
+      // Simulated progress
       let simulatedProgress = 10;
-      let progressSpeed = 1; // Start slow
+      let progressSpeed = 1;
       const progressInterval = setInterval(() => {
         if (simulatedProgress < 30) {
-          progressSpeed = 1; // Slow at start
+          progressSpeed = 1;
         } else if (simulatedProgress < 60) {
-          progressSpeed = 0.5; // Slower in middle
+          progressSpeed = 0.5;
         } else {
-          progressSpeed = 0.3; // Very slow near end
+          progressSpeed = 0.3;
         }
 
         simulatedProgress += progressSpeed;
         if (simulatedProgress <= 85) {
           setBackgroundRemovalProgress(Math.floor(simulatedProgress));
         }
-      }, 500); // Update every 500ms for smoother progress
-
-      const callbackTriggered = false;
+      }, 500);
 
       const result = await removeBackground(blob, {
-        proxyToWorker: true, // IMPORTANT: Run in web worker to prevent UI freeze
+        proxyToWorker: true,
       });
 
       clearInterval(progressInterval);
