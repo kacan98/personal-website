@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { cvSlice } from './slices/cv'
 import improvementDescriptionsReducer from './slices/improvementDescriptions'
+import uiReducer from './slices/ui'
 import { CVSettings } from '@/types'
 
 export const makeStore = (cvSettings: CVSettings) => {
@@ -8,6 +9,7 @@ export const makeStore = (cvSettings: CVSettings) => {
     reducer: {
       cv: cvSlice.reducer,
       improvementDescriptions: improvementDescriptionsReducer,
+      ui: uiReducer,
     },
     preloadedState: {
       cv: { ...cvSettings, hasChanges: false },

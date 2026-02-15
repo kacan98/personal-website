@@ -6,6 +6,8 @@ import {
   RankedStory,
   StoryRankingResponse
 } from '@/types/adjustment';
+import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model';
+import { CvUpgradeResponse } from '@/app/api/personalize-cv/model';
 
 export const useAdjustForPosition = ({
   onCvUpdate,
@@ -14,8 +16,8 @@ export const useAdjustForPosition = ({
   adjustCvBasedOnPosition,
   getMotivationalLetter
 }: UseAdjustForPositionProps & {
-  adjustCvBasedOnPosition?: () => Promise<any>;
-  getMotivationalLetter?: (positionDetails: string, checked: any[], selectedLanguage: string) => Promise<any>;
+  adjustCvBasedOnPosition?: () => Promise<CvUpgradeResponse>;
+  getMotivationalLetter?: (positionDetails: string, checked: any[], selectedLanguage: string) => Promise<MotivationalLetterResponse>;
 } = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -128,8 +130,9 @@ export const useAdjustForPosition = ({
         onCvUpdate(stories.slice(0, 4)); // Top 4 for CV
       }
 
-      if (onMotivationalLetterUpdate && letterResult.motivationalLetter) {
-        onMotivationalLetterUpdate(letterResult.motivationalLetter);
+      // Update motivational letter if available
+      if (onMotivationalLetterUpdate && letterResult?.letter) {
+        onMotivationalLetterUpdate(letterResult.letter);
       }
 
       setCurrentOperation('');
@@ -137,6 +140,8 @@ export const useAdjustForPosition = ({
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       onError?.(errorMessage);
+      // Re-throw so the caller can handle it
+      throw err;
     } finally {
       setIsLoading(false);
     }

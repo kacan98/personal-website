@@ -64,7 +64,7 @@ export function CvSectionComponent({
       // Update paragraphs
       if (originalSection.paragraphs) {
         originalSection.paragraphs.forEach((para, idx) => {
-          dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', idx], newValue: para }));
+          dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'paragraphs', idx, 'text'], newValue: para.text || "" }));
         });
       }
       // Update bullet points
@@ -84,7 +84,7 @@ export function CvSectionComponent({
           // Revert subsection paragraphs
           if (subSection.paragraphs) {
             subSection.paragraphs.forEach((para, idx) => {
-              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subIdx, 'paragraphs', idx], newValue: para }));
+              dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subSections', subIdx, 'paragraphs', idx, 'text'], newValue: para.text || "" }));
             });
           }
         });
@@ -147,7 +147,7 @@ export function CvSectionComponent({
             }
           }}
           text={title || ""}
-          originalText={isNew && showDiff ? "" : originalSection?.title}
+          originalText={isNew && showDiff ? "" : originalSection?.title ?? undefined}
           autoEdit={false}
           onAutoDelete={() => {
             // Delete the entire section when title is empty
@@ -168,8 +168,8 @@ export function CvSectionComponent({
           <SuperEditableText
             query={['subtitles', 'left']}
             variant="subtitle1"
-            text={subtitles.left}
-            originalText={originalSection?.subtitles?.left}
+            text={subtitles.left ?? undefined}
+            originalText={originalSection?.subtitles?.left ?? undefined}
             onDelete={editable ? () => {
               dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'left'], newValue: "" }));
             } : undefined}
@@ -181,8 +181,8 @@ export function CvSectionComponent({
           <SuperEditableText
             query={["subtitles", "right"]}
             variant="subtitle1"
-            text={subtitles.right}
-            originalText={originalSection?.subtitles?.right}
+            text={subtitles.right ?? undefined}
+            originalText={originalSection?.subtitles?.right ?? undefined}
             onDelete={editable ? () => {
               dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'right'], newValue: "" }));
             } : undefined}
@@ -194,8 +194,8 @@ export function CvSectionComponent({
         </Box>
       )}
       <EditableParagraphList
-        paragraphs={paragraphs}
-        originalParagraphs={originalSection?.paragraphs}
+        paragraphs={paragraphs ?? undefined}
+        originalParagraphs={originalSection?.paragraphs ?? undefined}
         baseQuery={[sideOrMain, sectionIndex, 'paragraphs']}
         editable={editable}
         showDiff={showDiff}
@@ -205,8 +205,8 @@ export function CvSectionComponent({
       />
 
       <EditableBulletPointList
-        bulletPoints={bulletPoints}
-        originalBulletPoints={originalSection?.bulletPoints}
+        bulletPoints={bulletPoints ?? undefined}
+        originalBulletPoints={originalSection?.bulletPoints ?? undefined}
         baseQuery={[sideOrMain, sectionIndex, 'bulletPoints']}
         editable={editable}
         showDiff={showDiff}

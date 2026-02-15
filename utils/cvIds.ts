@@ -10,61 +10,84 @@ function generateStableId(content: string): string {
 
 /**
  * Assign unique IDs to paragraphs if they don't have them
+ * Also ensures all nullable fields are present (set to null if missing)
  */
 function ensureParagraphIds(paragraphs: Paragraph[], parentId: string): Paragraph[] {
   return paragraphs.map((paragraph, index) => ({
-    ...paragraph,
-    id: paragraph.id || `${parentId}-para-${index}`
+    id: paragraph.id ?? `${parentId}-para-${index}`,
+    text: paragraph.text,
   }));
 }
 
 /**
  * Assign unique IDs to bullet points if they don't have them
+ * Also ensures all nullable fields are present (set to null if missing)
  */
 function ensureBulletPointIds(bulletPoints: BulletPoint[], parentId: string): BulletPoint[] {
   return bulletPoints.map((bullet, index) => ({
-    ...bullet,
-    id: bullet.id || `${parentId}-bullet-${index}`
+    id: bullet.id ?? `${parentId}-bullet-${index}`,
+    iconName: bullet.iconName,
+    text: bullet.text,
+    url: bullet.url ?? null,
+    description: bullet.description ?? null,
   }));
 }
 
 
 /**
  * Assign unique IDs to a subsection and its content if they don't have them
+ * Also ensures all nullable fields are present (set to null if missing)
  */
 function ensureSubSectionIds(subSection: CvSubSection, parentId: string, index: number): CvSubSection {
-  const subSectionId = subSection.id || `${parentId}-sub-${generateStableId(subSection.title || `${index}`)}`;
+  const subSectionId = subSection.id ?? `${parentId}-sub-${generateStableId(subSection.title ?? `${index}`)}`;
 
   return {
-    ...subSection,
     id: subSectionId,
-    paragraphs: subSection.paragraphs ? ensureParagraphIds(subSection.paragraphs, subSectionId) : undefined,
-    bulletPoints: subSection.bulletPoints ? ensureBulletPointIds(subSection.bulletPoints, subSectionId) : undefined
+    title: subSection.title ?? null,
+    subtitles: subSection.subtitles ? {
+      left: subSection.subtitles.left ?? null,
+      right: subSection.subtitles.right ?? null,
+      leftUrl: subSection.subtitles.leftUrl ?? null,
+      rightUrl: subSection.subtitles.rightUrl ?? null,
+    } : null,
+    paragraphs: subSection.paragraphs ? ensureParagraphIds(subSection.paragraphs, subSectionId) : null,
+    bulletPoints: subSection.bulletPoints ? ensureBulletPointIds(subSection.bulletPoints, subSectionId) : null
   };
 }
 
 /**
  * Assign unique IDs to a section and all its content if they don't have them
+ * Also ensures all nullable fields are present (set to null if missing)
  */
 function ensureSectionIds(section: CvSection, column: 'main' | 'side', index: number): CvSection {
-  const sectionId = section.id || `${column}-${generateStableId(section.title || `section-${index}`)}`;
+  const sectionId = section.id ?? `${column}-${generateStableId(section.title ?? `section-${index}`)}`;
 
   return {
-    ...section,
     id: sectionId,
-    paragraphs: section.paragraphs ? ensureParagraphIds(section.paragraphs, sectionId) : undefined,
-    bulletPoints: section.bulletPoints ? ensureBulletPointIds(section.bulletPoints, sectionId) : undefined,
-    subSections: section.subSections ? section.subSections.map((sub, subIndex) => ensureSubSectionIds(sub, sectionId, subIndex)) : undefined
+    title: section.title ?? null,
+    subtitles: section.subtitles ? {
+      left: section.subtitles.left ?? null,
+      right: section.subtitles.right ?? null,
+      leftUrl: section.subtitles.leftUrl ?? null,
+      rightUrl: section.subtitles.rightUrl ?? null,
+    } : null,
+    paragraphs: section.paragraphs ? ensureParagraphIds(section.paragraphs, sectionId) : null,
+    bulletPoints: section.bulletPoints ? ensureBulletPointIds(section.bulletPoints, sectionId) : null,
+    subSections: section.subSections ? section.subSections.map((sub, subIndex) => ensureSubSectionIds(sub, sectionId, subIndex)) : null
   };
 }
 
 /**
  * Ensure all CV sections and subsections have unique IDs
+ * Also ensures all nullable fields are present (set to null if missing)
  * This function is safe to call multiple times - it won't overwrite existing IDs
  */
 export function ensureCvIds(cv: CVSettings): CVSettings {
   return {
-    ...cv,
+    on: cv.on,
+    name: cv.name,
+    subtitle: cv.subtitle,
+    profilePicture: cv.profilePicture ?? null,
     mainColumn: cv.mainColumn.map((section, index) => ensureSectionIds(section, 'main', index)),
     sideColumn: cv.sideColumn.map((section, index) => ensureSectionIds(section, 'side', index))
   };

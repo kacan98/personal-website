@@ -1,16 +1,12 @@
 import { getSettings } from '@/data/settings';
 import { PROJECT_STORIES_PATH } from './routes';
+import { CvSection } from '@/types';
 
 interface CVProject {
   iconName: string;
   text: string;
   url?: string;
-}
-
-export interface CVProjectsSection {
-  id: string;
-  title: string;
-  bulletPoints: CVProject[];
+  description?: string;
 }
 
 interface RankedStory {
@@ -77,7 +73,7 @@ function convertStoriesToCVProjects(rankedStories: RankedStory[], locale: string
 /**
  * Get projects section using AI-ranked stories for a specific job
  */
-export async function getCVProjectsSectionForJob(jobDescription: string, locale: string = 'en'): Promise<CVProjectsSection> {
+export async function getCVProjectsSectionForJob(jobDescription: string, locale: string = 'en'): Promise<CvSection> {
   try {
     const response = await fetch('/api/stories/rank', {
       method: 'POST',
@@ -100,7 +96,16 @@ export async function getCVProjectsSectionForJob(jobDescription: string, locale:
     return {
       id: "personal-projects",
       title: getProjectsTitleByLocale(locale),
-      bulletPoints
+      subtitles: null,
+      paragraphs: null,
+      bulletPoints: bulletPoints.map((bp, index) => ({
+        id: `project-${index}`,
+        iconName: bp.iconName,
+        text: bp.text,
+        url: bp.url || null,
+        description: bp.description || null,
+      })),
+      subSections: null,
     };
   } catch (error) {
     console.error('Error getting ranked stories for CV, falling back to default:', error);
@@ -112,7 +117,7 @@ export async function getCVProjectsSectionForJob(jobDescription: string, locale:
  * Get default projects section (fallback when no job description available)
  * This function should only be called server-side (in API routes or SSR)
  */
-export async function getCVProjectsSection(locale: string = 'en'): Promise<CVProjectsSection> {
+export async function getCVProjectsSection(locale: string = 'en'): Promise<CvSection> {
   // Import here to avoid circular dependency issues
   const { getAllStories } = await import('./project-stories');
   const stories = await getAllStories();
@@ -153,7 +158,16 @@ export async function getCVProjectsSection(locale: string = 'en'): Promise<CVPro
   return {
     id: "personal-projects",
     title: getProjectsTitleByLocale(locale),
-    bulletPoints
+    subtitles: null,
+    paragraphs: null,
+    bulletPoints: bulletPoints.map((bp, index) => ({
+      id: `project-${index}`,
+      iconName: bp.iconName,
+      text: bp.text,
+      url: bp.url || null,
+      description: bp.description || null,
+    })),
+    subSections: null,
   };
 }
 

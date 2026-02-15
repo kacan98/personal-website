@@ -3,13 +3,16 @@ import {defineRouting} from 'next-intl/routing';
 export const routing = defineRouting({
   // A list of all locales that are supported
   locales: ['en', 'da', 'sv'],
-  
+
   // Used when no locale matches
   defaultLocale: 'en',
-  
+
   // Enable automatic locale detection from browser
   localeDetection: true,
-  
+
   // Customize locale prefix (optional)
   localePrefix: 'always'
 });
+
+// Export locale type from the routing configuration
+export type Locale = typeof routing.locales[number];

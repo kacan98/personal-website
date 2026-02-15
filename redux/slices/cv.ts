@@ -23,7 +23,7 @@ export const cvSlice = createSlice({
     subtitle: '',
     mainColumn: [],
     sideColumn: [],
-    image: '',
+    profilePicture: null,
     hasChanges: false,
   } as CVSettings & { hasChanges: boolean },
   reducers: {

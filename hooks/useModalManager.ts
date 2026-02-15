@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 /**
  * Available modal types in the CV page
@@ -86,7 +86,7 @@ export function useModalManager() {
     }));
   }, []);
 
-  return {
+  return useMemo(() => ({
     // State
     modals,
 
@@ -105,5 +105,5 @@ export function useModalManager() {
     preferredProjectsModalOpen: modals.preferredProjects,
     extensionModalOpen: modals.extension,
     showPasswordModal: modals.password,
-  };
+  }), [modals, openModal, closeModal, isModalOpen, closeAllModals, toggleModal]);
 }

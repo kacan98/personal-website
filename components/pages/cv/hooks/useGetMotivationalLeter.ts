@@ -44,6 +44,7 @@ export const useGetMotivationalLetter = ({
 
       const body = await res.json()
       setMotivationalLetter(body)
+      return body
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       setsnackbarMessage(`Error getting a motivational letter: ${errorMessage}`)

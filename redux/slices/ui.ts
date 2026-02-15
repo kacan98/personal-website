@@ -24,6 +24,8 @@ interface UiState {
 
   // Manual adjustment input
   manualOtherChanges: string;
+  includeOriginalCv: boolean;
+  includePositionDetails: boolean;
 }
 
 const initialState: UiState = {
@@ -45,6 +47,8 @@ const initialState: UiState = {
   titleClickedTimes: 0,
 
   manualOtherChanges: '',
+  includeOriginalCv: false, // Default: don't send original CV
+  includePositionDetails: false, // Default: don't send position details
 };
 
 const uiSlice = createSlice({
@@ -122,6 +126,12 @@ const uiSlice = createSlice({
     clearManualOtherChanges: (state) => {
       state.manualOtherChanges = '';
     },
+    setIncludeOriginalCv: (state, action: PayloadAction<boolean>) => {
+      state.includeOriginalCv = action.payload;
+    },
+    setIncludePositionDetails: (state, action: PayloadAction<boolean>) => {
+      state.includePositionDetails = action.payload;
+    },
 
     // Reset all UI state
     resetUiState: () => initialState,
@@ -148,6 +158,8 @@ export const {
   resetTitleClickedTimes,
   setManualOtherChanges,
   clearManualOtherChanges,
+  setIncludeOriginalCv,
+  setIncludePositionDetails,
   resetUiState,
 } = uiSlice.actions;
 

@@ -107,8 +107,8 @@ export function EditableBulletPointList({
     <>
       {mergedBulletPoints.map(({ index, current, original, isDeleted, isNewItem }) => {
         const displayPoint = isDeleted
-          ? { ...(original || { iconName: "default", text: "", id: `temp-${index}` }), text: "" }
-          : current || { iconName: "default", text: "", id: `temp-${index}` };
+          ? { ...(original || { iconName: "default", text: "", id: `temp-${index}`, url: null, description: null }), text: "" }
+          : current || { iconName: "default", text: "", id: `temp-${index}`, url: null, description: null };
 
         // Create unique key using baseQuery path and bullet point ID
         const uniqueKey = displayPoint.id
@@ -122,7 +122,7 @@ export function EditableBulletPointList({
             editable={!!(editable && !isDeleted)}
             baseQuery={[...baseQuery, index]}
             isPrintVersion={!!isPrintVersion}
-            originalBulletPoint={showDiff ? ((isNewItem || isNew) ? { iconName: "", text: "" } : original) : undefined}
+            originalBulletPoint={showDiff ? ((isNewItem || isNew) ? { id: null, iconName: "", text: "", url: null, description: null } : original) : undefined}
             showDiff={showDiff}
             autoEdit={(!current?.text || current.text.trim() === "") && !(showDiff && isDeleted) && !isRemoved}
             onAutoDelete={

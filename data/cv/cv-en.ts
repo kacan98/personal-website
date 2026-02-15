@@ -1,6 +1,5 @@
-import { CVSettings } from '@/types';
-
-export const cvConfigEn: CVSettings = {
+// Data is loose/partial - Zod will parse and fill in required fields with defaults
+export const cvConfigEn = {
   on: true,
   name: "Karel Čančara",
   subtitle: "Full Stack Developer | TypeScript, Angular, React, .NET",
@@ -52,8 +51,8 @@ export const cvConfigEn: CVSettings = {
             right: "Nov 2020 - Jul 2022"
           },
           paragraphs: [
-            { text: "- Extended company website with custom modules and rewrote front page for better value communication" },
-            { text: "- Collaborated across departments to translate business needs into web solutions" },
+            { text: "- Enhanced company website by developing custom CMS-integrated modules and improving value presentation across multiple sections" },
+            { text: "- Collaborated with teams across the company to understand product capabilities and translate them into effective web solutions" },
             { text: "- Designed customer onboarding guides and automated email workflows in HubSpot" },
             { text: "- Created product demonstration videos supporting sales and marketing efforts" }
           ]
