@@ -14,8 +14,8 @@ export const useAdjustForPosition = ({
   adjustCvBasedOnPosition,
   getMotivationalLetter
 }: UseAdjustForPositionProps & {
-  adjustCvBasedOnPosition?: () => Promise<any>;
-  getMotivationalLetter?: (positionDetails: string, checked: any[], selectedLanguage: string) => Promise<any>;
+  adjustCvBasedOnPosition?: () => Promise<unknown>;
+  getMotivationalLetter?: (positionDetails: string, checked: string[], selectedLanguage: string) => Promise<void>;
 } = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +88,7 @@ export const useAdjustForPosition = ({
 
   const generateMotivationalLetterWrapper = useCallback(async (
     positionDetails: string,
-    checked: any[],
+    checked: string[],
     selectedLanguage: string
   ) => {
     setStepActive('generatingLetter');
@@ -104,7 +104,7 @@ export const useAdjustForPosition = ({
 
   const startAdjustment = useCallback(async (
     positionDetails: string,
-    checked: any[],
+    checked: string[],
     selectedLanguage: string
   ) => {
     try {
@@ -118,7 +118,7 @@ export const useAdjustForPosition = ({
       // Step 2: Run CV adjustment and motivational letter generation in parallel
       setCurrentOperation('Personalizing CV and generating motivational letter...');
 
-      const [cvResult, letterResult] = await Promise.all([
+      await Promise.all([
         adjustCv(),
         generateMotivationalLetterWrapper(positionDetails, checked, selectedLanguage)
       ]);
@@ -126,10 +126,6 @@ export const useAdjustForPosition = ({
       // Update CV with ranked stories
       if (stories.length > 0 && onCvUpdate) {
         onCvUpdate(stories.slice(0, 4)); // Top 4 for CV
-      }
-
-      if (onMotivationalLetterUpdate && letterResult.motivationalLetter) {
-        onMotivationalLetterUpdate(letterResult.motivationalLetter);
       }
 
       setCurrentOperation('');

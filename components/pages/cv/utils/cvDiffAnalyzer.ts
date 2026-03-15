@@ -73,7 +73,7 @@ export function analyzeCvDifferences(
         // Section exists - check if it has any content (title, paragraphs, bullet points, or subsections)
         const hasTitle = currentSection.title && currentSection.title.trim() !== '';
         const hasParagraphs = currentSection.paragraphs && currentSection.paragraphs.some((p) => p.text && p.text.trim() !== '');
-        const hasBulletPoints = currentSection.bulletPoints && currentSection.bulletPoints.some((bp: any) => bp.text && bp.text.trim() !== '');
+        const hasBulletPoints = currentSection.bulletPoints && currentSection.bulletPoints.some((bp: BulletPointLike) => bp.text && bp.text.trim() !== '');
         const hasSubSections = currentSection.subSections && currentSection.subSections.length > 0;
 
         const hasAnyContent = hasTitle || hasParagraphs || hasBulletPoints || hasSubSections;
@@ -85,7 +85,7 @@ export function analyzeCvDifferences(
         } else {
         // Check if section content has actually changed (more granular than full JSON comparison)
         // Normalize sections by removing/ignoring IDs for comparison to avoid false positives
-        const normalizeSection = (section: any) => {
+        const normalizeSection = (section: SectionLike) => {
           const { id: _id, ...rest } = section;
           return rest;
         };
@@ -149,8 +149,8 @@ export function getMergedSectionsForRendering(
   };
 
   // Create a map of current sections by ID for quick lookup
-  const currentSectionsById = new Map<string, any>();
-  const currentSectionsByIndex = new Map<number, any>();
+  const currentSectionsById = new Map<string, CvSection>();
+  const currentSectionsByIndex = new Map<number, CvSection>();
 
   currentSections.forEach((section, index) => {
     if (section.id) {
@@ -202,3 +202,8 @@ export function useCvDiffAnalysis(originalCv: CVSettings | null, currentCv: CVSe
   }
   return analyzeCvDifferences(originalCv, currentCv);
 }
+type BulletPointLike = {
+  text?: string;
+};
+
+type SectionLike = Omit<CvSection, 'id'> & { id?: string };

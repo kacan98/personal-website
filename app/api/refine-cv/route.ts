@@ -201,9 +201,9 @@ Please return the refined CV in the same JSON format.`
         'Content-Type': 'application/json',
       },
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('POST /api/refine-cv - Unexpected error:', e)
-    return new Response(JSON.stringify({ error: 'Internal server error', details: e.message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error', details: e instanceof Error ? e.message : 'Unknown error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })

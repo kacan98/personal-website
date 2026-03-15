@@ -1,10 +1,10 @@
 import { logger } from "./logger";
 
 // Check if already injected to prevent multiple injections in same context
-if ((window as any).__cvTailorInjected) {
+if (window.__cvTailorInjected) {
   // Don't log here as it would be spammy
 } else {
-  (window as any).__cvTailorInjected = true;
+  window.__cvTailorInjected = true;
   const scriptId = Math.random().toString(36).substring(7);
   const frameUrl = window.location.href;
 

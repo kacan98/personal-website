@@ -64,7 +64,7 @@ const TreeProgress: React.FC<TreeProgressProps> = ({ steps }) => {
       border: '1px solid rgba(255, 255, 255, 0.2)',
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
     }}>
-      {progressSteps.map((step, index) => (
+      {progressSteps.map((step, _index) => (
         <Box key={step.id} sx={{
           display: 'flex',
           alignItems: 'center',

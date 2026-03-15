@@ -45,7 +45,7 @@ async function getBlogPost(slug: string) {
       sourceUrl: frontmatter.sourceUrl,
       content: content
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }

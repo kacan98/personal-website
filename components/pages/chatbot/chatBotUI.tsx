@@ -71,7 +71,7 @@ const ChatBotUI = () => {
                 fullContent += parsed.content;
                 setStreamingMessage(fullContent);
               }
-            } catch (e) {
+            } catch {
               // Skip invalid JSON
             }
           }

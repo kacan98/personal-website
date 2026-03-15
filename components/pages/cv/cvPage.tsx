@@ -203,6 +203,36 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
     setCurrentOperation: state.setCurrentOperation,
   });
 
+  const refineCvForHandlers = React.useCallback(async (data: {
+    checkedImprovements?: string[];
+    improvementInputs?: { [key: string]: string };
+    missingSkills?: string | null;
+    otherChanges?: string | null;
+  }) => {
+    await refineCv({
+      checkedImprovements: data.checkedImprovements ?? [],
+      improvementInputs: data.improvementInputs ?? {},
+      missingSkills: data.missingSkills ?? '',
+      otherChanges: data.otherChanges ?? '',
+    });
+  }, [refineCv]);
+
+  const adjustMotivationalLetterForHandlers = React.useCallback(async (
+    currentLetter: Parameters<typeof adjustMotivationalLetter>[0],
+    adjustmentComments: Parameters<typeof adjustMotivationalLetter>[1],
+    jobDescription: Parameters<typeof adjustMotivationalLetter>[2],
+    cv: Parameters<typeof adjustMotivationalLetter>[3],
+    language: Parameters<typeof adjustMotivationalLetter>[4],
+  ) => {
+    await adjustMotivationalLetter(
+      currentLetter,
+      adjustmentComments,
+      jobDescription,
+      cv,
+      language,
+    );
+  }, [adjustMotivationalLetter]);
+
   // Event handlers config (memoized to prevent infinite re-renders)
   const eventHandlersConfig = React.useMemo(() => ({
     // State setters
@@ -232,8 +262,8 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
 
     // Utility functions
     adjustmentWorkflow,
-    refineCv,
-    adjustMotivationalLetter: adjustMotivationalLetter as any,
+    refineCv: refineCvForHandlers,
+    adjustMotivationalLetter: adjustMotivationalLetterForHandlers,
   }), [
     state.setLanguage,
     state.setSnackbarMessage,
@@ -253,8 +283,8 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
     modals.openModal,
     modals.closeModal,
     adjustmentWorkflow,
-    refineCv,
-    adjustMotivationalLetter,
+    refineCvForHandlers,
+    adjustMotivationalLetterForHandlers,
   ]);
 
   const eventHandlers = useCvEventHandlers(eventHandlersConfig);
@@ -294,7 +324,7 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
           ? `CV and motivational letter translated to ${state.selectedLanguage}`
           : `CV translated to ${state.selectedLanguage}`
       );
-    } catch (error) {
+    } catch {
       state.setSnackbarMessage('Error during translation');
     } finally {
       state.setLoading(false);
@@ -309,7 +339,7 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
 
     try {
       pdfService.downloadMotivationalLetterPDF(letterToUse, state.companyName);
-    } catch (error) {
+    } catch {
       state.setSnackbarMessage('Error generating PDF');
     }
   }, [state, pdfService.downloadMotivationalLetterPDF]);
@@ -364,7 +394,7 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
     handleAdjustForPosition: (pos, ch, lang) =>
       eventHandlers.handleAdjustForPosition(pos, ch, lang),
     handleFetchCacheStats: cacheManager.handleFetchCacheStats,
-    openModal: (modal: string) => modals.openModal(modal as any),
+    openModal: (modal: string) => modals.openModal(modal as import('@/hooks/useModalManager').ModalType),
     checked: selectedImprovements,
     selectedLanguage: state.selectedLanguage,
     adjustmentWorkflow,
@@ -609,8 +639,8 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
           showPasswordModal={modals.showPasswordModal}
 
           // Modal actions
-          closeModal={(modalType: string) => modals.closeModal(modalType as any)}
-          openModal={(modalType: string) => modals.openModal(modalType as any)}
+          closeModal={modals.closeModal}
+          openModal={modals.openModal}
 
           // Data
           checked={selectedImprovements}

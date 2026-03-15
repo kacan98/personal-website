@@ -1,4 +1,6 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
+
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
@@ -360,16 +362,16 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   });
   const [showCopyAlert, setShowCopyAlert] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [removingBackground, setRemovingBackground] = useState(false);
-  const [backgroundRemovalStatus, setBackgroundRemovalStatus] = useState("");
-  const [backgroundRemovalProgress, setBackgroundRemovalProgress] = useState(0);
+  const [_removingBackground, setRemovingBackground] = useState(false);
+  const [_backgroundRemovalStatus, setBackgroundRemovalStatus] = useState("");
+  const [_backgroundRemovalProgress, setBackgroundRemovalProgress] = useState(0);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
   const [showCropDialog, setShowCropDialog] = useState(false);
   const [tempCrop, setTempCrop] = useState({ x: 0, y: 0 });
   const [tempZoom, setTempZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-  const profileInputRef = useRef<HTMLInputElement>(null);
-  const companyLogoInputRef = useRef<HTMLInputElement>(null);
+  const _profileInputRef = useRef<HTMLInputElement>(null);
+  const _companyLogoInputRef = useRef<HTMLInputElement>(null);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
@@ -436,7 +438,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -447,7 +449,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     }
   };
 
-  const handleDrop = (event: React.DragEvent) => {
+  const _handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -459,11 +461,11 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     }
   };
 
-  const handleDragOver = (event: React.DragEvent) => {
+  const _handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
   };
 
-  const handleRemoveImage = () => {
+  const _handleRemoveImage = () => {
     setSignatureData({ ...signatureData, profileImage: "" });
   };
 
@@ -550,7 +552,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     setTempZoom(signatureData.zoom || 1);
   };
 
-  const handleRemoveBackground = async () => {
+  const _handleRemoveBackground = async () => {
     if (!signatureData.profileImage) return;
 
     setRemovingBackground(true);

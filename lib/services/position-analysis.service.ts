@@ -52,7 +52,7 @@ export class PositionAnalysisService {
       apiKey: OPENAI_API_KEY,
     })
 
-    const tasks: Promise<any>[] = []
+    const tasks: Promise<unknown>[] = []
 
     // Position summary task - direct OpenAI call
     if (needsSummary) {
@@ -147,7 +147,7 @@ export class PositionAnalysisService {
       }
 
       if (needsIntersection) {
-        result.jobIntersection = results[resultIndex++]
+        result.jobIntersection = results[resultIndex++] as JobCvIntersectionResponse
         console.log('PositionAnalysisService - Job intersection completed')
       }
 

@@ -1,5 +1,6 @@
 import { CVUpgradeParams, CvUpgradeParams, CvUpgradeResponse } from './model'
 import { PositionAnalysisService } from '@/lib/services/position-analysis.service'
+import type { PositionAnalysisResult } from '@/lib/services/position-analysis.service'
 import { CVPersonalizationService } from '@/lib/services/cv-personalization.service'
 import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
 import { CACHE_CONFIG } from '@/lib/cache-config'
@@ -88,16 +89,16 @@ export async function POST(req: Request): Promise<Response> {
           'X-Cache-Source': fromCache ? 'disk-cache' : 'openai-api',
         },
       })
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('POST /api/personalize-cv - Error during personalization:', e)
-      return new Response(JSON.stringify({ error: 'Internal server error', details: e.message }), {
+      return new Response(JSON.stringify({ error: 'Internal server error', details: e instanceof Error ? e.message : 'Unknown error' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       })
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('POST /api/personalize-cv - Unexpected error:', e)
-    return new Response(JSON.stringify({ error: 'Internal server error', details: e.message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error', details: e instanceof Error ? e.message : 'Unknown error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })
@@ -111,13 +112,8 @@ async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<
   const needsPositionSummary = body.positionWeAreApplyingFor && !positionSummary
   const needsJobIntersection = !body.positionIntersection
 
-  // Run all tasks in parallel for better performance
-  const tasks: Promise<any>[] = []
-
-  // Task 1: Position analysis (summary + intersection)
-  if (needsPositionSummary || needsJobIntersection) {
-    tasks.push(
-      PositionAnalysisService.analyzePosition(
+  const analysisPromise = needsPositionSummary || needsJobIntersection
+    ? PositionAnalysisService.analyzePosition(
         body.positionWeAreApplyingFor,
         body.cvBody,
         request,
@@ -126,30 +122,22 @@ async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<
           skipIntersection: !needsJobIntersection
         }
       )
-    )
-  }
+    : Promise.resolve<PositionAnalysisResult | null>(null)
 
-  // Task 2: CV Personalization (can run in parallel since it doesn't use position summary)
-  tasks.push(
-    CVPersonalizationService.personalizeCV({
-      cvData: body.cvBody,
-      jobDescription: body.positionWeAreApplyingFor,
-      positionSummary: positionSummary || undefined
-    })
-  )
+  const cvPromise = CVPersonalizationService.personalizeCV({
+    cvData: body.cvBody,
+    jobDescription: body.positionWeAreApplyingFor,
+    positionSummary: positionSummary || undefined
+  })
 
-  // Wait for all tasks to complete
-  const results = await Promise.all(tasks)
+  const [analysisResult, personalizedCV] = await Promise.all([analysisPromise, cvPromise])
 
-  let resultIndex = 0
   let newPositionSummary: string | undefined
   let companyName: string | null | undefined
   let newJobIntersection = body.positionIntersection
 
   // Process analysis results if we ran them
-  if (needsPositionSummary || needsJobIntersection) {
-    const analysisResult = results[resultIndex++]
-
+  if (analysisResult) {
     if (analysisResult.positionSummary) {
       newPositionSummary = analysisResult.positionSummary
       positionSummary = newPositionSummary
@@ -161,9 +149,6 @@ async function personalizeCV(body: CvUpgradeParams, request?: Request): Promise<
       newJobIntersection = analysisResult.jobIntersection
     }
   }
-
-  // Get the personalized CV
-  const personalizedCV = results[resultIndex]
 
   const response: CvUpgradeResponse = {
     cv: personalizedCV,
