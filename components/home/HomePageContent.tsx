@@ -150,13 +150,16 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
             gap: { xs: 2, md: 3 },
           }}
         >
-          {items.map((item) => (
-            <Box
+          {items.map((item) => {
+            const isExternal = item.url?.startsWith("http");
+
+            return (
+              <Box
               key={item.text}
               component="a"
               href={item.url}
-              target="_blank"
-              rel="noreferrer"
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noreferrer" : undefined}
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -198,8 +201,9 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
               <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.7 }}>
                 {item.description}
               </Typography>
-            </Box>
-          ))}
+              </Box>
+            );
+          })}
         </Box>
       </ContentContainer>
     </Box>

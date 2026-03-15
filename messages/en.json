@@ -61,7 +61,7 @@
         "content": "I work across frontend and backend, building interfaces, endpoints, integrations, and internal tools in real production systems. Most of my work is in TypeScript, .NET, and X++."
       },
       "aiEnhanced": {
-        "header": "AI-Enhanced Development",
+        "header": "Practical Development",
         "content": "I use AI tools as part of my development workflow for research, implementation, and iteration, but I still care about clean code, correctness, and maintainability."
       },
       "problemSolver": {

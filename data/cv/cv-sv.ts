@@ -163,22 +163,22 @@ export const cvSv = {
         {
           iconName: "speed",
           text: "10x Prestandaförbättring - Minskade synkroniseringstid från 20+ min till <2 min",
-          url: "https://cancara.dk/project-stories/10x-performance-improvement"
+          url: "/sv/project-stories/10x-performance-improvement"
         },
         {
           iconName: "schedule",
           text: "Git-till-Jira Bro - Sparar ~1 timme/månad per utvecklare i tidsspårning",
-          url: "https://cancara.dk/project-stories/git-jira-bridge"
+          url: "/sv/project-stories/git-jira-bridge"
         },
         {
           iconName: "dashboard",
           text: "Utvecklardashboard - Samlar Jira och GitHub i en vy för aktiva uppgifter, PR:er och uppföljning",
-          url: "https://cancara.dk/project-stories/git-jira-bridge"
+          url: "/sv/project-stories/git-jira-bridge"
         },
         {
           iconName: "psychology",
           text: "AI-driven jobbansökningsplattform - GPT-baserad CV-anpassning och cover letters",
-          url: "https://cancara.dk/project-stories/ai-job-application-platform"
+          url: "/sv/project-stories/ai-job-application-platform"
         }
       ]
     }

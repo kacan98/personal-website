@@ -24,7 +24,6 @@ export default async function App({ params }: { params: Promise<{ locale: string
   const t = await getTranslations('homepage');
   const jobsData = getJobsData(locale);
   const socials = getSocials();
-  const settings = getSettings();
 
   const proofPoints = [
     {
@@ -45,8 +44,7 @@ export default async function App({ params }: { params: Promise<{ locale: string
   ];
 
   const selectedWork = getCuratedProjects(
-    locale === 'da' || locale === 'sv' ? locale : 'en',
-    settings.siteUrl
+    locale === 'da' || locale === 'sv' ? locale : 'en'
   ).slice(0, 3);
 
   const careerTimeline = convertJobsToTimeline(jobsData);

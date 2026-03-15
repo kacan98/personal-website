@@ -168,7 +168,7 @@ export const cvConfigEn = {
           iconName: "speed",
           text: "10x Performance Improvement",
           description: "Optimized enterprise sync from 20+ min to 2 min for 1000+ technicians. SQL optimization, IndexedDB, distributed systems.",
-          url: "https://cancara.dk/project-stories#10x-performance"
+          url: "/en/project-stories/10x-performance-improvement"
         },
         {
           iconName: "schedule",
@@ -180,13 +180,13 @@ export const cvConfigEn = {
           iconName: "dashboard",
           text: "Developer Task Overview Dashboard",
           description: "Personal internal dashboard that combines Jira and GitHub into one view for active tasks, PRs, failing checks, conflicts, and follow-up items. React, Node.js, TypeScript.",
-          url: "https://cancara.dk/project-stories/git-jira-bridge"
+          url: "/en/project-stories/git-jira-bridge"
         },
         {
           iconName: "psychology",
           text: "AI Job Application Platform",
           description: "Next.js 15 platform with GPT-based CV customization, cover letters, and multilingual flows.",
-          url: "https://cancara.dk/project-stories/ai-job-application-platform"
+          url: "/en/project-stories/ai-job-application-platform"
         }
       ]
     }
