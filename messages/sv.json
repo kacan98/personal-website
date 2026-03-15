@@ -21,7 +21,7 @@
   },
   "about": {
     "title": "Om mig",
-    "content": "Jag är en full-stack utvecklare med fokus på att bygga praktisk mjukvara som hjälper människor att få jobbet gjort. Mitt dagliga arbete spänner över frontend-gränssnitt, backend-endpoints, integrationer och prestandaförbättringar i TypeScript, Angular, React, .NET och X++.\n\nJag kom in i utveckling via marknadsföring, och det påverkar fortfarande hur jag arbetar. Jag tänker både på användaren, affärskontexten och på om lösningen faktiskt minskar friktion istället för att bara vara tekniskt smart.\n\nDet arbete jag tycker bäst om är att lösa stökiga verkliga problem: förbättra långsamma system, minska manuellt uppföljningsarbete, koppla ihop verktyg och bygga mjukvara som ger människor bättre överblick över vad de behöver göra härnäst.",
+    "content": "Jag är en full-stack utvecklare som bygger praktisk mjukvara över frontend och backend. Jag arbetar med produktfunktioner, interna verktyg, integrationer och arbetsflödestunga system i TypeScript, Angular, React, .NET-baserade miljöer och X++.\n\nJag gillar att hitta arbete som kan förenklas, automatiseras eller göras lättare att underhålla. Det kan handla om att minska manuell uppföljning, förbättra överblick, ta bort duplicering eller städa upp klumpiga delar av ett system.\n\nDet viktigaste för mig är att hjälpa människor spara tid med mjukvara som är tydligare, mer pålitlig och lättare att arbeta med.",
     "contactButton": "Skicka ett meddelande",
     "linkedinButton": "Lägg till mig på LinkedIn"
   },

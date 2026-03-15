@@ -21,7 +21,7 @@
   },
   "about": {
     "title": "About me",
-    "content": "I'm a full-stack developer focused on building practical software that helps people get work done. My day-to-day work spans frontend interfaces, backend endpoints, integrations, and performance improvements across TypeScript, Angular, React, .NET, and X++.\n\nI moved into development from marketing, which still shapes how I work. I care about the user, the business context, and whether a solution actually removes friction instead of just looking technically clever.\n\nThe work I enjoy most is solving messy real-world problems: improving slow systems, reducing manual follow-up, connecting tools, and building software that gives people better visibility into what they need to do next.",
+    "content": "I'm a full-stack developer building practical software across frontend and backend. I work on product features, internal tools, integrations, and workflow-heavy systems in TypeScript, Angular, React, .NET-based environments, and X++.\n\nI like finding work that can be simplified, automated, or made easier to maintain. That can mean reducing manual follow-up, improving visibility, removing duplication, or cleaning up awkward parts of a system.\n\nWhat I care about most is helping people save time with software that is clearer, more reliable, and easier to work with.",
     "contactButton": "Shoot me a message",
     "linkedinButton": "Add me on LinkedIn"
   },

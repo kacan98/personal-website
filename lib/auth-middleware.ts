@@ -24,7 +24,7 @@ export async function createAuthToken(): Promise<string> {
   const token = await new SignJWT({})
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime()
+    .setExpirationTime(`${SESSION_DURATION_DAYS}d`)
     .sign(secret);
 
   return token;
