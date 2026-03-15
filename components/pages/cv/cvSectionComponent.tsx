@@ -3,7 +3,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { updateCv, removeArrayItem } from "@/redux/slices/cv";
 import { CvSection } from "@/types";
 import { Box, alpha } from "@mui/material";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { CvSubSectionComponent } from "./cvSubSectionComponent";
 import { EditableParagraphList } from "./EditableParagraphList";
 import { EditableBulletPointList } from "./EditableBulletPointList";
@@ -51,7 +51,6 @@ export function CvSectionComponent({
   showDiff?: boolean;
 }) {
   const { title, subtitles, paragraphs, bulletPoints, subSections } = section;
-  const [_isAnyTextBeingEdited, setIsAnyTextBeingEdited] = useState(false);
   const dispatch = useAppDispatch();
 
   // Function to revert entire section to original
@@ -101,17 +100,17 @@ export function CvSectionComponent({
   );
 
 
-  const SuperEditableText = useCallback(({ query, originalText, ...props }: EditableTextProps & { originalText?: string }) => {
+  const renderEditableText = useCallback((props: EditableTextProps & { originalText?: string }) => {
+    const { query, originalText, ...restProps } = props;
+
     return <EditableText
-      {...props}
+      {...restProps}
       query={[sideOrMain, sectionIndex, ...query]}
       editable={editable}
-      onEditStart={() => setIsAnyTextBeingEdited(true)}
-      onEditEnd={() => setIsAnyTextBeingEdited(false)}
       originalText={originalText}
       showDiff={showDiff && !isPrintVersion}
     />;
-  }, [sideOrMain, sectionIndex, editable, setIsAnyTextBeingEdited, showDiff, isPrintVersion]);
+  }, [sideOrMain, sectionIndex, editable, showDiff, isPrintVersion]);
 
 
 
@@ -135,62 +134,62 @@ export function CvSectionComponent({
 
       {/* Content */}
       {title && (
-        <SuperEditableText
-          query={["title"]}
-          variant="h4"
-          mb={1}
-          sx={{
+        renderEditableText({
+          query: ["title"],
+          variant: "h4",
+          mb: 1,
+          sx: {
             fontWeight: 'bold',
             '@media print': {
               pageBreakAfter: 'avoid',
               breakAfter: 'avoid'
             }
-          }}
-          text={title || ""}
-          originalText={isNew && showDiff ? "" : originalSection?.title}
-          autoEdit={false}
-          onAutoDelete={() => {
+          },
+          text: title || "",
+          originalText: isNew && showDiff ? "" : originalSection?.title,
+          autoEdit: false,
+          onAutoDelete: () => {
             // Delete the entire section when title is empty
             dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex] }));
-          }}
-          onDelete={editable ? () => {
+          },
+          onDelete: editable ? () => {
             // Delete the entire section, not just the title
             dispatch(removeArrayItem({ query: [sideOrMain, sectionIndex] }));
-          } : undefined}
-          onRestore={editable && originalSection?.title && title !== originalSection.title ? () => {
+          } : undefined,
+          onRestore: editable && originalSection?.title && title !== originalSection.title ? () => {
             // Restore just the title
             dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'title'], newValue: originalSection.title! }));
-          } : undefined}
-        />
+          } : undefined,
+        })
       )}
       {subtitles && (
         <Box display="flex" justifyContent="space-between" mb={0}>
-          <SuperEditableText
-            query={['subtitles', 'left']}
-            variant="subtitle1"
-            text={subtitles.left}
-            originalText={originalSection?.subtitles?.left}
-            onDelete={editable ? () => {
+          {renderEditableText({
+            query: ['subtitles', 'left'],
+            variant: "subtitle1",
+            text: subtitles.left,
+            originalText: originalSection?.subtitles?.left,
+            onDelete: editable ? () => {
               dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'left'], newValue: "" }));
-            } : undefined}
-            onRestore={editable && originalSection?.subtitles?.left && subtitles.left !== originalSection.subtitles.left ? () => {
+            } : undefined,
+            onRestore: editable && originalSection?.subtitles?.left && subtitles.left !== originalSection.subtitles.left ? () => {
               // Restore just the left subtitle
               dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'left'], newValue: originalSection.subtitles!.left! }));
-            } : undefined}
-          />
-          <SuperEditableText
-            query={["subtitles", "right"]}
-            variant="subtitle1"
-            text={subtitles.right}
-            originalText={originalSection?.subtitles?.right}
-            onDelete={editable ? () => {
+            } : undefined,
+          })}
+          {renderEditableText({
+            query: ["subtitles", "right"],
+            variant: "subtitle1",
+            text: subtitles.right,
+            originalText: originalSection?.subtitles?.right,
+            onDelete: editable ? () => {
               dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'right'], newValue: "" }));
-            } : undefined}
-            onRestore={editable && originalSection?.subtitles?.right && subtitles.right !== originalSection.subtitles.right ? () => {
+            } : undefined,
+            onRestore: editable && originalSection?.subtitles?.right && subtitles.right !== originalSection.subtitles.right ? () => {
               // Restore just the right subtitle
               dispatch(updateCv({ query: [sideOrMain, sectionIndex, 'subtitles', 'right'], newValue: originalSection.subtitles!.right! }));
-            } : undefined}
-          />
+            } : undefined,
+          })}
         </Box>
       )}
       <EditableParagraphList
@@ -255,4 +254,3 @@ export function CvSectionComponent({
     </Box>
   );
 }
-

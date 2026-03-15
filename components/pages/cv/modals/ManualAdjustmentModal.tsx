@@ -49,10 +49,10 @@ const ManualAdjustmentModal = ({
   const [internalOtherChanges, setInternalOtherChanges] = useState("");
   const [_hasSubmitted, setHasSubmitted] = useState(false);
   const [internalIsMinimized, setInternalIsMinimized] = useState(false);
-  const [localOtherChanges, setLocalOtherChanges] = useState("");
+  const [localOtherChanges, setLocalOtherChanges] = useState(externalOtherChanges ?? "");
   const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const positionDetailsDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
-  const [localPositionDetails, setLocalPositionDetails] = useState("");
+  const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
   const [localImprovementInputs, setLocalImprovementInputs] = useState<{ [key: string]: string }>({});
   const improvementDebounceRefs = useRef<{ [key: string]: NodeJS.Timeout | undefined }>({});
 
@@ -61,20 +61,6 @@ const ManualAdjustmentModal = ({
   const setOtherChanges = externalSetOtherChanges ?? setInternalOtherChanges;
   const isMinimized = externalIsMinimized ?? internalIsMinimized;
   const _onToggleMinimize = externalOnToggleMinimize ?? (() => setInternalIsMinimized(prev => !prev));
-
-  // Initialize local state with external/internal value
-  useEffect(() => {
-    if (localOtherChanges === "" && otherChanges !== "") {
-      setLocalOtherChanges(otherChanges);
-    }
-  }, [otherChanges, localOtherChanges]);
-
-  // Initialize local position details
-  useEffect(() => {
-    if (localPositionDetails === "" && positionDetails !== "") {
-      setLocalPositionDetails(positionDetails);
-    }
-  }, [positionDetails, localPositionDetails]);
 
   // Debounced handler for otherChanges updates
   const _handleOtherChangesDebounced = useCallback((value: string) => {

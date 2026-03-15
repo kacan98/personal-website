@@ -43,13 +43,6 @@ export function FloatingManualAdjustments({
   const [localInputValue, setLocalInputValue] = useState(localManualChanges);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  // Initialize local value with props
-  useEffect(() => {
-    if (localInputValue !== localManualChanges) {
-      setLocalInputValue(localManualChanges);
-    }
-  }, [localManualChanges]);
-
   // Debounced handler for input changes
   const handleInputChange = useCallback((value: string) => {
     setLocalInputValue(value);
@@ -82,6 +75,7 @@ export function FloatingManualAdjustments({
 
     // Clear used improvements (those that were applied) and close the panel
     dispatch(clearUsedImprovements());
+    setLocalInputValue('');
     onManualOtherChangesChange('');
     onClose();
 

@@ -28,20 +28,20 @@ export type EditableTextExtraProps = {
 export type EditableTextProps = EditableTextExtraProps & TypographyProps
 
 export function EditableText({ query, text, editable, onEditStart, onEditEnd, originalText, showDiff = false, onDelete, onRestore, autoEdit = false, onAutoDelete, placeholder, ...typographyProps }: EditableTextProps) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [editValue, setEditValue] = useState("");
+    const shouldStartEditing = autoEdit && !!editable && (!text || text.trim() === "");
+    const [isEditing, setIsEditing] = useState(shouldStartEditing);
+    const [editValue, setEditValue] = useState(() => text || "");
     const [isNarrowContainer, setIsNarrowContainer] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const didNotifyAutoEditRef = useRef(false);
     const dispatch = useDispatch();
 
-    // Auto-start editing for new empty items
     useEffect(() => {
-        if (autoEdit && editable && (!text || text.trim() === "") && !isEditing) {
-            setEditValue(text || "");
-            setIsEditing(true);
+        if (shouldStartEditing && !didNotifyAutoEditRef.current) {
+            didNotifyAutoEditRef.current = true;
             onEditStart?.();
         }
-    }, [autoEdit, editable, text, isEditing, onEditStart]);
+    }, [onEditStart, shouldStartEditing]);
 
     // Check container width when entering edit mode
     useEffect(() => {
@@ -87,7 +87,7 @@ export function EditableText({ query, text, editable, onEditStart, onEditEnd, or
 
     const handleCancel = () => {
         setIsEditing(false);
-        setEditValue("");
+        setEditValue(text || "");
         onEditEnd?.();
     };
 

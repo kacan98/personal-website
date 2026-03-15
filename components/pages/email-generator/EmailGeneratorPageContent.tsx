@@ -332,45 +332,44 @@ const generateSignatureHTML = (data: SignatureData): string => {
 
 export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageContentProps) {
   const t = useTranslations('emailGenerator');
-  const [signatureData, setSignatureData] = useState<SignatureData>(DEFAULT_SIGNATURE_DATA);
+  const [signatureData, setSignatureData] = useState<SignatureData>(() => {
+    if (typeof window === "undefined") {
+      return DEFAULT_SIGNATURE_DATA;
+    }
+
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (!stored) {
+      return DEFAULT_SIGNATURE_DATA;
+    }
+
+    try {
+      const parsed = JSON.parse(stored);
+      return {
+        ...DEFAULT_SIGNATURE_DATA,
+        ...parsed,
+        colors: {
+          ...DEFAULT_SIGNATURE_DATA.colors,
+          ...parsed.colors,
+          iconColor: parsed.colors?.iconColor || parsed.colors?.nameColor || DEFAULT_SIGNATURE_DATA.colors.iconColor,
+        },
+      };
+    } catch (error) {
+      console.error("Failed to load signature data:", error);
+      return DEFAULT_SIGNATURE_DATA;
+    }
+  });
   const [showCopyAlert, setShowCopyAlert] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [removingBackground, setRemovingBackground] = useState(false);
   const [backgroundRemovalStatus, setBackgroundRemovalStatus] = useState("");
   const [backgroundRemovalProgress, setBackgroundRemovalProgress] = useState(0);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
-  const [localFocusX, setLocalFocusX] = useState(50);
-  const [localFocusY, setLocalFocusY] = useState(50);
   const [showCropDialog, setShowCropDialog] = useState(false);
   const [tempCrop, setTempCrop] = useState({ x: 0, y: 0 });
   const [tempZoom, setTempZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
   const companyLogoInputRef = useRef<HTMLInputElement>(null);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        // Merge with defaults to ensure all fields exist (backward compatibility)
-        const merged = {
-          ...DEFAULT_SIGNATURE_DATA,
-          ...parsed,
-          colors: {
-            ...DEFAULT_SIGNATURE_DATA.colors,
-            ...parsed.colors,
-            // Ensure iconColor exists
-            iconColor: parsed.colors?.iconColor || parsed.colors?.nameColor || DEFAULT_SIGNATURE_DATA.colors.iconColor,
-          },
-        };
-        setSignatureData(merged);
-      } catch (e) {
-        console.error("Failed to load signature data:", e);
-      }
-    }
-  }, []);
 
   // Save to localStorage whenever data changes
   useEffect(() => {
@@ -393,12 +392,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
       }
     }
   }, [signatureData]);
-
-  // Sync local slider states when signatureData changes externally
-  useEffect(() => {
-    setLocalFocusX(signatureData.imageFocusX);
-    setLocalFocusY(signatureData.imageFocusY);
-  }, [signatureData.imageFocusX, signatureData.imageFocusY]);
 
   const generatedHTML = generateSignatureHTML(signatureData);
 

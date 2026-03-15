@@ -7,6 +7,13 @@ export default defineConfig([
   ...nextVitals,
   ...nextTypescript,
   {
+    files: ['chrome-extension/webpack/*.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      'unused-imports/no-unused-vars': 'off',
+    },
+  },
+  {
     plugins: {
       'unused-imports': unusedImports,
     },

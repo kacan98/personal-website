@@ -21,7 +21,7 @@ interface PasswordModalProps {
   onClose: () => void;
 }
 
-export default function PasswordModal({ open, onClose }: PasswordModalProps): JSX.Element {
+export default function PasswordModal({ open, onClose }: PasswordModalProps) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

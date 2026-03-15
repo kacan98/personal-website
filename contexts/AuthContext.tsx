@@ -25,7 +25,7 @@ interface AuthProviderProps {
   eager?: boolean;
 }
 
-export function AuthProvider({ children, eager = false }: AuthProviderProps): JSX.Element {
+export function AuthProvider({ children, eager = false }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(eager);
 

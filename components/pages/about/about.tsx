@@ -22,7 +22,7 @@ export const About = ({
     buttonHref,
     linkedinButtonText = "Add me on LinkedIn",
     onButtonClick
-}: AboutProps): JSX.Element => {
+}: AboutProps) => {
     return (
         <PageWrapper
             title={heading}
