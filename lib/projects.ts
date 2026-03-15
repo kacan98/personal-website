@@ -19,6 +19,10 @@ export type ProjectDocument = Project & {
   sourceUrl?: string;
 };
 
+const legacyStorySlugMap: Record<string, string> = {
+  'git-to-jira-bridge': 'git-jira-bridge',
+};
+
 function getLocaleDir(locale: string): string {
   if (locale === 'da') return 'data/projects-da';
   if (locale === 'sv') return 'data/projects-sv';
@@ -54,10 +58,45 @@ function readProjectFile(filePath: string, locale: string): ProjectDocument | nu
   };
 }
 
+function getLegacyStory(slug: string, locale: string): ProjectDocument | null {
+  const legacySlug = legacyStorySlugMap[slug] || slug;
+  const legacyPath = path.join(process.cwd(), 'project-stories', `${legacySlug}.md`);
+  return readProjectFile(legacyPath, locale);
+}
+
+function shouldUseLegacyContent(project: ProjectDocument | null, legacyProject: ProjectDocument | null): boolean {
+  if (!legacyProject) return false;
+  if (!project) return true;
+
+  const trimmed = project.content.trim();
+  const lineCount = trimmed ? trimmed.split(/\n+/).length : 0;
+  return trimmed.length < 900 || lineCount < 18;
+}
+
+function mergeProjectWithLegacy(project: ProjectDocument | null, legacyProject: ProjectDocument | null): ProjectDocument | null {
+  if (!project && !legacyProject) return null;
+  if (!project) return legacyProject;
+  if (!legacyProject) return project;
+  if (!shouldUseLegacyContent(project, legacyProject)) return project;
+
+  return {
+    ...project,
+    content: legacyProject.content,
+    category: project.category || legacyProject.category,
+    date: project.date || legacyProject.date,
+    metrics: project.metrics || legacyProject.metrics,
+    liveUrl: project.liveUrl || legacyProject.liveUrl,
+    sourceUrl: project.sourceUrl || legacyProject.sourceUrl,
+    tags: project.tags?.length ? project.tags : legacyProject.tags,
+  };
+}
+
 export function getProjectBySlug(locale: string, slug: string): ProjectDocument | null {
   const localizedPath = path.join(process.cwd(), getLocaleDir(locale), `${slug}.md`);
-  const fallbackPath = path.join(process.cwd(), "data/projects", `${slug}.md`);
-  return readProjectFile(localizedPath, locale) || readProjectFile(fallbackPath, 'en');
+  const fallbackPath = path.join(process.cwd(), 'data/projects', `${slug}.md`);
+  const project = readProjectFile(localizedPath, locale) || readProjectFile(fallbackPath, 'en');
+  const legacyProject = getLegacyStory(slug, locale);
+  return mergeProjectWithLegacy(project, legacyProject);
 }
 
 export function getAllProjects(locale: string): ProjectDocument[] {
@@ -77,7 +116,9 @@ export function getAllProjects(locale: string): ProjectDocument[] {
     .map((file) => {
       const localizedPath = path.join(localizedDir, file);
       const fallbackPath = path.join(fallbackDir, file);
-      return readProjectFile(localizedPath, locale) || readProjectFile(fallbackPath, 'en');
+      const project = readProjectFile(localizedPath, locale) || readProjectFile(fallbackPath, 'en');
+      const legacyProject = getLegacyStory(file.replace(/\.md$/, ''), locale);
+      return mergeProjectWithLegacy(project, legacyProject);
     })
     .filter((project): project is ProjectDocument => Boolean(project))
     .filter((project) => !project.archived)

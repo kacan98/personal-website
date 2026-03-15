@@ -18,7 +18,7 @@ async function PortfolioPage({ title, locale }: PortfolioPageProps) {
         title={title}
         size="large"
       />
-      <ClientProjectDisplay allProjects={allProjects} />
+      <ClientProjectDisplay allProjects={allProjects} locale={locale} />
     </Box>
   );
 }

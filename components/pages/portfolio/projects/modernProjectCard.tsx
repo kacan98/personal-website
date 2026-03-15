@@ -2,9 +2,27 @@ import { Box, Typography, IconButton, Chip } from "@mui/material";
 import { Project } from "@/types";
 import { SUPPORTED_ICONS } from "@/components/icon";
 import Image from "next/image";
+import Link from "next/link";
 
-export const ModernProjectCard = ({ title, description, image, links, tags }: Project) => {
+export const ModernProjectCard = ({ title, description, image, links, tags, projectHref }: Project & { projectHref?: string }) => {
   const imageSrc = image?.trim();
+  const cardTitle = (
+    <Typography
+      variant="h5"
+      sx={{
+        fontWeight: 700,
+        mb: 2,
+        color: "text.primary",
+        fontSize: { xs: "1.25rem", md: "1.5rem" },
+        lineHeight: 1.2,
+        textAlign: { xs: "center", md: "left" },
+        transition: 'color 0.2s ease',
+        '&:hover': projectHref ? { color: 'secondary.main' } : undefined,
+      }}
+    >
+      {title}
+    </Typography>
+  );
 
   return (
     <Box
@@ -26,6 +44,8 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
       }}
     >
       <Box
+        component={projectHref ? Link : 'div'}
+        href={projectHref}
         sx={{
           width: { xs: "100%", md: "45%" },
           height: { xs: "240px", md: "320px" },
@@ -37,6 +57,8 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
           background: imageSrc
             ? "transparent"
             : "linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(17, 24, 39, 0.95) 100%)",
+          textDecoration: 'none',
+          cursor: projectHref ? 'pointer' : 'default',
         }}
       >
         {imageSrc ? (
@@ -45,11 +67,7 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
               src={imageSrc}
               alt={`${title} project`}
               fill
-              style={{
-                objectFit: "cover",
-                objectPosition: "top",
-                transition: "transform 0.3s ease",
-              }}
+              style={{ objectFit: "cover", objectPosition: "top", transition: "transform 0.3s ease" }}
               sizes="(max-width: 768px) 100vw, 45vw"
             />
             <Box
@@ -59,48 +77,21 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
                 background: "linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(168, 85, 247, 0.1) 100%)",
                 opacity: 0,
                 transition: "opacity 0.3s ease",
-                ".modern-project-card:hover &": {
-                  opacity: 1,
-                },
+                '.modern-project-card:hover &': { opacity: 1 },
               }}
             />
           </>
         ) : (
-          <Typography
-            variant="h6"
-            sx={{
-              px: 3,
-              textAlign: "center",
-              color: "rgba(255,255,255,0.92)",
-              fontWeight: 700,
-              letterSpacing: "0.04em",
-            }}
-          >
+          <Typography variant="h6" sx={{ px: 3, textAlign: "center", color: "rgba(255,255,255,0.92)", fontWeight: 700, letterSpacing: "0.04em" }}>
             {title}
           </Typography>
         )}
       </Box>
 
-      <Box
-        sx={{
-          width: { xs: "100%", md: "55%" },
-          p: { xs: 3, md: 4 },
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
+      <Box sx={{ width: { xs: "100%", md: "55%" }, p: { xs: 3, md: 4 }, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
         <Box>
           {tags && tags.length > 0 && (
-            <Box
-              sx={{
-                mb: 2,
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 1,
-                justifyContent: { xs: "center", md: "flex-start" },
-              }}
-            >
+            <Box sx={{ mb: 2, display: "flex", flexWrap: "wrap", gap: 1, justifyContent: { xs: "center", md: "flex-start" } }}>
               {tags.slice(0, 3).map((tag) => (
                 <Chip
                   key={tag}
@@ -112,70 +103,32 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
                     fontWeight: 500,
                     fontSize: "0.75rem",
                     border: "1px solid rgba(168, 85, 247, 0.2)",
-                    "&:hover": {
-                      backgroundColor: "rgba(168, 85, 247, 0.2)",
-                    },
+                    "&:hover": { backgroundColor: "rgba(168, 85, 247, 0.2)" },
                   }}
                 />
               ))}
               {tags.length > 3 && (
-                <Chip
-                  label={`+${tags.length - 3}`}
-                  size="small"
-                  sx={{
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    color: "text.secondary",
-                    fontSize: "0.75rem",
-                  }}
-                />
+                <Chip label={`+${tags.length - 3}`} size="small" sx={{ backgroundColor: "rgba(255, 255, 255, 0.05)", color: "text.secondary", fontSize: "0.75rem" }} />
               )}
             </Box>
           )}
 
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              color: "text.primary",
-              fontSize: { xs: "1.25rem", md: "1.5rem" },
-              lineHeight: 1.2,
-              textAlign: { xs: "center", md: "left" },
-            }}
-          >
-            {title}
-          </Typography>
+          {projectHref ? (
+            <Link href={projectHref} style={{ textDecoration: 'none' }}>
+              {cardTitle}
+            </Link>
+          ) : cardTitle}
 
-          <Typography
-            variant="body1"
-            sx={{
-              color: "text.secondary",
-              lineHeight: 1.6,
-              mb: 3,
-              fontSize: "0.95rem",
-              textAlign: { xs: "center", md: "left" },
-            }}
-          >
+          <Typography variant="body1" sx={{ color: "text.secondary", lineHeight: 1.6, mb: 3, fontSize: "0.95rem", textAlign: { xs: "center", md: "left" } }}>
             {description}
           </Typography>
         </Box>
 
         {links && links.length > 0 && (
           <Box sx={{ mt: "auto" }}>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                alignItems: "center",
-                justifyContent: { xs: "center", md: "flex-start" },
-                pt: 2,
-                borderTop: "1px solid",
-                borderColor: "rgba(255, 255, 255, 0.1)",
-              }}
-            >
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center", justifyContent: { xs: "center", md: "flex-start" }, pt: 2, borderTop: "1px solid", borderColor: "rgba(255, 255, 255, 0.1)" }}>
               {links.map(({ url, iconName }, index) => {
                 const isExternal = url.startsWith("http");
-
                 return (
                   <IconButton
                     key={`${url}-${index}`}

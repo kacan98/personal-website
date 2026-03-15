@@ -8,13 +8,13 @@ import { useState, useMemo } from 'react';
 
 type ClientProjectDisplayProps = {
   allProjects: Project[];
+  locale: string;
 };
 
-const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
+const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps) => {
   const t = useTranslations('projects');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Get unique tags from all projects
   const uniqueTags = useMemo(() =>
     Array.from(new Set(allProjects.flatMap((project) => project.tags)))
       .sort()
@@ -22,7 +22,6 @@ const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
     [allProjects]
   );
 
-  // Filter projects based on selected tags
   const filteredProjects = useMemo(() => {
     if (selectedTags.length === 0) {
       return allProjects;
@@ -33,46 +32,15 @@ const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
   }, [allProjects, selectedTags]);
 
   const handleTagToggle = (tag: string) => {
-    setSelectedTags(prev => {
-      if (prev.includes(tag)) {
-        // Remove tag if already selected
-        return prev.filter(t => t !== tag);
-      } else {
-        // Add tag if not selected
-        return [...prev, tag];
-      }
-    });
+    setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
   };
 
-  const handleClearAll = () => {
-    setSelectedTags([]);
-  };
+  const handleClearAll = () => setSelectedTags([]);
 
   return (
-    <Box sx={{
-      py: 6,
-      minHeight: '100vh',
-      backgroundColor: 'background.default'
-    }}>
-      {/* Filter chips */}
-      <Box sx={{
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 2,
-        px: 2,
-        mb: 6
-      }}>
-        <Box sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 1,
-          maxWidth: "800px",
-          width: "100%"
-        }}>
-          {/* All Projects chip */}
+    <Box sx={{ py: 6, minHeight: '100vh', backgroundColor: 'background.default' }}>
+      <Box sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, px: 2, mb: 6 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 1, maxWidth: "800px", width: "100%" }}>
           <Chip
             label={t('allProjects')}
             onClick={handleClearAll}
@@ -92,7 +60,6 @@ const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
             }}
           />
 
-          {/* Individual tag chips */}
           {uniqueTags.map((tag) => (
             <Chip
               key={tag}
@@ -116,25 +83,15 @@ const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
           ))}
         </Box>
 
-        {/* Selected count indicator */}
         {selectedTags.length > 0 && (
-          <Box sx={{
-            fontSize: '0.875rem',
-            color: BRAND_COLORS.secondary,
-          }}>
+          <Box sx={{ fontSize: '0.875rem', color: BRAND_COLORS.secondary }}>
             {selectedTags.length} {selectedTags.length === 1 ? 'tag' : 'tags'} selected • {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
           </Box>
         )}
       </Box>
 
-      {/* Projects */}
       <Container maxWidth="lg">
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          alignItems: 'center'
-        }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
           {filteredProjects.map((project, index) => (
             <Box
               key={project.title}
@@ -153,7 +110,7 @@ const ClientProjectDisplay = ({ allProjects }: ClientProjectDisplayProps) => {
                 },
               }}
             >
-              <ModernProjectCard {...project} />
+              <ModernProjectCard {...project} projectHref={`/${locale}/projects/${project.slug}`} />
             </Box>
           ))}
         </Box>
