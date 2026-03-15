@@ -13,6 +13,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import { motion } from "motion/react";
 import type { CuratedProject } from '@/lib/cv-projects';
 import { Link } from "@/types";
 
@@ -40,17 +41,24 @@ function ProofSection({ heading, points }: { heading: string; points: ProofPoint
     <Box id="proof" sx={{ py: { xs: 8, md: 12 } }}>
       <ContentContainer>
         <Box sx={{ mb: { xs: 5, md: 7 }, maxWidth: '42rem' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              mt: 1,
-              fontSize: { xs: '2rem', md: '2.75rem' },
-              fontWeight: 700,
-              lineHeight: 1.1,
-            }}
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-80px" }}
           >
-            {heading}
-          </Typography>
+            <Typography
+              variant="h2"
+              sx={{
+                mt: 1,
+                fontSize: { xs: '2rem', md: '2.75rem' },
+                fontWeight: 700,
+                lineHeight: 1.1,
+              }}
+            >
+              {heading}
+            </Typography>
+          </motion.div>
         </Box>
 
         <Box
@@ -60,50 +68,63 @@ function ProofSection({ heading, points }: { heading: string; points: ProofPoint
             gap: { xs: 2, md: 3 },
           }}
         >
-          {points.map((point) => (
-            <Box
+          {points.map((point, index) => (
+            <motion.div
               key={point.title}
-              sx={{
-                p: { xs: 3, md: 4 },
-                minHeight: { md: 240 },
-                borderRadius: 4,
-                border: '1px solid rgba(255,255,255,0.1)',
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))',
-                backdropFilter: 'blur(10px)',
-              }}
+              initial={{ opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-60px" }}
             >
-              <Typography
-                variant="overline"
+              <Box
                 sx={{
-                  display: 'block',
-                  color: 'secondary.light',
-                  letterSpacing: '0.14em',
-                  fontWeight: 700,
-                  mb: 1.5,
+                  p: { xs: 3, md: 4 },
+                  minHeight: { md: 240 },
+                  borderRadius: 4,
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))',
+                  backdropFilter: 'blur(10px)',
+                  transition: 'transform 0.25s ease, border-color 0.25s ease, background 0.25s ease',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    borderColor: 'rgba(255,255,255,0.18)',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.05))',
+                  },
                 }}
               >
-                {point.eyebrow}
-              </Typography>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1.5,
-                  fontSize: { xs: '1.25rem', md: '1.45rem' },
-                }}
-              >
-                {point.title}
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: 'rgba(255,255,255,0.82)',
-                  lineHeight: 1.7,
-                }}
-              >
-                {point.description}
-              </Typography>
-            </Box>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    display: 'block',
+                    color: 'secondary.light',
+                    letterSpacing: '0.14em',
+                    fontWeight: 700,
+                    mb: 1.5,
+                  }}
+                >
+                  {point.eyebrow}
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 700,
+                    mb: 1.5,
+                    fontSize: { xs: '1.25rem', md: '1.45rem' },
+                  }}
+                >
+                  {point.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: 'rgba(255,255,255,0.82)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {point.description}
+                </Typography>
+              </Box>
+            </motion.div>
           ))}
         </Box>
       </ContentContainer>
@@ -131,16 +152,23 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
     <Box id="selected-work" sx={{ py: { xs: 8, md: 12 } }}>
       <ContentContainer>
         <Box sx={{ mb: { xs: 4, md: 6 }, maxWidth: '36rem' }}>
-          <Typography
-            variant="h2"
-            sx={{
-              fontSize: { xs: '2rem', md: '2.6rem' },
-              fontWeight: 700,
-              lineHeight: 1.1,
-            }}
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-80px" }}
           >
-            {title}
-          </Typography>
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: { xs: '2rem', md: '2.6rem' },
+                fontWeight: 700,
+                lineHeight: 1.1,
+              }}
+            >
+              {title}
+            </Typography>
+          </motion.div>
         </Box>
 
         <Box
@@ -150,58 +178,65 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
             gap: { xs: 2, md: 3 },
           }}
         >
-          {items.map((item) => {
+          {items.map((item, index) => {
             const isExternal = item.url?.startsWith("http");
 
             return (
-              <Box
-              key={item.text}
-              component="a"
-              href={item.url}
-              target={isExternal ? "_blank" : undefined}
-              rel={isExternal ? "noreferrer" : undefined}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                p: { xs: 3, md: 4 },
-                borderRadius: 4,
-                textDecoration: 'none',
-                color: 'inherit',
-                border: '1px solid rgba(255,255,255,0.1)',
-                background: 'rgba(255,255,255,0.03)',
-                transition: 'transform 0.2s ease, border-color 0.2s ease, background 0.2s ease',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  borderColor: 'rgba(255,255,255,0.2)',
-                  background: 'rgba(255,255,255,0.05)',
-                },
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+              <motion.div
+                key={item.text}
+                initial={{ opacity: 0, y: 26 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-60px" }}
+              >
                 <Box
+                  component="a"
+                  href={item.url}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noreferrer" : undefined}
                   sx={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 2.5,
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'rgba(255,255,255,0.08)',
-                    color: 'secondary.light',
+                    flexDirection: 'column',
+                    gap: 2,
+                    p: { xs: 3, md: 4 },
+                    borderRadius: 4,
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'rgba(255,255,255,0.03)',
+                    transition: 'transform 0.2s ease, border-color 0.2s ease, background 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      borderColor: 'rgba(255,255,255,0.2)',
+                      background: 'rgba(255,255,255,0.05)',
+                    },
                   }}
                 >
-                  {getProjectIcon(item.iconName)}
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 2.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'rgba(255,255,255,0.08)',
+                        color: 'secondary.light',
+                      }}
+                    >
+                      {getProjectIcon(item.iconName)}
+                    </Box>
+                    <ArrowOutwardIcon sx={{ color: 'rgba(255,255,255,0.6)' }} />
+                  </Box>
+                  <Typography variant="h5" sx={{ fontWeight: 700, fontSize: { xs: '1.2rem', md: '1.35rem' } }}>
+                    {item.text}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.7 }}>
+                    {item.description}
+                  </Typography>
                 </Box>
-                <ArrowOutwardIcon sx={{ color: 'rgba(255,255,255,0.6)' }} />
-              </Box>
-              <Typography variant="h5" sx={{ fontWeight: 700, fontSize: { xs: '1.2rem', md: '1.35rem' } }}>
-                {item.text}
-              </Typography>
-              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.7 }}>
-                {item.description}
-              </Typography>
-              </Box>
+              </motion.div>
             );
           })}
         </Box>

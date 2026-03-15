@@ -8,12 +8,14 @@ interface LoadingProps {
   messages?: string[];
   terminal?: string;
   loadingAssets?: string;
+  variant?: "default" | "minimal";
 }
 
 export default function Loading({ 
   messages,
   terminal,
-  loadingAssets
+  loadingAssets,
+  variant = "default"
 }: LoadingProps = {}) {
   const t = useTranslations('loading');
   
@@ -33,6 +35,8 @@ export default function Loading({
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if (variant === "minimal") return;
+
     // Cycle through loading messages
     const messageInterval = setInterval(() => {
       setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
@@ -50,7 +54,63 @@ export default function Loading({
       clearInterval(messageInterval);
       clearInterval(progressInterval);
     };
-  }, []);
+  }, [loadingMessages.length, variant]);
+
+  if (variant === "minimal") {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "40vh",
+          color: "white",
+          position: "relative",
+          px: 3,
+        }}
+      >
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 360,
+            borderRadius: 4,
+            px: { xs: 3, md: 4 },
+            py: { xs: 2.5, md: 3 },
+            background: `linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03))`,
+            border: `1px solid ${BRAND_COLORS.secondary}22`,
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.18)",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              mb: 1.5,
+              color: "rgba(255,255,255,0.72)",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              fontWeight: 700,
+            }}
+          >
+            {t("loading")}
+          </Typography>
+          <LinearProgress
+            variant="indeterminate"
+            sx={{
+              height: 5,
+              borderRadius: 999,
+              backgroundColor: "rgba(255,255,255,0.08)",
+              "& .MuiLinearProgress-bar": {
+                background: `linear-gradient(90deg, ${BRAND_COLORS.primary}, ${BRAND_COLORS.secondary})`,
+                borderRadius: 999,
+              },
+            }}
+          />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box
