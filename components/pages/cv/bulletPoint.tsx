@@ -13,6 +13,7 @@ import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
 const ensureProtocol = (url: string): string => {
     if (!url) return url;
     if (url.startsWith('mailto:')) return url;
+    if (url.startsWith('/') || url.startsWith('#')) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `https://${url}`;
 };

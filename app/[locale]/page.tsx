@@ -2,7 +2,6 @@ import HomePageContent from "@/components/home/HomePageContent";
 import { getTranslations } from 'next-intl/server';
 import { getJobsData, convertJobsToTimeline, getSocials } from '@/data';
 import { getCuratedProjects } from '@/lib/cv-projects';
-import { getSettings } from '@/data/settings';
 
 const technologies = [
   { name: "TypeScript", color: "#3178C6" },

@@ -141,25 +141,15 @@
   "chatbot": {
     "placeholder": "Ask about my experience and skills...",
     "sendButton": "Send",
-    "clearTooltip": "Clear Chat & Start New Conversation",
-    "startNewChat": "Start New Chat",
-    "chatError": "Chat Error",
+    "clearTooltip": "Clear Chatbot & Start New Conversation",
+    "startNewChat": "Start New Chatbot",
+    "chatError": "Chatbot Error",
     "initializing": "Initializing Karel AI...",
     "sending": "..."
   },
   "projectStories": {
     "title": "Project Stories",
     "description": "Things I've built, problems I've solved, and what I learned along the way"
-  },
-  "navigation": {
-    "home": "Home",
-    "about": "About",
-    "projects": "Projects",
-    "cv": "CV",
-    "blog": "Projects",
-    "gallery": "Gallery",
-    "chatbot": "Chatbot",
-    "tools": "Free Tools"
   },
   "tools": {
     "title": "Free Tools",

@@ -141,9 +141,9 @@
   "chatbot": {
     "placeholder": "Spørg om min erfaring og færdigheder...",
     "sendButton": "Send",
-    "clearTooltip": "Clear Chat & Start Ny Samtale",
+    "clearTooltip": "Clear Chatbot & Start Ny Samtale",
     "startNewChat": "Start Ny Chat",
-    "chatError": "Chat Error",
+    "chatError": "Chatbot Error",
     "initializing": "Initialiserer Karel AI...",
     "sending": "..."
   },
