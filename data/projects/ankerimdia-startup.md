@@ -1,0 +1,29 @@
+---
+title: "Learning Sales and Strategy: The AnkeriMedia Experience"
+slug: "ankerimdia-startup"
+image: ""
+description: "University startup project focused on sales, customer conversations, and market validation."
+featured: false
+listed: false
+archived: true
+category: business
+tags:
+  - sales
+  - marketing
+  - lead generation
+  - business development
+  - market research
+---
+# Learning Sales and Strategy: The AnkeriMedia Experience
+
+This was a university startup project where I worked on sales, customer outreach, and market validation.
+
+## What I learned
+
+- How to run customer conversations instead of just building ideas in isolation
+- How to qualify demand and handle objections
+- How much clearer product decisions become when you speak directly with potential buyers
+
+## Why it still matters
+
+It is not core engineering proof, which is why it is archived from the public project list, but it is still part of how I think about useful software and real-world problems.

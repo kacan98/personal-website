@@ -1,4 +1,3 @@
-import { getSettings } from '@/data/settings';
 import { CvSection } from '@/types';
 
 export interface CuratedProject {
@@ -29,25 +28,25 @@ export function getCuratedProjects(locale: Locale): CuratedProject[] {
         iconName: 'speed',
         text: '10x Performance Improvement',
         description: 'Optimized enterprise sync from 20+ min to 2 min for 1000+ technicians.',
-        url: `/${locale}/project-stories/10x-performance-improvement`,
+        url: `/${locale}/projects/10x-performance-improvement`,
       },
       {
         iconName: 'schedule',
         text: 'Git-to-JIRA Time Tracker',
         description: 'Automated time logging from commits with Jira sync and review flow.',
-        url: 'https://log-bridge.vercel.app',
+        url: `/${locale}/projects/git-to-jira-bridge`,
       },
       {
         iconName: 'dashboard',
         text: 'Developer Task Overview Dashboard',
         description: 'Combines Jira and GitHub into one view for active tasks, PRs, checks, and follow-up.',
-        url: `/${locale}/project-stories/git-jira-bridge`,
+        url: `/${locale}/projects/developer-task-overview-dashboard`,
       },
       {
         iconName: 'psychology',
         text: 'AI Job Application Platform',
         description: 'Next.js platform for CV customization, cover letters, and multilingual flows.',
-        url: `/${locale}/project-stories/ai-job-application-platform`,
+        url: `/${locale}/projects/ai-job-application-platform`,
       },
     ],
     da: [
@@ -55,25 +54,25 @@ export function getCuratedProjects(locale: Locale): CuratedProject[] {
         iconName: 'speed',
         text: '10x Præstationsforbedring',
         description: 'Reducerede synkroniseringstid fra 20+ min til få minutter i et produktionssystem.',
-        url: `/${locale}/project-stories/10x-performance-improvement`,
+        url: `/${locale}/projects/10x-performance-improvement`,
       },
       {
         iconName: 'schedule',
         text: 'Git-til-Jira Bro',
         description: 'Automatiseret tidssporing fra commits med Jira-sync og review-flow.',
-        url: `/${locale}/project-stories/git-jira-bridge`,
+        url: `/${locale}/projects/git-to-jira-bridge`,
       },
       {
         iconName: 'dashboard',
         text: 'Udviklerdashboard',
         description: "Samler Jira og GitHub i ét overblik for aktive opgaver, PR'er, checks og opfølgning.",
-        url: `/${locale}/project-stories/git-jira-bridge`,
+        url: `/${locale}/projects/developer-task-overview-dashboard`,
       },
       {
         iconName: 'psychology',
         text: 'AI-drevet jobansøgningsplatform',
         description: 'Next.js-platform til CV-tilpasning, cover letters og flersprogede flows.',
-        url: `/${locale}/project-stories/ai-job-application-platform`,
+        url: `/${locale}/projects/ai-job-application-platform`,
       },
     ],
     sv: [
@@ -81,25 +80,25 @@ export function getCuratedProjects(locale: Locale): CuratedProject[] {
         iconName: 'speed',
         text: '10x Prestandaförbättring',
         description: 'Minskade synkroniseringstid från 20+ min till några minuter i ett produktionssystem.',
-        url: `/${locale}/project-stories/10x-performance-improvement`,
+        url: `/${locale}/projects/10x-performance-improvement`,
       },
       {
         iconName: 'schedule',
         text: 'Git-till-Jira Bro',
         description: 'Automatiserad tidsspårning från commits med Jira-sync och reviewflöde.',
-        url: `/${locale}/project-stories/git-jira-bridge`,
+        url: `/${locale}/projects/git-to-jira-bridge`,
       },
       {
         iconName: 'dashboard',
         text: 'Utvecklardashboard',
         description: 'Samlar Jira och GitHub i en vy för aktiva uppgifter, PR:er, checks och uppföljning.',
-        url: `/${locale}/project-stories/git-jira-bridge`,
+        url: `/${locale}/projects/developer-task-overview-dashboard`,
       },
       {
         iconName: 'psychology',
         text: 'AI-driven jobbansökningsplattform',
         description: 'Next.js-plattform för CV-anpassning, cover letters och flerspråkiga flöden.',
-        url: `/${locale}/project-stories/ai-job-application-platform`,
+        url: `/${locale}/projects/ai-job-application-platform`,
       },
     ],
   };

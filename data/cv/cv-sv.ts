@@ -163,22 +163,22 @@ export const cvSv = {
         {
           iconName: "speed",
           text: "10x Prestandaförbättring - Minskade synkroniseringstid från 20+ min till <2 min",
-          url: "/sv/project-stories/10x-performance-improvement"
+          url: "/sv/projects/10x-performance-improvement"
         },
         {
           iconName: "schedule",
           text: "Git-till-Jira Bro - Sparar ~1 timme/månad per utvecklare i tidsspårning",
-          url: "/sv/project-stories/git-jira-bridge"
+          url: "/sv/projects/git-to-jira-bridge"
         },
         {
           iconName: "dashboard",
           text: "Utvecklardashboard - Samlar Jira och GitHub i en vy för aktiva uppgifter, PR:er och uppföljning",
-          url: "/sv/project-stories/git-jira-bridge"
+          url: "/sv/projects/git-to-jira-bridge"
         },
         {
           iconName: "psychology",
           text: "AI-driven jobbansökningsplattform - GPT-baserad CV-anpassning och cover letters",
-          url: "/sv/project-stories/ai-job-application-platform"
+          url: "/sv/projects/ai-job-application-platform"
         }
       ]
     }

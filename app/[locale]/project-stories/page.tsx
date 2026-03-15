@@ -1,82 +1,10 @@
-import { Container, Box } from '@mui/material';
-import { getContainerSx } from '@/app/spacing';
-import SectionHeader from '@/components/ui/SectionHeader';
-import { MetricsLayout } from '@/components/pages/project-stories/layouts';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import { getTranslations, getLocale } from 'next-intl/server';
+import { redirect } from "next/navigation";
 
-interface BlogPost {
-  slug: string;
-  title: string;
-  tags: string[];
-  category: string;
-  archived?: boolean;
-  date?: string;
-  metrics?: {
-    impact?: string;
-    timeframe?: string;
-    usersAffected?: string;
-  };
-  excerpt: string;
+interface ProjectStoriesProps {
+  params: Promise<{ locale: string }>;
 }
 
-async function getProjectStories(): Promise<BlogPost[]> {
-  const projectStoriesDir = path.join(process.cwd(), 'project-stories');
-
-  if (!fs.existsSync(projectStoriesDir)) {
-    return [];
-  }
-
-  const files = fs.readdirSync(projectStoriesDir).filter(file => file.endsWith('.md'));
-
-  const posts = files.map(file => {
-    const filePath = path.join(projectStoriesDir, file);
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const { data: frontmatter, content } = matter(fileContent);
-
-    return {
-      slug: file.replace('.md', ''),
-      title: frontmatter.title || 'Untitled',
-      tags: frontmatter.tags || [],
-      category: frontmatter.category || 'uncategorized',
-      archived: frontmatter.archived || false,
-      date: frontmatter.date,
-      metrics: frontmatter.metrics,
-      excerpt: content.substring(0, 200).replace(/\n/g, ' ').trim() + '...'
-    };
-  }).filter((post) => !post.archived);
-
-  // Sort by date (newest first)
-  return posts.sort((a, b) => {
-    if (!a.date && !b.date) return 0;
-    if (!a.date) return 1;
-    if (!b.date) return -1;
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
-}
-
-export default async function ProjectStoriesPage() {
-  const posts = await getProjectStories();
-  const t = await getTranslations('projectStories');
-  const locale = await getLocale();
-
-  return (
-    <Container sx={{ ...getContainerSx(), py: 6 }}>
-      {/* Header with max width for better readability */}
-      <Box sx={{ maxWidth: '70ch', mx: 'auto', mb: 4 }}>
-        <SectionHeader
-          title={t('title')}
-          description={t('description')}
-          size="large"
-        />
-      </Box>
-
-      {/* Metrics Layout - constrained to same width as individual stories */}
-      <Box sx={{ maxWidth: '70ch', mx: 'auto' }}>
-        <MetricsLayout posts={posts} locale={locale} />
-      </Box>
-    </Container>
-  );
+export default async function ProjectStoriesRedirect({ params }: ProjectStoriesProps) {
+  const { locale } = await params;
+  redirect("/" + locale + "/projects");
 }

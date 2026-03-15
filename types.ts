@@ -125,11 +125,14 @@ export type StylesSettings = {
 export type Project = {
   title: string;
   slug: string;
-  image: string;
+  image?: string;
+  imageAlt?: string;
   tags: string[];
+  tech?: string[];
   links: Link[];
   featured: boolean;
   archived?: boolean;
+  listed?: boolean;
   description?: string;
   order?: number;
 };

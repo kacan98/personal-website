@@ -4,9 +4,9 @@
     "about": "About",
     "projects": "Projects",
     "cv": "CV",
-    "blog": "Project Stories",
+    "blog": "Projects",
     "gallery": "Gallery",
-    "chatbot": "Chat",
+    "chatbot": "Chatbot",
     "tools": "Free Tools"
   },
   "common": {
@@ -156,9 +156,9 @@
     "about": "About",
     "projects": "Projects",
     "cv": "CV",
-    "blog": "Project Stories",
+    "blog": "Projects",
     "gallery": "Gallery",
-    "chatbot": "Chat",
+    "chatbot": "Chatbot",
     "tools": "Free Tools"
   },
   "tools": {

@@ -163,22 +163,22 @@ export const cvConfigDa = {
         {
           iconName: "speed",
           text: "10x Præstationsforbedring - Reducerede synkroniseringstid fra 20+ min til <2 min",
-          url: "/da/project-stories/10x-performance-improvement"
+          url: "/da/projects/10x-performance-improvement"
         },
         {
           iconName: "schedule",
           text: "Git-til-Jira Bro - Sparer ~1 time/måned per udvikler i tidssporing",
-          url: "/da/project-stories/git-jira-bridge"
+          url: "/da/projects/git-to-jira-bridge"
         },
         {
           iconName: "dashboard",
           text: "Udviklerdashboard - Samler Jira og GitHub i ét overblik for aktive opgaver, PR'er og opfølgning",
-          url: "/da/project-stories/git-jira-bridge"
+          url: "/da/projects/git-to-jira-bridge"
         },
         {
           iconName: "psychology",
           text: "AI-drevet jobansøgningsplatform - GPT-baseret CV-tilpasning og cover letters",
-          url: "/da/project-stories/ai-job-application-platform"
+          url: "/da/projects/ai-job-application-platform"
         }
       ]
     }

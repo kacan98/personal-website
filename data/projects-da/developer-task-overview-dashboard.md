@@ -5,7 +5,7 @@ image: "/images/projects/developer-task-overview-dashboard.svg"
 tech: ["TypeScript", "React", "Node.js", "GitHub API", "Jira API"]
 links:
   - title: "Project Story"
-    url: "/da/project-stories/git-jira-bridge"
+    url: "/da/projects/git-to-jira-bridge"
     iconName: "externalLink"
   - title: "Repo"
     url: "https://github.com/kacan98/track-current-task"
