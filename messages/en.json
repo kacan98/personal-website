@@ -45,7 +45,8 @@
   },
   "projects": {
     "title": "Projects",
-    "allProjects": "All"
+    "allProjects": "All",
+    "viewProject": "View project"
   },
   "language": {
     "english": "English",

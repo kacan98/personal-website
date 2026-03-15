@@ -45,7 +45,8 @@
   },
   "projects": {
     "title": "Projekt",
-    "allProjects": "Alla"
+    "allProjects": "Alla",
+    "viewProject": "Se projekt"
   },
   "language": {
     "english": "English",

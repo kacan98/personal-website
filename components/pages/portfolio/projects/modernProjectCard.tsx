@@ -1,10 +1,12 @@
-import { Box, Typography, IconButton, Chip } from "@mui/material";
+import { Box, Typography, IconButton, Chip, Button } from "@mui/material";
 import { Project } from "@/types";
 import { SUPPORTED_ICONS } from "@/components/icon";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export const ModernProjectCard = ({ title, description, image, links, tags, projectHref }: Project & { projectHref?: string }) => {
+  const t = useTranslations("projects");
   const imageSrc = image?.trim();
   const cardTitle = (
     <Typography
@@ -124,10 +126,34 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
           </Typography>
         </Box>
 
-        {links && links.length > 0 && (
+        {(projectHref || (links && links.length > 0)) && (
           <Box sx={{ mt: "auto" }}>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center", justifyContent: { xs: "center", md: "flex-start" }, pt: 2, borderTop: "1px solid", borderColor: "rgba(255, 255, 255, 0.1)" }}>
-              {links.map(({ url, iconName }, index) => {
+            <Box sx={{ display: "flex", gap: 1.5, alignItems: "center", justifyContent: { xs: "center", md: "flex-start" }, flexWrap: "wrap", pt: 2, borderTop: "1px solid", borderColor: "rgba(255, 255, 255, 0.1)" }}>
+              {projectHref && (
+                <Button
+                  component={Link}
+                  href={projectHref}
+                  variant="contained"
+                  sx={{
+                    minWidth: 0,
+                    px: 2.25,
+                    py: 1,
+                    borderRadius: "999px",
+                    textTransform: "none",
+                    fontWeight: 700,
+                    boxShadow: "0 10px 22px rgba(168, 85, 247, 0.28)",
+                    background: "linear-gradient(135deg, rgba(168, 85, 247, 1) 0%, rgba(217, 70, 239, 0.95) 100%)",
+                    "&:hover": {
+                      boxShadow: "0 14px 28px rgba(168, 85, 247, 0.35)",
+                      transform: "translateY(-1px)",
+                    },
+                  }}
+                >
+                  {t("viewProject")}
+                </Button>
+              )}
+
+              {links?.map(({ url, iconName }, index) => {
                 const isExternal = url.startsWith("http");
                 return (
                   <IconButton

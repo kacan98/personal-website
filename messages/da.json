@@ -45,7 +45,8 @@
   },
   "projects": {
     "title": "Projekter",
-    "allProjects": "Alle"
+    "allProjects": "Alle",
+    "viewProject": "Se projekt"
   },
   "language": {
     "english": "English",
