@@ -10,7 +10,7 @@ export interface AppSettings {
 export const settings: AppSettings = {
   siteName: "Karel Čančara",
   siteDescription: "Full Stack Developer | TypeScript, Angular, React, .NET",
-  siteUrl: "https://kcancara.vercel.app",
+  siteUrl: "https://cancara.dk",
   authorName: "Karel Čančara",
   specialPages: {
     chatbot: true

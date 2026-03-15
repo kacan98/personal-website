@@ -16,7 +16,7 @@ import {
 import Button from "@/components/ui/Button";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations, useLocale } from 'next-intl';
 import { useState } from "react";
 
@@ -31,6 +31,7 @@ type TopBarProps = {
 
 const NavBar = ({ navLinks }: TopBarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
   const t = useTranslations('navigation');
@@ -43,7 +44,11 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
-  
+
+  const handleMobileNavigate = (href: string) => {
+    setMobileMenuOpen(false);
+    router.push(href);
+  };
 
   // Mobile Navigation Modal
   const mobileMenu = (
@@ -94,37 +99,34 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             }}
           >
             {!weAreHome && (
-              <Link href={`/${locale}`} passHref>
-                <Button
-                  variant="nav"
-                  isActive={weAreHome}
-                  onClick={() => setMobileMenuOpen(false)}
-                  sx={{
-                    fontSize: '1.2rem',
-                    minHeight: 48,
-                    borderRadius: '24px',
-                  }}
-                >
-                  {t('home')}
-                </Button>
-              </Link>
+              <Button
+                variant="nav"
+                isActive={weAreHome}
+                onClick={() => handleMobileNavigate(`/${locale}`)}
+                sx={{
+                  fontSize: '1.2rem',
+                  minHeight: 48,
+                  borderRadius: '24px',
+                }}
+              >
+                {t('home')}
+              </Button>
             )}
 
             {navLinks.map(({ name, href }) => (
-              <Link key={name} href={href} passHref>
-                <Button
-                  variant="nav"
-                  isActive={pathname === href || pathname.startsWith(href + '/')}
-                  onClick={() => setMobileMenuOpen(false)}
-                  sx={{
-                    fontSize: '1.2rem',
-                    minHeight: 48,
-                    borderRadius: '24px',
-                  }}
-                >
-                  {name}
-                </Button>
-              </Link>
+              <Button
+                key={name}
+                variant="nav"
+                isActive={pathname === href || pathname.startsWith(href + '/')}
+                onClick={() => handleMobileNavigate(href)}
+                sx={{
+                  fontSize: '1.2rem',
+                  minHeight: 48,
+                  borderRadius: '24px',
+                }}
+              >
+                {name}
+              </Button>
             ))}
           </Box>
         </Box>

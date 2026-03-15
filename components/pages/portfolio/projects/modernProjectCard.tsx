@@ -152,12 +152,15 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
                 borderColor: 'rgba(255, 255, 255, 0.1)',
               }}
             >
-              {links.map(({ url, iconName }, index) => (
-                <IconButton
+              {links.map(({ url, iconName }, index) => {
+                const isExternal = url.startsWith("http");
+
+                return (
+                  <IconButton
                   key={`${url}-${index}`}
                   href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
                   sx={{
                     backgroundColor: 'rgba(168, 85, 247, 0.1)',
                     color: 'primary.main',
@@ -174,8 +177,9 @@ export const ModernProjectCard = ({ title, description, image, links, tags }: Pr
                   }}
                 >
                   {SUPPORTED_ICONS[iconName]?.component()}
-                </IconButton>
-              ))}
+                  </IconButton>
+                );
+              })}
             </Box>
           </Box>
         )}

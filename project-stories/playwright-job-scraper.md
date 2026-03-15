@@ -9,6 +9,7 @@ tags:
   - web scraping
   - automation
 category: automation
+archived: true
 date: 2024-06-01
 metrics:
   impact:

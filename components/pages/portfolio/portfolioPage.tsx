@@ -19,6 +19,7 @@ async function PortfolioPage({ title, locale }: PortfolioPageProps) {
   }
 
   const allProjects = readMarkdownFiles<Project>(projectsFolder)
+    .filter((project) => !project.archived)
     .sort((a: Project, b: Project) => {
       // Sort by order field if it exists, otherwise by title
       const orderA = a.order ?? 999;
