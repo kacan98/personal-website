@@ -183,6 +183,7 @@ export default function BackgroundRemovalPageContent({
               >
                 {originalImage ? (
                   <Box sx={{ position: "relative", maxWidth: "100%" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={originalImage}
                       alt="Original"
@@ -315,15 +316,18 @@ export default function BackgroundRemovalPageContent({
                 }}
               >
                 {processedImage ? (
-                  <img
-                    src={processedImage}
-                    alt="Processed"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "400px",
-                      borderRadius: "4px",
-                    }}
-                  />
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={processedImage}
+                      alt="Processed"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "400px",
+                        borderRadius: "4px",
+                      }}
+                    />
+                  </>
                 ) : (
                   <Typography variant="body2" sx={{ color: "#666666" }}>
                     Processed image will appear here

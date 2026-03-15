@@ -1,4 +1,5 @@
 import { Box, Chip, Tooltip } from "@mui/material";
+import type { Theme } from "@mui/material/styles";
 import { ReactNode } from "react";
 import { TextChange } from "./utils/cvDiffTracker";
 
@@ -17,7 +18,7 @@ export function ChangeIndicatorText({
     return <>{children}</>;
   }
 
-  const getChangeColor = (type: TextChange['type']): 'success' | 'secondary' | 'error' | 'default' => {
+  const getChangeColor = (type: TextChange['type']): 'success' | 'secondary' | 'error' => {
     switch (type) {
       case 'added':
         return 'success';
@@ -26,7 +27,7 @@ export function ChangeIndicatorText({
       case 'removed':
         return 'error';
       default:
-        return 'default';
+        return 'secondary';
     }
   };
 
@@ -68,11 +69,11 @@ export function ChangeIndicatorText({
       sx={{ 
         position: 'relative',
         display: 'inline-block',
-        backgroundColor: (theme: any) => {
+        backgroundColor: (theme: Theme) => {
           const color = getChangeColor(change.type);
-          return theme.palette.mode === 'light' 
-            ? theme.palette[color]?.light || `${color}.50`
-            : theme.palette[color]?.dark || `${color}.900`;
+          return theme.palette.mode === 'light'
+            ? theme.palette[color].light
+            : theme.palette[color].dark;
         },
         padding: '2px 4px',
         borderRadius: '4px',

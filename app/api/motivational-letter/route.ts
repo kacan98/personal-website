@@ -59,7 +59,7 @@ async function handleMotivationalLetter(req: Request): Promise<Response> {
   }
 }
 
-async function generateMotivationalLetter(body: any) {
+async function generateMotivationalLetter(body: MotivationalLetterParams) {
   const openai = getOpenAIClient();
   const settings = getSettings();
 

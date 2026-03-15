@@ -6,7 +6,7 @@ import { ADMIN_USER_ID } from '@/lib/constants';
 import { eq, desc } from 'drizzle-orm';
 import { ListImprovementMemoriesResponse, ErrorResponse } from '../types';
 
-export const GET = withAuth(async (request: NextRequest) => {
+export const GET = withAuth(async (_request: NextRequest) => {
   try {
     // Fetch all memories for the admin user, ordered by most recently used
     const memories = await db

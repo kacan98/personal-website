@@ -12,6 +12,14 @@ export interface CvChangeTracker {
   changes: TextChange[];
 }
 
+type ComparableSection = {
+  title?: string | null;
+  subtitles?: { left?: string | null; right?: string | null } | null;
+  paragraphs?: Array<{ text: string }> | null;
+  bulletPoints?: Array<{ text: string }> | null;
+  subSections?: CvSubSection[] | null;
+};
+
 /**
  * Deep clone function for CV data
  */
@@ -101,8 +109,10 @@ export function compareCvSections(
 
   if (!originalSection && !modifiedSection) return changes;
 
-  const orig = (originalSection || {}) as any;
-  const mod = (modifiedSection || {}) as any;
+  const orig = originalSection as ComparableSection | undefined;
+  const mod = modifiedSection as ComparableSection | undefined;
+
+  if (!orig || !mod) return changes;
   
   // Compare title
   if (orig.title !== mod.title) {
@@ -134,8 +144,8 @@ export function compareCvSections(
   }
   
   // Compare paragraphs
-  const origParagraphTexts = orig.paragraphs?.map((p: any) => p.text) || [];
-  const modParagraphTexts = mod.paragraphs?.map((p: any) => p.text) || [];
+  const origParagraphTexts = orig?.paragraphs?.map((p) => p.text) || [];
+  const modParagraphTexts = mod?.paragraphs?.map((p) => p.text) || [];
   changes.push(...compareTextArrays(
     origParagraphTexts,
     modParagraphTexts,
@@ -143,8 +153,8 @@ export function compareCvSections(
   ));
 
   // Compare bullet points
-  const origBulletTexts = orig.bulletPoints?.map((bp: any) => bp.text) || [];
-  const modBulletTexts = mod.bulletPoints?.map((bp: any) => bp.text) || [];
+  const origBulletTexts = orig?.bulletPoints?.map((bp) => bp.text) || [];
+  const modBulletTexts = mod?.bulletPoints?.map((bp) => bp.text) || [];
   changes.push(...compareTextArrays(
     origBulletTexts,
     modBulletTexts,
@@ -153,8 +163,8 @@ export function compareCvSections(
   
   // Compare subsections
   if (orig.subSections && mod.subSections) {
-    orig.subSections.forEach((origSub: any, index: number) => {
-      const modSub = mod.subSections?.[index];
+    orig.subSections.forEach((origSub: CvSubSection, index: number) => {
+      const modSub = mod?.subSections?.[index];
       changes.push(...compareCvSections(
         origSub,
         modSub,

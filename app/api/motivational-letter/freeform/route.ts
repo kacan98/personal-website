@@ -77,9 +77,9 @@ Please modify the letter according to the user's request. When possible, referen
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Error modifying motivational letter:', e)
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })

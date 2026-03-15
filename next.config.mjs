@@ -92,7 +92,7 @@ const nextConfig = {
   // Force transpilation of problematic packages
   transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime'],
   // Webpack configuration for memory optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
+  webpack: (config, { dev }) => {
     // Optimize webpack cache settings for production to prevent 1.37GB cache inclusion
     if (config.cache && !dev) {
       // For Next.js 15, disable filesystem cache in production to prevent 1.37GB cache

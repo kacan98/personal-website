@@ -1,7 +1,6 @@
 "use client";
 import { Box } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import { BRAND_COLORS } from '@/app/colors';
 
 // Add a containInParent prop to control positioning behavior
@@ -11,16 +10,6 @@ export default function BackgroundEffect({
   containInParent?: boolean
 }) {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return null;
-  }
 
   // Only apply to root page if onlyForRoot is true
   if (pathname !== '/' && pathname !== '') {

@@ -6,19 +6,19 @@ import { z } from 'zod';
  * Recursively remove .default() from a Zod schema
  * Used to create OpenAI-compatible schemas (OpenAI rejects $ref with sibling keywords like default)
  */
-function deepRemoveDefaults(schema: z.ZodTypeAny): any {
+function deepRemoveDefaults(schema: z.ZodTypeAny): z.ZodTypeAny {
   if (schema instanceof z.ZodDefault)
     return deepRemoveDefaults(schema.removeDefault());
 
   if (schema instanceof z.ZodObject) {
-    const newShape: any = {};
+    const newShape: Record<string, z.ZodTypeAny> = {};
     for (const key in schema.shape) {
       newShape[key] = deepRemoveDefaults(schema.shape[key]);
     }
     return new z.ZodObject({
       ...schema._def,
       shape: () => newShape,
-    }) as any;
+    }) as z.ZodTypeAny;
   }
 
   if (schema instanceof z.ZodArray)

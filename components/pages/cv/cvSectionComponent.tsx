@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv, removeArrayItem } from "@/redux/slices/cv";

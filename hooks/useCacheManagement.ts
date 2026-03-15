@@ -1,12 +1,19 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useCacheService } from '@/services/cacheService';
 
+import { CacheStats } from '@/services/cacheService';
+
+interface CacheStatusNotification {
+  show: boolean;
+  fromCache: boolean;
+}
+
 interface CacheManagementConfig {
-  setCacheStats: (stats: any) => void;
+  setCacheStats: (stats: CacheStats | null) => void;
   setClearingCache: (clearing: boolean) => void;
   clearingCache: boolean;
   setSnackbarMessage: (message: string) => void;
-  setCacheStatusNotification: (notification: any) => void;
+  setCacheStatusNotification: (notification: CacheStatusNotification | null) => void;
   setLastCacheStatus: (status: boolean | null) => void;
 }
 

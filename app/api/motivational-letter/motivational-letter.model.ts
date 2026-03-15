@@ -39,6 +39,7 @@ export type SelectedStory = {
   tags: string[]
   url: string
   fullUrl: string
+  reasoning?: string
   metrics?: {
     impact?: string
     timeframe?: string

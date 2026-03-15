@@ -6,6 +6,15 @@ export interface CacheStats {
   cvActiveEntries: number;
 }
 
+interface ClearCacheResult {
+  success: boolean;
+  message: string;
+  stats?: {
+    before: CacheStats;
+    after: CacheStats;
+  };
+}
+
 export class CacheService {
   /**
    * Fetches current cache statistics
@@ -29,7 +38,7 @@ export class CacheService {
   static async clearCache(): Promise<{
     success: boolean;
     message: string;
-    result?: any;
+    result?: ClearCacheResult;
   }> {
     try {
       const response = await fetch('/api/clear-cache', {

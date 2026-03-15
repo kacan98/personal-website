@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import Image from "next/image";
 import BlockContent from "@/components/blockContent";
 import { notFound } from "next/navigation";
+import type { PortableTextBlock } from "@portabletext/react";
 import { readMarkdownFiles } from "@/lib/markdown";
 import { Project } from "@/types";
 
@@ -54,7 +55,7 @@ export default async function Page({ params }: PageProps) {
             </Box>
           )}
           <Box textAlign="left">
-            <BlockContent value={project.content} />
+            <BlockContent value={project.content as unknown as PortableTextBlock[]} />
           </Box>
         </PageWrapper>
       </Box>

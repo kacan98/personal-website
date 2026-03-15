@@ -19,8 +19,6 @@ import { MotivationalLetterResponse } from "@/app/api/motivational-letter/motiva
 import CvLanguageSelectionComponent from "../languageSelect";
 import { StoryCard } from "../components/StoryCard";
 import { CVSettings } from "@/types";
-import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 
 interface MotivationalLetterModalProps {
   open: boolean;
@@ -62,10 +60,8 @@ const MotivationalLetterModal = ({
   setPositionDetails,
   checked,
   _handleChecked,
-  candidate,
+  candidate: _candidate,
 }: MotivationalLetterModalProps) => {
-  const router = useRouter();
-  const locale = useLocale();
   const [isEditing, setIsEditing] = useState(false);
   const [editableText, setEditableText] = useState("");
   const [localEditableText, setLocalEditableText] = useState("");
@@ -192,7 +188,7 @@ const MotivationalLetterModal = ({
                   relevance: story.relevance,
                   metrics: story.metrics,
                   tags: story.tags,
-                  reasoning: (story as any).reasoning
+                  reasoning: story.reasoning
                 }}
                 index={index}
                 isHighlighted={false}

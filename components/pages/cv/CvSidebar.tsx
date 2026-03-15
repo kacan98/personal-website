@@ -19,7 +19,7 @@ import {
   SmartToy as SmartToyIcon,
   BugReport as BugReportIcon,
 } from "@mui/icons-material";
-import { useState, useEffect, ReactElement } from "react";
+import { useEffect, useState, ReactElement } from "react";
 
 // Compact version with smaller buttons and tighter spacing
 interface SidebarActionButtonProps {
@@ -324,19 +324,18 @@ const CvSidebar = ({
   const visibleButtons = sidebarButtons.filter(button => button.visible);
 
   // State for collapsible sidebar
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  // Load collapsed state from localStorage on mount
-  useEffect(() => {
-    const savedCollapsedState = localStorage.getItem('cvSidebarCollapsed');
-    if (savedCollapsedState !== null) {
-      setIsCollapsed(JSON.parse(savedCollapsedState));
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') {
+      return false;
     }
-  }, []);
+
+    const savedCollapsedState = window.localStorage.getItem('cvSidebarCollapsed');
+    return savedCollapsedState !== null ? (JSON.parse(savedCollapsedState) as boolean) : false;
+  });
 
   // Save collapsed state to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cvSidebarCollapsed', JSON.stringify(isCollapsed));
+    window.localStorage.setItem('cvSidebarCollapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
   const handleToggleCollapse = () => {

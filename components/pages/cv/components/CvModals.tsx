@@ -10,6 +10,8 @@ import PositionAnalysisModal from '../modals/PositionAnalysisModal';
 import PreferredProjectsModal from '../modals/PreferredProjectsModal';
 import ExtensionDownload from '../ExtensionDownload';
 import PasswordModal from '@/components/auth/PasswordModal';
+import { SelectChangeEvent } from '@mui/material';
+import { ModalType } from '@/hooks/useModalManager';
 
 interface CvModalsProps {
   // Modal state
@@ -22,8 +24,8 @@ interface CvModalsProps {
   showPasswordModal: boolean;
 
   // Modal actions
-  closeModal: (modalType: string) => void;
-  openModal: (modalType: string) => void;
+  closeModal: (modalType: ModalType) => void;
+  openModal: (modalType: ModalType) => void;
 
   // Data
   checked: string[];
@@ -48,13 +50,18 @@ interface CvModalsProps {
   loading: boolean;
 
   // Event handlers
-  handleManualRefinement: (data: any) => Promise<void>;
+  handleManualRefinement: (data: {
+    checkedImprovements: string[];
+    improvementInputs: { [key: string]: string };
+    missingSkills: string;
+    otherChanges: string;
+  }) => Promise<void>;
   handleAdjustForPosition: (pos: string, checked: string[], lang: string) => Promise<void>;
   handleDownloadMotivationalLetterPDF: () => void;
   handleAdjustLetter: (comments: string, pos: string, lang: string) => Promise<void>;
   handleTranslateBoth: () => Promise<void>;
-  getMotivationalLetter: any;
-  handleLanguageChange: any;
+  getMotivationalLetter: (positionDetails: string, checkedItems: string[], language: string) => Promise<void>;
+  handleLanguageChange: (event: SelectChangeEvent<string>) => void;
   handleChecked: (value: string) => () => void;
   updatePositionIntersection: () => Promise<void>;
   setsnackbarMessage: (msg: string) => void;

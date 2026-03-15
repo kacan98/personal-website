@@ -77,13 +77,16 @@ export default function SocialLinksEditor({ socialLinks, onLinksChange }: Social
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2, alignItems: "center" }}>
                 <Box sx={{ display: "flex", alignItems: "center", flex: 1, mr: 1 }}>
                   {platform && (
-                    <img
-                      src={platform.icon}
-                      alt={link.platform}
-                      width="24"
-                      height="24"
-                      style={{ marginRight: 8 }}
-                    />
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={platform.icon}
+                        alt={link.platform}
+                        width="24"
+                        height="24"
+                        style={{ marginRight: 8 }}
+                      />
+                    </>
                   )}
                   <FormControl sx={{ flex: 1 }}>
                     <InputLabel size="small">Platform</InputLabel>

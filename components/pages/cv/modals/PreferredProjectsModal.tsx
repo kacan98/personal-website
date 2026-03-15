@@ -11,8 +11,6 @@ import {
 import { useState, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
-import { useRouter } from "next/navigation";
-import { useLocale } from "next-intl";
 import { StoryCard } from "../components/StoryCard";
 
 interface RankedStory {
@@ -29,6 +27,7 @@ interface RankedStory {
   url: string;
   fullUrl: string;
   content: string;
+  reasoning?: string;
 }
 
 interface PreferredProjectsResponse {
@@ -53,8 +52,6 @@ const PreferredProjectsModal = ({
   onUpdateCVProjects,
   existingRankedStories,
 }: PreferredProjectsModalProps) => {
-  const router = useRouter();
-  const locale = useLocale();
   const [isLoading, setIsLoading] = useState(false);
   const [preferredProjects, setPreferredProjects] = useState<PreferredProjectsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +63,7 @@ const PreferredProjectsModal = ({
       if (existingRankedStories) {
         setPreferredProjects({
           selectedStories: existingRankedStories,
-          selectionReasoning: (existingRankedStories[0] as any)?.reasoning || '',
+          selectionReasoning: existingRankedStories[0]?.reasoning || '',
           useStories: true,
           totalAvailable: existingRankedStories.length
         });
@@ -137,7 +134,7 @@ const PreferredProjectsModal = ({
               relevance: story.relevance,
               metrics: story.metrics,
               tags: story.tags,
-              reasoning: (story as any).reasoning
+              reasoning: story.reasoning
             }}
             index={index}
             isHighlighted={index < 4}

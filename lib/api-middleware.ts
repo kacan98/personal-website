@@ -7,7 +7,7 @@ export interface StandardErrorResponse {
 /**
  * Middleware wrapper for API routes that require authentication
  */
-export function withAuth<T extends any[]>(
+export function withAuth<T extends unknown[]>(
   handler: (req: Request, ...args: T) => Promise<Response>
 ) {
   return async (req: Request, ...args: T): Promise<Response> => {

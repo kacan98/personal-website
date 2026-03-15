@@ -67,7 +67,7 @@ Return only the translated letter text.`,
     }
 
     throw new Error('Failed to translate letter')
-  } catch (e: any) {
-    return new Response(e.message, { status: 500 })
+  } catch (e: unknown) {
+    return new Response(e instanceof Error ? e.message : 'Unknown error', { status: 500 })
   }
 }

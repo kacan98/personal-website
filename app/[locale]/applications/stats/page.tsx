@@ -57,6 +57,18 @@ interface StatsData {
   };
 }
 
+interface ChartClickData {
+  activePayload?: Array<{
+    payload: {
+      dateStr: string;
+    };
+  }>;
+}
+
+function isChartClickData(data: unknown): data is ChartClickData {
+  return typeof data === 'object' && data !== null && 'activePayload' in data;
+}
+
 // Helper function to get Monday of a given week (start of week)
 const getMonday = (date: Date): Date => {
   const d = new Date(date);
@@ -234,8 +246,8 @@ export default function ApplicationStatsPage() {
                       return allDays;
                     })()}
                     margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    onClick={(data: any) => {
-                      if (data && data.activePayload && data.activePayload[0]) {
+                    onClick={(data: unknown) => {
+                      if (isChartClickData(data) && data.activePayload && data.activePayload[0]) {
                         const clickedDate = data.activePayload[0].payload.dateStr;
                         setSelectedDate(selectedDate === clickedDate ? null : clickedDate);
                       }

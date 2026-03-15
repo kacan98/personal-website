@@ -4,7 +4,7 @@ export interface AppSettings {
   siteDescription: string;
   siteUrl: string;
   authorName: string;
-  specialPages?: any;
+  specialPages?: Record<string, boolean>;
 }
 
 export const settings: AppSettings = {
