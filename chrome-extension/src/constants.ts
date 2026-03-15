@@ -1,5 +1,5 @@
 // Default configuration for the extension
-export const DEFAULT_TARGET_URL = "https://kcancara.vercel.app";
+export const DEFAULT_TARGET_URL = "https://cancara.dk";
 export const DEFAULT_DEBUG_LOGGING = false;
 export const DEFAULT_AUTO_OPEN = false;
 

@@ -137,10 +137,12 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                                 wrapper={(c) =>
                                     bulletPoint.url!.startsWith("mailto:") ? (
                                         <a href={safeUrl}>{c}</a>
-                                    ) : (
+                                    ) : bulletPoint.url!.startsWith("http") ? (
                                         <a href={safeUrl} target="_blank" rel="noreferrer">
                                             {c}
                                         </a>
+                                    ) : (
+                                        <a href={safeUrl}>{c}</a>
                                     )
                                 }
                             >

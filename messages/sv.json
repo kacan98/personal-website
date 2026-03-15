@@ -23,7 +23,7 @@
   },
   "about": {
     "title": "Om mig",
-    "content": "Jag är Karel, en utvecklare som skriver kod för arbete och för nöje. Jag jobbar mest med frontend men jag är bekväm med backend också. Jag lärde mig själv att koda efter att ha jobbat med marknadsföring ett tag, så jag tänker mycket på användarupplevelsen.\n\nJag jobbar med TypeScript, Angular, React och C# mestadels. Jag gillar att lista ut hur saker fungerar och göra dem bättre. När jag inte kodar läser jag vanligtvis om ny teknik eller försöker förstöra något bara för att se om jag kan fixa det.\n\nAlltid redo för intressanta projekt eller bara att snacka om kod.",
+    "content": "Jag är en full-stack utvecklare som bygger praktisk mjukvara över frontend och backend. Jag arbetar med produktfunktioner, interna verktyg, integrationer och arbetsflödestunga system i TypeScript, Angular, React, .NET-baserade miljöer och X++.\n\nJag gillar att hitta arbete som kan förenklas, automatiseras eller göras lättare att underhålla. Det kan handla om att minska manuell uppföljning, förbättra överblick, ta bort duplicering eller städa upp klumpiga delar av ett system.\n\nDet viktigaste för mig är att hjälpa människor spara tid med mjukvara som är tydligare, mer pålitlig och lättare att arbeta med.",
     "contactButton": "Skicka ett meddelande",
     "linkedinButton": "Lägg till mig på LinkedIn"
   },
@@ -54,28 +54,52 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer"
+      "tagline": "Full-Stack Developer",
+      "subtitle": "Jag bygger produktfunktioner, interna verktyg och arbetsflödesmjukvara över frontend och backend."
     },
     "about": {
       "fullStack": {
         "header": "Full-Stack Developer",
-        "content": "Jag jobbar på företagsprogramvara som hundratals företag använder dagligen. Jag skriver kod i TypeScript, .NET och X++, och försöker göra saker snabbare och mindre buggiga."
+        "content": "Jag arbetar över både frontend och backend med gränssnitt, endpoints, integrationer och interna verktyg i riktiga produktionssystem. Det mesta av mitt arbete är i TypeScript, .NET och X++."
       },
       "aiEnhanced": {
-        "header": "AI-Enhanced Development",
-        "content": "Jag använder AI coding tools varje dag eftersom de hjälper mig att skriva kod snabbare och fånga misstag jag skulle missa. Testar alltid nya verktyg för att se om de gör mitt liv enklare."
+        "header": "Practical Development",
+        "content": "Jag använder AI-verktyg som en del av mitt utvecklingsarbete för research, implementation och iteration, men jag bryr mig fortfarande om ren kod, korrekthet och underhållbarhet."
       },
       "problemSolver": {
         "header": "Problemlösare",
-        "content": "Jag gillar att lista ut varför saker går sönder och fixa dem. Större delen av min dag går åt till att debugga, bygga funktioner och se till att saker faktiskt fungerar."
+        "content": "Jag gillar att hitta den verkliga flaskhalsen i ett system, oavsett om det handlar om prestanda, bristande överblick, klumpiga arbetsflöden eller en funktion som är svårare att använda än den borde vara."
       },
       "userFocused": {
         "header": "Användarfokuserad",
-        "content": "Jag brukade jobba med marknadsföring, så jag tänker på vem som faktiskt ska använda det jag bygger. Jag försöker göra programvara som inte får folk att vilja kasta sin dator genom fönstret."
+        "content": "Min bakgrund i marknadsföring hjälper fortfarande. Jag tänker på vem som ska använda programvaran, vad de försöker få gjort och hur man minskar friktion istället för att lägga till mer process."
       }
     },
     "timeline": {
       "title": "Karriärresa"
+    },
+    "proof": {
+      "heading": "Jag arbetar bäst där produktarbete, interna verktyg och verksamhetens verklighet möts.",
+      "items": [
+        {
+          "eyebrow": "Produktion",
+          "title": "Frontend och backend i levande system",
+          "description": "Jag arbetar med gränssnitt, endpoints, integrationer och affärslogik i system som används varje dag."
+        },
+        {
+          "eyebrow": "Arbetsflöde",
+          "title": "Interna verktyg som minskar friktion",
+          "description": "Jag bygger dashboards, uppgiftsöversikter och mindre arbetsflödesmjukvara som gör upprepat arbete enklare att hantera."
+        },
+        {
+          "eyebrow": "Leverans",
+          "title": "Praktisk engineering i stället för fluff",
+          "description": "Jag gillar att hitta den verkliga flaskhalsen, göra systemet tydligare och leverera något som faktiskt används."
+        }
+      ]
+    },
+    "selectedWork": {
+      "title": "Utvalt Arbete"
     }
   },
   "contact": {
@@ -86,7 +110,7 @@
       "description": "Bästa sättet att nå mig"
     },
     "linkedin": {
-      "label": "LinkedIn", 
+      "label": "LinkedIn",
       "description": "Professionellt nätverk"
     },
     "github": {

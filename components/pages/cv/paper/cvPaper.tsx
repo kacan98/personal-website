@@ -72,7 +72,7 @@ export function CvPaper({
     }}>
       <Grid size={isCvDesktop ? 4 : 12}>
         <Box display="flex" flexDirection="column" alignItems="left" sx={{
-          pr: 1,
+          pr: { xs: 0, sm: 1 },
           '@media print': { overflow: 'visible' }
         }}>
           <Box
@@ -82,7 +82,7 @@ export function CvPaper({
             mb={3}
             sx={{
               flexWrap: { xs: 'wrap', sm: 'nowrap' },
-              textAlign: { xs: 'center', sm: 'left' }
+              textAlign: 'left'
             }}
           >
             {imageUrl && <Avatar
@@ -143,7 +143,7 @@ export function CvPaper({
               const isNewSection = !isDeleted && currentIndex >= (originalCv?.sideColumn?.length ?? 0);
 
               return (
-                <Box key={sectionId || renderIndex} mb={1}>
+                <Box key={sectionId || renderIndex} mb={2.5}>
                   <CvSectionComponent
                     sideOrMain="sideColumn"
                     sectionIndex={renderIndex}
@@ -176,7 +176,7 @@ export function CvPaper({
       </Grid>
       <Grid size={isCvDesktop ? 8 : 12} sx={{ textAlign: "left" }}>
         <Box sx={{
-          pl: 1,
+          pl: { xs: 0, sm: 1 },
           '@media print': { overflow: 'visible' }
         }}>
           {(() => {
@@ -207,7 +207,7 @@ export function CvPaper({
               const isNewSection = !isDeleted && currentIndex >= (originalCv?.mainColumn?.length ?? 0);
 
               return (
-                <Box key={sectionId || renderIndex} mb={1}>
+                <Box key={sectionId || renderIndex} mb={2.5}>
                   <CvSectionComponent
                     sideOrMain="mainColumn"
                     sectionIndex={renderIndex}

@@ -1,179 +1,15 @@
 import { getSettings } from '@/data/settings';
-import { PROJECT_STORIES_PATH } from './routes';
 import { CvSection } from '@/types';
 
-interface CVProject {
+export interface CuratedProject {
   iconName: string;
   text: string;
   url?: string;
   description?: string;
 }
 
-interface RankedStory {
-  id: string;
-  title: string;
-  category: string;
-  relevance: number;
-  tags: string[];
-  metrics?: {
-    impact?: string | {
-      en: string;
-      da?: string;
-      sv?: string;
-    };
-    timeframe?: string;
-    usersAffected?: string;
-  };
-  url: string;
-  fullUrl: string;
-  content: string;
-}
+type Locale = 'en' | 'da' | 'sv';
 
-/**
- * Get localized impact text from a story
- */
-function getLocalizedImpact(impact: string | { en: string; da?: string; sv?: string } | undefined, locale: string): string {
-  if (!impact) return '';
-
-  // If impact is an object with translations
-  if (typeof impact === 'object') {
-    return impact[locale as keyof typeof impact] || impact.en;
-  }
-
-  // If impact is just a string, return it as-is
-  return impact;
-}
-
-/**
- * Convert ranked stories to CV projects format with translations
- */
-function convertStoriesToCVProjects(rankedStories: RankedStory[], locale: string): CVProject[] {
-  return rankedStories.map(story => {
-    // Get localized impact description
-    const impact = story.metrics?.impact || story.title;
-    const description = getLocalizedImpact(impact, locale);
-
-    // Select icon based on category
-    let iconName = "science"; // default
-    if (story.category === 'automation') {
-      iconName = "gitHub";
-    } else if (story.id === 'magic-bookmarks') {
-      iconName = "translate";
-    }
-
-    return {
-      iconName,
-      text: description,
-      url: story.fullUrl
-    };
-  });
-}
-
-
-/**
- * Get projects section using AI-ranked stories for a specific job
- */
-export async function getCVProjectsSectionForJob(jobDescription: string, locale: string = 'en'): Promise<CvSection> {
-  try {
-    const response = await fetch('/api/stories/rank', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        jobDescription,
-        maxStories: 4 // Limit to 4 for CV
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to rank stories');
-    }
-
-    const result = await response.json();
-    const bulletPoints = convertStoriesToCVProjects(result.selectedStories, locale);
-
-    return {
-      id: "personal-projects",
-      title: getProjectsTitleByLocale(locale),
-      subtitles: null,
-      paragraphs: null,
-      bulletPoints: bulletPoints.map((bp, index) => ({
-        id: `project-${index}`,
-        iconName: bp.iconName,
-        text: bp.text,
-        url: bp.url || null,
-        description: bp.description || null,
-      })),
-      subSections: null,
-    };
-  } catch (error) {
-    console.error('Error getting ranked stories for CV, falling back to default:', error);
-    return await getCVProjectsSection(locale);
-  }
-}
-
-/**
- * Get default projects section (fallback when no job description available)
- * This function should only be called server-side (in API routes or SSR)
- */
-export async function getCVProjectsSection(locale: string = 'en'): Promise<CvSection> {
-  // Import here to avoid circular dependency issues
-  const { getAllStories } = await import('./project-stories');
-  const stories = await getAllStories();
-  const settings = getSettings();
-
-  // Simple fallback: get technical stories (exclude business category)
-  const cvRelevantStories = stories
-    .filter(story => story.category !== 'business')
-    .sort((a, b) => {
-      // Prioritize stories with impact metrics
-      if (a.metrics?.impact && !b.metrics?.impact) return -1;
-      if (!a.metrics?.impact && b.metrics?.impact) return 1;
-      // Then by title alphabetically
-      return a.title.localeCompare(b.title);
-    })
-    .slice(0, 5); // Limit to 5 projects for CV
-
-  const bulletPoints: CVProject[] = cvRelevantStories.map(story => {
-    // Get localized impact description
-    const impact = story.metrics?.impact || story.title;
-    const description = getLocalizedImpact(impact, locale);
-
-    // Select icon based on category
-    let iconName = "science"; // default
-    if (story.category === 'automation') {
-      iconName = "gitHub";
-    } else if (story.id === 'magic-bookmarks') {
-      iconName = "translate";
-    }
-
-    return {
-      iconName,
-      text: description,
-      url: `${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}`
-    };
-  });
-
-  return {
-    id: "personal-projects",
-    title: getProjectsTitleByLocale(locale),
-    subtitles: null,
-    paragraphs: null,
-    bulletPoints: bulletPoints.map((bp, index) => ({
-      id: `project-${index}`,
-      iconName: bp.iconName,
-      text: bp.text,
-      url: bp.url || null,
-      description: bp.description || null,
-    })),
-    subSections: null,
-  };
-}
-
-/**
- * Get projects title by locale
- */
 function getProjectsTitleByLocale(locale: string): string {
   switch (locale) {
     case 'da':
@@ -184,4 +20,116 @@ function getProjectsTitleByLocale(locale: string): string {
     default:
       return 'Work Examples';
   }
+}
+
+export function getCuratedProjects(locale: Locale): CuratedProject[] {
+  const localized: Record<Locale, CuratedProject[]> = {
+    en: [
+      {
+        iconName: 'speed',
+        text: '10x Performance Improvement',
+        description: 'Optimized enterprise sync from 20+ min to 2 min for 1000+ technicians.',
+        url: `/${locale}/project-stories/10x-performance-improvement`,
+      },
+      {
+        iconName: 'schedule',
+        text: 'Git-to-JIRA Time Tracker',
+        description: 'Automated time logging from commits with Jira sync and review flow.',
+        url: 'https://log-bridge.vercel.app',
+      },
+      {
+        iconName: 'dashboard',
+        text: 'Developer Task Overview Dashboard',
+        description: 'Combines Jira and GitHub into one view for active tasks, PRs, checks, and follow-up.',
+        url: `/${locale}/project-stories/git-jira-bridge`,
+      },
+      {
+        iconName: 'psychology',
+        text: 'AI Job Application Platform',
+        description: 'Next.js platform for CV customization, cover letters, and multilingual flows.',
+        url: `/${locale}/project-stories/ai-job-application-platform`,
+      },
+    ],
+    da: [
+      {
+        iconName: 'speed',
+        text: '10x Præstationsforbedring',
+        description: 'Reducerede synkroniseringstid fra 20+ min til få minutter i et produktionssystem.',
+        url: `/${locale}/project-stories/10x-performance-improvement`,
+      },
+      {
+        iconName: 'schedule',
+        text: 'Git-til-Jira Bro',
+        description: 'Automatiseret tidssporing fra commits med Jira-sync og review-flow.',
+        url: `/${locale}/project-stories/git-jira-bridge`,
+      },
+      {
+        iconName: 'dashboard',
+        text: 'Udviklerdashboard',
+        description: "Samler Jira og GitHub i ét overblik for aktive opgaver, PR'er, checks og opfølgning.",
+        url: `/${locale}/project-stories/git-jira-bridge`,
+      },
+      {
+        iconName: 'psychology',
+        text: 'AI-drevet jobansøgningsplatform',
+        description: 'Next.js-platform til CV-tilpasning, cover letters og flersprogede flows.',
+        url: `/${locale}/project-stories/ai-job-application-platform`,
+      },
+    ],
+    sv: [
+      {
+        iconName: 'speed',
+        text: '10x Prestandaförbättring',
+        description: 'Minskade synkroniseringstid från 20+ min till några minuter i ett produktionssystem.',
+        url: `/${locale}/project-stories/10x-performance-improvement`,
+      },
+      {
+        iconName: 'schedule',
+        text: 'Git-till-Jira Bro',
+        description: 'Automatiserad tidsspårning från commits med Jira-sync och reviewflöde.',
+        url: `/${locale}/project-stories/git-jira-bridge`,
+      },
+      {
+        iconName: 'dashboard',
+        text: 'Utvecklardashboard',
+        description: 'Samlar Jira och GitHub i en vy för aktiva uppgifter, PR:er, checks och uppföljning.',
+        url: `/${locale}/project-stories/git-jira-bridge`,
+      },
+      {
+        iconName: 'psychology',
+        text: 'AI-driven jobbansökningsplattform',
+        description: 'Next.js-plattform för CV-anpassning, cover letters och flerspråkiga flöden.',
+        url: `/${locale}/project-stories/ai-job-application-platform`,
+      },
+    ],
+  };
+
+  return localized[locale];
+}
+
+function toSection(projects: CuratedProject[], locale: string): CvSection {
+  return {
+    id: 'personal-projects',
+    title: getProjectsTitleByLocale(locale),
+    subtitles: null,
+    paragraphs: null,
+    bulletPoints: projects.map((project, index) => ({
+      id: `project-${index}`,
+      iconName: project.iconName,
+      text: project.text,
+      url: project.url || null,
+      description: project.description || null,
+    })),
+    subSections: null,
+  };
+}
+
+export async function getCVProjectsSectionForJob(_jobDescription: string, locale: string = 'en'): Promise<CvSection> {
+  return getCVProjectsSection(locale);
+}
+
+export async function getCVProjectsSection(locale: string = 'en'): Promise<CvSection> {
+  const validLocale: Locale = locale === 'da' || locale === 'sv' ? locale : 'en';
+  const projects = getCuratedProjects(validLocale);
+  return toSection(projects, validLocale);
 }
