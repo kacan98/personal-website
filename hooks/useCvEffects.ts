@@ -167,11 +167,6 @@ export function useCvEffects(config: CvEffectsConfig) {
     }
   }, [config.positionDetails, config.companyName, dispatch]);
 
-  // Fetch cache stats on component mount
-  useEffect(() => {
-    config.handleFetchCacheStats();
-  }, []); // Empty dependency array - only run on mount
-
   return {
     jobDescriptionReceived,
     jobLoadingTimeout,

@@ -22,17 +22,19 @@ export function useAuth(): AuthContextType {
 
 interface AuthProviderProps {
   children: ReactNode;
+  eager?: boolean;
 }
 
-export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
+export function AuthProvider({ children, eager = false }: AuthProviderProps): JSX.Element {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(eager);
 
   const checkAuthStatus = async (): Promise<void> => {
+    setIsLoading(true);
     try {
       const response = await fetch('/api/auth/status', {
         method: 'GET',
-        credentials: 'include', // Include cookies
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -52,7 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Include cookies
+        credentials: 'include',
         body: JSON.stringify({ password }),
       });
 
@@ -61,13 +63,13 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       if (data.success) {
         setIsAuthenticated(true);
         return { success: true, message: data.message };
-      } else {
-        return {
-          success: false,
-          message: data.message,
-          remainingAttempts: data.remainingAttempts
-        };
       }
+
+      return {
+        success: false,
+        message: data.message,
+        remainingAttempts: data.remainingAttempts
+      };
     } catch (error) {
       console.error('Login failed:', error);
       return {
@@ -81,21 +83,21 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
-        credentials: 'include', // Include cookies
+        credentials: 'include',
       });
 
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error);
-      // Still set to false even if request fails
       setIsAuthenticated(false);
     }
   };
 
-  // Check auth status on mount
   useEffect(() => {
-    checkAuthStatus();
-  }, []);
+    if (eager) {
+      checkAuthStatus();
+    }
+  }, [eager]);
 
   const value: AuthContextType = {
     isAuthenticated,

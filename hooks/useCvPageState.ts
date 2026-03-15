@@ -11,7 +11,7 @@ import { CacheStats } from '@/services/cacheService';
 export function useCvPageState() {
   // Core CV state
   const [originalCv, setOriginalCv] = useState<CVSettings | null>(null);
-  const [showDiff, setShowDiff] = useState(true);
+  const [showDiff, setShowDiff] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Language and localization
