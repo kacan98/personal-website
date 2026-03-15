@@ -129,6 +129,7 @@ export type Project = {
   tags: string[];
   links: Link[];
   featured: boolean;
+  archived?: boolean;
   description?: string;
   order?: number;
 };

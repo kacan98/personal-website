@@ -12,6 +12,7 @@ interface BlogPost {
   title: string;
   tags: string[];
   category: string;
+  archived?: boolean;
   date?: string;
   metrics?: {
     impact?: string;
@@ -40,11 +41,12 @@ async function getProjectStories(): Promise<BlogPost[]> {
       title: frontmatter.title || 'Untitled',
       tags: frontmatter.tags || [],
       category: frontmatter.category || 'uncategorized',
+      archived: frontmatter.archived || false,
       date: frontmatter.date,
       metrics: frontmatter.metrics,
       excerpt: content.substring(0, 200).replace(/\n/g, ' ').trim() + '...'
     };
-  });
+  }).filter((post) => !post.archived);
 
   // Sort by date (newest first)
   return posts.sort((a, b) => {

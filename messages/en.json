@@ -21,7 +21,7 @@
   },
   "about": {
     "title": "About me",
-    "content": "I'm Karel, a developer who writes code for work and fun. I mostly do frontend stuff but I'm comfortable with backend too. I taught myself to code after doing marketing for a while, so I think a lot about the user experience side of things.\n\nI work with TypeScript, Angular, React, and C# mostly. I like figuring out how things work and making them work better. When I'm not coding, I'm usually reading about new tech or trying to break something just to see if I can fix it.\n\nAlways up for interesting projects or just chatting about code.",
+    "content": "I'm a full-stack developer focused on building practical software that helps people get work done. My day-to-day work spans frontend interfaces, backend endpoints, integrations, and performance improvements across TypeScript, Angular, React, .NET, and X++.\n\nI moved into development from marketing, which still shapes how I work. I care about the user, the business context, and whether a solution actually removes friction instead of just looking technically clever.\n\nThe work I enjoy most is solving messy real-world problems: improving slow systems, reducing manual follow-up, connecting tools, and building software that gives people better visibility into what they need to do next.",
     "contactButton": "Shoot me a message",
     "linkedinButton": "Add me on LinkedIn"
   },
@@ -52,28 +52,52 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer"
+      "tagline": "Full-Stack Developer",
+      "subtitle": "I build product features, internal tools, and workflow software across frontend and backend."
     },
     "about": {
       "fullStack": {
         "header": "Full-Stack Developer",
-        "content": "I work on enterprise software that hundreds of companies use daily. I write code in TypeScript, .NET, and X++, and try to make things faster and less buggy."
+        "content": "I work across frontend and backend, building interfaces, endpoints, integrations, and internal tools in real production systems. Most of my work is in TypeScript, .NET, and X++."
       },
       "aiEnhanced": {
         "header": "AI-Enhanced Development",
-        "content": "I use AI coding tools every day because they help me write code faster and catch mistakes I'd miss. Always trying out new tools to see if they make my life easier."
+        "content": "I use AI tools as part of my development workflow for research, implementation, and iteration, but I still care about clean code, correctness, and maintainability."
       },
       "problemSolver": {
         "header": "Problem Solver",
-        "content": "I like figuring out why things break and fixing them. Most of my day is spent debugging, building features, and making sure stuff actually works."
+        "content": "I like figuring out the real bottleneck in a system, whether that is performance, missing visibility, awkward workflows, or a feature that is harder to use than it should be."
       },
       "userFocused": {
         "header": "User-Focused",
-        "content": "I used to do marketing, so I think about who's actually going to use the stuff I build. I try to make software that doesn't make people want to throw their computer out the window."
+        "content": "My marketing background still helps. I think about who will use the software, what they are trying to get done, and how to reduce friction instead of adding more process."
       }
     },
     "timeline": {
       "title": "Career Journey"
+    },
+    "proof": {
+      "heading": "I work best where product work, internal tooling, and operational reality meet.",
+      "items": [
+        {
+          "eyebrow": "Production",
+          "title": "Frontend and backend in live systems",
+          "description": "I work across interfaces, endpoints, integrations, and business logic in systems people rely on every day."
+        },
+        {
+          "eyebrow": "Workflow",
+          "title": "Internal tools that reduce friction",
+          "description": "I build dashboards, task visibility tools, and small workflow software that make repeated work easier to handle."
+        },
+        {
+          "eyebrow": "Ownership",
+          "title": "Practical engineering over fluff",
+          "description": "I like finding the real bottleneck, making the system clearer, and shipping something people will actually use."
+        }
+      ]
+    },
+    "selectedWork": {
+      "title": "Selected Work"
     }
   },
   "contact": {
@@ -84,7 +108,7 @@
       "description": "Best way to reach me"
     },
     "linkedin": {
-      "label": "LinkedIn", 
+      "label": "LinkedIn",
       "description": "Professional network"
     },
     "github": {

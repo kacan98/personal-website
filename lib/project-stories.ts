@@ -9,6 +9,7 @@ export interface Story {
   content: string;
   tags: string[];
   category: string;
+  archived?: boolean;
   metrics?: {
     impact?: string;
     timeframe?: string;
@@ -38,10 +39,11 @@ export async function getAllStories(): Promise<Story[]> {
       content: content,
       tags: frontmatter.tags || [],
       category: frontmatter.category || 'uncategorized',
+      archived: frontmatter.archived || false,
       metrics: frontmatter.metrics,
       embedding: frontmatter.embedding || null
     };
-  });
+  }).filter((story) => !story.archived);
 
   return stories;
 }

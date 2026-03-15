@@ -8,6 +8,7 @@ interface HeroProps {
   firstName: string;
   lastName: string;
   tagLine: string;
+  subtitle?: string;
 }
 
 const FirstNameContainer = styled(Typography)(({
@@ -35,11 +36,21 @@ const JobTitle = styled(Typography)({
   color: BRAND_COLORS.secondary,
   textTransform: 'none',
   letterSpacing: '0.02em',
-  fontWeight: 500,
-  fontSize: 'clamp(1.4rem, 4vw, 1.8rem)',
+  fontWeight: 600,
+  fontSize: 'clamp(1.4rem, 4vw, 1.9rem)',
   marginTop: '1rem',
   contain: 'layout style',
   minHeight: '2rem',
+});
+
+const JobSubtitle = styled(Typography)({
+  display: 'block',
+  color: 'rgba(255, 255, 255, 0.82)',
+  fontWeight: 400,
+  lineHeight: 1.6,
+  fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+  marginTop: '1rem',
+  maxWidth: '42rem',
 });
 
 const NameHeading = styled(Typography)(({
@@ -51,7 +62,7 @@ const NameHeading = styled(Typography)(({
   minHeight: '6rem',
 }));
 
-export const Hero = ({ firstName, lastName, tagLine }: HeroProps) => {
+export const Hero = ({ firstName, lastName, tagLine, subtitle }: HeroProps) => {
   const component = useRef(null);
 
   // Simplified rendering for better LCP performance
@@ -87,6 +98,11 @@ export const Hero = ({ firstName, lastName, tagLine }: HeroProps) => {
               <JobTitle className="job-title" variant="h3">
                 {tagLine}
               </JobTitle>
+              {subtitle ? (
+                <JobSubtitle variant="body1">
+                  {subtitle}
+                </JobSubtitle>
+              ) : null}
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }} sx={{

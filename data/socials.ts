@@ -18,7 +18,7 @@ export const socials: Social[] = [
   },
   {
     title: "Email",
-    url: "mailto:karel.cancara@gmail.com", 
+    url: "mailto:karel@cancara.dk", 
     iconName: "mail"
   }
 ];

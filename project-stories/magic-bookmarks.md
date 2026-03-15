@@ -7,6 +7,7 @@ tags:
   - CSS Modules
   - Developer Tools
 category: technical
+archived: true
 date: 2025-10-01
 metrics:
   impact: Streamlines navigation across development environments

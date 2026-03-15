@@ -2,27 +2,45 @@
 export const cvSv = {
   on: true,
   name: "Karel Čančara",
-  subtitle: "Full Stack Utvecklare | TypeScript, Angular, React, .NET",
+  subtitle: "Full Stack Utvecklare | TypeScript, Angular, React, D365 SCM, .NET",
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
       id: "profile",
-      paragraphs: [{ text: "Full Stack Utvecklare med 4+ års erfarenhet av att bygga webbapplikationer och företagslösningar. Levererat högimpaktfunktioner och betydande prestandaförbättringar.\n\n" },
-      { text: "Övergick till utveckling från marknadsföring, vilket ger ett användarfokuserat perspektiv och tvärfunktionella samarbetsförmågor. Konsekvent presterat som toppbidragsgivare i utvecklingsteam med expertis i TypeScript, Angular, React och .NET." }]
+      paragraphs: [
+        { text: "Full Stack Utvecklare med 4+ års erfarenhet av att bygga företagsprogramvara, interna verktyg och workflow-förbättringar." },
+        { text: "Jag arbetar över både frontend och backend, från gränssnitt och API:er till integrationer och prestandaarbete. Starkast i TypeScript, Angular, React, X++ och .NET-baserade miljöer." }
+      ]
     },
     {
       id: "work-experience",
       title: "Arbetslivserfarenhet",
       subSections: [
         {
-          title: "Microsoft Dynamics 365 Finance and Operations Developer",
+          id: "dynaway-full-stack-developer",
+          title: "Full Stack Utvecklare",
           subtitles: {
             left: "Dynaway",
-            right: "Nov 2024 - Nuvarande"
+            right: "Jul 2025 - Nuvarande"
           },
-          paragraphs: [{ text: "- Utvecklar full-stack lösningar för Microsoft Dynamics 365 Finance and Operations för företagskunder" },
-      { text: "- Bygger backend-tjänster och API:er med .NET, X++ och C# samtidigt som jag samarbetar med frontend-team" },
-      { text: "- Uppnådde 10x prestandaförbättring genom att reducera synkroniseringstid från 20+ minuter till under 2 minuter" }]
+          paragraphs: [
+            { text: "- Bygger frontend- och backendfunktioner i Microsoft Dynamics 365 Supply Chain Management, inklusive gränssnitt, endpoints, integrationer och workflow-förbättringar" },
+            { text: "- Arbetar i TypeScript, X++ och .NET-baserade miljöer för att stödja verkliga operativa processer" },
+            { text: "- Byggde interna utvecklarverktyg, inklusive en Jira/GitHub-dashboard som samlar uppgifter, PR:er, felande pipelines, merge conflicts och kommentarer på ett ställe" },
+            { text: "- Förbättrade kritisk dataöverföring med cirka 10x i produktionssystem" }
+          ]
+        },
+        {
+          id: "dynaway-d365-scm-xpp-developer",
+          title: "D365 SCM X++-utvecklare",
+          subtitles: {
+            left: "Dynaway",
+            right: "Nov 2024 - Jul 2025"
+          },
+          paragraphs: [
+            { text: "- Utvecklade backendlogik och ERP-anpassningar i Microsoft Dynamics 365 Supply Chain Management med X++ och relaterade plattformsverktyg" },
+            { text: "- Byggde endpoints och affärslogik som stödde frontend-workflows och enterprisekrav" }
+          ]
         },
         {
           title: "Frontend Webbutvecklare",
@@ -30,10 +48,11 @@ export const cvSv = {
             left: "Dynaway",
             right: "Jul 2022 - Nov 2024"
           },
-          paragraphs: [{ text: "- Byggde TypeScript och Angular webbapplikationer som betjänar 100+ företag" },
-      { text: "- Konsekvent rankad som topprestanda i utvecklingsteamsprints" },
-      { text: "- Fungerade som Scrum Master för 5-personers utvecklingsteam" },
-      { text: "- Förbättrade CI/CD pipelines och automatiserade distributionsarbetsflöden" }]
+          paragraphs: [
+            { text: "- Byggde TypeScript- och Angular-webbapplikationer som används av 100+ företag" },
+            { text: "- Förbättrade CI/CD-workflows och leveranstempo i teamet" },
+            { text: "- Arbetade som Scrum Master i ett 5-personers utvecklingsteam" }
+          ]
         },
         {
           title: "Webbutvecklare inom Marknadsföring",
@@ -41,10 +60,11 @@ export const cvSv = {
             left: "Dynaway",
             right: "Nov 2020 - Jul 2022"
           },
-          paragraphs: [{ text: "- Förbättrade företagets webbplats genom att utveckla anpassade CMS-integrerade moduler och förbättra värdepresentation över flera sektioner" },
-      { text: "- Samarbetade med team över hela företaget för att förstå produktfunktioner och översätta dem till effektiva webblösningar" },
-      { text: "- Designade kundinföringsguider och automatiserade e-postarbetsflöden i HubSpot för att förbättra leadgenerering" },
-      { text: "- Etablerade videokultur för företaget och skapade produktdemonstrationsinnehåll som stödde försäljning och marknadsföring" }]
+          paragraphs: [
+            { text: "- Byggde CMS-integrerade moduler och förbättrade värdepresentation på företagets webbplats" },
+            { text: "- Samarbetade med team över hela företaget för att översätta produktfunktioner till effektiva webblösningar" },
+            { text: "- Designade onboarding-innehåll och automatiserade e-postflöden i HubSpot" }
+          ]
         },
         {
           title: "Medgrundare",
@@ -52,23 +72,11 @@ export const cvSv = {
             left: "AnkeriMedia",
             right: "Nov 2019 - Jul 2020"
           },
-          paragraphs: [{ text: "- Medgrundade marknadsföringstjänster startup inriktat på tjeckiska fastighetsbyråer" },
-      { text: "- Byggde företagets webbplats, skapade marknadsföringsmaterial och genomförde direkt uppsökning till potentiella kunder" },
-      { text: "- Säkrade framgångsrikt 50+ möten med beslutsfattare och stängde 5 betalande kunder" }]
-        }
-      ]
-    },
-    {
-      id: "education",
-      title: "Utbildning",
-      subSections: [
-        {
-          title: "Professionell kandidatexamen i Marknadsföring och Försäljning",
-          subtitles: {
-            left: "UCN",
-            right: ""
-          },
-          paragraphs: []
+          paragraphs: [
+            { text: "- Medgrundade en marknadsföringsbyrå med fokus på tjeckiska fastighetsbyråer" },
+            { text: "- Byggde företagets webbplats, skapade material och hanterade uppsökande försäljning" },
+            { text: "- Säkrade 50+ möten med beslutsfattare och stängde 5 betalande kunder" }
+          ]
         }
       ]
     }
@@ -80,8 +88,8 @@ export const cvSv = {
       bulletPoints: [
         {
           iconName: "translate",
-          text: "kcancara.vercel.app/",
-          url: "https://kcancara.vercel.app/"
+          text: "cancara.dk",
+          url: "https://cancara.dk/"
         },
         {
           iconName: "linkedIn",
@@ -95,8 +103,8 @@ export const cvSv = {
         },
         {
           iconName: "mail",
-          text: "karel.cancara@gmail.com",
-          url: "mailto:karel.cancara@gmail.com"
+          text: "karel@cancara.dk",
+          url: "mailto:karel@cancara.dk"
         }
       ]
     },
@@ -106,11 +114,11 @@ export const cvSv = {
       bulletPoints: [
         {
           iconName: "translate",
-          text: "Språk: TypeScript, JavaScript, C#"
+          text: "Språk: TypeScript, JavaScript, X++, C#"
         },
         {
           iconName: "translate",
-          text: "Ramverk: Angular, React, .NET, Node.js, Express, Deno"
+          text: "Ramverk: Angular, React, .NET, Node.js, Express"
         },
         {
           iconName: "gitHub",
@@ -153,29 +161,24 @@ export const cvSv = {
       title: "Personliga Projekt",
       bulletPoints: [
         {
-          iconName: "science",
-          text: "AI-Driven Jobbansökningsplattform - Minskade ansökningstid med 80%",
-          url: "https://kcancara.vercel.app/project-stories/ai-job-application-platform"
-        },
-        {
-          iconName: "science",
+          iconName: "speed",
           text: "10x Prestandaförbättring - Minskade synkroniseringstid från 20+ min till <2 min",
-          url: "https://kcancara.vercel.app/project-stories/10x-performance-improvement"
+          url: "https://cancara.dk/project-stories/10x-performance-improvement"
         },
         {
-          iconName: "gitHub",
+          iconName: "schedule",
           text: "Git-till-Jira Bro - Sparar ~1 timme/månad per utvecklare i tidsspårning",
-          url: "https://kcancara.vercel.app/project-stories/git-jira-bridge"
+          url: "https://cancara.dk/project-stories/git-jira-bridge"
         },
         {
-          iconName: "science",
-          text: "LinkedIn Jobbfiltrering - Automatiserad jobbskrapning med Playwright",
-          url: "https://kcancara.vercel.app/project-stories/playwright-job-scraper"
+          iconName: "dashboard",
+          text: "Utvecklardashboard - Samlar Jira och GitHub i en vy för aktiva uppgifter, PR:er och uppföljning",
+          url: "https://cancara.dk/project-stories/git-jira-bridge"
         },
         {
-          iconName: "translate",
-          text: "Magic Bookmarks - Universellt miljönavigeringsverktyg",
-          url: "https://kcancara.vercel.app/project-stories/magic-bookmarks"
+          iconName: "psychology",
+          text: "AI-driven jobbansökningsplattform - GPT-baserad CV-anpassning och cover letters",
+          url: "https://cancara.dk/project-stories/ai-job-application-platform"
         }
       ]
     }

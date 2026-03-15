@@ -13,6 +13,7 @@ links:
     url: "https://josef-kriz.github.io/team-app/"
     iconName: "externalLink"
 featured: true
+archived: true
 order: 90
 ---
 

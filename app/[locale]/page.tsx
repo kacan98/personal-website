@@ -1,9 +1,9 @@
 import HomePageContent from "@/components/home/HomePageContent";
 import { getTranslations } from 'next-intl/server';
 import { getJobsData, convertJobsToTimeline, getSocials } from '@/data';
+import { getCuratedProjects } from '@/lib/cv-projects';
+import { getSettings } from '@/data/settings';
 
-
-// Example technologies array for the TechList component
 const technologies = [
   { name: "TypeScript", color: "#3178C6" },
   { name: "React", color: "#61DAFB" },
@@ -24,37 +24,41 @@ export default async function App({ params }: { params: Promise<{ locale: string
   const t = await getTranslations('homepage');
   const jobsData = getJobsData(locale);
   const socials = getSocials();
-  
-  const aboutMe = {
-    fullStack: {
-      header: t('about.fullStack.header'),
-      content: t('about.fullStack.content'),
-      visualType: 'laptop' as const
-    },
-    aiEnhanced: {
-      header: t('about.aiEnhanced.header'), 
-      content: t('about.aiEnhanced.content'),
-      visualType: 'ai' as const
-    },
-    problemSolver: {
-      header: t('about.problemSolver.header'),
-      content: t('about.problemSolver.content'),
-      visualType: 'problem' as const
-    },
-    userFocused: {
-      header: t('about.userFocused.header'),
-      content: t('about.userFocused.content'),
-      visualType: 'user' as const
-    },
-  };
+  const settings = getSettings();
 
-  // Convert jobs data to timeline format
+  const proofPoints = [
+    {
+      eyebrow: t('proof.items.0.eyebrow'),
+      title: t('proof.items.0.title'),
+      description: t('proof.items.0.description'),
+    },
+    {
+      eyebrow: t('proof.items.1.eyebrow'),
+      title: t('proof.items.1.title'),
+      description: t('proof.items.1.description'),
+    },
+    {
+      eyebrow: t('proof.items.2.eyebrow'),
+      title: t('proof.items.2.title'),
+      description: t('proof.items.2.description'),
+    },
+  ];
+
+  const selectedWork = getCuratedProjects(
+    locale === 'da' || locale === 'sv' ? locale : 'en',
+    settings.siteUrl
+  ).slice(0, 3);
+
   const careerTimeline = convertJobsToTimeline(jobsData);
 
   return (
-    <HomePageContent 
+    <HomePageContent
       heroTagline={t('hero.tagline')}
-      aboutMe={aboutMe}
+      heroSubtitle={t('hero.subtitle')}
+      proofHeading={t('proof.heading')}
+      proofPoints={proofPoints}
+      selectedWorkTitle={t('selectedWork.title')}
+      selectedWork={selectedWork}
       careerTimeline={careerTimeline}
       timelineTitle={t('timeline.title')}
       technologies={technologies}

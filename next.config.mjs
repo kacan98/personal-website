@@ -20,9 +20,7 @@ const nextConfig = {
     // No remote patterns needed - using local images only
   },
   poweredByHeader: false,
-  experimental: {
-    optimizePackageImports: ['@mui/material', '@mui/icons-material'],
-    webpackMemoryOptimizations: true, // Next.js 15+ memory optimization
+  experimental: {    webpackMemoryOptimizations: true, // Next.js 15+ memory optimization
     // ppr: 'incremental', // TODO: Enable when upgrading to Next.js canary
   },
   // External packages for server components
