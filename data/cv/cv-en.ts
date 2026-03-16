@@ -2,15 +2,15 @@
 export const cvConfigEn = {
   on: true,
   name: "Karel Čančara",
-  subtitle: "Full Stack Developer | TypeScript, Angular, React, D365 SCM, .NET",
+  subtitle: "Full Stack Developer | TypeScript, Angular, React, .NET",
   profilePicture: "/images/cv/profile.jpg",
   mainColumn: [
     {
       id: "profile",
       title: "Profile",
       paragraphs: [
-        { text: "Full Stack Developer with 4+ years of experience building enterprise software, internal tools, and workflow improvements." },
-        { text: "Comfortable across frontend and backend, from interfaces and APIs to integrations and performance work. Strongest in TypeScript, Angular, React, X++, and .NET-based environments." }
+        { text: "Full Stack Developer with 4+ years of experience in building web applications and enterprise solutions. Delivered high-impact features and achieved significant performance improvements.\n\n" },
+        { text: "Transitioned from marketing to development, bringing a user-focused perspective and cross-functional collaboration skills. Consistently performed as top contributor in development teams with expertise in TypeScript, Angular, React, and .NET." }
       ]
     },
     {
@@ -18,29 +18,17 @@ export const cvConfigEn = {
       title: "Work Experience",
       subSections: [
         {
-          id: "dynaway-full-stack-developer",
-          title: "Full Stack Developer",
+          id: "dynaway-d365-developer",
+          title: "Microsoft Dynamics 365 Finance and Operations Developer",
           subtitles: {
             left: "Dynaway",
-            right: "Jul 2025 - Present"
+            right: "Nov 2024 - Present"
           },
           paragraphs: [
-            { text: "- Build frontend and backend features in Microsoft Dynamics 365 Supply Chain Management, including interfaces, endpoints, integrations, and workflow improvements" },
-            { text: "- Work in TypeScript, X++, and .NET-based environments to support real operational processes" },
-            { text: "- Built internal developer tooling, including a Jira/GitHub dashboard that surfaces tasks, PRs, failing pipelines, merge conflicts, and comments in one place" },
-            { text: "- Improved critical data transfer performance by roughly 10x in production systems" }
-          ]
-        },
-        {
-          id: "dynaway-d365-scm-xpp-developer",
-          title: "D365 SCM X++ Developer",
-          subtitles: {
-            left: "Dynaway",
-            right: "Nov 2024 - Jul 2025"
-          },
-          paragraphs: [
-            { text: "- Developed backend logic and ERP customizations in Microsoft Dynamics 365 Supply Chain Management using X++ and related platform tooling" },
-            { text: "- Built endpoints and business logic supporting frontend workflows and enterprise client requirements" }
+            { text: "- Developing full-stack solutions for Microsoft Dynamics 365 Finance and Operations serving enterprise clients" },
+            { text: "- Building backend services and APIs using .NET, X++, and C# while collaborating with frontend teams" },
+            { text: "- Achieved 10x performance improvement in data transfer between frontend and backend systems" },
+            { text: "- Built internal developer tools and AI-assisted workflows, including X++ team skills and a Jira/GitHub dashboard that surfaces tasks in progress, PRs, failing pipelines, merge conflicts, and comments requiring action in one place" }
           ]
         },
         {
@@ -51,9 +39,9 @@ export const cvConfigEn = {
             right: "Jul 2022 - Nov 2024"
           },
           paragraphs: [
-            { text: "- Built TypeScript and Angular web applications used by 100+ companies" },
-            { text: "- Improved CI/CD workflows and delivery speed across the team" },
-            { text: "- Served as Scrum Master for a 5-person development team" }
+            { text: "- Built TypeScript and Angular web applications serving 100+ companies" },
+            { text: "- Consistently delivered highest story points in team sprints while enhancing CI/CD pipelines" },
+            { text: "- Served as Scrum Master for 5-person development team" }
           ]
         },
         {
@@ -64,9 +52,10 @@ export const cvConfigEn = {
             right: "Nov 2020 - Jul 2022"
           },
           paragraphs: [
-            { text: "- Built CMS-integrated website modules and improved product/value presentation across the site" },
-            { text: "- Worked with teams across the company to translate product capabilities into effective web solutions" },
-            { text: "- Designed onboarding content and automated email workflows in HubSpot" }
+            { text: "- Enhanced company website by developing custom CMS-integrated modules and improving value presentation across multiple sections" },
+            { text: "- Collaborated with teams across the company to understand product capabilities and translate them into effective web solutions" },
+            { text: "- Designed customer onboarding guides and automated email workflows in HubSpot" },
+            { text: "- Created product demonstration videos supporting sales and marketing efforts" }
           ]
         },
         {
@@ -77,9 +66,9 @@ export const cvConfigEn = {
             right: "Nov 2019 - Jul 2020"
           },
           paragraphs: [
-            { text: "- Co-founded a marketing services startup focused on Czech real estate agencies" },
-            { text: "- Built the company website, created materials, and handled outbound outreach" },
-            { text: "- Secured 50+ meetings with decision-makers and closed 5 paying customers" }
+            { text: "- Co-founded marketing services startup targeting Czech real estate agencies" },
+            { text: "- Built company website, created marketing materials, and conducted direct outreach to potential clients" },
+            { text: "- Successfully secured 50+ meetings with decision-makers and closed 5 paying customers" }
           ]
         }
       ]
@@ -92,8 +81,8 @@ export const cvConfigEn = {
       bulletPoints: [
         {
           iconName: "translate",
-          text: "cancara.dk",
-          url: "https://cancara.dk/"
+          text: "kcancara.vercel.app/",
+          url: "https://kcancara.vercel.app/"
         },
         {
           iconName: "linkedIn",
@@ -107,8 +96,8 @@ export const cvConfigEn = {
         },
         {
           iconName: "mail",
-          text: "karel@cancara.dk",
-          url: "mailto:karel@cancara.dk"
+          text: "karel.cancara@gmail.com",
+          url: "mailto:karel.cancara@gmail.com"
         }
       ]
     },
@@ -118,11 +107,11 @@ export const cvConfigEn = {
       bulletPoints: [
         {
           iconName: "translate",
-          text: "Languages: TypeScript, JavaScript, X++, C#"
+          text: "Languages: TypeScript, JavaScript, C#"
         },
         {
           iconName: "translate",
-          text: "Frameworks: Angular, React, .NET, Node.js, Express"
+          text: "Frameworks: Angular, React, .NET, Node.js, Express, Deno"
         },
         {
           iconName: "gitHub",
@@ -153,10 +142,6 @@ export const cvConfigEn = {
         {
           iconName: "translate",
           text: "Swedish (fluent)"
-        },
-        {
-          iconName: "translate",
-          text: "Czech (native)"
         }
       ]
     },
@@ -165,10 +150,16 @@ export const cvConfigEn = {
       title: "Projects",
       bulletPoints: [
         {
-          iconName: "speed",
+          iconName: "code",
           text: "10x Performance Improvement",
           description: "Optimized enterprise sync from 20+ min to 2 min for 1000+ technicians. SQL optimization, IndexedDB, distributed systems.",
-          url: "/en/projects/10x-performance-improvement"
+          url: "https://kacan98.com/project-stories#10x-performance"
+        },
+        {
+          iconName: "autoAwesome",
+          text: "AI Job Application Platform",
+          description: "Next.js 15 platform with GPT-5 integration for CV customization & cover letters. Multi-language support.",
+          url: "https://kacan98.com"
         },
         {
           iconName: "schedule",
@@ -177,16 +168,16 @@ export const cvConfigEn = {
           url: "https://log-bridge.vercel.app"
         },
         {
-          iconName: "dashboard",
+          iconName: "code",
           text: "Developer Task Overview Dashboard",
           description: "Personal internal dashboard that combines Jira and GitHub into one view for active tasks, PRs, failing checks, conflicts, and follow-up items. React, Node.js, TypeScript.",
-          url: "/en/projects/git-to-jira-bridge"
+          url: "https://kcancara.vercel.app/project-stories/git-jira-bridge"
         },
         {
-          iconName: "psychology",
-          text: "AI Job Application Platform",
-          description: "Next.js 15 platform with GPT-based CV customization, cover letters, and multilingual flows.",
-          url: "/en/projects/ai-job-application-platform"
+          iconName: "calculate",
+          text: "Property Investment Calculator",
+          description: "Real-time buy-vs-rent analysis tool with complex financial modeling. React, Redux, TypeScript.",
+          url: "https://kacan98.github.io/buying-vs-renting/"
         }
       ]
     }
