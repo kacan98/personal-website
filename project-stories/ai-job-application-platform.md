@@ -74,6 +74,14 @@ The position-adjustment flow is centered around one practical input: the job des
 
 That decision reflects the product mindset behind the project. Good software should reduce decision fatigue. The interface should help the user focus on the few inputs that actually change the outcome.
 
+## The diff view keeps AI output reviewable
+
+The most important part of the workflow is not generation. It is review. When the CV is adjusted for a role, the page can show exactly what changed so I can inspect the output before using it.
+
+![AI-modified CV shown in diff mode so every tailored change can be reviewed before it is used.](/images/project-stories/ai-job-application-platform/cv-ai-diff-view.png)
+
+That matters for recruiters and customers because it shows a practical approach to AI: use it to accelerate high-value work, but keep the output transparent and easy to validate.
+
 ## Translation is built into the application flow
 
 For multilingual applications, I did not want translation to be an afterthought or an export step hidden somewhere else. It lives directly in the CV workflow.
