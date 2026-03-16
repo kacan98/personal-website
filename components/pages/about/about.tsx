@@ -1,30 +1,20 @@
-import { Box, Typography, Button as MuiButton } from "@mui/material";
-import { ReactNode } from "react";
+import { Box, Typography, Paper, Chip, Divider } from "@mui/material";
+import Button from "@/components/ui/Button";
 import PageWrapper from "../pageWrapper";
+import ProfileImage from "./ProfileImage";
 
-export type AboutProps = {
-  heading: string;
-  bodyContent: ReactNode;
-  buttonText?: string;
-  buttonHref?: string;
-  linkedinButtonText?: string;
-  avatarSrc?: string;
-  avatarAlt?: string;
-  onButtonClick?: () => void;
-};
-
-const highlightItems = [
+const focusAreas = [
   {
     title: "Product + Ops",
-    body: "Internal dashboards, tooling, and workflows that keep noisy products stable without slowing builders down.",
+    body: "Internal dashboards and tooling that keep noisy systems stable so teams ship faster.",
   },
   {
     title: "Systems Thinking",
-    body: "I combine frontend polish and backend reliability, so each touchpoint proves the feature actually works.",
+    body: "Frontend polish backed by backend precision, so every screen tells the same truth.",
   },
   {
-    title: "Solo Delivery",
-    body: "One developer who ships the experience end-to-end and writes the docs, tests, and automation that follow.",
+    title: "Solo Ownership",
+    body: "I deliver experiences end-to-end, including docs, tests, automation, and follow-through.",
   },
 ];
 
@@ -34,15 +24,23 @@ const stats = [
   { label: "Internal tools", value: "8" },
 ];
 
+const approachTags = [
+  "Product engineering",
+  "Workflow automation",
+  "Operational reality",
+  "TypeScript & .NET",
+  "Human-first UX",
+];
+
 const renderParagraphs = (content: string) =>
   content
     .split("\n")
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
     .map((paragraph, index) => (
-      <Box component="p" key={index} sx={{ mb: 2, textAlign: "left", lineHeight: 1.7 }}>
+      <Typography key={index} component="p" sx={{ mb: 2, lineHeight: 1.7 }}>
         {paragraph}
-      </Box>
+      </Typography>
     ));
 
 export const About = ({
@@ -52,136 +50,185 @@ export const About = ({
   buttonHref,
   linkedinButtonText = "Add me on LinkedIn",
   onButtonClick,
-}: AboutProps) => {
+}: {
+  heading: string;
+  bodyContent: React.ReactNode;
+  buttonText?: string;
+  buttonHref?: string;
+  linkedinButtonText?: string;
+  onButtonClick?: () => void;
+}) => {
   return (
-    <PageWrapper title={heading} description="Product-minded engineer solving real operational problems">
-      <Box
-        sx={{
-          maxWidth: "960px",
-          mx: "auto",
-          px: { xs: 2, md: 0 },
-          py: { xs: 3, md: 5 },
-        }}
-      >
-        <Typography variant="h3" sx={{ mb: 3 }}>
-          {heading}
-        </Typography>
-
+    <PageWrapper title={heading} description="Product-minded engineer solving messy operational problems">
+      <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 4, md: 6 }, py: { xs: 3, md: 4 } }}>
         <Box
+          component="section"
           sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "280px minmax(0, 1fr)" },
-            gap: { xs: 3, md: 5 },
-            alignItems: "start",
+            borderRadius: 4,
+            border: "1px solid rgba(255,255,255,0.1)",
+            background:
+              "linear-gradient(180deg, rgba(168,85,247,0.12), rgba(15,15,15,0.8))",
+            p: { xs: 3, md: 5 },
+            boxShadow: "0 20px 45px rgba(0,0,0,0.35)",
           }}
         >
           <Box
             sx={{
-              borderRadius: 3,
-              border: "1px solid rgba(255,255,255,0.08)",
-              background: "rgba(255,255,255,0.02)",
-              p: 2.5,
-              textAlign: "left",
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) minmax(0, 1fr)" },
+              gap: { xs: 4, md: 5 },
+              alignItems: "center",
             }}
           >
-            <Typography variant="subtitle2" sx={{ letterSpacing: "0.2em", mb: 1.5, color: "text.secondary" }}>
-              Product engineer
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+              Product-savvy engineering for messy operational systems
             </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 600 }}>
-              Karel Čančara
-            </Typography>
-            <Typography sx={{ mt: 1.5, color: "text.secondary" }}>
-              Building frontend, backend, and ops tools that keep messy products working and teams focused.
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              color: "text.primary",
-              fontSize: { xs: "1rem", md: "1.1rem" },
-              lineHeight: 1.7,
-            }}
-          >
-            {typeof bodyContent === "string" ? renderParagraphs(bodyContent) : bodyContent}
-
-            {buttonText && (
-              <Box
-                sx={{
-                  mt: 3,
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 2,
-                }}
-              >
-                <MuiButton
-                  variant="contained"
-                  color="primary"
+            <Box sx={{ color: "rgba(255,255,255,0.8)", mb: 3, lineHeight: 1.7 }}>
+              {typeof bodyContent === "string" ? renderParagraphs(bodyContent) : bodyContent}
+            </Box>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+              {buttonText && (
+                <Button
+                  component="a"
                   href={buttonHref}
-                  onClick={onButtonClick}
-                  sx={{ textTransform: "none", fontWeight: 600, px: 4 }}
+                  variant="primary"
+                  sx={{ px: 4, py: 1.75 }}
                 >
                   {buttonText}
-                </MuiButton>
-                <MuiButton
-                  variant="outlined"
-                  href="https://www.linkedin.com/in/kcancara"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{ textTransform: "none", fontWeight: 600, px: 4 }}
-                >
-                  {linkedinButtonText}
-                </MuiButton>
+                </Button>
+              )}
+              <Button
+                component="a"
+                href="https://www.linkedin.com/in/kcancara"
+                variant="outline"
+                sx={{ px: 4, py: 1.5 }}
+              >
+                {linkedinButtonText}
+              </Button>
+            </Box>
+            <Box sx={{ mt: 3, display: "flex", flexWrap: "wrap", gap: 1 }}>
+              {approachTags.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  size="small"
+                  sx={{
+                    backgroundColor: "rgba(255,255,255,0.08)",
+                    color: "text.primary",
+                    borderColor: "rgba(255,255,255,0.2)",
+                    borderStyle: "solid",
+                    borderWidth: 1,
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+          <Paper
+            elevation={0}
+            sx={{
+              borderRadius: 3,
+              background: "rgba(0,0,0,0.45)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              p: 3,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <ProfileImage />
+            <Typography variant="subtitle2" sx={{ letterSpacing: "0.3em", color: "text.secondary" }}>
+              Product engineer
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+              Karel Čančara
+            </Typography>
+            <Typography sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+              Frontend and backend delivery for workflows, automation, and engineer-facing UX.
+            </Typography>
+            <Divider sx={{ width: "100%", borderColor: "rgba(255,255,255,0.1)" }} />
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  7+
+                </Typography>
+                <Typography variant="caption" sx={{ letterSpacing: "0.2em", color: "text.secondary" }}>
+                  Years shipping
+                </Typography>
               </Box>
-            )}
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  14
+                </Typography>
+                <Typography variant="caption" sx={{ letterSpacing: "0.2em", color: "text.secondary" }}>
+                  Projects live
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  8
+                </Typography>
+                <Typography variant="caption" sx={{ letterSpacing: "0.2em", color: "text.secondary" }}>
+                  Internal tools
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+        </Box>
+
+        <Box component="section" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Typography variant="h5" sx={{ letterSpacing: "0.2em" }}>
+            Focus areas
+          </Typography>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
+              gap: { xs: 1.5, md: 2.5 },
+            }}
+          >
+            {focusAreas.map((item) => (
+              <Paper
+                key={item.title}
+                elevation={0}
+                sx={{
+                  borderRadius: 3,
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.03)",
+                  minHeight: 180,
+                  p: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ letterSpacing: "0.3em", color: "text.secondary" }}>
+                  {item.title}
+                </Typography>
+                <Typography sx={{ color: "text.secondary", lineHeight: 1.6 }}>
+                  {item.body}
+                </Typography>
+              </Paper>
+            ))}
           </Box>
         </Box>
 
-        <Box
-          sx={{
-            mt: 6,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-            gap: 2.5,
-          }}
-        >
-          {highlightItems.map((item) => (
-            <Box
-              key={item.title}
-              sx={{
-                borderRadius: 3,
-                border: "1px solid rgba(255,255,255,0.08)",
-                background: "rgba(255,255,255,0.02)",
-                p: 3,
-                minHeight: 180,
-              }}
-            >
-              <Typography variant="subtitle2" sx={{ letterSpacing: "0.12em", mb: 1, color: "text.secondary" }}>
-                {item.title}
-              </Typography>
-              <Typography variant="body1" sx={{ lineHeight: 1.6, color: "text.secondary" }}>
-                {item.body}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-
-        <Box
-          sx={{
-            mt: 5,
-            display: "grid",
-            gridTemplateColumns: { xs: "repeat(3, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" },
-            gap: 2,
-            textAlign: "center",
-          }}
-        >
+        <Box component="section" sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 1 }}>
           {stats.map((stat) => (
-            <Box
+            <Paper
               key={stat.label}
+              elevation={0}
               sx={{
+                flex: "1 1 180px",
                 borderRadius: 3,
                 border: "1px solid rgba(255,255,255,0.08)",
                 background: "rgba(255,255,255,0.02)",
                 py: 3,
+                px: 4,
+                textAlign: "center",
               }}
             >
               <Typography variant="h4" sx={{ fontWeight: 700 }}>
@@ -190,7 +237,7 @@ export const About = ({
               <Typography variant="caption" sx={{ letterSpacing: "0.1em", color: "text.secondary" }}>
                 {stat.label}
               </Typography>
-            </Box>
+            </Paper>
           ))}
         </Box>
       </Box>
