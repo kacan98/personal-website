@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { BACKGROUND_COLORS } from "./colors";
+import { getBaseMetadata, getPersonSchema, getWebsiteSchema } from "@/lib/site-metadata";
 
-export const metadata: Metadata = {
-  title: "Karel Čančara - Full-Stack Developer",
-  description: "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.",
-};
+export const metadata: Metadata = getBaseMetadata();
+
+const personSchema = getPersonSchema();
+const websiteSchema = getWebsiteSchema();
 
 export default function RootLayout({
   children,
@@ -22,6 +23,14 @@ export default function RootLayout({
           fontFamily: "Urbanist, sans-serif",
         }}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         {children}
       </body>
     </html>
