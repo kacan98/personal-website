@@ -39,46 +39,47 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         mb: { xs: 4, md: 6 }
       }}
     >
+      {subtitle && (
+        <Typography
+          component="div"
+          sx={{
+            fontFamily: 'ui-monospace, "SFMono-Regular", "SF Mono", Consolas, monospace',
+            fontSize: '0.82rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: 'text.secondary',
+            mb: 1.25,
+          }}
+        >
+          {subtitle}
+        </Typography>
+      )}
       <Typography 
         variant="h2"
         component="h2"
         onClick={onClick}
         sx={{
           ...getSizeSx(),
-          fontWeight: 600,
+          fontWeight: 700,
           color: 'text.primary',
-          letterSpacing: '-0.02em',
-          mb: subtitle ? 2 : (description ? 3 : 0),
+          letterSpacing: '-0.035em',
+          lineHeight: 1.02,
+          mb: description ? 2.25 : 0,
           cursor: 'default',
         }}
       >
         {title}
       </Typography>
       
-      {subtitle && (
-        <Typography 
-          variant="h4"
-          component="h3"
-          sx={{
-            fontSize: { xs: '1.2rem', md: '1.5rem' },
-            fontWeight: 400,
-            color: 'text.secondary',
-            mb: description ? 2 : 0,
-          }}
-        >
-          {subtitle}
-        </Typography>
-      )}
-      
       {description && (
         <Typography 
           variant="body1"
           sx={{
-            fontSize: { xs: '1rem', md: '1.125rem' },
+            fontSize: { xs: '1rem', md: '1.05rem' },
             color: 'text.secondary',
             maxWidth: '600px',
             mx: align === 'center' ? 'auto' : 0,
-            lineHeight: 1.6,
+            lineHeight: 1.75,
           }}
         >
           {description}

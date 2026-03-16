@@ -9,26 +9,43 @@ const getBaseTheme = (fontSize:number): ThemeOptions => {
   // so modify and set below instead
   return {
     typography: {
-      fontFamily: '"Open Sans", "Urbanist", "Cormorant Garamond", "Yeseva One", system-ui, sans-serif',
+      fontFamily: '"Open Sans", system-ui, sans-serif',
       fontSize,
 
       h1: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
         fontWeight: 700,
+        letterSpacing: '-0.04em',
+        lineHeight: 1,
       },
       h2: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
         fontWeight: 700,
+        letterSpacing: '-0.035em',
+        lineHeight: 1.04,
       },
       h3: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
         fontWeight: 700,
+        letterSpacing: '-0.03em',
       },
       h4: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
         fontWeight: 700,
       },
       h5: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
         fontWeight: 700,
       },
       h6: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
         fontWeight: 700,
+      },
+      button: {
+        fontFamily: '"Urbanist", "Open Sans", system-ui, sans-serif',
+        fontWeight: 600,
+        letterSpacing: '-0.01em',
+        textTransform: 'none',
       },
     },
     components: {

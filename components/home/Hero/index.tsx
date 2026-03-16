@@ -13,51 +13,51 @@ interface HeroProps {
 
 const FirstNameContainer = styled(Typography)(({
   display: 'block',
-  letterSpacing: '-0.02em',
+  letterSpacing: '-0.04em',
   color: BRAND_COLORS.primary,
-  marginBottom: '0.5rem',
-  fontSize: 'clamp(3rem, 8vw, 5rem)',
-  fontWeight: 600,
+  marginBottom: '0.25rem',
+  fontSize: 'clamp(3.2rem, 8vw, 5.4rem)',
+  fontWeight: 700,
   fontDisplay: 'swap',
 }));
 
 const LastNameContainer = styled(Typography)(({
   display: 'block',
   color: BRAND_COLORS.primary,
-  marginTop: '0.5rem',
-  letterSpacing: '-0.02em',
-  fontSize: 'clamp(3rem, 8vw, 5rem)',
+  marginTop: '0.1rem',
+  letterSpacing: '-0.045em',
+  fontSize: 'clamp(3.2rem, 8vw, 5.4rem)',
   fontWeight: 700,
   fontDisplay: 'swap',
 }));
 
 const JobTitle = styled(Typography)({
   display: 'block',
-  color: BRAND_COLORS.secondary,
+  color: 'rgba(255, 255, 255, 0.88)',
   textTransform: 'none',
-  letterSpacing: '0.02em',
+  letterSpacing: '-0.01em',
   fontWeight: 600,
-  fontSize: 'clamp(1.4rem, 4vw, 1.9rem)',
-  marginTop: '1rem',
+  fontSize: 'clamp(1.35rem, 4vw, 1.85rem)',
+  marginTop: '1.2rem',
   contain: 'layout style',
   minHeight: '2rem',
 });
 
 const JobSubtitle = styled(Typography)({
   display: 'block',
-  color: 'rgba(255, 255, 255, 0.82)',
+  color: 'rgba(255, 255, 255, 0.74)',
   fontWeight: 400,
-  lineHeight: 1.6,
-  fontSize: 'clamp(1rem, 2vw, 1.15rem)',
-  marginTop: '1rem',
-  maxWidth: '42rem',
+  lineHeight: 1.75,
+  fontSize: 'clamp(1rem, 2vw, 1.08rem)',
+  marginTop: '1.1rem',
+  maxWidth: '36rem',
 });
 
 const NameHeading = styled(Typography)(({
   marginBottom: '1.5rem',
   fontWeight: 700,
-  lineHeight: 1.1,
-  letterSpacing: '-0.02em',
+  lineHeight: 0.96,
+  letterSpacing: '-0.03em',
   contain: 'layout style',
   minHeight: '6rem',
 }));
@@ -76,7 +76,7 @@ export const Hero = ({ firstName, lastName, tagLine, subtitle }: HeroProps) => {
           container
           spacing={2}
           sx={{
-            minHeight: '70vh',
+            minHeight: '64vh',
             alignItems: 'center',
             flexDirection: { xs: 'column', md: 'row' }
           }}

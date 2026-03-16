@@ -24,7 +24,7 @@ function PageWrapper({
       sx={{
         ...getPageSx(),
         ...getContainerSx(),
-        textAlign: "center",
+        textAlign: { xs: "left", md: "center" },
       }}
     >
       <SectionHeader

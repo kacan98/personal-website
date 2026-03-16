@@ -50,7 +50,6 @@ export default async function App({ params }: { params: Promise<{ locale: string
 
   return (
     <HomePageContent
-      locale={locale}
       heroTagline={t('hero.tagline')}
       heroSubtitle={t('hero.subtitle')}
       proofHeading={t('proof.heading')}
