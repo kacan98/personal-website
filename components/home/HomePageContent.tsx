@@ -53,51 +53,6 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function TopProofStrip({ points }: { points: ProofPoint[] }) {
-  return (
-    <Box
-      sx={{
-        mt: { xs: 4, md: 5 },
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-        gap: { xs: 1.5, md: 2 },
-      }}
-    >
-      {points.map((point, index) => (
-        <motion.div
-          key={point.title}
-          initial={false}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, delay: index * 0.05, ease: "easeOut" }}
-        >
-          <Box
-            sx={{
-              height: "100%",
-              px: { xs: 2.2, md: 2.5 },
-              py: { xs: 2, md: 2.25 },
-              borderRadius: 3,
-              border: "1px solid rgba(255,255,255,0.08)",
-              background: "rgba(255,255,255,0.03)",
-            }}
-          >
-            <Eyebrow>{point.eyebrow}</Eyebrow>
-            <Typography
-              sx={{
-                mt: 0.9,
-                fontSize: { xs: "1rem", md: "1.05rem" },
-                fontWeight: 700,
-                color: "text.primary",
-              }}
-            >
-              {point.title}
-            </Typography>
-          </Box>
-        </motion.div>
-      ))}
-    </Box>
-  );
-}
-
 function IntroSection({
   heading,
   points,
@@ -124,12 +79,16 @@ function IntroSection({
             alignItems: "start",
           }}
         >
-          <Box sx={{ maxWidth: "34rem" }}>
-            <Eyebrow>Why this site exists</Eyebrow>
+          <Box
+            sx={{
+              maxWidth: "34rem",
+              textAlign: { xs: "center", lg: "left" },
+              mx: { xs: "auto", lg: 0 },
+            }}
+          >
             <Typography
               variant="h2"
               sx={{
-                mt: 1.2,
                 fontSize: { xs: "2rem", md: "2.8rem" },
                 fontWeight: 700,
                 lineHeight: 1.05,
@@ -145,6 +104,7 @@ function IntroSection({
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
               gap: { xs: 1.5, md: 2 },
+              textAlign: { xs: "center", md: "left" },
             }}
           >
             {points.map((point, index) => (
@@ -154,20 +114,18 @@ function IntroSection({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-80px" }}
-              >
-                <Box
-                  sx={{
-                    height: "100%",
-                    p: { xs: 2.5, md: 3 },
+                >
+                  <Box
+                    sx={{
+                      height: "100%",
+                      p: { xs: 2.5, md: 3 },
                     borderRadius: 3,
                     border: "1px solid rgba(255,255,255,0.08)",
                     background: "rgba(255,255,255,0.025)",
                   }}
                 >
-                  <Eyebrow>{point.eyebrow}</Eyebrow>
                   <Typography
                     sx={{
-                      mt: 1,
                       mb: 1,
                       fontSize: { xs: "1.15rem", md: "1.2rem" },
                       fontWeight: 700,
@@ -208,12 +166,17 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
   return (
     <Box id="selected-work" sx={{ py: { xs: 8, md: 10 } }}>
       <ContentContainer>
-        <Box sx={{ mb: { xs: 4, md: 5 }, maxWidth: "36rem" }}>
-          <Eyebrow>Selected work</Eyebrow>
+        <Box
+          sx={{
+            mb: { xs: 4, md: 5 },
+            maxWidth: "36rem",
+            textAlign: { xs: "center", md: "left" },
+            mx: { xs: "auto", md: 0 },
+          }}
+        >
           <Typography
             variant="h2"
             sx={{
-              mt: 1.2,
               fontSize: { xs: "2rem", md: "2.6rem" },
               fontWeight: 700,
               lineHeight: 1.06,
@@ -330,7 +293,6 @@ export default function HomePageContent({
       >
         <ContentContainer fullWidth>
           <Hero firstName="Karel" lastName="Čančara" tagLine={heroTagline} subtitle={heroSubtitle} />
-          {isKarelsPortfolio && <TopProofStrip points={proofPoints} />}
         </ContentContainer>
         <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0, py: { xs: 2, md: 4 } }}>
           <SocialIcons direction="column" socials={socials} />
