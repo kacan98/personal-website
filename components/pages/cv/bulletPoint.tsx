@@ -13,6 +13,7 @@ import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
 const ensureProtocol = (url: string): string => {
     if (!url) return url;
     if (url.startsWith('mailto:')) return url;
+    if (url.startsWith('/') || url.startsWith('#')) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `https://${url}`;
 };
@@ -137,10 +138,12 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                                 wrapper={(c) =>
                                     bulletPoint.url!.startsWith("mailto:") ? (
                                         <a href={safeUrl}>{c}</a>
-                                    ) : (
+                                    ) : bulletPoint.url!.startsWith("http") ? (
                                         <a href={safeUrl} target="_blank" rel="noreferrer">
                                             {c}
                                         </a>
+                                    ) : (
+                                        <a href={safeUrl}>{c}</a>
                                     )
                                 }
                             >

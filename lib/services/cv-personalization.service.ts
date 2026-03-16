@@ -22,11 +22,11 @@ function undefinedToNull<T>(obj: T): T {
     return obj.map(undefinedToNull) as T
   }
   if (typeof obj === 'object') {
-    const result: any = {}
+    const result: Record<string, unknown> = {}
     for (const key in obj) {
       result[key] = undefinedToNull(obj[key])
     }
-    return result
+    return result as T
   }
   return obj
 }

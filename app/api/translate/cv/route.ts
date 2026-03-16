@@ -66,7 +66,7 @@ export async function POST(req: Request): Promise<Response> {
     return new Response(JSON.stringify(response.choices[0].message.content), {
       status: 200,
     })
-  } catch (e: any) {
-    return new Response(e.message, { status: 500 })
+  } catch (e: unknown) {
+    return new Response(e instanceof Error ? e.message : 'Unknown error', { status: 500 })
   }
 }

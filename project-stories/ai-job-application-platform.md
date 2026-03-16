@@ -12,7 +12,10 @@ tags:
 category: fullstack
 date: 2024-12-01
 metrics:
-  impact: Apply for 10 jobs in 30 minutes vs hours manually
+  impact:
+    en: Built AI platform enabling 10 job applications in 30 minutes vs hours manually
+    da: Byggede AI-platform der muliggør 10 jobansøgninger på 30 minutter mod timer manuelt
+    sv: Byggde AI-plattform som möjliggör 10 jobbansökningar på 30 minuter mot timmar manuellt
   timeframe: Multi-week development project
 embedding:
   - -0.01051704864948988
@@ -1591,6 +1594,6 @@ The platform has significantly streamlined my job application process. I can now
 
 Having it available online with proper authentication means I can access it from anywhere, making the job application process much more flexible and responsive to new opportunities.
 
-**Live site**: [kcancara.vercel.app](https://kcancara.vercel.app)
+**Live site**: [cancara.dk](https://cancara.dk)
 
 **Tech used**: Next.js 15, React 19, TypeScript, OpenAI GPT-5 API, Material-UI, Redux Toolkit, Chrome Extension API, JWT authentication, Vercel deployment

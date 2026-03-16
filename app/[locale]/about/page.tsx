@@ -9,7 +9,7 @@ export default async function AboutPage() {
       heading={t('title')}
       bodyContent={t('content')}
       buttonText={t('contactButton')}
-      buttonHref="mailto:karel.cancara@gmail.com"
+      buttonHref="mailto:karel@cancara.dk"
       linkedinButtonText={t('linkedinButton')}
     />
   );

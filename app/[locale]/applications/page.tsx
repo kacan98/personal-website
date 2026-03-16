@@ -96,7 +96,7 @@ export default function ApplicationsPage() {
           });
           setSelectedApp({
             cvData: data.cvData,
-            id: undefined as any,
+            id: 0,
             jobUrl: '',
             positionTitle: '',
             companyName: null,
@@ -107,7 +107,7 @@ export default function ApplicationsPage() {
             createdAt: '',
             updatedAt: '',
             status: APPLICATION_STATUSES.DRAFT,
-          } as Partial<JobApplication> as JobApplication);
+          });
           localStorage.removeItem('pendingApplication');
         } catch (err) {
           console.error('Failed to load pending application:', err);

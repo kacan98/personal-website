@@ -1,4 +1,4 @@
-import { pgSchema, serial, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, text, timestamp, jsonb, integer } from 'drizzle-orm/pg-core';
 
 // Create a dedicated schema namespace for the personal website
 export const personalWebsiteSchema = pgSchema('personal_website');
@@ -48,3 +48,20 @@ export const jobApplications = personalWebsiteSchema.table('job_applications', {
 // Type exports for TypeScript
 export type JobApplication = typeof jobApplications.$inferSelect;
 export type NewJobApplication = typeof jobApplications.$inferInsert;
+
+// Improvement memories table - stores reusable CV improvement descriptions
+export const improvementMemories = personalWebsiteSchema.table('improvement_memories', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull(), // From JWT auth
+  improvementKey: text('improvement_key').notNull(), // e.g., "Docker experience"
+  userDescription: text('user_description').notNull(), // The actual experience description
+  confidence: integer('confidence').notNull().default(1), // How often this is reused
+  usageCount: integer('usage_count').notNull().default(1), // Track reuse count
+  lastUsed: timestamp('last_used').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Type exports for improvement memories
+export type ImprovementMemory = typeof improvementMemories.$inferSelect;
+export type NewImprovementMemory = typeof improvementMemories.$inferInsert;

@@ -85,7 +85,7 @@ export function EditableBulletPointList({
 
   // Add any original bullet points that were removed (not in current list)
   if (showDiff && originalBulletPoints) {
-    originalBulletPoints.forEach((originalPoint, originalIndex) => {
+    originalBulletPoints.forEach((originalPoint, _originalIndex) => {
       if (originalPoint.id && !seenOriginalIds.has(originalPoint.id)) {
         // This original item was removed
         if (!isPrintVersion) {

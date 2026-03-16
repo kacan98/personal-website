@@ -2,6 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional schema reference for frontmatter validation"
+    },
     "title": {
       "type": "string",
       "description": "Project title"
@@ -39,9 +43,17 @@
           "icon": {
             "type": "string",
             "enum": ["gitHub", "externalLink", "globe", "mail", "instagram", "facebook", "linkedIn", "libraryBooks", "twitter", "translate", "youTube", "pinterest", "reddit", "school", "science", "whatsApp"]
+          },
+          "iconName": {
+            "type": "string",
+            "enum": ["gitHub", "externalLink", "globe", "mail", "instagram", "facebook", "linkedIn", "libraryBooks", "twitter", "translate", "youTube", "pinterest", "reddit", "school", "science", "whatsApp"]
           }
         },
-        "required": ["title", "url", "icon"],
+        "required": ["title", "url"],
+        "anyOf": [
+          { "required": ["icon"] },
+          { "required": ["iconName"] }
+        ],
         "additionalProperties": false
       },
       "minItems": 1,
@@ -50,6 +62,14 @@
     "featured": {
       "type": "boolean",
       "description": "Whether this project should be featured"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short project summary"
+    },
+    "order": {
+      "type": "number",
+      "description": "Optional ordering index for project sorting"
     }
   },
   "required": ["title", "slug", "image", "tags", "links", "featured"],

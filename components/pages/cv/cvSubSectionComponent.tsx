@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { CvSection, CvSubSection } from "@/types";
 import { useAppDispatch } from "@/redux/hooks";
@@ -96,7 +97,7 @@ export function CvSubSectionComponent({
   return (
     <Box
       key={subSectionIndex}
-      mb={2}
+      mb={3}
       sx={{
         position: 'relative',
         backgroundColor: isRemoved ? alpha('#ff0000', 0.1) : 'transparent',
@@ -114,6 +115,7 @@ export function CvSubSectionComponent({
       <SuperEditableText
         query={['title']}
         variant="h5"
+        mb={0.75}
         text={subSection.title || ""}
         originalText={originalSubSection?.title ?? undefined}
         autoEdit={(!subSection.title || subSection.title.trim() === "") && !isRemoved}
@@ -131,7 +133,7 @@ export function CvSubSectionComponent({
         } : undefined}
       />
       {subSection.subtitles && (
-        <Box display="flex" justifyContent="space-between" pb={1}>
+        <Box display="flex" justifyContent="space-between" pb={1.5}>
           <SuperEditableText
             query={['subtitles', 'left']}
             variant="subtitle1"

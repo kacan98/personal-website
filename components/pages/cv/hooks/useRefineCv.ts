@@ -70,6 +70,27 @@ export const useRefineCv = ({
       // Update the CV in Redux while preserving hasChanges flag
       dispatch(updateCvWithChanges(data.cv));
 
+      // Save improvements with descriptions to database for future reuse
+      const improvementsToSave = Object.entries(refinementData.improvementInputs)
+        .filter(([_, description]) => description.trim().length > 0)
+        .map(([key, description]) => ({ key, description }));
+
+      if (improvementsToSave.length > 0) {
+        try {
+          await fetch('/api/improvement-memories/save', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ improvements: improvementsToSave }),
+          });
+          console.log(`Saved ${improvementsToSave.length} improvement memories to database`);
+        } catch (error) {
+          console.error('Failed to save improvement memories:', error);
+          // Don't fail the whole operation if saving memories fails
+        }
+      }
+
       // Track refinement history
       if (data.refinementSummary) {
         setRefinementHistory(prev => [...prev, data.refinementSummary!]);

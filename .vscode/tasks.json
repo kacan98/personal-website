@@ -8,11 +8,19 @@
       "windows": {
         "command": "npm run dev"
       },
+      "runOptions": { "runOn": "folderOpen" }
+    },
+    {
+      "label": "Claude",
+      "type": "shell",
+      "command": "Claude",
       "presentation": {
         "reveal": "always",
         "panel": "new"
       },
-      "runOptions": { "runOn": "folderOpen" }
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
     },
     {
       "label": "Validate Markdown",

@@ -10,6 +10,7 @@ links:
     url: "https://buzzbuzz.vercel.app/"
     iconName: "externalLink"
 featured: false
+archived: true
 order: 15
 ---
 

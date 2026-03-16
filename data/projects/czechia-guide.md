@@ -4,7 +4,7 @@ title: "Czechia Guide"
 slug: "czechia-guide"
 image: "/images/projects/czechia-guide.png"
 description: "Interactive travel guide for Prague and Czechia with curated recommendations for tourists and food lovers."
-tags: ["Astro", "TypeScript"]
+tags: ["Frontend"]
 links:
   - title: "Deployment"
     url: "https://czech-guide.vercel.app/en/"

@@ -13,6 +13,7 @@ links:
     url: "https://r8tit.azurewebsites.net/"
     iconName: "externalLink"
 featured: true
+archived: true
 order: 30
 ---
 

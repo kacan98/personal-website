@@ -10,7 +10,7 @@ export const POST = withAuth(async (req: Request, _auth) => {
     let body: { prefix?: string } = {}
     try {
       body = await req.json()
-    } catch (e) {
+    } catch {
       // If no body, clear all cache
     }
 
@@ -41,9 +41,9 @@ export const POST = withAuth(async (req: Request, _auth) => {
       }
     })
 
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('POST /api/clear-cache - Error:', e)
-    return ApiResponse.error('Failed to clear cache: ' + e.message, 500)
+    return ApiResponse.error('Failed to clear cache: ' + (e instanceof Error ? e.message : 'Unknown error'), 500)
   }
 });
 
@@ -55,8 +55,8 @@ export const GET = withAuth(async (_req: Request, _auth) => {
       stats,
       message: 'Cache statistics retrieved successfully'
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('GET /api/clear-cache - Error:', e)
-    return ApiResponse.error('Failed to get cache stats: ' + e.message, 500)
+    return ApiResponse.error('Failed to get cache stats: ' + (e instanceof Error ? e.message : 'Unknown error'), 500)
   }
 });

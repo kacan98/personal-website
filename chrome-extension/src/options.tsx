@@ -137,7 +137,7 @@ const Options = () => {
     // Validate URL
     try {
       new URL(targetUrl);
-    } catch (e) {
+    } catch {
       setStatus("Please enter a valid URL");
       setTimeout(() => setStatus(""), 3000);
       return;
@@ -165,7 +165,7 @@ const Options = () => {
         mode: 'no-cors'
       });
       setStatus("Connection successful!");
-    } catch (e) {
+    } catch {
       setStatus("Could not connect - make sure the server is running");
     }
     setIsTesting(false);

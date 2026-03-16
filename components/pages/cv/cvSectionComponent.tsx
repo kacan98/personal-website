@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 import { EditableText, EditableTextProps } from "@/components/editableText";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv, removeArrayItem } from "@/redux/slices/cv";
@@ -138,7 +139,7 @@ export function CvSectionComponent({
         <SuperEditableText
           query={["title"]}
           variant="h4"
-          mb={1}
+          mb={1.5}
           sx={{
             fontWeight: 'bold',
             '@media print': {
@@ -164,7 +165,7 @@ export function CvSectionComponent({
         />
       )}
       {subtitles && (
-        <Box display="flex" justifyContent="space-between" mb={0}>
+        <Box display="flex" justifyContent="space-between" mb={1}>
           <SuperEditableText
             query={['subtitles', 'left']}
             variant="subtitle1"

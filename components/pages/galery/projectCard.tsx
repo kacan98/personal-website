@@ -4,6 +4,7 @@ import { SUPPORTED_ICONS } from "@/components/icon";
 import Image from "next/image";
 
 export const ProjectCard = ({ title, description, image, links }: Project) => {
+  const imageSrc = image?.trim();
 
   return (
     <Card
@@ -23,7 +24,6 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
       variant="outlined"
     >
       <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", p: 2 }}>
-        {/* Image Section */}
         <Box
           display="flex"
           justifyContent="center"
@@ -33,37 +33,59 @@ export const ProjectCard = ({ title, description, image, links }: Project) => {
             overflow: "hidden",
           }}
         >
-          <Box width={300} height={200}>
-            {/*This should work better... */}
-            <Image
-              src={image}
-              alt={`Image of ${title} project`}
-              width={300}
-              height={200}
-              style={{ objectFit: "cover", objectPosition: "top" }}
-            />
+          <Box
+            width={300}
+            height={200}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: imageSrc
+                ? "transparent"
+                : "linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(17, 24, 39, 0.95) 100%)",
+              borderRadius: 2,
+              px: 2,
+            }}
+          >
+            {imageSrc ? (
+              <Image
+                src={imageSrc}
+                alt={`Image of ${title} project`}
+                width={300}
+                height={200}
+                style={{ objectFit: "cover", objectPosition: "top" }}
+              />
+            ) : (
+              <Typography
+                variant="h6"
+                sx={{ color: "rgba(255,255,255,0.92)", fontWeight: 700, textAlign: "center" }}
+              >
+                {title}
+              </Typography>
+            )}
           </Box>
         </Box>
-        
-        {/* Content Section - grows to fill space */}
+
         <Box sx={{ flex: 1, display: "flex", flexDirection: "column", textAlign: "center" }}>
-          <Typography variant="h6" sx={{ 
-            fontWeight: 600, 
-            fontSize: '1.25rem',
+          <Typography variant="h6" sx={{
+            fontWeight: 600,
+            fontSize: "1.25rem",
             mb: 1,
-            color: 'text.primary'
+            color: "text.primary"
           }}>{title}</Typography>
           <Typography variant="body2" sx={{ mb: 2, flex: 1 }}>{description}</Typography>
-          
-          {/* Buttons Section - always at bottom */}
+
           <Box sx={{ mt: "auto" }}>
             <Grid container alignItems="center" justifyContent="center">
               {links &&
-                links.map(({ url, iconName }, index) => (
-                  <IconButton key={`${url}-${index}`} href={url} target="_blank">
-                    {SUPPORTED_ICONS[iconName]?.component()}
-                  </IconButton>
-                ))}
+                links.map(({ url, iconName }, index) => {
+                  const isExternal = url.startsWith("http");
+                  return (
+                    <IconButton key={`${url}-${index}`} href={url} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener noreferrer" : undefined}>
+                      {SUPPORTED_ICONS[iconName]?.component()}
+                    </IconButton>
+                  );
+                })}
             </Grid>
           </Box>
         </Box>

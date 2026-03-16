@@ -11,7 +11,10 @@ tags:
 category: automation
 date: 2025-06-01
 metrics:
-  impact: Automated time tracking by syncing Git commits to Jira
+  impact:
+    en: Automated time tracking by syncing Git commits to Jira
+    da: Automatiserede tidssporing ved at synkronisere Git-commits til Jira
+    sv: Automatiserade tidsspårning genom att synkronisera Git-commits till Jira
   timeframe: Active development project
 liveUrl: https://log-bridge.vercel.app
 embedding:
