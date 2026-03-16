@@ -20,7 +20,7 @@ export default function RootLayout({
           padding: 0,
           backgroundColor: BACKGROUND_COLORS.primary,
           color: "white",
-          fontFamily: "Urbanist, sans-serif",
+          fontFamily: '"Open Sans, sans-serif',
         }}
       >
         <script

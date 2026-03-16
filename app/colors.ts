@@ -1,48 +1,38 @@
-// Centralized Brand Colors - Single source of truth
-// 2025 TREND: Dark gray with electric violet accent (sophisticated, modern)
+// Centralized brand colors tuned for a warmer, more editorial portfolio aesthetic.
 export const BRAND_COLORS = {
-  primary: "#e8e8e8",     // Slightly dimmed white for better readability (2025 best practice)
-  secondary: "#a0a0a0",   // Neutral gray for secondary elements
-  accent: "#a855f7",      // Electric violet - 2025 trend, stands out without being garish
-  dark: "#0a0a0a",        // Near black for maximum contrast
-  // RGB versions for use in rgba() functions
-  primaryRgb: "232, 232, 232",
-  secondaryRgb: "160, 160, 160", 
-  accentRgb: "168, 85, 247",  // Electric violet RGB
-  darkRgb: "10, 10, 10",
+  primary: "#f5efe2",
+  secondary: "#b6c0b8",
+  accent: "#f26b3a",
+  dark: "#081311",
+  primaryRgb: "245, 239, 226",
+  secondaryRgb: "182, 192, 184",
+  accentRgb: "242, 107, 58",
+  darkRgb: "8, 19, 17",
 } as const;
 
-// Pure grayscale backgrounds - 2025 dark mode best practices
 export const BACKGROUND_COLORS = {
-  primary: "#0f0f0f",     // Main background - true dark gray (not pure black for comfort)
-  secondary: "#050505",   // Deeper sections for visual hierarchy
-  surface: "#1a1a1a",     // Cards/surfaces - subtle elevation
-  overlay: "#242424",     // Overlays/modals - clear separation from background
+  primary: "#091311",
+  secondary: "#0d1c18",
+  surface: "#13241f",
+  overlay: "#1b3029",
 } as const;
 
-// Helper functions for common gradient patterns
 export const BRAND_GRADIENTS = {
-  primary: `linear-gradient(135deg, ${BRAND_COLORS.accent}, ${BRAND_COLORS.secondary})`,
-  horizontal: `linear-gradient(to right, ${BRAND_COLORS.accent}, ${BRAND_COLORS.primary}, ${BRAND_COLORS.accent})`,
-  diagonal: `linear-gradient(to right top, ${BRAND_COLORS.accent}, ${BRAND_COLORS.secondary}, ${BRAND_COLORS.primary})`,
+  primary: `linear-gradient(135deg, ${BRAND_COLORS.accent}, #f1c37a)`,
+  horizontal: `linear-gradient(to right, ${BRAND_COLORS.accent}, ${BRAND_COLORS.primary}, #91d0bd)`,
+  diagonal: `linear-gradient(to right top, ${BRAND_COLORS.accent}, #d5b36f, #91d0bd)`,
   subtle: `linear-gradient(135deg, ${BACKGROUND_COLORS.primary}, ${BACKGROUND_COLORS.surface})`,
 } as const;
 
-// Monochrome purple palette with minimal accent colors
 export const SHAPE_COLORS = {
-  // Purple variants for monochrome scheme
-  lightPurple: "#c084fc",  // Light purple for accents
-  deepPurple: "#7c3aed",   // Deep purple for contrast
-  lavender: "#b19cd9",     // Soft lavender
-
-  // Single warm accent for contrast
-  gold: "#d4af37",         // Elegant gold
-
-  // RGB versions for rgba() functions
-  lightPurpleRgb: "192, 132, 252",
-  deepPurpleRgb: "124, 58, 237",
-  lavenderRgb: "177, 156, 217",
-  goldRgb: "212, 175, 55",
+  lightPurple: "#9ad9c8",
+  deepPurple: "#2f7f72",
+  lavender: "#d8be84",
+  gold: "#f0b45f",
+  lightPurpleRgb: "154, 217, 200",
+  deepPurpleRgb: "47, 127, 114",
+  lavenderRgb: "216, 190, 132",
+  goldRgb: "240, 180, 95",
 } as const;
 
 // Helper functions for common rgba values
