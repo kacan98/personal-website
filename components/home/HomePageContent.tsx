@@ -13,7 +13,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import PsychologyIcon from "@mui/icons-material/Psychology";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { CuratedProject } from "@/lib/cv-projects";
 import { Link } from "@/types";
 
@@ -267,6 +267,20 @@ export default function HomePageContent({
   technologies,
   socials,
 }: HomePageContentProps) {
+  const reduceMotion = useReducedMotion();
+  const heroProps = reduceMotion
+    ? {}
+    : { initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8 } };
+
+  const sectionProps = reduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 28 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-80px" },
+        transition: { duration: 0.55 },
+      };
+
   return (
     <>
       <Box
@@ -279,35 +293,51 @@ export default function HomePageContent({
         }}
       >
         <ContentContainer fullWidth>
-          <Hero firstName="Karel" lastName="Čančara" tagLine={heroTagline} subtitle={heroSubtitle} />
+          <motion.div {...heroProps}>
+            <Hero firstName="Karel" lastName="Čančara" tagLine={heroTagline} subtitle={heroSubtitle} />
+          </motion.div>
         </ContentContainer>
-        <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0, py: { xs: 2, md: 4 } }}>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            py: { xs: 2, md: 4 },
+          }}
+        >
           <SocialIcons direction="column" socials={socials} />
         </Box>
       </Box>
 
       {isKarelsPortfolio && (
         <>
-          <IntroSection heading={proofHeading} points={proofPoints} />
+          <motion.div {...sectionProps}>
+            <IntroSection heading={proofHeading} points={proofPoints} />
+          </motion.div>
 
           <Box id="technologies" sx={{ py: { xs: 2, md: 3 } }}>
             <TechList technologies={technologies} />
           </Box>
 
-          <SelectedWorkSection title={selectedWorkTitle} items={selectedWork} />
+          <motion.div {...sectionProps}>
+            <SelectedWorkSection title={selectedWorkTitle} items={selectedWork} />
+          </motion.div>
 
-          <Box
-            id="timeline"
-            sx={{
-              py: { xs: 4, md: 5 },
-              background: "linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.01))",
-              borderTop: "1px solid rgba(255,255,255,0.04)",
-            }}
-          >
-            <ContentContainer>
-              <Timeline items={careerTimeline} title={timelineTitle} />
-            </ContentContainer>
-          </Box>
+          <motion.div {...sectionProps}>
+            <Box
+              id="timeline"
+              sx={{
+                py: { xs: 4, md: 5 },
+                background: "linear-gradient(180deg, rgba(255,255,255,0.018), rgba(255,255,255,0.01))",
+                borderTop: "1px solid rgba(255,255,255,0.04)",
+              }}
+            >
+              <ContentContainer>
+                <Timeline items={careerTimeline} title={timelineTitle} />
+              </ContentContainer>
+            </Box>
+          </motion.div>
         </>
       )}
 
