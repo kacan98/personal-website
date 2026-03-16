@@ -118,6 +118,8 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    // Handle images before links so markdown screenshots render correctly
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<figure><img src="$2" alt="$1" loading="lazy" /><figcaption>$1</figcaption></figure>')
     // Handle bold and italic
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
@@ -277,6 +279,24 @@ export default async function BlogPostPage({ params }: BlogPostProps) {
             borderRadius: '8px',
             overflow: 'auto',
             mb: 2,
+          },
+          '& figure': {
+            my: 4,
+            mx: 0,
+          },
+          '& img': {
+            display: 'block',
+            width: '100%',
+            height: 'auto',
+            borderRadius: 3,
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 18px 48px rgba(0,0,0,0.28)',
+          },
+          '& figcaption': {
+            mt: 1.5,
+            color: 'text.secondary',
+            fontSize: '0.95rem',
+            textAlign: 'center',
           },
           // Fix list spacing - compact lists
           '& ul': {
