@@ -1,7 +1,8 @@
 ---
 title: "A Hidden AI CV Tailoring Workflow Inside My Portfolio"
 slug: "ai-job-application-platform"
-image: ""
+image: "/images/project-stories/ai-job-application-platform/cv-ai-diff-view.png"
+imageAlt: "AI CV diff view showing tailored changes highlighted directly in the editable resume"
 description: "A password-gated CV editor with AI tailoring, diff review, translation, and a browser-to-application workflow."
 featured: true
 listed: true
