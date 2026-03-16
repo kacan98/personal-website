@@ -8,13 +8,34 @@ function generateStableId(content: string): string {
   return content.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'untitled';
 }
 
+function ensureUniqueId(preferredId: string, seenIds: Set<string>, fallbackId: string): string {
+  const baseId = preferredId || fallbackId;
+
+  if (!seenIds.has(baseId)) {
+    seenIds.add(baseId);
+    return baseId;
+  }
+
+  let suffix = 1;
+  let candidate = `${baseId}-${suffix}`;
+  while (seenIds.has(candidate)) {
+    suffix += 1;
+    candidate = `${baseId}-${suffix}`;
+  }
+
+  seenIds.add(candidate);
+  return candidate;
+}
+
 /**
  * Assign unique IDs to paragraphs if they don't have them
  * Also ensures all nullable fields are present (set to null if missing)
  */
 function ensureParagraphIds(paragraphs: Paragraph[], parentId: string): Paragraph[] {
+  const seenIds = new Set<string>();
+
   return paragraphs.map((paragraph, index) => ({
-    id: paragraph.id ?? `${parentId}-para-${index}`,
+    id: ensureUniqueId(paragraph.id ?? '', seenIds, `${parentId}-para-${index}`),
     text: paragraph.text,
   }));
 }
@@ -24,8 +45,10 @@ function ensureParagraphIds(paragraphs: Paragraph[], parentId: string): Paragrap
  * Also ensures all nullable fields are present (set to null if missing)
  */
 function ensureBulletPointIds(bulletPoints: BulletPoint[], parentId: string): BulletPoint[] {
+  const seenIds = new Set<string>();
+
   return bulletPoints.map((bullet, index) => ({
-    id: bullet.id ?? `${parentId}-bullet-${index}`,
+    id: ensureUniqueId(bullet.id ?? '', seenIds, `${parentId}-bullet-${index}`),
     iconName: bullet.iconName,
     text: bullet.text,
     url: bullet.url ?? null,
@@ -33,13 +56,13 @@ function ensureBulletPointIds(bulletPoints: BulletPoint[], parentId: string): Bu
   }));
 }
 
-
 /**
  * Assign unique IDs to a subsection and its content if they don't have them
  * Also ensures all nullable fields are present (set to null if missing)
  */
-function ensureSubSectionIds(subSection: CvSubSection, parentId: string, index: number): CvSubSection {
-  const subSectionId = subSection.id ?? `${parentId}-sub-${generateStableId(subSection.title ?? `${index}`)}`;
+function ensureSubSectionIds(subSection: CvSubSection, parentId: string, index: number, seenIds?: Set<string>): CvSubSection {
+  const fallbackId = `${parentId}-sub-${generateStableId(subSection.title ?? `${index}`)}`;
+  const subSectionId = ensureUniqueId(subSection.id ?? '', seenIds ?? new Set<string>(), fallbackId);
 
   return {
     id: subSectionId,
@@ -59,8 +82,10 @@ function ensureSubSectionIds(subSection: CvSubSection, parentId: string, index: 
  * Assign unique IDs to a section and all its content if they don't have them
  * Also ensures all nullable fields are present (set to null if missing)
  */
-function ensureSectionIds(section: CvSection, column: 'main' | 'side', index: number): CvSection {
-  const sectionId = section.id ?? `${column}-${generateStableId(section.title ?? `section-${index}`)}`;
+function ensureSectionIds(section: CvSection, column: 'main' | 'side', index: number, seenIds?: Set<string>): CvSection {
+  const fallbackId = `${column}-${generateStableId(section.title ?? `section-${index}`)}`;
+  const sectionId = ensureUniqueId(section.id ?? '', seenIds ?? new Set<string>(), fallbackId);
+  const seenSubSectionIds = new Set<string>();
 
   return {
     id: sectionId,
@@ -73,7 +98,7 @@ function ensureSectionIds(section: CvSection, column: 'main' | 'side', index: nu
     } : null,
     paragraphs: section.paragraphs ? ensureParagraphIds(section.paragraphs, sectionId) : null,
     bulletPoints: section.bulletPoints ? ensureBulletPointIds(section.bulletPoints, sectionId) : null,
-    subSections: section.subSections ? section.subSections.map((sub, subIndex) => ensureSubSectionIds(sub, sectionId, subIndex)) : null
+    subSections: section.subSections ? section.subSections.map((sub, subIndex) => ensureSubSectionIds(sub, sectionId, subIndex, seenSubSectionIds)) : null
   };
 }
 
@@ -83,13 +108,16 @@ function ensureSectionIds(section: CvSection, column: 'main' | 'side', index: nu
  * This function is safe to call multiple times - it won't overwrite existing IDs
  */
 export function ensureCvIds(cv: CVSettings): CVSettings {
+  const seenMainSectionIds = new Set<string>();
+  const seenSideSectionIds = new Set<string>();
+
   return {
     on: cv.on,
     name: cv.name,
     subtitle: cv.subtitle,
     profilePicture: cv.profilePicture ?? null,
-    mainColumn: cv.mainColumn.map((section, index) => ensureSectionIds(section, 'main', index)),
-    sideColumn: cv.sideColumn.map((section, index) => ensureSectionIds(section, 'side', index))
+    mainColumn: cv.mainColumn.map((section, index) => ensureSectionIds(section, 'main', index, seenMainSectionIds)),
+    sideColumn: cv.sideColumn.map((section, index) => ensureSectionIds(section, 'side', index, seenSideSectionIds))
   };
 }
 
@@ -97,7 +125,6 @@ export function ensureCvIds(cv: CVSettings): CVSettings {
  * Find a section by ID in the CV
  */
 export function findSectionById(cv: CVSettings, id: string): { section: CvSection; column: 'mainColumn' | 'sideColumn'; index: number } | null {
-  // Search main column
   for (let index = 0; index < cv.mainColumn.length; index++) {
     const section = cv.mainColumn[index];
     if (section.id === id) {
@@ -105,7 +132,6 @@ export function findSectionById(cv: CVSettings, id: string): { section: CvSectio
     }
   }
 
-  // Search side column
   for (let index = 0; index < cv.sideColumn.length; index++) {
     const section = cv.sideColumn[index];
     if (section.id === id) {
@@ -126,7 +152,6 @@ export function findSubSectionById(cv: CVSettings, id: string): {
   sectionIndex: number;
   subSectionIndex: number
 } | null {
-  // Search main column
   for (let sectionIndex = 0; sectionIndex < cv.mainColumn.length; sectionIndex++) {
     const section = cv.mainColumn[sectionIndex];
     if (section.subSections) {
@@ -139,7 +164,6 @@ export function findSubSectionById(cv: CVSettings, id: string): {
     }
   }
 
-  // Search side column
   for (let sectionIndex = 0; sectionIndex < cv.sideColumn.length; sectionIndex++) {
     const section = cv.sideColumn[sectionIndex];
     if (section.subSections) {
@@ -173,7 +197,6 @@ export function compareCvs(originalCv: CVSettings, currentCv: CVSettings): {
   const removedSubSections = new Set<string>();
   const newSubSections: Array<{ subSection: CvSubSection; parentSectionId: string }> = [];
 
-  // Create maps of original sections by ID for quick lookup
   const originalSectionsMap = new Map<string, CvSection>();
   [...originalCv.mainColumn, ...originalCv.sideColumn].forEach(section => {
     if (section.id) {
@@ -181,25 +204,20 @@ export function compareCvs(originalCv: CVSettings, currentCv: CVSettings): {
     }
   });
 
-  // Check current sections
   [...currentCv.mainColumn, ...currentCv.sideColumn].forEach(currentSection => {
     if (!currentSection.id) {
-      // New section without ID - treat as new
       newSections.push(currentSection);
       return;
     }
 
     const originalSection = originalSectionsMap.get(currentSection.id);
     if (!originalSection) {
-      // New section
       newSections.push(currentSection);
     } else {
-      // Check if section is modified
       if (JSON.stringify(originalSection) !== JSON.stringify(currentSection)) {
         modifiedSections.add(currentSection.id);
       }
 
-      // Check subsections
       if (currentSection.subSections && originalSection.subSections) {
         const originalSubSectionsMap = new Map<string, CvSubSection>();
         originalSection.subSections.forEach(subSection => {
@@ -210,24 +228,18 @@ export function compareCvs(originalCv: CVSettings, currentCv: CVSettings): {
 
         currentSection.subSections.forEach(currentSubSection => {
           if (!currentSubSection.id) {
-            // New subsection without ID
             newSubSections.push({ subSection: currentSubSection, parentSectionId: currentSection.id! });
             return;
           }
 
           const originalSubSection = originalSubSectionsMap.get(currentSubSection.id);
           if (!originalSubSection) {
-            // New subsection
             newSubSections.push({ subSection: currentSubSection, parentSectionId: currentSection.id! });
-          } else {
-            // Check if subsection is modified
-            if (JSON.stringify(originalSubSection) !== JSON.stringify(currentSubSection)) {
-              modifiedSubSections.add(currentSubSection.id);
-            }
+          } else if (JSON.stringify(originalSubSection) !== JSON.stringify(currentSubSection)) {
+            modifiedSubSections.add(currentSubSection.id);
           }
         });
 
-        // Find removed subsections
         originalSection.subSections.forEach(originalSubSection => {
           if (originalSubSection.id && !currentSection.subSections?.find(s => s.id === originalSubSection.id)) {
             removedSubSections.add(originalSubSection.id);
@@ -237,7 +249,6 @@ export function compareCvs(originalCv: CVSettings, currentCv: CVSettings): {
     }
   });
 
-  // Find removed sections
   [...originalCv.mainColumn, ...originalCv.sideColumn].forEach(originalSection => {
     if (originalSection.id && !findSectionById(currentCv, originalSection.id)) {
       removedSections.add(originalSection.id);

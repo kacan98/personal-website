@@ -167,25 +167,25 @@ export const cvConfigEn = {
         {
           iconName: "speed",
           text: "10x Performance Improvement",
-          description: "Optimized enterprise sync from 20+ min to 2 min for 1000+ technicians. SQL optimization, IndexedDB, distributed systems.",
+          description: "Reduced a production synchronization flow from 20+ minutes to under 2 minutes for a technician-facing enterprise workflow.",
           url: "/en/projects/10x-performance-improvement"
         },
         {
           iconName: "schedule",
-          text: "Git-to-JIRA Time Tracker",
-          description: "Automated time logging from commits. Reduced daily tracking from 15 min to 30 sec. React, GitHub/JIRA APIs.",
-          url: "https://log-bridge.vercel.app"
+          text: "Git-to-Jira Bridge",
+          description: "Automated Jira time logging from Git activity to remove repetitive manual reporting and keep worklogs closer to real development flow.",
+          url: "/en/projects/git-to-jira-bridge"
         },
         {
           iconName: "dashboard",
           text: "Developer Task Overview Dashboard",
-          description: "Personal internal dashboard that combines Jira and GitHub into one view for active tasks, PRs, failing checks, conflicts, and follow-up items. React, Node.js, TypeScript.",
-          url: "/en/projects/git-to-jira-bridge"
+          description: "Internal dashboard that combines Jira tasks, PRs, failing checks, conflicts, and branch follow-up into one action-oriented view.",
+          url: "/en/projects/developer-task-overview-dashboard"
         },
         {
           iconName: "psychology",
           text: "AI Job Application Platform",
-          description: "Next.js 15 platform with GPT-based CV customization, cover letters, and multilingual flows.",
+          description: "Password-gated CV workflow with AI tailoring, diff review, translation, and a browser-to-application flow for faster customization.",
           url: "/en/projects/ai-job-application-platform"
         }
       ]

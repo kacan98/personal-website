@@ -17,6 +17,8 @@ export type ProjectDocument = Project & {
   metrics?: ProjectMetricMap;
   liveUrl?: string;
   sourceUrl?: string;
+  cvTitle?: string;
+  cvDescription?: string;
 };
 
 const legacyStorySlugMap: Record<string, string> = {
@@ -53,6 +55,8 @@ function readProjectFile(filePath: string, locale: string): ProjectDocument | nu
     metrics: frontmatter.metrics,
     liveUrl: frontmatter.liveUrl,
     sourceUrl: frontmatter.sourceUrl,
+    cvTitle: frontmatter.cvTitle,
+    cvDescription: frontmatter.cvDescription,
     content,
     locale,
   };

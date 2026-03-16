@@ -20,6 +20,7 @@ const nextConfig = {
     // No remote patterns needed - using local images only
   },
   poweredByHeader: false,
+  allowedDevOrigins: ['127.0.0.1', 'localhost'],
   experimental: {    webpackMemoryOptimizations: true, // Next.js 15+ memory optimization
     // ppr: 'incremental', // TODO: Enable when upgrading to Next.js canary
   },

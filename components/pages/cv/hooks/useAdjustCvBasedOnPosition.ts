@@ -32,7 +32,7 @@ export const useAdjustCvBasedOnPosition = ({
   setPositionIntersection,
   setCacheStatus,
 }: AdjustCvBasedOnPositionProps) => {
-  const adjustCvBasedOnPosition = useCallback(async () => {    
+  const adjustCvBasedOnPosition = useCallback(async () => {
     if (!positionDetails) {
       throw new Error('Please provide position details');
     }
@@ -63,51 +63,44 @@ export const useAdjustCvBasedOnPosition = ({
       const transformedCv: CvUpgradeResponse = await res.json()
       const { cv, newPositionSummary, companyName, newJobIntersection, _cacheInfo } = transformedCv
 
-      // Update cache status if callback provided
       if (setCacheStatus && _cacheInfo) {
         setCacheStatus(_cacheInfo.fromCache)
       }
 
-      // Preserve original IDs to maintain diff tracking
       if (cv) {
-        // Preserve main column section IDs
         cv.mainColumn?.forEach((section, index) => {
-          if (cvProps.mainColumn?.[index]) {
+          if (cvProps.mainColumn?.[index] && !section.id) {
             section.id = cvProps.mainColumn[index].id;
+          }
 
-            // Preserve subsection IDs
-            if (section.subSections && cvProps.mainColumn[index].subSections) {
-              section.subSections.forEach((subSection, subIndex) => {
-                if (cvProps.mainColumn[index].subSections?.[subIndex]) {
-                  subSection.id = cvProps.mainColumn[index].subSections[subIndex].id;
-                }
-              });
-            }
+          if (section.subSections && cvProps.mainColumn[index]?.subSections) {
+            section.subSections.forEach((subSection, subIndex) => {
+              if (cvProps.mainColumn[index].subSections?.[subIndex] && !subSection.id) {
+                subSection.id = cvProps.mainColumn[index].subSections[subIndex].id;
+              }
+            });
+          }
 
-            // Preserve bullet point IDs
-            if (section.bulletPoints && cvProps.mainColumn[index].bulletPoints) {
-              section.bulletPoints.forEach((bullet, bulletIndex) => {
-                if (cvProps.mainColumn[index].bulletPoints?.[bulletIndex]) {
-                  bullet.id = cvProps.mainColumn[index].bulletPoints[bulletIndex].id;
-                }
-              });
-            }
+          if (section.bulletPoints && cvProps.mainColumn[index]?.bulletPoints) {
+            section.bulletPoints.forEach((bullet, bulletIndex) => {
+              if (cvProps.mainColumn[index].bulletPoints?.[bulletIndex] && !bullet.id) {
+                bullet.id = cvProps.mainColumn[index].bulletPoints[bulletIndex].id;
+              }
+            });
           }
         });
 
-        // Preserve side column section IDs
         cv.sideColumn?.forEach((section, index) => {
-          if (cvProps.sideColumn?.[index]) {
+          if (cvProps.sideColumn?.[index] && !section.id) {
             section.id = cvProps.sideColumn[index].id;
+          }
 
-            // Preserve bullet point IDs
-            if (section.bulletPoints && cvProps.sideColumn[index].bulletPoints) {
-              section.bulletPoints.forEach((bullet, bulletIndex) => {
-                if (cvProps.sideColumn[index].bulletPoints?.[bulletIndex]) {
-                  bullet.id = cvProps.sideColumn[index].bulletPoints[bulletIndex].id;
-                }
-              });
-            }
+          if (section.bulletPoints && cvProps.sideColumn[index]?.bulletPoints) {
+            section.bulletPoints.forEach((bullet, bulletIndex) => {
+              if (cvProps.sideColumn[index].bulletPoints?.[bulletIndex] && !bullet.id) {
+                bullet.id = cvProps.sideColumn[index].bulletPoints[bulletIndex].id;
+              }
+            });
           }
         });
 
@@ -125,7 +118,7 @@ export const useAdjustCvBasedOnPosition = ({
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setsnackbarMessage('Error transforming CV: ' + errorMessage)
-      throw err; // Re-throw to be caught by the parallel execution
+      throw err;
     } finally {
       setLoading(false);
     }
