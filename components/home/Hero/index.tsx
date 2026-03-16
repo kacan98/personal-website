@@ -11,24 +11,22 @@ interface HeroProps {
   subtitle?: string;
 }
 
-const FirstNameContainer = styled(Typography)(({
+const FirstNameContainer = styled("span")(({
   display: 'block',
   letterSpacing: '-0.04em',
   color: BRAND_COLORS.primary,
   marginBottom: '0.25rem',
   fontSize: 'clamp(3.2rem, 8vw, 5.4rem)',
   fontWeight: 700,
-  fontDisplay: 'swap',
 }));
 
-const LastNameContainer = styled(Typography)(({
+const LastNameContainer = styled("span")(({
   display: 'block',
   color: BRAND_COLORS.primary,
   marginTop: '0.1rem',
   letterSpacing: '-0.045em',
   fontSize: 'clamp(3.2rem, 8vw, 5.4rem)',
   fontWeight: 700,
-  fontDisplay: 'swap',
 }));
 
 const JobTitle = styled(Typography)({
@@ -53,13 +51,14 @@ const JobSubtitle = styled(Typography)({
   maxWidth: '36rem',
 });
 
-const NameHeading = styled(Typography)(({
+const NameHeading = styled("h1")(({
   marginBottom: '1.5rem',
   fontWeight: 700,
   lineHeight: 0.96,
   letterSpacing: '-0.03em',
   contain: 'layout style',
   minHeight: '6rem',
+  marginTop: 0,
 }));
 
 export const Hero = ({ firstName, lastName, tagLine, subtitle }: HeroProps) => {
@@ -96,25 +95,21 @@ export const Hero = ({ firstName, lastName, tagLine, subtitle }: HeroProps) => {
                 alignItems: { xs: 'center', md: 'flex-start' },
               }}
             >
-              <NameHeading variant="h1" aria-label={firstName + " " + lastName}>
+              <NameHeading aria-label={firstName + " " + lastName}>
                 <FirstNameContainer
                   className="name-container"
-                  variant="inherit"
-                  component="span"
-                  sx={{ textAlign: { xs: 'center', md: 'left' } }}
+                  style={{ textAlign: 'inherit' }}
                 >
                   {renderOptimizedText(firstName)}
                 </FirstNameContainer>
                 <LastNameContainer
                   className="name-container"
-                  variant="inherit"
-                  component="span"
-                  sx={{ textAlign: { xs: 'center', md: 'left' } }}
+                  style={{ textAlign: 'inherit' }}
                 >
                   {renderOptimizedText(lastName)}
                 </LastNameContainer>
               </NameHeading>
-              <JobTitle className="job-title" variant="h3" component="div">
+              <JobTitle className="job-title" variant="h3">
                 {tagLine}
               </JobTitle>
               {subtitle ? (
