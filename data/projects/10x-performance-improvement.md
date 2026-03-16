@@ -11,7 +11,6 @@ tags:
   - Performance
   - Full-Stack
   - Enterprise
-  - Data
 ---
 # 10x Performance Improvement
 

@@ -8,10 +8,9 @@ listed: true
 order: 4
 category: fullstack
 tags:
-  - Next.js
-  - TypeScript
   - Full-Stack
   - AI
+  - Frontend
 ---
 # AI Job Application Platform
 

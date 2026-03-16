@@ -2,7 +2,7 @@
 title: "Udviklerdashboard"
 description: "Internt dashboard der samler Jira og GitHub i én visning for aktive opgaver, PR'er, fejlende checks, branch conflicts og opfølgning."
 image: "/images/projects/developer-task-overview-dashboard.svg"
-tech: ["TypeScript", "React", "Node.js", "GitHub API", "Jira API"]
+tech: ["TypeScript", "React", "Node.js", "Internal Tools", "Developer Tools", "APIs"]
 links:
   - title: "Project Story"
     url: "/da/projects/git-to-jira-bridge"

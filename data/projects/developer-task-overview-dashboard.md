@@ -3,7 +3,7 @@ title: "Developer Task Overview Dashboard"
 slug: "developer-task-overview-dashboard"
 description: "Internal dashboard that combines Jira and GitHub into a single view for active tasks, PRs, failing checks, branch conflicts, and follow-up items."
 image: "/images/projects/developer-task-overview-dashboard.svg"
-tech: ["TypeScript", "React", "Node.js", "Internal Tools", "Developer Tools", "APIs"]
+tech: ["Internal Tools", "Developer Tools", "Frontend"]
 links:
   - title: "Project Story"
     url: "/en/projects/git-to-jira-bridge"
