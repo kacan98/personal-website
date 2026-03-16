@@ -86,6 +86,12 @@ cp .env.example .env
 
 Fill in the required variables as shown in `.env.example`.
 
+### Environment validation policy
+
+- **Production (`NODE_ENV=production`)**: app hard-fails if critical secrets are missing or still placeholder values (`JWT_SECRET`, `CV_ADMIN_PASSWORD`, `OPENAI_API_KEY`).
+- **Development/Test**: placeholders are tolerated for non-protected paths so builds/tests can run, but protected auth/token or OpenAI functionality fails at runtime when invoked.
+- Use real values for any feature you actually exercise locally.
+
 3. **Run the application:**
 ```bash
 npm run build
