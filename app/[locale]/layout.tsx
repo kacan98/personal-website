@@ -21,6 +21,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PROJECTS_PATH } from "@/lib/routes";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/site-metadata";
 
 type Props = {
   children: React.ReactNode;
@@ -33,8 +34,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Karel Čančara - Full-Stack Developer",
-    description: "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   };
 }
 

@@ -86,6 +86,13 @@ cp .env.example .env
 
 Fill in the required variables as shown in `.env.example`.
 
+### Environment validation policy
+
+- Placeholder or missing secrets are tolerated until a protected feature actually tries to use them.
+- CV auth/token operations fail at runtime when `JWT_SECRET` or `CV_ADMIN_PASSWORD` are not configured properly.
+- OpenAI-powered routes fail at runtime when `OPENAI_API_KEY` is not configured properly.
+- Use real values for any feature you actually exercise locally or in production.
+
 3. **Run the application:**
 ```bash
 npm run build
