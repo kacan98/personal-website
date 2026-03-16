@@ -4,7 +4,7 @@ title: "Property Transaction Analyzer - Buying vs Renting"
 slug: "property-transaction-analyzer"
 image: "/images/projects/property-transaction-analyzer-buying-vs-renting.png"
 description: "Interactive tool comparing buying vs renting property scenarios with financial calculations and visualizations."
-tags: ["React", "Redux", "TypeScript"]
+tags: ["React", "TypeScript", "Frontend", "Data Visualization"]
 links:
   - title: "GitHub"
     url: "https://github.com/kacan98/buying-vs-renting"

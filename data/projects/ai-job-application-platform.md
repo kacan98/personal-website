@@ -3,14 +3,15 @@ title: "AI Job Application Platform"
 slug: "ai-job-application-platform"
 image: ""
 description: "Next.js platform for CV customization, cover letters, and multilingual job-application flows."
-featured: false
-listed: false
+featured: true
+listed: true
+order: 4
 category: fullstack
 tags:
   - Next.js
   - TypeScript
-  - OpenAI
-  - CV customization
+  - Full-Stack
+  - AI
 ---
 # AI Job Application Platform
 

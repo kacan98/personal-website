@@ -3,14 +3,15 @@ title: "10x Performance Improvement"
 slug: "10x-performance-improvement"
 image: ""
 description: "Reduced synchronization time from 20+ minutes to under 2 minutes in production systems."
-featured: false
-listed: false
+featured: true
+listed: true
+order: 3
 category: performance
 tags:
-  - performance
-  - SQL
-  - IndexedDB
-  - enterprise
+  - Performance
+  - Full-Stack
+  - Enterprise
+  - Data
 ---
 # 10x Performance Improvement
 

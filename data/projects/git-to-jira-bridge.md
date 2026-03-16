@@ -1,9 +1,10 @@
 ---
 title: "Git-to-Jira Bridge"
+slug: "git-to-jira-bridge"
 description: "Full-stack time tracking system that automatically syncs development hours from Git commits to Jira worklogs, eliminating manual time reporting."
 image: "/images/projects/git-to-jira-bridge.png"
 imageAlt: "Git-to-Jira Bridge dashboard showing time tracking interface"
-tech: ["TypeScript", "React", "Node.js", "Express", "Git API", "Jira API", "Vercel", "CSV Processing"]
+tech: ["TypeScript", "React", "Node.js", "Full-Stack", "Automation", "APIs"]
 links:
   - title: "Deployment"
     url: "https://log-bridge.vercel.app"

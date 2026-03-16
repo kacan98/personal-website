@@ -15,12 +15,20 @@ const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps
   const t = useTranslations('projects');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const uniqueTags = useMemo(() =>
-    Array.from(new Set(allProjects.flatMap((project) => project.tags)))
-      .sort()
-      .filter((tag) => !!tag),
-    [allProjects]
-  );
+  const uniqueTags = useMemo(() => {
+    const tagCounts = allProjects.reduce<Record<string, number>>((acc, project) => {
+      for (const tag of project.tags || []) {
+        if (!tag) continue;
+        acc[tag] = (acc[tag] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    return Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 10)
+      .map(([tag]) => tag);
+  }, [allProjects]);
 
   const filteredProjects = useMemo(() => {
     if (selectedTags.length === 0) {
@@ -94,7 +102,7 @@ const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
           {filteredProjects.map((project, index) => (
             <Box
-              key={project.title}
+              key={project.slug}
               className="modern-project-card"
               sx={{
                 width: '100%',
