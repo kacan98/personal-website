@@ -36,23 +36,6 @@ interface HomePageContentProps {
   socials: Link[];
 }
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <Typography
-      sx={{
-        display: "block",
-        fontFamily: 'ui-monospace, "SFMono-Regular", "SF Mono", Consolas, monospace',
-        fontSize: "0.82rem",
-        textTransform: "uppercase",
-        letterSpacing: "0.14em",
-        color: "rgba(255,255,255,0.58)",
-      }}
-    >
-      {children}
-    </Typography>
-  );
-}
-
 function IntroSection({
   heading,
   points,
@@ -102,8 +85,8 @@ function IntroSection({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(3, minmax(0, 1fr))" },
-              gap: { xs: 1.5, md: 2 },
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, minmax(0, 1fr))" },
+              gap: { xs: 1.5, md: 2.25 },
               textAlign: { xs: "center", md: "left" },
             }}
           >
@@ -114,16 +97,17 @@ function IntroSection({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-80px" }}
+                style={{ height: "100%" }}
                 >
                   <Box
                     sx={{
                       height: "100%",
-                      p: { xs: 2.5, md: 3 },
-                    borderRadius: 3,
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    background: "rgba(255,255,255,0.025)",
-                  }}
-                >
+                      p: { xs: 2.5, md: 3.25 },
+                      borderRadius: 3,
+                      border: "1px solid rgba(255,255,255,0.06)",
+                      background: "rgba(255,255,255,0.018)",
+                    }}
+                  >
                   <Typography
                     sx={{
                       mb: 1,
@@ -192,6 +176,7 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
             display: "grid",
             gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" },
             gap: { xs: 2, md: 2.5 },
+            alignItems: "stretch",
           }}
         >
           {items.map((item, index) => {
@@ -204,6 +189,7 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: index * 0.06, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-60px" }}
+                style={{ height: "100%" }}
               >
                 <Box
                   component="a"
@@ -213,6 +199,7 @@ function SelectedWorkSection({ title, items }: { title: string; items: CuratedPr
                   sx={{
                     display: "flex",
                     flexDirection: "column",
+                    height: "100%",
                     gap: 2,
                     p: { xs: 3, md: 3.5 },
                     borderRadius: 3,

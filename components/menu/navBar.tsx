@@ -33,7 +33,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const t = useTranslations('navigation');
   const locale = useLocale();
 
