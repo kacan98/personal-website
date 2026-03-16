@@ -12,6 +12,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:update-cv-screens": "UPDATE_CV_STORY_SCREENSHOTS=1 playwright test e2e/cv-tailoring.spec.ts",
+    "capture:dashboard-screens": "node scripts/capture-dashboard-story-screens.mjs",
     "prepare": "husky",
     "validate-md": "remark data/ --use remark-lint-frontmatter-schema",
     "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch",
@@ -75,6 +79,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.6",
+    "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
