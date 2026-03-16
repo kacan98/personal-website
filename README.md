@@ -88,9 +88,10 @@ Fill in the required variables as shown in `.env.example`.
 
 ### Environment validation policy
 
-- **Production (`NODE_ENV=production`)**: app hard-fails if critical secrets are missing or still placeholder values (`JWT_SECRET`, `CV_ADMIN_PASSWORD`, `OPENAI_API_KEY`).
-- **Development/Test**: placeholders are tolerated for non-protected paths so builds/tests can run, but protected auth/token or OpenAI functionality fails at runtime when invoked.
-- Use real values for any feature you actually exercise locally.
+- Placeholder or missing secrets are tolerated until a protected feature actually tries to use them.
+- CV auth/token operations fail at runtime when `JWT_SECRET` or `CV_ADMIN_PASSWORD` are not configured properly.
+- OpenAI-powered routes fail at runtime when `OPENAI_API_KEY` is not configured properly.
+- Use real values for any feature you actually exercise locally or in production.
 
 3. **Run the application:**
 ```bash

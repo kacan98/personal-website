@@ -9,6 +9,29 @@ export const SITE_TITLE = `${SITE_NAME} - Full-Stack Developer`;
 export const SITE_DESCRIPTION =
   "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.";
 export const SOCIAL_IMAGE = "/portfolio.png";
+export const CONTACT_EMAIL = "karel@cancara.dk";
+export const GITHUB_URL = "https://github.com/kacan98";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/kcancara";
+
+export const PROFILE_HEADLINE =
+  "Full-stack developer focused on building reliable product features, internal tools, and workflow-heavy systems with TypeScript, React, .NET, and X++.";
+
+export const PROFILE_SUMMARY =
+  "I build software across frontend and backend, from UI work and integrations to business logic and operational tooling. My focus is practical delivery, maintainable systems, and removing friction from real workflows.";
+
+export const PROFILE_CORE_SKILLS = [
+  "TypeScript, JavaScript, React, Next.js",
+  ".NET, C#, X++, APIs and integrations",
+  "SQL, data modeling, enterprise workflows",
+  "Internal tools and AI-enhanced development workflows",
+] as const;
+
+export const PROFILE_KEY_LINKS = [
+  { label: "Portfolio", href: SITE_URL, text: SITE_URL },
+  { label: "Projects", href: `${SITE_URL}/en${PROJECTS_PATH}`, text: `${SITE_URL}/en${PROJECTS_PATH}` },
+  { label: "CV", href: `${SITE_URL}/en/cv`, text: `${SITE_URL}/en/cv` },
+  { label: "LinkedIn", href: LINKEDIN_URL, text: "linkedin.com/in/kcancara" },
+] as const;
 
 export function getBaseMetadata(): Metadata {
   return {
@@ -48,9 +71,9 @@ export function getPersonSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     image: `${SITE_URL}${SOCIAL_IMAGE}`,
-    email: "mailto:karel@cancara.dk",
+    email: `mailto:${CONTACT_EMAIL}`,
     jobTitle: "Full-Stack Developer",
-    sameAs: ["https://github.com/kacan98", "https://www.linkedin.com/in/kcancara"],
+    sameAs: [GITHUB_URL, LINKEDIN_URL],
     knowsAbout: ["TypeScript", "React", "Next.js", ".NET", "X++", "AI-enhanced development"],
   };
 }
@@ -82,5 +105,15 @@ export function getProfileSchema() {
 }
 
 export function getSitemapRoutes(): string[] {
-  return ["", "/about", PROJECTS_PATH, "/cv", "/tools", "/chatbot"];
+  const routes = ["", "/about", PROJECTS_PATH, "/cv", "/tools"];
+
+  if (settings.specialPages?.chatbot) {
+    routes.push("/chatbot");
+  }
+
+  return routes;
+}
+
+export function getLlmsKeyPages(): string[] {
+  return ["", "/about", PROJECTS_PATH, "/cv"];
 }

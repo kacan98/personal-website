@@ -1,5 +1,15 @@
 import type { Metadata } from "next";
-import { getProfileSchema, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site-metadata";
+import {
+  CONTACT_EMAIL,
+  PROFILE_CORE_SKILLS,
+  PROFILE_HEADLINE,
+  PROFILE_KEY_LINKS,
+  PROFILE_SUMMARY,
+  getProfileSchema,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/site-metadata";
 
 export const metadata: Metadata = {
   title: `About ${SITE_NAME}`,
@@ -21,36 +31,29 @@ export default function ProfilePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(profileSchema) }}
       />
       <h1>{SITE_NAME}</h1>
-      <p>
-        Full-stack developer focused on building reliable product features, internal tools, and workflow-heavy
-        systems with TypeScript, React, .NET, and X++.
-      </p>
+      <p>{PROFILE_HEADLINE}</p>
 
       <h2>Professional Summary</h2>
-      <p>
-        I build software across frontend and backend, from UI work and integrations to business logic and
-        operational tooling. My focus is practical delivery, maintainable systems, and removing friction from
-        real workflows.
-      </p>
+      <p>{PROFILE_SUMMARY}</p>
 
       <h2>Core Skills</h2>
       <ul>
-        <li>TypeScript, JavaScript, React, Next.js</li>
-        <li>.NET, C#, X++, APIs and integrations</li>
-        <li>SQL, data modeling, enterprise workflows</li>
-        <li>Internal tools and AI-enhanced development workflows</li>
+        {PROFILE_CORE_SKILLS.map((skill) => (
+          <li key={skill}>{skill}</li>
+        ))}
       </ul>
 
       <h2>Key Links</h2>
       <ul>
-        <li>Portfolio: <a href={SITE_URL}>{SITE_URL}</a></li>
-        <li>Projects: <a href={`${SITE_URL}/en/projects`}>{SITE_URL}/en/projects</a></li>
-        <li>CV: <a href={`${SITE_URL}/en/cv`}>{SITE_URL}/en/cv</a></li>
-        <li>LinkedIn: <a href="https://www.linkedin.com/in/kcancara">linkedin.com/in/kcancara</a></li>
+        {PROFILE_KEY_LINKS.map((link) => (
+          <li key={link.label}>
+            {link.label}: <a href={link.href}>{link.text}</a>
+          </li>
+        ))}
       </ul>
 
       <h2>Contact</h2>
-      <p>Email: <a href="mailto:karel@cancara.dk">karel@cancara.dk</a></p>
+      <p>Email: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
     </main>
   );
 }

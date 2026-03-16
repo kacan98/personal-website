@@ -66,23 +66,6 @@ function requireProtectedSecret(key: keyof typeof parsedEnv, context: string): s
   return value!;
 }
 
-function assertProductionEnv(): void {
-  if (!isProduction) return;
-
-  const requiredSecrets: Array<keyof typeof parsedEnv> = ['JWT_SECRET', 'CV_ADMIN_PASSWORD', 'OPENAI_API_KEY'];
-
-  const invalid = requiredSecrets.filter((key) => isPlaceholderValue(String(key), readEnv(key)));
-
-  if (invalid.length > 0) {
-    throw new Error(
-      `Missing required production environment variables: ${invalid.join(', ')}. ` +
-        'Set real secret values (not placeholders) before running production build/start.'
-    );
-  }
-}
-
-assertProductionEnv();
-
 // Backwards-compatible exports used across API routes/services
 export const OPENAI_API_KEY = isPlaceholderValue('OPENAI_API_KEY', readEnv('OPENAI_API_KEY'))
   ? undefined
