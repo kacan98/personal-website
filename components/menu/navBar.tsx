@@ -40,6 +40,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const weAreHome = pathname === "/" || pathname === `/${locale}`;
+  const showMobileLayout = isMobile;
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -163,7 +164,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
           ...getContainerSx()
         }}>
           {/* Mobile Layout */}
-          {isMobile ? (
+          {showMobileLayout ? (
             <>
               {!weAreHome && (
                 <Link href="/" passHref>
@@ -218,7 +219,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
       </AppBar>
       
       {/* Mobile Menu */}
-      {isMobile && mobileMenu}
+      {showMobileLayout && mobileMenu}
     </>
   );
 };
