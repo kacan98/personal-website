@@ -44,6 +44,7 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Match only internationalized pathnames, exclude API routes, static files, and icon routes
-  matcher: ['/((?!api|_next|_vercel|icon|favicon|.*\\..*).*)']
+  // Match only internationalized pathnames, exclude API routes, static files, icon routes,
+  // and dedicated crawler-friendly static profile page.
+  matcher: ['/((?!api|_next|_vercel|icon|favicon|profile|.*\\..*).*)']
 };
