@@ -1,131 +1,81 @@
 ---
-title: From Portfolio Site to AI Job Application Platform
+title: A Hidden AI CV Tailoring Workflow Inside My Portfolio
 tags:
   - Next.js
   - React
   - TypeScript
   - OpenAI GPT-5
-  - Material-UI
   - Product Design
   - Chrome Extension
   - Recruiter UX
 category: fullstack
 date: 2026-03-16
 metrics:
-  impact: Turns a personal website into a practical workspace for tailored job applications and client-facing storytelling
-  timeframe: Product built and iterated through real use
+  impact: Turns a public CV into a private, reviewable workflow for tailoring applications faster
+  timeframe: Built from a local-only tool into a production-ready workflow
 liveUrl: https://kcancara.vercel.app/en/cv
 sourceUrl: https://github.com/openclaw/personal-website-3
 ---
-# A portfolio that behaves like a product
+# A private workflow behind a public CV
 
-Most personal websites stop at "here is my CV." I wanted something more useful.
+This part of the site is not meant for normal visitors.
 
-This project started as a portfolio, but I kept pushing it until it became a real workflow tool: a place where a recruiter can quickly understand my background, a potential client can inspect how I think, and I can tailor a strong application without jumping between six different tools.
+The public CV should stay calm, readable, and easy to scan for recruiters or clients. The editing tools only matter to me when I am tailoring an application, so I kept them hidden on purpose. Before this lived in the site, I used the same workflow locally on my own machine. That worked, but it was annoying: too many context switches, too much copy-paste, and no shared place where the polished public CV and the private editing workflow could live together.
 
-![Homepage showing the product framing and navigation across portfolio, CV, stories, and chat.](/images/project-stories/ai-job-application-platform/home-hero.png)
+So I merged them into one page. The public version stays clean. The working tools are there when I need them.
 
-## What makes it different
+## Step 1: the page looks normal until I need the workshop
 
-The site combines several layers that usually live in separate products:
+For a normal visitor, the CV is just a CV. That is intentional.
 
-- A public portfolio and project gallery
-- A recruiter-friendly CV page
-- An authenticated inline CV editor
-- Role-specific CV adjustment flows
-- Translation support for multilingual applications
-- A Chrome extension for capturing job descriptions
-- A project stories section for deeper proof of work
-- A chatbot trained on the portfolio content
+![Public CV view with no editing controls visible.](/images/project-stories/ai-job-application-platform/cv-public.png)
 
-That combination is what makes the project interesting. It is not just a design exercise and it is not just an AI demo. It is a practical product built around an actual recurring workflow.
+The hidden part is almost a small joke: clicking the page header reveals the password prompt. I like that because it keeps the editing flow available without turning the whole site into an admin dashboard.
 
-## A strong first impression matters
+![Password-gated entry to the private CV editing workflow.](/images/project-stories/ai-job-application-platform/cv-auth-modal.png)
 
-The public-facing side of the site is intentionally simple to navigate. A visitor can move between portfolio pieces, the CV, project stories, and the chatbot without needing context first.
+## Step 2: the same page turns into an editing workspace
 
-![Portfolio overview showing a browsable set of projects rather than a single long resume page.](/images/project-stories/ai-job-application-platform/portfolio-grid.png)
+After login, the page becomes a working editor instead of a static document. I can still see the final CV exactly as a recruiter would read it, but now I get the tools needed to tailor it in place.
 
-For recruiters, that means the site works as a fast screening tool. For potential customers, it means the work is framed as outcomes and capabilities, not just technology names.
+![Editable CV mode with the compact action rail visible on the right.](/images/project-stories/ai-job-application-platform/cv-edit-mode.png)
 
-## The CV is readable before it is editable
+This is the main product decision behind the flow: stay close to the final output. I do not want a separate admin tool with a separate preview and another export step if I can avoid it.
 
-The CV page is designed to stand on its own as a polished public document. Even without logging in, the layout reads like a finished deliverable rather than a draft workspace.
+## Step 3: start from the browser, not from a blank text box
 
-![Public CV view with a clean two-column layout and link-rich contact and skills sections.](/images/project-stories/ai-job-application-platform/cv-public.png)
+One entry point is the Chrome extension. The goal is simple: when I find a relevant job posting, I should be able to move it into the CV workflow quickly instead of manually rebuilding the context every time.
 
-That distinction matters to me. Public visitors should see a calm, credible presentation first. Editing tools only appear when they are genuinely useful.
+![Chrome extension flow for bringing a job post into the CV tailoring process.](/images/project-stories/ai-job-application-platform/cv-extension-modal.png)
 
-## The same page becomes a working editor
+That sounds small, but it removes a lot of friction. The best workflow is usually the one that reduces the number of tabs and decisions.
 
-Once authenticated, the exact same CV becomes editable in place. That means I am not maintaining content in one screen and previewing it in another. I am editing the real output directly.
+## Step 4: paste the job description and let the CV adapt
 
-![Authenticated edit mode with inline editing controls and a compact action rail for tailoring workflows.](/images/project-stories/ai-job-application-platform/cv-edit-mode.png)
+If I already have the role description, I can paste it directly into the adjustment flow. The interface is deliberately simple because the important thing is the brief itself, not a long list of settings.
 
-This is one of the parts I am happiest with. It shows how I like to build products: keep the workflow close to the final result, remove unnecessary context switching, and make advanced capabilities feel lightweight instead of intimidating.
+![Modal for tailoring the CV to a pasted job description.](/images/project-stories/ai-job-application-platform/cv-manual-adjustment.png)
 
-The small action rail on the right turns the CV from a document into a workspace. It keeps the interface compact while still exposing the important actions.
+This is where the local-only tool became worth productizing. I was already doing this repeatedly by hand. Moving it into the site made the process faster, more consistent, and easier to review.
 
-## Tailoring starts with a clear brief
+## Step 5: AI can help, but every change stays reviewable
 
-The position-adjustment flow is centered around one practical input: the job description. Instead of sending a user into a maze of settings, the workflow begins with the thing that matters most.
+The most important part is not generating changes. It is reviewing them. After the CV is adjusted, I can inspect what changed directly on the page instead of trusting an invisible rewrite.
 
-![Role-specific CV adjustment modal designed around a pasted job description and a focused call to action.](/images/project-stories/ai-job-application-platform/cv-manual-adjustment.png)
+![Diff view showing exactly how AI tailored the CV for a role.](/images/project-stories/ai-job-application-platform/cv-ai-diff-view.png)
 
-That decision reflects the product mindset behind the project. Good software should reduce decision fatigue. The interface should help the user focus on the few inputs that actually change the outcome.
+This is the part I would want a recruiter or client to notice. The AI is useful, but it is not treated like magic. The workflow keeps the output transparent, editable, and easy to validate before I use it.
 
-## The diff view keeps AI output reviewable
+## Step 6: translation stays inside the same flow
 
-The most important part of the workflow is not generation. It is review. When the CV is adjusted for a role, the page can show exactly what changed so I can inspect the output before using it.
+If I want to produce another language version, I can do it without leaving the same workspace. That matters because translation is part of the real application process, not an afterthought.
 
-![AI-modified CV shown in diff mode so every tailored change can be reviewed before it is used.](/images/project-stories/ai-job-application-platform/cv-ai-diff-view.png)
+![Translation modal built directly into the CV tailoring workflow.](/images/project-stories/ai-job-application-platform/cv-translation-modal.png)
 
-That matters for recruiters and customers because it shows a practical approach to AI: use it to accelerate high-value work, but keep the output transparent and easy to validate.
+Keeping translation in the same place means the workflow stays coherent from start to finish: capture the role, tailor the CV, review the diff, and prepare the right version for the audience.
 
-## Translation is built into the application flow
+## Why I think this is worth showing
 
-For multilingual applications, I did not want translation to be an afterthought or an export step hidden somewhere else. It lives directly in the CV workflow.
+This is not the whole website. It is a very specific product idea hidden inside it: a private application workshop built on top of a public CV.
 
-![Translation workflow for converting the CV into another language without leaving the editing context.](/images/project-stories/ai-job-application-platform/cv-translation-modal.png)
-
-This is a good example of the kind of end-to-end thinking I try to bring to my work. A lot of products handle the happy path, but the real quality shows up in the secondary workflows: translation, iteration, review, and reuse.
-
-## Browser capture shortens the path from job post to tailored application
-
-I also added a Chrome extension flow so a job posting can move straight into the tailoring workflow. That closes an important gap between finding an opportunity and acting on it.
-
-![Chrome extension onboarding that connects live job postings to the CV tailoring workflow.](/images/project-stories/ai-job-application-platform/cv-extension-modal.png)
-
-From a recruiter or client perspective, this matters because it shows the project is not just about generating text. It is about building a complete system around a real-world task.
-
-## Proof matters more than claims
-
-I do not want the site to rely only on summary bullets. The project stories section gives visitors a way to inspect how I work, what I built, and what the result was.
-
-![Project stories page surfacing concrete examples, measurable outcomes, and implementation context.](/images/project-stories/ai-job-application-platform/project-stories-page.png)
-
-That is valuable for hiring managers and customers alike. It turns the portfolio into evidence. Instead of saying that I can solve product and engineering problems, I can show the reader several concrete examples and let them judge the quality of the work.
-
-## A conversational way to explore fit
-
-The chatbot is another layer in the same idea. Some visitors want to browse. Others want to ask direct questions.
-
-![Portfolio chatbot that lets visitors ask about background, projects, and areas of expertise.](/images/project-stories/ai-job-application-platform/chatbot-page.png)
-
-Giving them a conversational interface makes the site more useful without replacing the structured pages. It is there to reduce friction, not to become the whole experience.
-
-## What this project says about me as a developer
-
-If I were evaluating an engineer through one side project, this is the kind of project I would want to see.
-
-It shows product judgment, not just implementation speed. It shows I can connect UX, content, workflows, and engineering details into one coherent experience. It shows I think about real users, not just features. And it shows I can build something that is polished enough to present publicly while still being practical enough to use regularly.
-
-The technical stack matters, but the more important signal is the shape of the solution:
-
-- A public experience that feels credible and intentional
-- Authenticated tools that stay close to the real output
-- AI features used where they remove friction rather than create noise
-- Multiple entry points for different audiences: recruiters, clients, and collaborators
-- Clear proof of work through case studies and portfolio content
-
-That is the standard I try to hold myself to when building software: useful, thoughtful, and finished enough that someone else can trust it.
+I think it reflects the kind of developer I am in a useful way. I like tools that solve a real repeated problem, I like keeping advanced features out of the way until they are needed, and I like AI features best when they are practical, inspectable, and grounded in a real workflow.
