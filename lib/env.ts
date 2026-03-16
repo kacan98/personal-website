@@ -16,7 +16,6 @@ const envSchema = z
 
 const parsedEnv = envSchema.parse(process.env);
 
-const isProduction = parsedEnv.NODE_ENV === 'production';
 
 function normalize(value?: string): string | undefined {
   const trimmed = value?.trim();
