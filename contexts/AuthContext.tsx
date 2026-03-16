@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,17 +22,19 @@ export function useAuth(): AuthContextType {
 
 interface AuthProviderProps {
   children: ReactNode;
+  eager?: boolean;
 }
 
-export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
+export function AuthProvider({ children, eager = false }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(eager);
 
-  const checkAuthStatus = useCallback(async (): Promise<void> => {
+  const checkAuthStatus = async (): Promise<void> => {
+    setIsLoading(true);
     try {
       const response = await fetch('/api/auth/status', {
         method: 'GET',
-        credentials: 'include', // Include cookies
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -43,16 +45,16 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
-  const login = useCallback(async (password: string): Promise<{ success: boolean; message: string; remainingAttempts?: number }> => {
+  const login = async (password: string): Promise<{ success: boolean; message: string; remainingAttempts?: number }> => {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Include cookies
+        credentials: 'include',
         body: JSON.stringify({ password }),
       });
 
@@ -61,13 +63,13 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       if (data.success) {
         setIsAuthenticated(true);
         return { success: true, message: data.message };
-      } else {
-        return {
-          success: false,
-          message: data.message,
-          remainingAttempts: data.remainingAttempts
-        };
       }
+
+      return {
+        success: false,
+        message: data.message,
+        remainingAttempts: data.remainingAttempts
+      };
     } catch (error) {
       console.error('Login failed:', error);
       return {
@@ -75,35 +77,35 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         message: 'Network error occurred'
       };
     }
-  }, []);
+  };
 
-  const logout = useCallback(async (): Promise<void> => {
+  const logout = async (): Promise<void> => {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
-        credentials: 'include', // Include cookies
+        credentials: 'include',
       });
 
       setIsAuthenticated(false);
     } catch (error) {
       console.error('Logout failed:', error);
-      // Still set to false even if request fails
       setIsAuthenticated(false);
     }
-  }, []);
+  };
 
-  // Check auth status on mount
   useEffect(() => {
-    checkAuthStatus();
-  }, [checkAuthStatus]);
+    if (eager) {
+      checkAuthStatus();
+    }
+  }, [eager]);
 
-  const value: AuthContextType = useMemo(() => ({
+  const value: AuthContextType = {
     isAuthenticated,
     isLoading,
     login,
     logout,
     checkAuthStatus,
-  }), [isAuthenticated, isLoading, login, logout, checkAuthStatus]);
+  };
 
   return (
     <AuthContext.Provider value={value}>

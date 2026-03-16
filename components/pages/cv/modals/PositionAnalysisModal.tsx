@@ -22,10 +22,12 @@ import {
   TrendingUp as TrendingUpIcon,
   AutoAwesome as AutoAwesomeIcon,
   Clear as ClearIcon,
+  Save as SaveIcon,
 } from "@mui/icons-material";
 import Button from "@/components/ui/Button";
 import BaseModal from "./BaseModal";
 import { JobCvIntersectionResponse } from "@/app/api/job-cv-intersection/model";
+import { ImprovementMemoryManager } from "../components/ImprovementMemoryManager";
 
 // Component for improvement description input
 const ImprovementDescriptionInput = ({
@@ -158,14 +160,26 @@ const PositionAnalysisModal = ({
   const [localPositionDetails, setLocalPositionDetails] = useState(positionDetails);
   const positionDebounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const [isAutoFilling, setIsAutoFilling] = useState(false);
+  const [isSavingImprovements, setIsSavingImprovements] = useState(false);
 
-  // Get historical positions for auto-fill
-  const historicalPositions = useAppSelector((state) => state.improvementDescriptions.positions);
+  // Track initial improvement descriptions to detect changes
+  const initialImprovementsRef = useRef<Record<string, string>>({});
 
   // Sync local state with props
   useEffect(() => {
     setLocalPositionDetails(positionDetails);
   }, [positionDetails]);
+
+  // Initialize initial improvements snapshot when position intersection changes
+  useEffect(() => {
+    if (positionIntersection && currentPosition) {
+      const snapshot: Record<string, string> = {};
+      Object.entries(currentPosition.improvements).forEach(([key, data]) => {
+        snapshot[key] = data.userDescription;
+      });
+      initialImprovementsRef.current = snapshot;
+    }
+  }, [positionIntersection, currentPosition]);
 
   // Debounced handler for position details
   const handlePositionDetailsChange = useCallback((value: string) => {
@@ -200,7 +214,6 @@ const PositionAnalysisModal = ({
     try {
       const newImprovements = positionIntersection.whatIsMissing.map(item => item.description);
       console.log('Manual auto-fill with improvements:', newImprovements);
-      console.log('Historical positions available:', Object.keys(historicalPositions).length);
 
       const autoFillRes = await fetch(autoFillImprovementsAPIEndpointName, {
         method: 'POST',
@@ -208,8 +221,7 @@ const PositionAnalysisModal = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          newImprovements,
-          historicalPositions
+          newImprovements
         } as AutoFillImprovementsParams),
       });
 
@@ -243,11 +255,11 @@ const PositionAnalysisModal = ({
     } finally {
       setIsAutoFilling(false);
     }
-  }, [positionIntersection, historicalPositions, dispatch, setsnackbarMessage]);
+  }, [positionIntersection, dispatch, setsnackbarMessage]);
 
   // Check if there are unfilled improvements that could potentially be auto-filled
   const hasUnfilledImprovements = useCallback(() => {
-    if (!positionIntersection?.whatIsMissing || Object.keys(historicalPositions).length === 0) {
+    if (!positionIntersection?.whatIsMissing) {
       return false;
     }
 
@@ -256,7 +268,66 @@ const PositionAnalysisModal = ({
       const improvementData = currentPosition?.improvements[missing.description];
       return !improvementData || (!improvementData.autoFilled && improvementData.userDescription.trim().length === 0);
     });
-  }, [positionIntersection, historicalPositions, currentPosition]);
+  }, [positionIntersection, currentPosition]);
+
+  // Check if there are any changed or added improvements
+  const hasChangedImprovements = useCallback(() => {
+    if (!currentPosition) return false;
+
+    return Object.entries(currentPosition.improvements).some(([key, data]) => {
+      const currentDescription = data.userDescription.trim();
+      const initialDescription = (initialImprovementsRef.current[key] || '').trim();
+
+      // Check if there's a description and it's different from initial
+      return currentDescription.length > 0 && currentDescription !== initialDescription;
+    });
+  }, [currentPosition]);
+
+  // Handler to save current improvements to database
+  const handleSaveCurrentImprovements = useCallback(async () => {
+    if (!currentPosition) return;
+
+    // Get only changed or added improvements
+    const improvementsToSave = Object.entries(currentPosition.improvements)
+      .filter(([key, data]) => {
+        const currentDescription = data.userDescription.trim();
+        const initialDescription = (initialImprovementsRef.current[key] || '').trim();
+        return currentDescription.length > 0 && currentDescription !== initialDescription;
+      })
+      .map(([key, data]) => ({ key, description: data.userDescription }));
+
+    if (improvementsToSave.length === 0) {
+      setsnackbarMessage('No new or changed improvements to save');
+      return;
+    }
+
+    setIsSavingImprovements(true);
+    try {
+      const response = await fetch('/api/improvement-memories/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ improvements: improvementsToSave }),
+      });
+
+      if (response.ok) {
+        setsnackbarMessage(`Saved ${improvementsToSave.length} improvement(s) to memory!`);
+
+        // Update the initial snapshot after successful save
+        improvementsToSave.forEach(({ key, description }) => {
+          initialImprovementsRef.current[key] = description;
+        });
+      } else {
+        setsnackbarMessage('Failed to save improvements');
+      }
+    } catch (error) {
+      console.error('Error saving improvements:', error);
+      setsnackbarMessage('Error saving improvements');
+    } finally {
+      setIsSavingImprovements(false);
+    }
+  }, [currentPosition, setsnackbarMessage]);
 
   // Actions for when analysis exists
   const analysisActions = (
@@ -400,25 +471,40 @@ const PositionAnalysisModal = ({
             <Typography variant="h6" sx={{ color: 'warning.main', fontWeight: 600 }}>
               ⚡ Potential Improvements
             </Typography>
-            {hasUnfilledImprovements() && (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {hasUnfilledImprovements() && (
+                <Button
+                  variant="primary"
+                  size="medium"
+                  onClick={handleAutoFill}
+                  disabled={isAutoFilling}
+                  startIcon={<AutoAwesomeIcon />}
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
+                    '&:hover': {
+                      boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
+                    }
+                  }}
+                >
+                  {isAutoFilling ? 'Filling...' : 'Fill from past jobs'}
+                </Button>
+              )}
               <Button
-                variant="primary"
+                variant="outline"
                 size="medium"
-                onClick={handleAutoFill}
-                disabled={isAutoFilling}
-                startIcon={<AutoAwesomeIcon />}
+                onClick={handleSaveCurrentImprovements}
+                disabled={isSavingImprovements || !hasChangedImprovements()}
+                startIcon={<SaveIcon />}
                 sx={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  boxShadow: '0 2px 8px rgba(25, 118, 210, 0.3)',
-                  '&:hover': {
-                    boxShadow: '0 4px 12px rgba(25, 118, 210, 0.4)',
-                  }
                 }}
               >
-                {isAutoFilling ? 'Filling...' : 'Fill from past jobs'}
+                {isSavingImprovements ? 'Saving...' : 'Save improvements'}
               </Button>
-            )}
+            </Box>
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
             Select the skills or experiences you actually have to include them in your CV refinement:
@@ -509,6 +595,9 @@ const PositionAnalysisModal = ({
           </Typography>
         </Box>
       )}
+
+      {/* Improvement Memory Manager - Always visible */}
+      <ImprovementMemoryManager setSnackbarMessage={setsnackbarMessage} />
 
     </BaseModal>
   );

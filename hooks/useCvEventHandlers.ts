@@ -11,6 +11,8 @@ import { CVSettings } from '@/types';
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model';
 import { ModalType } from './useModalManager';
 import { useAuth } from '@/contexts/AuthContext';
+import { AdjustmentWorkflowState } from '@/types/adjustment';
+import { RefineCvRequest } from '@/app/api/refine-cv/model';
 
 interface EventHandlersConfig {
   // State setters
@@ -39,9 +41,9 @@ interface EventHandlersConfig {
   closeModal: (modal: ModalType) => void;
 
   // Utility functions
-  adjustmentWorkflow: any;
-  refineCv: (data: any) => Promise<void>;
-  adjustMotivationalLetter: (letter: any, comments: string, position: string, cv: CVSettings, lang: string) => Promise<void>;
+  adjustmentWorkflow: AdjustmentWorkflowState & { startAdjustment: (positionDetails: string, checked: string[], selectedLanguage: string) => Promise<void> };
+  refineCv: (data: Pick<RefineCvRequest, 'checkedImprovements' | 'improvementInputs' | 'missingSkills' | 'otherChanges'>) => Promise<void>;
+  adjustMotivationalLetter: (letter: MotivationalLetterResponse, comments: string, position: string, cv: CVSettings, lang: string) => Promise<void>;
 }
 
 export function useCvEventHandlers(config: EventHandlersConfig) {
@@ -59,7 +61,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
   // Snackbar close handler
   const handleClose = useCallback((
-    event: React.SyntheticEvent | Event,
+    _event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
     if (reason === "clickaway") {
@@ -197,7 +199,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
       const jsonData = JSON.stringify(config.reduxCvProps, null, 2);
       await navigator.clipboard.writeText(jsonData);
       config.setSnackbarMessage('CV JSON copied to clipboard successfully');
-    } catch (error) {
+    } catch {
       config.setSnackbarMessage('Failed to copy CV JSON to clipboard');
     }
   }, [config.reduxCvProps, config.setSnackbarMessage]);
@@ -215,7 +217,7 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
     try {
       await logout();
       config.setSnackbarMessage('Logged out successfully');
-    } catch (error) {
+    } catch {
       config.setSnackbarMessage('Error during logout');
     } finally {
       config.setLoggingOut(false);

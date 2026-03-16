@@ -9,7 +9,10 @@ tags:
 category: technical
 date: 2024-06-01
 metrics:
-  impact: Interactive buy vs rent calculator with real-time financial projections
+  impact:
+    en: Created interactive buy vs rent calculator with real-time financial projections
+    da: Skabte interaktiv køb vs leje beregner med realtids økonomiske fremskrivninger
+    sv: Skapade interaktiv köp vs hyra kalkylator med realtids finansiella projektioner
   timeframe: Personal project with social media feedback
 liveUrl: https://kacan98.github.io/buying-vs-renting/
 embedding:

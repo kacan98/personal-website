@@ -7,7 +7,7 @@
     "build": "next build",
     "build:dev": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -15,12 +15,16 @@
     "prepare": "husky",
     "validate-md": "remark data/ --use remark-lint-frontmatter-schema",
     "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch",
+    "validate:projects": "node scripts/validate-projects.mjs",
     "analyze": "ANALYZE=true npm run build",
     "generate-embeddings": "node scripts/generate-embeddings.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "lint:fix": "eslint . --fix",
+    "check:links": "node scripts/check-links.mjs",
+    "check": "npm run validate:projects && npm run type-check && npm run lint && npm run check:links"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -29,9 +33,10 @@
     "@fontsource/open-sans": "^5.2.6",
     "@fontsource/urbanist": "^5.2.6",
     "@fontsource/yeseva-one": "^5.2.6",
+    "@imgly/background-removal": "^1.7.0",
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
-    "@mui/material-nextjs": "^7.3.0",
+    "@mui/material-nextjs": "^7.3.9",
     "@portabletext/react": "^3.2.1",
     "@react-spring/web": "^10.0.1",
     "@reduxjs/toolkit": "^2.8.2",
@@ -51,12 +56,13 @@
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^5.0.2",
     "motion": "^12.23.12",
-    "next": "^15.5.0",
-    "next-intl": "^4.3.5",
+    "next": "^16.1.6",
+    "next-intl": "^4.8.3",
     "openai": "^5.13.1",
     "pg": "^8.16.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-easy-crop": "^5.5.6",
     "react-icons": "^5.5.0",
     "react-parallax-tilt": "^1.7.304",
     "react-redux": "^9.2.0",
@@ -68,7 +74,7 @@
     "zod": "^3.25.56"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^15.5.0",
+    "@next/bundle-analyzer": "^16.1.6",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -77,13 +83,13 @@
     "@types/pg": "^8.15.5",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "@typescript-eslint/eslint-plugin": "^7.18.0",
-    "@typescript-eslint/parser": "^7.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
     "@vitejs/plugin-react": "^5.0.4",
     "chokidar": "^4.0.3",
     "drizzle-kit": "^0.31.5",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.0",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "^16.1.6",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-unused-imports": "^4.1.4",
     "husky": "^9.1.7",
@@ -98,7 +104,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint --fix"
+      "npm run lint:fix --"
     ]
   }
 }

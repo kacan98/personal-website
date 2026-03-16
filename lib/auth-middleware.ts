@@ -1,15 +1,12 @@
 import { NextRequest } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
-import { getJwtSecret, getCvAdminPassword } from './env';
+import { JWT_SECRET, CV_ADMIN_PASSWORD } from './env';
 
-function getJwtSecretBytes(): Uint8Array {
-  return new TextEncoder().encode(getJwtSecret());
-}
+const secret = JWT_SECRET ? new TextEncoder().encode(JWT_SECRET) : null;
 
 // Session duration configuration
 const SESSION_DURATION_DAYS = 14;
 const SESSION_DURATION_SECONDS = SESSION_DURATION_DAYS * 24 * 60 * 60;
-
 
 export interface AuthResult {
   authenticated: boolean;
@@ -20,11 +17,15 @@ export interface AuthResult {
  * Create a JWT token for authentication using jose library
  */
 export async function createAuthToken(): Promise<string> {
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required to create auth tokens');
+  }
+
   const token = await new SignJWT({})
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DURATION_DAYS}d`)
-    .sign(getJwtSecretBytes());
+    .sign(secret);
 
   return token;
 }
@@ -33,8 +34,13 @@ export async function createAuthToken(): Promise<string> {
  * Verify JWT token using jose library
  */
 export async function verifyAuthToken(token: string): Promise<boolean> {
+  if (!secret) {
+    console.error('JWT_SECRET environment variable not set!');
+    return false;
+  }
+
   try {
-    await jwtVerify(token, getJwtSecretBytes());
+    await jwtVerify(token, secret);
     return true;
   } catch (error) {
     console.log('Token verification failed:', error);
@@ -46,13 +52,11 @@ export async function verifyAuthToken(token: string): Promise<boolean> {
  * Validate password for CV admin access
  */
 export function validatePassword(password: string): boolean {
-  try {
-    const adminPassword = getCvAdminPassword();
-    return password === adminPassword;
-  } catch (error) {
-    console.error('CV admin password validation failed:', error);
+  if (!CV_ADMIN_PASSWORD) {
+    console.error('CV_ADMIN_PASSWORD environment variable not set!');
     return false;
   }
+  return password === CV_ADMIN_PASSWORD;
 }
 
 /**

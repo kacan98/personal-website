@@ -1,16 +1,10 @@
-import PortfolioPage from "@/components/pages/portfolio/portfolioPage";
-import { getTranslations } from 'next-intl/server';
+import { redirect } from "next/navigation";
 
 interface PortfolioProps {
   params: Promise<{ locale: string }>;
 }
 
-export default async function Portfolio({ params }: PortfolioProps) {
+export default async function PortfolioRedirect({ params }: PortfolioProps) {
   const { locale } = await params;
-  const t = await getTranslations('projects');
-
-  return <PortfolioPage
-    title={t('title')}
-    locale={locale}
-  />;
+  redirect("/" + locale + "/projects");
 }

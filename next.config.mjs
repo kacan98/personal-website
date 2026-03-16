@@ -20,9 +20,7 @@ const nextConfig = {
     // No remote patterns needed - using local images only
   },
   poweredByHeader: false,
-  experimental: {
-    optimizePackageImports: ['@mui/material', '@mui/icons-material'],
-    webpackMemoryOptimizations: true, // Next.js 15+ memory optimization
+  experimental: {    webpackMemoryOptimizations: true, // Next.js 15+ memory optimization
     // ppr: 'incremental', // TODO: Enable when upgrading to Next.js canary
   },
   // External packages for server components
@@ -92,7 +90,7 @@ const nextConfig = {
   // Force transpilation of problematic packages
   transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime'],
   // Webpack configuration for memory optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
+  webpack: (config, { dev }) => {
     // Optimize webpack cache settings for production to prevent 1.37GB cache inclusion
     if (config.cache && !dev) {
       // For Next.js 15, disable filesystem cache in production to prevent 1.37GB cache

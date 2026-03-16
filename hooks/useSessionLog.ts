@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 export interface SessionEvent {
   timestamp: Date;
   action: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   severity: 'info' | 'success' | 'warning' | 'error';
 }
 
@@ -16,7 +16,7 @@ export function useSessionLog() {
 
   const logEvent = useCallback((
     action: string,
-    details?: Record<string, any>,
+    details?: Record<string, unknown>,
     severity: 'info' | 'success' | 'warning' | 'error' = 'info'
   ) => {
     const event: SessionEvent = {

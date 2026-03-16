@@ -2,9 +2,9 @@
  * Shared AI prompts and configurations for CV processing
  */
 
-export interface PromptConfig {
+export interface PromptConfig<TParams = unknown> {
   systemPrompt: string;
-  userPromptTemplate: (params: any) => string;
+  userPromptTemplate: (params: TParams) => string;
   temperature: number;
   maxTokens: number;
 }
@@ -42,13 +42,18 @@ IMPORTANT: You must respond with valid JSON only that matches the input structur
 /**
  * Configuration for full CV personalization
  */
-export const PERSONALIZE_CV_CONFIG: PromptConfig = {
+export const PERSONALIZE_CV_CONFIG: PromptConfig<{
+  position: string;
+  cv: unknown;
+  positionSummary?: string;
+  jobIntersection?: unknown;
+}> = {
   systemPrompt: CV_ADJUSTMENT_SYSTEM_PROMPT,
   userPromptTemplate: (params: {
     position: string;
-    cv: any;
+    cv: unknown;
     positionSummary?: string;
-    jobIntersection?: any;
+    jobIntersection?: unknown;
   }) => `Please personalize this CV for the following position:
 
 Position: ${params.position}
@@ -69,7 +74,11 @@ Please return the personalized CV in the exact same JSON format.`,
 /**
  * Configuration for individual section adjustment
  */
-export const ADJUST_SECTION_CONFIG: PromptConfig = {
+export const ADJUST_SECTION_CONFIG: PromptConfig<{
+  positionDescription: string;
+  section: unknown;
+  sectionType?: string;
+}> = {
   systemPrompt: `${CV_ADJUSTMENT_SYSTEM_PROMPT}
 
 Focus on adjusting a single CV section to better match a specific job position while maintaining accuracy and truthfulness.
@@ -82,7 +91,7 @@ Additional Section Guidelines:
 - Maintain the same structure and format`,
   userPromptTemplate: (params: {
     positionDescription: string;
-    section: any;
+    section: unknown;
     sectionType?: string;
   }) => `Please adjust this CV section to better match the following position:
 
@@ -104,7 +113,7 @@ IMPORTANT: You must respond with valid JSON only. If the position description is
 /**
  * Helper function to create OpenAI chat completion request
  */
-export function createChatCompletionRequest(config: PromptConfig, params: any) {
+export function createChatCompletionRequest<TParams>(config: PromptConfig<TParams>, params: TParams) {
   return {
     model: 'gpt-4',
     messages: [

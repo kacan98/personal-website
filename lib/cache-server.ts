@@ -86,7 +86,7 @@ export function setCache(key: string, data: unknown, ttl: number = CACHE_CONFIG.
 /**
  * Get cache entry if valid (not expired)
  */
-export function getCache<T = any>(key: string): T | null {
+export function getCache<T = unknown>(key: string): T | null {
   const entry = cache.get(key);
 
   if (!entry) {
@@ -167,7 +167,6 @@ export function clearCacheByPrefix(prefix: string): void {
 export function getCacheStats() {
   let totalSize = 0;
   let expiredCount = 0;
-  let cvRelatedSize = 0;
   let cvRelatedActiveCount = 0;
   const now = Date.now();
 
@@ -184,7 +183,6 @@ export function getCacheStats() {
     // Check if this is a CV-related cache entry
     const isCvRelated = cvPrefixes.some(prefix => key.startsWith(prefix));
     if (isCvRelated) {
-      cvRelatedSize++;
       if (!isExpired) {
         cvRelatedActiveCount++;
       }

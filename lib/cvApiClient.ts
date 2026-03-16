@@ -114,7 +114,7 @@ export class CvApiClient {
    */
   static async adjustSection(params: {
     positionDescription: string;
-    section: any;
+    section: unknown;
     sectionType?: string;
   }) {
     return apiClient.post('/adjust-section', params);

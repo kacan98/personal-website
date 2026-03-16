@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { getOpenAIApiKey } from "./env";
+import { OPENAI_API_KEY } from "./env";
 
 // Centralized model configuration
 export const OPENAI_MODELS = {
@@ -14,10 +14,18 @@ export const OPENAI_MODELS = {
 // Singleton OpenAI client
 let openaiClient: OpenAI | null = null;
 
+export function hasOpenAIKey(): boolean {
+  return Boolean(OPENAI_API_KEY);
+}
+
 export function getOpenAIClient(): OpenAI {
+  if (!OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY environment variable is required");
+  }
+
   if (!openaiClient) {
     openaiClient = new OpenAI({
-      apiKey: getOpenAIApiKey(),
+      apiKey: OPENAI_API_KEY,
     });
   }
   return openaiClient;

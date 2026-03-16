@@ -43,7 +43,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     let body: LoginRequest;
     try {
       body = await request.json();
-    } catch (e) {
+    } catch {
       return NextResponse.json(
         {
           success: false,

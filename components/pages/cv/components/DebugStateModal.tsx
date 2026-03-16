@@ -18,7 +18,7 @@ import { CVSettings } from '@/types';
 interface SessionEvent {
   timestamp: Date;
   action: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   severity: 'info' | 'success' | 'warning' | 'error';
 }
 
@@ -28,7 +28,7 @@ interface DebugStateModalProps {
   currentCv: CVSettings | null;
   originalCv: CVSettings | null;
   hasChanges: boolean;
-  pageState?: Record<string, any>;
+  pageState?: Record<string, unknown>;
   sessionEvents?: SessionEvent[];
 }
 
@@ -67,25 +67,25 @@ export function DebugStateModal({
     setTabValue(newValue);
   };
 
-  const isDeepEqual = (obj1: any, obj2: any): boolean => {
+  const isDeepEqual = (obj1: unknown, obj2: unknown): boolean => {
     if (obj1 === obj2) return true;
     if (!obj1 || !obj2) return obj1 === obj2;
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   };
 
-  const findChangedFields = (original: any, current: any, path = ''): string[] => {
+  const findChangedFields = (original: object | null | undefined, current: object | null | undefined, path = ''): string[] => {
     const changes: string[] = [];
     if (!original || !current) return changes;
 
     const allKeys = new Set([
-      ...Object.keys(original || {}),
-      ...Object.keys(current || {}),
+      ...Object.keys((original || {}) as Record<string, unknown>),
+      ...Object.keys((current || {}) as Record<string, unknown>),
     ]);
 
     for (const key of allKeys) {
       const fullPath = path ? `${path}.${key}` : key;
-      const origVal = original?.[key];
-      const currVal = current?.[key];
+      const origVal = (original as Record<string, unknown> | undefined)?.[key];
+      const currVal = (current as Record<string, unknown> | undefined)?.[key];
 
       if (!isDeepEqual(origVal, currVal)) {
         if (typeof origVal === 'object' && typeof currVal === 'object') {
@@ -327,6 +327,11 @@ export function DebugStateModal({
   );
 }
 
-function getNestedValue(obj: any, path: string): any {
-  return path.split('.').reduce((current, key) => current?.[key], obj);
+function getNestedValue(obj: Record<string, unknown> | null, path: string): unknown {
+  return path.split('.').reduce((current: unknown, key) => {
+    if (typeof current === 'object' && current !== null) {
+      return (current as Record<string, unknown>)[key];
+    }
+    return undefined;
+  }, obj);
 }

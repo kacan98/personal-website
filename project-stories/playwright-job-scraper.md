@@ -9,9 +9,13 @@ tags:
   - web scraping
   - automation
 category: automation
+archived: true
 date: 2024-06-01
 metrics:
-  impact: 'Filtered 30 jobs/minute, prioritized fresh opportunities'
+  impact:
+    en: Filtered 30 jobs/minute, prioritized fresh opportunities
+    da: Filtrerede 30 job/minut og prioriterede friske muligheder
+    sv: Filtrerade 30 jobb/minut och prioriterade nya möjligheter
   timeframe: Learning project
 embedding:
   - -0.04258573800325394

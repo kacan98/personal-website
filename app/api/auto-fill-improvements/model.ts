@@ -18,10 +18,9 @@ export const HistoricalPosition = z.object({
   improvements: z.record(z.string(), HistoricalImprovementData),
 })
 
-// Request parameters
+// Request parameters - simplified, no longer need historicalPositions
 export const AutoFillImprovementsParams = z.object({
   newImprovements: z.array(z.string()),
-  historicalPositions: z.record(z.string(), HistoricalPosition),
 })
 
 export type AutoFillImprovementsParams = z.infer<typeof AutoFillImprovementsParams>

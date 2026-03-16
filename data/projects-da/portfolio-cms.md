@@ -2,6 +2,7 @@
 $schema: ./schemas/project.schema.json
 title: "Portfolio med CMS"
 slug: "portfolio-cms"
+archived: true
 image: "/images/projects/reusable-portfolio-with-a-cms.png"
 description: "Dynamisk portfolio integreret med et indholdsadministrationssystem for nemme indholdsopdateringer af ikke-udviklere."
 tags: ["Next.js", "TypeScript", "React"]

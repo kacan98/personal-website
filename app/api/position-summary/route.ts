@@ -131,9 +131,9 @@ export async function POST(req: Request): Promise<Response> {
         'Content-Type': 'application/json',
       },
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('POST /api/position-summary - Unexpected error:', e)
-    return new Response(JSON.stringify({ error: 'Internal server error', details: e.message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error', details: e instanceof Error ? e.message : 'Unknown error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })

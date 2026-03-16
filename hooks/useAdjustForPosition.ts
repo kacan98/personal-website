@@ -6,8 +6,6 @@ import {
   RankedStory,
   StoryRankingResponse
 } from '@/types/adjustment';
-import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model';
-import { CvUpgradeResponse } from '@/app/api/personalize-cv/model';
 
 export const useAdjustForPosition = ({
   onCvUpdate,
@@ -16,8 +14,8 @@ export const useAdjustForPosition = ({
   adjustCvBasedOnPosition,
   getMotivationalLetter
 }: UseAdjustForPositionProps & {
-  adjustCvBasedOnPosition?: () => Promise<CvUpgradeResponse>;
-  getMotivationalLetter?: (positionDetails: string, checked: any[], selectedLanguage: string) => Promise<MotivationalLetterResponse>;
+  adjustCvBasedOnPosition?: () => Promise<unknown>;
+  getMotivationalLetter?: (positionDetails: string, checked: string[], selectedLanguage: string) => Promise<void>;
 } = {}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +88,7 @@ export const useAdjustForPosition = ({
 
   const generateMotivationalLetterWrapper = useCallback(async (
     positionDetails: string,
-    checked: any[],
+    checked: string[],
     selectedLanguage: string
   ) => {
     setStepActive('generatingLetter');
@@ -106,7 +104,7 @@ export const useAdjustForPosition = ({
 
   const startAdjustment = useCallback(async (
     positionDetails: string,
-    checked: any[],
+    checked: string[],
     selectedLanguage: string
   ) => {
     try {
@@ -120,7 +118,7 @@ export const useAdjustForPosition = ({
       // Step 2: Run CV adjustment and motivational letter generation in parallel
       setCurrentOperation('Personalizing CV and generating motivational letter...');
 
-      const [cvResult, letterResult] = await Promise.all([
+      await Promise.all([
         adjustCv(),
         generateMotivationalLetterWrapper(positionDetails, checked, selectedLanguage)
       ]);
@@ -130,18 +128,11 @@ export const useAdjustForPosition = ({
         onCvUpdate(stories.slice(0, 4)); // Top 4 for CV
       }
 
-      // Update motivational letter if available
-      if (onMotivationalLetterUpdate && letterResult?.letter) {
-        onMotivationalLetterUpdate(letterResult.letter);
-      }
-
       setCurrentOperation('');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       onError?.(errorMessage);
-      // Re-throw so the caller can handle it
-      throw err;
     } finally {
       setIsLoading(false);
     }

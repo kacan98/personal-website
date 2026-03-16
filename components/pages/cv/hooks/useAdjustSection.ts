@@ -43,7 +43,7 @@ export const useAdjustSection = ({
       setSnackbarMessage('Section adjusted successfully!')
       return result.adjustedSection as CvSection
 
-    } catch (error) {
+    } catch {
       setSnackbarMessage('Failed to adjust section. Please try again.')
       return null
     } finally {

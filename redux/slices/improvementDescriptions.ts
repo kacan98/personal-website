@@ -24,37 +24,11 @@ export interface ImprovementDescriptionsState {
   currentPositionHash: string
 }
 
-const STORAGE_KEY = 'cv-improvements'
-
-// Helper function to load from localStorage
-const loadFromStorage = (): { [positionHash: string]: PositionImprovements } => {
-  // Check if we're in the browser environment
-  if (typeof window === 'undefined') {
-    return {}
-  }
-
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? JSON.parse(stored) : {}
-  } catch (error) {
-    console.error('Error loading improvements from localStorage:', error)
-    return {}
-  }
-}
-
-// Helper function to save to localStorage
-const saveToStorage = (positions: { [positionHash: string]: PositionImprovements }) => {
-  // Check if we're in the browser environment
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(positions))
-  } catch (error) {
-    console.error('Error saving improvements to localStorage:', error)
-  }
-}
+/**
+ * Note: This slice maintains session-only state for UI purposes.
+ * Improvement memories are now persisted to the database (not localStorage).
+ * Persistence happens automatically after CV refinement via the useRefineCv hook.
+ */
 
 // Generate position hash
 const generatePositionHash = (positionDetails: string, companyName?: string): string => {
@@ -88,7 +62,7 @@ const extractPositionTitle = (positionDetails: string): string => {
 }
 
 const initialState: ImprovementDescriptionsState = {
-  positions: loadFromStorage(),
+  positions: {},
   currentPositionHash: ''
 }
 
@@ -115,7 +89,6 @@ const improvementDescriptionsSlice = createSlice({
           positionHash,
           improvements: {}
         }
-        saveToStorage(state.positions)
       }
     },
 
@@ -146,7 +119,6 @@ const improvementDescriptionsSlice = createSlice({
         }
 
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     },
 
@@ -170,7 +142,6 @@ const improvementDescriptionsSlice = createSlice({
         }
 
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     },
 
@@ -188,7 +159,6 @@ const improvementDescriptionsSlice = createSlice({
         })
 
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     },
 
@@ -201,8 +171,6 @@ const improvementDescriptionsSlice = createSlice({
           delete state.positions[positionHash]
         }
       })
-
-      saveToStorage(state.positions)
     },
 
     // Clear all improvements for current position
@@ -211,7 +179,6 @@ const improvementDescriptionsSlice = createSlice({
       if (currentPosition) {
         currentPosition.improvements = {}
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     },
 
@@ -222,7 +189,6 @@ const improvementDescriptionsSlice = createSlice({
       if (currentPosition && currentPosition.improvements[improvementKey]) {
         delete currentPosition.improvements[improvementKey]
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     },
 
@@ -241,7 +207,6 @@ const improvementDescriptionsSlice = createSlice({
 
         currentPosition.improvements = improvementsToKeep
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     },
 
@@ -277,7 +242,6 @@ const improvementDescriptionsSlice = createSlice({
         })
 
         currentPosition.timestamp = Date.now()
-        saveToStorage(state.positions)
       }
     }
   }

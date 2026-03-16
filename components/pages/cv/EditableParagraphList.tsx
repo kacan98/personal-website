@@ -1,4 +1,4 @@
-import { EditableText } from "@/components/editableText";
+import { EditableText, EditableTextProps } from "@/components/editableText";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv, removeArrayItem } from "@/redux/slices/cv";
 import { Box, IconButton, Tooltip } from "@mui/material";
@@ -105,7 +105,7 @@ export function EditableParagraphList({
     });
   }
 
-  const SuperEditableText = useCallback(({ query, originalText, ...props }: any) => {
+  const SuperEditableText = useCallback(({ query, originalText, ...props }: EditableTextProps & { originalText?: string }) => {
     return <EditableText
       {...props}
       query={[...baseQuery, ...query]}

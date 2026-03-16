@@ -73,7 +73,7 @@ Adjust the motivational letter based on the feedback while maintaining the profe
     }
 
     throw new Error('Failed to adjust motivational letter')
-  } catch (e: any) {
-    return new Response(e.message, { status: 500 })
+  } catch (e: unknown) {
+    return new Response(e instanceof Error ? e.message : 'Unknown error', { status: 500 })
   }
 }

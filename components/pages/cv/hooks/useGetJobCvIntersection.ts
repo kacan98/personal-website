@@ -5,7 +5,7 @@ import {
 } from '@/app/api/job-cv-intersection/model'
 import { CVSettings } from '@/types'
 import { useCallback } from 'react'
-import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { useAppDispatch } from '@/redux/hooks'
 import { setCurrentPosition, bulkUpdateImprovements } from '@/redux/slices/improvementDescriptions'
 import { autoFillImprovementsAPIEndpointName, AutoFillImprovementsParams, AutoFillImprovementsResponse } from '@/app/api/auto-fill-improvements/model'
 
@@ -30,8 +30,6 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
   } = props
   const dispatch = useAppDispatch()
 
-  // Get historical positions for auto-fill
-  const historicalPositions = useAppSelector((state) => state.improvementDescriptions.positions)
   const updatePositionIntersection = useCallback(async () => {
     if (!positionDetails) {
       return setsnackbarMessage('Please provide position details')
@@ -71,7 +69,6 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
         try {
           const newImprovements = body.whatIsMissing.map(item => item.description)
           console.log('Attempting auto-fill with improvements:', newImprovements)
-          console.log('Historical positions available:', Object.keys(historicalPositions).length)
 
           const autoFillRes = await fetch(autoFillImprovementsAPIEndpointName, {
             method: 'POST',
@@ -79,8 +76,7 @@ export const useGetJobCvIntersection = (props: JobCvIntersectionProps) => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              newImprovements,
-              historicalPositions
+              newImprovements
             } as AutoFillImprovementsParams),
           })
 

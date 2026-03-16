@@ -20,11 +20,11 @@ function undefinedToNull<T>(obj: T): T {
     return obj.map(undefinedToNull) as T
   }
   if (typeof obj === 'object') {
-    const result: any = {}
+    const result: Record<string, unknown> = {}
     for (const key in obj) {
       result[key] = undefinedToNull(obj[key])
     }
-    return result
+    return result as T
   }
   return obj
 }
@@ -240,9 +240,9 @@ Please return the refined CV in the same JSON format.`
         'Content-Type': 'application/json',
       },
     })
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('POST /api/refine-cv - Unexpected error:', e)
-    return new Response(JSON.stringify({ error: 'Internal server error', details: e.message }), {
+    return new Response(JSON.stringify({ error: 'Internal server error', details: e instanceof Error ? e.message : 'Unknown error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     })

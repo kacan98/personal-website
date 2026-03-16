@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 
 const intlMiddleware = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   // Get the Accept-Language header
   const acceptLanguage = request.headers.get('accept-language');
   

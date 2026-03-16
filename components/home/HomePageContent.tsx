@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Contact from "@/components/home/Contact";
 import Hero from "@/components/home/Hero";
@@ -6,264 +6,287 @@ import SocialIcons from "@/components/home/socialIcons";
 import TechList from "@/components/home/Tech";
 import Timeline, { TimelineItem } from "@/components/home/Timeline";
 import ContentContainer from "@/components/layout/ContentContainer";
-import SplineWrapper from "@/components/spline/SplineWrapper";
 import { isKarelsPortfolio } from "@/globalVars";
-import { SPACING } from "@/app/spacing";
 import { Box, Typography } from "@mui/material";
+import BoltIcon from '@mui/icons-material/Bolt';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import { motion } from "motion/react";
+import type { CuratedProject } from '@/lib/cv-projects';
 import { Link } from "@/types";
-import { useState, useEffect, useRef } from "react";
 
-interface AboutSection {
-  header: string;
-  content: string;
-  visualType?: 'laptop' | 'ai' | 'problem' | 'user';
-}
-
-// Function to render visual component based on type
-function renderVisualComponent(visualType: string) {
-  switch (visualType) {
-    case 'laptop':
-      return <SplineWrapper />; // 3D laptop for Full Stack
-    case 'ai':
-      // Simple AI icon
-      return (
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '100%',
-          fontSize: '120px',
-          animation: 'pulse 3s ease-in-out infinite'
-        }}>
-          🤖
-        </Box>
-      );
-    case 'problem':
-      // Video for Problem Solver
-      return (
-        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <iframe
-            width="560"
-            height="315"
-            src="https://www.youtube.com/embed/GcPJUR0wq_M?si=wmhMvYYtVDBvmNq4"
-            title="YouTube video player"
-            style={{ border: 0, borderRadius: '8px' }}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          />
-        </Box>
-      );
-    case 'user':
-      // Simple user icon
-      return (
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '100%',
-          fontSize: '120px',
-          animation: 'bounce 2s ease-in-out infinite'
-        }}>
-          👤
-        </Box>
-      );
-    default:
-      return null;
-  }
-}
-
-// Simple inline component for about sections
-function AboutSectionItem({ section, id, index }: { section: AboutSection; id: string; index: number }) {
-  const isEven = index % 2 === 0;
-  const [isRevealed, setIsRevealed] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isRevealed) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isRevealed) {
-          setIsRevealed(true);
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px 0px' // Start animation 50px before element is in view
-      }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, [isRevealed]);
-
-  return (
-    <Box
-      ref={sectionRef}
-      id={id}
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: { xs: 6, md: 10 },
-        scrollSnapAlign: 'start',
-        overflow: 'hidden', // Prevent content from showing during slide
-      }}
-    >
-      <Box sx={{
-        display: 'flex',
-        flexDirection: { xs: 'column', md: isEven ? 'row' : 'row-reverse' },
-        alignItems: 'center',
-        gap: { xs: 4, md: 6, lg: 8 },
-        maxWidth: '1200px',
-        width: '100%',
-        px: SPACING.containerPadding,
-      }}>
-        {/* Text Content */}
-        <Box sx={{
-          flex: 1,
-          textAlign: { xs: 'center', md: 'left' },
-          opacity: isRevealed ? 1 : 0,
-          transform: isRevealed
-            ? 'translateX(0)'
-            : isEven
-              ? 'translateX(-60px)'
-              : 'translateX(60px)',
-          transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-          transitionDelay: '0.1s',
-        }}>
-          <Typography
-            variant="h2"
-            component="h2"
-            sx={{
-              mb: 3,
-              fontWeight: 600,
-              color: 'text.primary',
-              fontSize: { xs: '2rem', md: '2.5rem', lg: '3rem' },
-              opacity: isRevealed ? 1 : 0,
-              transform: isRevealed ? 'translateY(0)' : 'translateY(20px)',
-              transition: 'opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s',
-            }}
-          >
-            {section.header}
-          </Typography>
-
-          <Typography
-            variant="h5"
-            component="div"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              lineHeight: 1.8,
-              fontSize: { xs: '1.2rem', md: '1.3rem', lg: '1.4rem' },
-              fontWeight: 300,
-              opacity: isRevealed ? 1 : 0,
-              transform: isRevealed ? 'translateY(0)' : 'translateY(20px)',
-              transition: 'opacity 0.6s ease-out 0.4s, transform 0.6s ease-out 0.4s',
-            }}
-          >
-            {section.content}
-          </Typography>
-        </Box>
-
-        {/* Visual Content - temporarily removed */}
-        {section.visualType && (
-          <Box sx={{
-            flex: { xs: 'none', md: '0 0 45%' },
-            width: { xs: '100%', md: 'auto' },
-            height: { xs: '250px', sm: '300px', md: '350px', lg: '400px' },
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            order: { xs: -1, md: 0 },
-            opacity: isRevealed ? 1 : 0,
-            transform: isRevealed
-              ? 'translateX(0) scale(1)'
-              : isEven
-                ? 'translateX(60px) scale(0.95)'
-                : 'translateX(-60px) scale(0.95)',
-            transition: 'opacity 0.8s ease-out, transform 0.8s ease-out',
-            transitionDelay: '0.3s',
-            backgroundColor: 'transparent',
-            borderRadius: 2,
-          }}>
-            {renderVisualComponent(section.visualType)}
-          </Box>
-        )}
-      </Box>
-    </Box>
-  );
+interface ProofPoint {
+  eyebrow: string;
+  title: string;
+  description: string;
 }
 
 interface HomePageContentProps {
   heroTagline: string;
-  aboutMe: Record<string, AboutSection>;
+  heroSubtitle: string;
+  proofHeading: string;
+  proofPoints: ProofPoint[];
+  selectedWorkTitle: string;
+  selectedWork: CuratedProject[];
   careerTimeline: TimelineItem[];
   timelineTitle: string;
   technologies: Array<{ name: string; color: string }>;
   socials: Link[];
 }
 
-export default function HomePageContent({ 
-  heroTagline, 
-  aboutMe, 
-  careerTimeline, 
+function ProofSection({ heading, points }: { heading: string; points: ProofPoint[] }) {
+  return (
+    <Box id="proof" sx={{ py: { xs: 8, md: 12 } }}>
+      <ContentContainer>
+        <Box sx={{ mb: { xs: 5, md: 7 }, maxWidth: '42rem' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <Typography
+              variant="h2"
+              sx={{
+                mt: 1,
+                fontSize: { xs: '2rem', md: '2.75rem' },
+                fontWeight: 700,
+                lineHeight: 1.1,
+              }}
+            >
+              {heading}
+            </Typography>
+          </motion.div>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
+            gap: { xs: 2, md: 3 },
+          }}
+        >
+          {points.map((point, index) => (
+            <motion.div
+              key={point.title}
+              initial={{ opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-60px" }}
+            >
+              <Box
+                sx={{
+                  p: { xs: 3, md: 4 },
+                  minHeight: { md: 240 },
+                  borderRadius: 4,
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))',
+                  backdropFilter: 'blur(10px)',
+                  transition: 'transform 0.25s ease, border-color 0.25s ease, background 0.25s ease',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    borderColor: 'rgba(255,255,255,0.18)',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.05))',
+                  },
+                }}
+              >
+                <Typography
+                  variant="overline"
+                  sx={{
+                    display: 'block',
+                    color: 'secondary.light',
+                    letterSpacing: '0.14em',
+                    fontWeight: 700,
+                    mb: 1.5,
+                  }}
+                >
+                  {point.eyebrow}
+                </Typography>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 700,
+                    mb: 1.5,
+                    fontSize: { xs: '1.25rem', md: '1.45rem' },
+                  }}
+                >
+                  {point.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: 'rgba(255,255,255,0.82)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {point.description}
+                </Typography>
+              </Box>
+            </motion.div>
+          ))}
+        </Box>
+      </ContentContainer>
+    </Box>
+  );
+}
+
+function getProjectIcon(iconName: string) {
+  switch (iconName) {
+    case 'speed':
+      return <BoltIcon />;
+    case 'schedule':
+      return <ScheduleIcon />;
+    case 'dashboard':
+      return <DashboardIcon />;
+    case 'psychology':
+      return <PsychologyIcon />;
+    default:
+      return <BoltIcon />;
+  }
+}
+
+function SelectedWorkSection({ title, items }: { title: string; items: CuratedProject[] }) {
+  return (
+    <Box id="selected-work" sx={{ py: { xs: 8, md: 12 } }}>
+      <ContentContainer>
+        <Box sx={{ mb: { xs: 4, md: 6 }, maxWidth: '36rem' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 22 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-80px" }}
+          >
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: { xs: '2rem', md: '2.6rem' },
+                fontWeight: 700,
+                lineHeight: 1.1,
+              }}
+            >
+              {title}
+            </Typography>
+          </motion.div>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: 'repeat(3, minmax(0, 1fr))' },
+            gap: { xs: 2, md: 3 },
+          }}
+        >
+          {items.map((item, index) => {
+            const isExternal = item.url?.startsWith("http");
+
+            return (
+              <motion.div
+                key={item.text}
+                initial={{ opacity: 0, y: 26 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-60px" }}
+              >
+                <Box
+                  component="a"
+                  href={item.url}
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noreferrer" : undefined}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
+                    p: { xs: 3, md: 4 },
+                    borderRadius: 4,
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    background: 'rgba(255,255,255,0.03)',
+                    transition: 'transform 0.2s ease, border-color 0.2s ease, background 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      borderColor: 'rgba(255,255,255,0.2)',
+                      background: 'rgba(255,255,255,0.05)',
+                    },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 2.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'rgba(255,255,255,0.08)',
+                        color: 'secondary.light',
+                      }}
+                    >
+                      {getProjectIcon(item.iconName)}
+                    </Box>
+                    <ArrowOutwardIcon sx={{ color: 'rgba(255,255,255,0.6)' }} />
+                  </Box>
+                  <Typography variant="h5" sx={{ fontWeight: 700, fontSize: { xs: '1.2rem', md: '1.35rem' } }}>
+                    {item.text}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.82)', lineHeight: 1.7 }}>
+                    {item.description}
+                  </Typography>
+                </Box>
+              </motion.div>
+            );
+          })}
+        </Box>
+      </ContentContainer>
+    </Box>
+  );
+}
+
+export default function HomePageContent({
+  heroTagline,
+  heroSubtitle,
+  proofHeading,
+  proofPoints,
+  selectedWorkTitle,
+  selectedWork,
+  careerTimeline,
   timelineTitle,
   technologies,
-  socials 
+  socials,
 }: HomePageContentProps) {
   return (
     <>
-      {/* Hero Section - normal scrolling */}
       <Box id="hero" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', position: 'relative' }}>
         <ContentContainer fullWidth>
-          <Hero firstName="Karel" lastName="Čančara" tagLine={heroTagline} />
+          <Hero firstName="Karel" lastName="Čančara" tagLine={heroTagline} subtitle={heroSubtitle} />
         </ContentContainer>
         <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, py: { xs: 2, md: 4 } }}>
           <SocialIcons direction={"column"} socials={socials} />
         </Box>
       </Box>
-      
+
       {isKarelsPortfolio && (
         <>
-          {/* About Me */}
-          <Box>
-            <AboutSectionItem section={aboutMe.fullStack} id="about-fullstack" index={0} />
-            <AboutSectionItem section={aboutMe.aiEnhanced} id="about-ai" index={1} />
-            <AboutSectionItem section={aboutMe.problemSolver} id="about-problem" index={2} />
-            <AboutSectionItem section={aboutMe.userFocused} id="about-user" index={3} />
+          <ProofSection heading={proofHeading} points={proofPoints} />
+
+          <Box id="technologies" sx={{ py: { xs: 2, md: 3 } }}>
+            <TechList technologies={technologies} />
           </Box>
 
-          {/* Technologies - normal scrolling */}
-          <Box id="technologies" sx={{ py: { xs: 1, md: 2 }, minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
-            <TechList
-              technologies={technologies}
-            />
-          </Box>
+          <SelectedWorkSection title={selectedWorkTitle} items={selectedWork} />
 
-          {/* Career Timeline - normal scrolling */}
-          <Box id="timeline" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+          <Box id="timeline" sx={{ py: { xs: 2, md: 3 } }}>
             <ContentContainer>
-              <Timeline 
-                items={careerTimeline}
-                title={timelineTitle}
-              />
+              <Timeline items={careerTimeline} title={timelineTitle} />
             </ContentContainer>
           </Box>
         </>
       )}
 
-      {/* Contact Section - normal scrolling */}
-      <Box id="contact" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Box id="contact" sx={{ py: { xs: 2, md: 4 } }}>
         <Contact />
       </Box>
     </>

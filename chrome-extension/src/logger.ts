@@ -10,25 +10,25 @@ class CVTailorLogger {
     try {
       const result = await chrome.storage.sync.get({ debugLogging: DEFAULT_DEBUG_LOGGING });
       this.debugEnabled = result.debugLogging;
-    } catch (error) {
+    } catch {
       // Fallback for content scripts that can't access chrome.storage directly
       this.debugEnabled = DEFAULT_DEBUG_LOGGING;
     }
   }
 
-  log(...args: any[]) {
+  log(...args: unknown[]) {
     if (this.debugEnabled) {
       console.log(this.prefix, ...args);
     }
   }
 
-  error(...args: any[]) {
+  error(...args: unknown[]) {
     if (this.debugEnabled) {
       console.error(this.prefix, ...args);
     }
   }
 
-  warn(...args: any[]) {
+  warn(...args: unknown[]) {
     if (this.debugEnabled) {
       console.warn(this.prefix, ...args);
     }
