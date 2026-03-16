@@ -82,20 +82,39 @@ export const Hero = ({ firstName, lastName, tagLine, subtitle }: HeroProps) => {
           }}
         >
           <Grid size={{ xs: 12, md: 6 }}>
-            <Box className="hero-text" sx={{
-              data: { speed: 0.2 },
-              textAlign: { xs: 'center', md: 'left' },
-              px: { xs: 2, sm: 3, md: 0 }
-            }}>
+            <Box
+              className="hero-text"
+              sx={{
+                data: { speed: 0.2 },
+                textAlign: { xs: 'center', md: 'left' },
+                px: { xs: 2, sm: 3, md: 0 },
+                width: '100%',
+                maxWidth: { xs: 420, md: 'none' },
+                mx: { xs: 'auto', md: 0 },
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: { xs: 'center', md: 'flex-start' },
+              }}
+            >
               <NameHeading variant="h1" aria-label={firstName + " " + lastName}>
-                <FirstNameContainer className="name-container" variant="inherit">
+                <FirstNameContainer
+                  className="name-container"
+                  variant="inherit"
+                  component="span"
+                  sx={{ textAlign: { xs: 'center', md: 'left' } }}
+                >
                   {renderOptimizedText(firstName)}
                 </FirstNameContainer>
-                <LastNameContainer className="name-container" variant="inherit">
+                <LastNameContainer
+                  className="name-container"
+                  variant="inherit"
+                  component="span"
+                  sx={{ textAlign: { xs: 'center', md: 'left' } }}
+                >
                   {renderOptimizedText(lastName)}
                 </LastNameContainer>
               </NameHeading>
-              <JobTitle className="job-title" variant="h3">
+              <JobTitle className="job-title" variant="h3" component="div">
                 {tagLine}
               </JobTitle>
               {subtitle ? (
