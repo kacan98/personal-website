@@ -272,13 +272,13 @@ export default function HomePageContent({
         <>
           <ProofSection heading={proofHeading} points={proofPoints} />
 
-          <Box id="technologies" sx={{ py: { xs: 1, md: 2 }, minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+          <Box id="technologies" sx={{ py: { xs: 2, md: 3 } }}>
             <TechList technologies={technologies} />
           </Box>
 
           <SelectedWorkSection title={selectedWorkTitle} items={selectedWork} />
 
-          <Box id="timeline" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+          <Box id="timeline" sx={{ py: { xs: 2, md: 3 } }}>
             <ContentContainer>
               <Timeline items={careerTimeline} title={timelineTitle} />
             </ContentContainer>
@@ -286,7 +286,7 @@ export default function HomePageContent({
         </>
       )}
 
-      <Box id="contact" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Box id="contact" sx={{ py: { xs: 2, md: 4 } }}>
         <Contact />
       </Box>
     </>
