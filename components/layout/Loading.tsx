@@ -18,6 +18,7 @@ export default function Loading({
   variant = "default"
 }: LoadingProps = {}) {
   const t = useTranslations('loading');
+  const tCommon = useTranslations('common');
   
   const loadingMessages = messages || [
     t('messages.0'),
@@ -93,7 +94,7 @@ export default function Loading({
               fontWeight: 700,
             }}
           >
-            {t("loading")}
+            {tCommon("loading")}
           </Typography>
           <LinearProgress
             variant="indeterminate"
