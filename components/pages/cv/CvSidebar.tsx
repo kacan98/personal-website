@@ -43,6 +43,7 @@ const CompactSidebarActionButton = ({
     <Tooltip title={label} placement="left" arrow>
       <span>
         <IconButton
+          aria-label={label}
           onClick={onClick}
           disabled={disabled || loading}
           sx={{
@@ -367,6 +368,7 @@ const CvSidebar = ({
       {/* Compact Collapse/Expand Toggle Button */}
       <Tooltip title={isCollapsed ? "CV Actions" : "Collapse Actions"} placement="left" arrow>
         <IconButton
+          aria-label={isCollapsed ? 'CV Actions' : 'Collapse Actions'}
           onClick={handleToggleCollapse}
           sx={{
             width: 36, // Reduced from 48
