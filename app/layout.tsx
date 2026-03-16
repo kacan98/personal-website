@@ -3,7 +3,7 @@ import { BACKGROUND_COLORS } from "./colors";
 
 export const metadata: Metadata = {
   title: "Karel Čančara - Full-Stack Developer",
-  description: "Full-Stack Developer specializing in TypeScript, React, .NET, and AI-enhanced development. Building enterprise solutions for 100+ companies.",
+  description: "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.",
 };
 
 export default function RootLayout({

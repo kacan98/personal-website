@@ -1,17 +1,14 @@
 "use client";
 import { Box, Grid, Typography, styled } from "@mui/material";
 import React, { useRef } from "react";
-import Button from "@/components/ui/Button";
 import { BRAND_COLORS } from "@/app/colors";
 import StaticShapes from "./StaticShapes";
 
 interface HeroProps {
   firstName: string;
   lastName: string;
-  headline: string;
-  subheadline: string;
-  primaryCta: string;
-  secondaryCta: string;
+  tagLine: string;
+  subtitle?: string;
 }
 
 const FirstNameContainer = styled(Typography)(({
@@ -34,25 +31,26 @@ const LastNameContainer = styled(Typography)(({
   fontDisplay: 'swap',
 }));
 
-const Headline = styled(Typography)({
+const JobTitle = styled(Typography)({
   display: 'block',
   color: BRAND_COLORS.secondary,
   textTransform: 'none',
-  letterSpacing: '0.01em',
+  letterSpacing: '0.02em',
   fontWeight: 600,
-  fontSize: 'clamp(1.5rem, 4vw, 2.2rem)',
-  marginTop: '0.25rem',
+  fontSize: 'clamp(1.4rem, 4vw, 1.9rem)',
+  marginTop: '1rem',
   contain: 'layout style',
+  minHeight: '2rem',
 });
 
-const Subheadline = styled(Typography)({
+const JobSubtitle = styled(Typography)({
   display: 'block',
-  color: 'rgba(255, 255, 255, 0.85)',
+  color: 'rgba(255, 255, 255, 0.82)',
   fontWeight: 400,
-  fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-  marginTop: '1rem',
-  maxWidth: '36rem',
   lineHeight: 1.6,
+  fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+  marginTop: '1rem',
+  maxWidth: '42rem',
 });
 
 const NameHeading = styled(Typography)(({
@@ -64,7 +62,7 @@ const NameHeading = styled(Typography)(({
   minHeight: '6rem',
 }));
 
-export const Hero = ({ firstName, lastName, headline, subheadline, primaryCta, secondaryCta }: HeroProps) => {
+export const Hero = ({ firstName, lastName, tagLine, subtitle }: HeroProps) => {
   const component = useRef(null);
 
   // Simplified rendering for better LCP performance
@@ -97,26 +95,14 @@ export const Hero = ({ firstName, lastName, headline, subheadline, primaryCta, s
                   {renderOptimizedText(lastName)}
                 </LastNameContainer>
               </NameHeading>
-              <Headline className="job-title" variant="h2">
-                {headline}
-              </Headline>
-              <Subheadline variant="body1">
-                {subheadline}
-              </Subheadline>
-              <Box sx={{
-                mt: 3,
-                display: 'flex',
-                gap: 2,
-                flexWrap: 'wrap',
-                justifyContent: { xs: 'center', md: 'flex-start' }
-              }}>
-                <Button component="a" href="#contact" variant="primary">
-                  {primaryCta}
-                </Button>
-                <Button component="a" href="#timeline" variant="secondary">
-                  {secondaryCta}
-                </Button>
-              </Box>
+              <JobTitle className="job-title" variant="h3">
+                {tagLine}
+              </JobTitle>
+              {subtitle ? (
+                <JobSubtitle variant="body1">
+                  {subtitle}
+                </JobSubtitle>
+              ) : null}
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }} sx={{

@@ -34,8 +34,8 @@ export default function Contact({
     {
       icon: <Email />,
       label: t('email.label'),
-      value: "karel.cancara@gmail.com", 
-      href: "mailto:karel.cancara@gmail.com",
+      value: "karel@cancara.dk", 
+      href: "mailto:karel@cancara.dk",
       description: t('email.description')
     },
     {
@@ -55,8 +55,8 @@ export default function Contact({
     {
       icon: <Language />,
       label: t('portfolio.label'),
-      value: "kcancara.vercel.app",
-      href: "https://kcancara.vercel.app/",
+      value: "cancara.dk",
+      href: "https://cancara.dk",
       description: t('portfolio.description')
     }
   ];
@@ -216,7 +216,7 @@ export default function Contact({
             </Typography>
             <Button
               component="a"
-              href="mailto:karel.cancara@gmail.com"
+              href="mailto:karel@cancara.dk"
               variant="primary"
               sx={{
                 px: { xs: 4, md: 6 },

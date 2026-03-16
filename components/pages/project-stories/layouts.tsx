@@ -11,7 +11,7 @@ interface BlogPost {
   tags: string[];
   category: string;
   metrics?: {
-    impact?: string;
+    impact?: string | { en: string; da?: string; sv?: string };
     timeframe?: string;
     usersAffected?: string;
   };
@@ -20,7 +20,15 @@ interface BlogPost {
 
 interface LayoutProps {
   posts: BlogPost[];
+  locale?: string;
 }
+
+// Helper function to get localized text
+const getLocalizedText = (text: string | { en: string; da?: string; sv?: string } | undefined, locale: string = 'en'): string => {
+  if (!text) return '';
+  if (typeof text === 'string') return text;
+  return text[locale as keyof typeof text] || text.en;
+};
 
 // Helper function using app colors
 const getCategoryColor = (category: string) => {
@@ -54,7 +62,7 @@ const getCategoryColor = (category: string) => {
 };
 
 // Metrics Focus Layout
-export function MetricsLayout({ posts }: LayoutProps) {
+export function MetricsLayout({ posts, locale = 'en' }: LayoutProps) {
   return (
     <Grid container spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}>
       {posts.map((post) => {
@@ -141,7 +149,7 @@ export function MetricsLayout({ posts }: LayoutProps) {
                               color: BRAND_COLORS.primary,
                               fontSize: '0.875rem'
                             }}>
-                              {post.metrics.impact}
+                              {getLocalizedText(post.metrics.impact, locale)}
                             </Typography>
                           </Box>
                         )}

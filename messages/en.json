@@ -4,9 +4,10 @@
     "about": "About",
     "projects": "Projects",
     "cv": "CV",
-    "blog": "Project Stories",
+    "blog": "Projects",
     "gallery": "Gallery",
-    "chatbot": "Chat"
+    "chatbot": "Chatbot",
+    "tools": "Free Tools"
   },
   "common": {
     "loading": "Loading...",
@@ -17,11 +18,12 @@
     "download": "Download",
     "edit": "Edit",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "apply": "Apply"
   },
   "about": {
     "title": "About me",
-    "content": "I'm Karel, a developer who writes code for work and fun. I mostly do frontend stuff but I'm comfortable with backend too. I taught myself to code after doing marketing for a while, so I think a lot about the user experience side of things.\n\nI work with TypeScript, Angular, React, and C# mostly. I like figuring out how things work and making them work better. When I'm not coding, I'm usually reading about new tech or trying to break something just to see if I can fix it.\n\nAlways up for interesting projects or just chatting about code.",
+    "content": "I'm a full-stack developer building practical software across frontend and backend. I work on product features, internal tools, integrations, and workflow-heavy systems in TypeScript, Angular, React, .NET-based environments, and X++.\n\nI like finding work that can be simplified, automated, or made easier to maintain. That can mean reducing manual follow-up, improving visibility, removing duplication, or cleaning up awkward parts of a system.\n\nWhat I care about most is helping people save time with software that is clearer, more reliable, and easier to work with.",
     "contactButton": "Shoot me a message",
     "linkedinButton": "Add me on LinkedIn"
   },
@@ -43,7 +45,8 @@
   },
   "projects": {
     "title": "Projects",
-    "allProjects": "All"
+    "allProjects": "All",
+    "viewProject": "Read more"
   },
   "language": {
     "english": "English",
@@ -53,10 +56,7 @@
   "homepage": {
     "hero": {
       "tagline": "Full-Stack Developer",
-      "headline": "I build web apps and AI automations that save teams real hours every week.",
-      "subheadline": "For business owners: I design practical AI-powered workflows for lead follow-up, internal ops, and repetitive admin so your team can focus on high-value work.",
-      "primaryCta": "Book a free automation call",
-      "secondaryCta": "See experience & results"
+      "subtitle": "I build product features, internal tools, and workflow software across frontend and backend."
     },
     "about": {
       "fullStack": {
@@ -69,23 +69,46 @@
       },
       "problemSolver": {
         "header": "Problem Solver",
-        "content": "I like figuring out why things break and fixing them. Most of my day is spent debugging, building features, and making sure stuff actually works."
+        "content": "I like figuring out the real bottleneck in a system, whether that is performance, missing visibility, awkward workflows, or a feature that is harder to use than it should be."
       },
       "userFocused": {
         "header": "User-Focused",
-        "content": "I used to do marketing, so I think about who's actually going to use the stuff I build. I try to make software that doesn't make people want to throw their computer out the window."
+        "content": "My marketing background still helps. I think about who will use the software, what they are trying to get done, and how to reduce friction instead of adding more process."
       }
     },
     "timeline": {
       "title": "Experience & proof of delivery"
+    },
+    "proof": {
+      "heading": "I work best where product work, internal tooling, and operational reality meet.",
+      "items": [
+        {
+          "eyebrow": "Production",
+          "title": "Frontend and backend in live systems",
+          "description": "I work across interfaces, endpoints, integrations, and business logic in systems people rely on every day."
+        },
+        {
+          "eyebrow": "Workflow",
+          "title": "Internal tools that reduce friction",
+          "description": "I build dashboards, task visibility tools, and small workflow software that make repeated work easier to handle."
+        },
+        {
+          "eyebrow": "Ownership",
+          "title": "Practical engineering over fluff",
+          "description": "I like finding the real bottleneck, making the system clearer, and shipping something people will actually use."
+        }
+      ]
+    },
+    "selectedWork": {
+      "title": "Selected Work"
     }
   },
   "contact": {
-    "title": "Let's make your workflows simpler",
-    "subtitle": "Need a developer who can both build products and automate manual work? I usually reply within 24 hours.",
+    "title": "Let's get in touch",
+    "subtitle": "Ready to work together? I'd love to hear from you.",
     "email": {
       "label": "Email",
-      "description": "Best for project inquiries"
+      "description": "Best way to reach me"
     },
     "linkedin": {
       "label": "LinkedIn",
@@ -93,14 +116,13 @@
     },
     "github": {
       "label": "GitHub",
-      "description": "Code samples and technical depth"
+      "description": "Code and projects"
     },
     "portfolio": {
       "label": "Portfolio",
-      "description": "Selected projects and case studies"
+      "description": "See my work"
     },
-    "sendEmail": "Start the conversation",
-    "prompt": "Tell me what you want to automate, and I’ll suggest the highest-impact first step."
+    "sendEmail": "Send me an email"
   },
   "loading": {
     "messages": [
@@ -120,14 +142,90 @@
   "chatbot": {
     "placeholder": "Ask about my experience and skills...",
     "sendButton": "Send",
-    "clearTooltip": "Clear Chat & Start New Conversation",
-    "startNewChat": "Start New Chat",
-    "chatError": "Chat Error",
+    "clearTooltip": "Clear Chatbot & Start New Conversation",
+    "startNewChat": "Start New Chatbot",
+    "chatError": "Chatbot Error",
     "initializing": "Initializing Karel AI...",
     "sending": "..."
   },
   "projectStories": {
     "title": "Project Stories",
     "description": "Things I've built, problems I've solved, and what I learned along the way"
+  },
+  "tools": {
+    "title": "Free Tools",
+    "description": "Free browser-based tools. No signup, no limits, 100% private.",
+    "emailSignature": "Email Signature Generator",
+    "emailSignatureDesc": "Create professional email signatures with custom colors, fonts, and social links. Includes AI-powered background removal for profile pictures.",
+    "backgroundRemoval": "Background Removal",
+    "backgroundRemovalDesc": "Remove backgrounds from images using AI. Works 100% in your browser - no uploads, completely private and free."
+  },
+  "emailGenerator": {
+    "title": "Email Signature Generator",
+    "signatureDetails": "Signature Details",
+    "clearAll": "Clear All",
+    "contentTab": "Content",
+    "stylingTab": "Styling",
+    "fullName": "Full Name",
+    "jobTitle": "Job Title",
+    "company": "Company (optional)",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "website": "Website (optional)",
+    "profilePicture": "Profile Picture (optional)",
+    "imageSize": "Image Size",
+    "companyLogo": "Company Logo (optional)",
+    "dropImage": "Drop profile picture here or click to upload",
+    "profileUploaded": "Profile picture uploaded",
+    "removeBackground": "Remove Background",
+    "removingBackground": "Removing...",
+    "delete": "Delete",
+    "socialLinks": "Social Links",
+    "addLink": "Add Link",
+    "platform": "Platform",
+    "url": "URL",
+    "imageShape": "Image Shape",
+    "imageShapeCircle": "Circle",
+    "imageShapeRounded": "Rounded Square",
+    "imageShapeSquare": "Square",
+    "imagePosition": "Image Position",
+    "imagePositionLeft": "Left (Middle)",
+    "imagePositionTop": "Left (Top)",
+    "fontFamily": "Font Family",
+    "colorSchemes": "Color Schemes",
+    "advancedColors": "Advanced: Custom Colors",
+    "nameColor": "Name Color",
+    "titleColor": "Title/Company Color",
+    "linkColor": "Link Color",
+    "iconColor": "Icon Color",
+    "copySignature": "Copy HTML Signature",
+    "signatureCopied": "Signature HTML copied to clipboard!",
+    "preview": "Preview",
+    "previewDescription": "This is how your signature will appear in emails",
+    "sampleEmailIntro": "Hi there,",
+    "sampleEmailBody": "This is a sample email to show how your signature looks.",
+    "adjustImageTitle": "Adjust Image Position & Zoom",
+    "zoom": "Zoom",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "preparingImage": "Preparing image...",
+    "downloadingModel": "Downloading AI model (first time only, ~50MB)...",
+    "downloadingProgress": "Downloading model: {current}MB / {total}MB...",
+    "processingImage": "Processing image with AI...",
+    "finishingUp": "Finishing up...",
+    "complete": "Complete!",
+    "backgroundRemovalError": "Failed to remove background. Please try again.",
+    "backgroundRemovalInfo": "Background removal is 100% free and runs in your browser. The AI model downloads once (~50MB) and is cached for future use.",
+    "colorPresetProfessionalBlue": "Professional Blue",
+    "colorPresetModernPurple": "Modern Purple",
+    "colorPresetCorporateGray": "Corporate Gray",
+    "colorPresetTechGreen": "Tech Green",
+    "colorPresetCreativeOrange": "Creative Orange",
+    "colorPresetElegantGray": "Elegant Gray",
+    "fontOpenSans": "Open Sans (Google Font)",
+    "fontRoboto": "Roboto (Google Font)"
+  },
+  "backgroundRemoval": {
+    "title": "Background Removal"
   }
 }

@@ -3,4 +3,5 @@
  * Update these paths here to change them throughout the app
  */
 
-export const PROJECT_STORIES_PATH = '/project-stories';
+export const PROJECTS_PATH = '/projects';
+export const PROJECT_STORIES_PATH = PROJECTS_PATH;

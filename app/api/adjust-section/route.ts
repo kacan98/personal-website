@@ -48,7 +48,7 @@ export async function POST(req: Request): Promise<Response> {
       }
 
       return Response.json(result)
-    } catch (parseError) {
+    } catch {
       // If JSON parsing fails, return the original section
       const result: AdjustSectionResponse = {
         adjustedSection: body.section
@@ -57,7 +57,7 @@ export async function POST(req: Request): Promise<Response> {
       return Response.json(result)
     }
 
-  } catch (error) {
+  } catch {
     return Response.json(
       { error: 'Failed to adjust section' },
       { status: 500 }

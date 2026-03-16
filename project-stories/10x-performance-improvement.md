@@ -12,7 +12,10 @@ tags:
 category: performance
 date: 2025-06-01
 metrics:
-  impact: Reduced sync time from 20+ minutes to minutes
+  impact:
+    en: Reduced sync time from 20+ minutes to minutes
+    da: Reducerede synkroniseringstid fra 20+ minutter til få minutter
+    sv: Reducerade synkroniseringstid från 20+ minuter till några minuter
   timeframe: Backend optimization project
   usersAffected: 1000+ technicians across 100+ companies
 embedding:

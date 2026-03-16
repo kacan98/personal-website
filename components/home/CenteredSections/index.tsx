@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Typography } from "@mui/material";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export interface CenteredSection {
   header: string;
@@ -126,60 +126,47 @@ export default function CenteredSections({ sections, title }: CenteredSectionsPr
     }
   };
 
-  // Handle wheel scrolling
-  const handleWheel = useCallback((e: WheelEvent) => {
-    // Only prevent default and handle scrolling if we're in the sections area
-    if (!isInSectionsArea.current) return;
-    
-    e.preventDefault();
-    
-    if (isScrolling.current) return;
-    
-    const direction = e.deltaY > 0 ? 1 : -1;
-    
-    // Determine target section
-    let targetSection = currentSection;
-    
-    if (direction === 1) { // Scrolling down
-      if (currentSection < sections.length - 1) {
-        targetSection = currentSection + 1;
-      } else {
-        return; // Already at last section
-      }
-    } else { // Scrolling up
-      if (currentSection > -1) {
+  // Set up event listeners and section detection
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (!isInSectionsArea.current) return;
+
+      e.preventDefault();
+
+      if (isScrolling.current) return;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      let targetSection = currentSection;
+
+      if (direction === 1) {
+        if (currentSection < sections.length - 1) {
+          targetSection = currentSection + 1;
+        } else {
+          return;
+        }
+      } else if (currentSection > -1) {
         targetSection = currentSection - 1;
       } else {
-        return; // Already at hero
+        return;
       }
-    }
-    
-    // Execute scroll
-    isScrolling.current = true;
-    setCurrentSection(targetSection);
-    
-    if (targetSection === -1) {
-      // Scroll to hero section (top of page)
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (targetSection >= 0 && targetSection < sections.length) {
-      // Scroll to one of the centered sections
-      const targetElement = sectionsRef.current[targetSection];
-      if (targetElement) {
-        targetElement.scrollIntoView({ 
+
+      isScrolling.current = true;
+      setCurrentSection(targetSection);
+
+      if (targetSection === -1) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        sectionsRef.current[targetSection]?.scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
       }
-    }
-    
-    // Reset scrolling flag after animation
-    setTimeout(() => {
-      isScrolling.current = false;
-    }, 800); // Slightly shorter for better responsiveness
-  }, [currentSection, sections.length]);
 
-  // Set up event listeners and section detection
-  useEffect(() => {
+      setTimeout(() => {
+        isScrolling.current = false;
+      }, 800);
+    };
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isInSectionsArea.current || isScrolling.current) return;
       
@@ -256,7 +243,7 @@ export default function CenteredSections({ sections, title }: CenteredSectionsPr
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('scroll', detectCurrentSection);
     };
-  }, [handleWheel, currentSection, sections.length]);
+  }, [currentSection, sections.length]);
 
   useEffect(() => {
     if (isTitleRevealed) return;

@@ -44,7 +44,7 @@ const tryPlayAudio = (path: string, volume = 0.5): void => {
     // Start loading
     audio.src = path;
     audio.load();
-  } catch (error) {
+  } catch {
     // Completely silent fail
   }
 };
@@ -65,7 +65,7 @@ export const useSoundEffects = (soundPaths: SoundEffectPaths) => {
 
       // Try to play it
       tryPlayAudio(soundPath, 0.5);
-    } catch (error) {
+    } catch {
       // Silent fail
     }
   };

@@ -2,12 +2,12 @@ import crypto from 'crypto';
 import { CACHE_CONFIG } from './cache-config';
 
 // In-memory cache for client-side use (lightweight version)
-const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+const cache = new Map<string, { data: unknown; timestamp: number; ttl: number }>();
 
 /**
  * Generate a deterministic cache key from any object/parameters
  */
-export function generateCacheKey(prefix: string, params: any): string {
+export function generateCacheKey(prefix: string, params: Record<string, unknown>): string {
   // Convert object to deterministic string by sorting keys
   const normalizedParams = JSON.stringify(params, Object.keys(params).sort());
 
@@ -20,7 +20,7 @@ export function generateCacheKey(prefix: string, params: any): string {
 /**
  * Set cache entry with TTL
  */
-export function setCache(key: string, data: any, ttl: number = CACHE_CONFIG.DEFAULT_TTL): void {
+export function setCache(key: string, data: unknown, ttl: number = CACHE_CONFIG.DEFAULT_TTL): void {
   cache.set(key, {
     data,
     timestamp: Date.now(),
@@ -36,7 +36,7 @@ export function setCache(key: string, data: any, ttl: number = CACHE_CONFIG.DEFA
 /**
  * Get cache entry if valid (not expired)
  */
-export function getCache<T = any>(key: string): T | null {
+export function getCache<T = unknown>(key: string): T | null {
   const entry = cache.get(key);
 
   if (!entry) {
@@ -58,7 +58,7 @@ export function getCache<T = any>(key: string): T | null {
     console.log(`🟡 Cache HIT: ${key} (TTL remaining: ${remainingTtl}s)`);
   }
 
-  return entry.data;
+  return entry.data as T;
 }
 
 /**

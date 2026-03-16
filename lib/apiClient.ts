@@ -15,7 +15,7 @@ export class ApiError extends Error {
 /**
  * Standard API response interface
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   errors?: Record<string, string>;
@@ -85,7 +85,7 @@ export class ApiClient {
    */
   async post<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options: RequestInit = {}
   ): Promise<T> {
     return this.request<T>(endpoint, {
@@ -100,7 +100,7 @@ export class ApiClient {
    */
   async put<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options: RequestInit = {}
   ): Promise<T> {
     return this.request<T>(endpoint, {

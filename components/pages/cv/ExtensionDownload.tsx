@@ -22,6 +22,16 @@ interface ExtensionDownloadProps {
   onClose: () => void;
 }
 
+interface GitHubReleaseAsset {
+  name: string;
+  browser_download_url: string;
+}
+
+interface GitHubRelease {
+  tag_name?: string;
+  assets?: GitHubReleaseAsset[];
+}
+
 const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [extensionDownloaded, setExtensionDownloaded] = useState(false);
@@ -60,10 +70,10 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
         const response = await fetch(apiUrl);
 
         if (response.ok) {
-          const release = await response.json();
-          setLatestVersion(release.tag_name);
+          const release: GitHubRelease = await response.json();
+          setLatestVersion(release.tag_name ?? null);
         }
-      } catch (error) {
+      } catch {
         console.log('Could not fetch version info');
       } finally {
         setIsLoadingVersion(false);
@@ -96,8 +106,8 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
       const response = await fetch(apiUrl);
 
       if (response.ok) {
-        const release = await response.json();
-        const extensionAsset = release.assets?.find((asset: any) =>
+        const release: GitHubRelease = await response.json();
+        const extensionAsset = release.assets?.find((asset) =>
           asset.name.includes('cv-tailor-extension') && asset.name.endsWith('.zip')
         );
 

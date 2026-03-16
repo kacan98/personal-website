@@ -5,6 +5,7 @@ import { setCurrentPosition } from '@/redux/slices/improvementDescriptions';
 import { CVSettings } from '@/types';
 import { deepClone } from '../components/pages/cv/utils/cvDiffTracker';
 import { MotivationalLetterResponse } from '@/app/api/motivational-letter/motivational-letter.model';
+import { AdjustmentWorkflowActions, AdjustmentWorkflowState } from '@/types/adjustment';
 
 interface CvEffectsConfig {
   // State
@@ -33,11 +34,11 @@ interface CvEffectsConfig {
   // Dependencies
   checked: string[];
   selectedLanguage: string;
-  adjustmentWorkflow: any;
+  adjustmentWorkflow: AdjustmentWorkflowState & Pick<AdjustmentWorkflowActions, 'resetWorkflow'>;
 }
 
 export function useCvEffects(config: CvEffectsConfig) {
-  const locale = useLocale();
+  useLocale();
   const dispatch = useAppDispatch();
 
   // Refs for job loading state
@@ -171,11 +172,6 @@ export function useCvEffects(config: CvEffectsConfig) {
       }));
     }
   }, [config.positionDetails, config.companyName, dispatch]);
-
-  // Fetch cache stats on component mount
-  useEffect(() => {
-    config.handleFetchCacheStats();
-  }, []); // Empty dependency array - only run on mount
 
   return {
     jobDescriptionReceived,

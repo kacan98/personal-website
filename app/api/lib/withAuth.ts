@@ -2,14 +2,14 @@ import { checkAuthFromRequest } from '@/lib/auth-middleware';
 
 export interface AuthResult {
   authenticated: boolean;
-  user?: any;
+  user?: unknown;
 }
 
 /**
  * Higher-order function that adds authentication to API routes
  * Eliminates the need to duplicate auth logic across all protected routes
  */
-export function withAuth<_T = any>(
+export function withAuth<_T = unknown>(
   handler: (req: Request, auth: AuthResult) => Promise<Response>
 ): (req: Request) => Promise<Response> {
   return async (req: Request) => {

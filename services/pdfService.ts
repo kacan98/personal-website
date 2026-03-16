@@ -90,8 +90,8 @@ export class PdfService {
    * Generates PDF for CV (placeholder for future implementation)
    */
   static generateCvPDF(
-    cvData: any,
-    options?: {
+    _cvData: unknown,
+    _options?: {
       fontSize?: number;
       companyName?: string;
     }

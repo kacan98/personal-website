@@ -42,11 +42,18 @@ export const useGetSummary = (props: {
       setPositionSummary(res.summary)
       setLanguage(res.languagePostIsWrittineIn)
       if (res.companyName) setCompanyName(res.companyName)
-    } catch (err) {
+    } catch {
       setsnackbarMessage('Error summarizing position')
     }
     setLoading(false)
-  }, Object.values(props))
+  }, [
+    positionDetails,
+    setCompanyName,
+    setLanguage,
+    setLoading,
+    setPositionSummary,
+    setsnackbarMessage,
+  ])
 
   return { updateSummary }
 }

@@ -7,9 +7,13 @@ tags:
   - CSS Modules
   - Developer Tools
 category: technical
+archived: true
 date: 2025-10-01
 metrics:
-  impact: Streamlines navigation across development environments
+  impact:
+    en: Built tool streamlining navigation across development environments
+    da: Udviklede værktøj der strømliner navigation mellem udviklingsmiljøer
+    sv: Byggde verktyg som effektiviserar navigering mellan utvecklingsmiljöer
   timeframe: 5-hour rapid development
 liveUrl: 'https://magic-bookmarks.vercel.app/'
 sourceUrl: 'https://github.com/kacan98/magic-bookmarks'

@@ -1,6 +1,6 @@
 # Personal Portfolio & AI Job Application Platform
 
-**Live Site:** [https://kcancara.vercel.app/](https://kcancara.vercel.app/)
+**Live Site:** [https://cancara.dk/](https://cancara.dk/)
 
 My personal portfolio website built with Next.js and TypeScript. This full-stack application combines a professional showcase with AI-powered job application tools.
 

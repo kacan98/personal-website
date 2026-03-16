@@ -16,12 +16,9 @@ import {
 import Button from "@/components/ui/Button";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations, useLocale } from 'next-intl';
-import {
-  useEffect,
-  useState
-} from "react";
+import { useState } from "react";
 
 type NavLink = {
   name: string;
@@ -34,25 +31,25 @@ type TopBarProps = {
 
 const NavBar = ({ navLinks }: TopBarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
   const t = useTranslations('navigation');
   const locale = useLocale();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const weAreHome = pathname === "/" || pathname === `/${locale}`;
-
-  // Handle client-side mounting to prevent hydration issues
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const showMobileLayout = isMobile;
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
-  
+
+  const handleMobileNavigate = (href: string) => {
+    setMobileMenuOpen(false);
+    router.push(href);
+  };
 
   // Mobile Navigation Modal
   const mobileMenu = (
@@ -103,37 +100,34 @@ const NavBar = ({ navLinks }: TopBarProps) => {
             }}
           >
             {!weAreHome && (
-              <Link href={`/${locale}`} passHref>
-                <Button
-                  variant="nav"
-                  isActive={weAreHome}
-                  onClick={() => setMobileMenuOpen(false)}
-                  sx={{
-                    fontSize: '1.2rem',
-                    minHeight: 48,
-                    borderRadius: '24px',
-                  }}
-                >
-                  {t('home')}
-                </Button>
-              </Link>
+              <Button
+                variant="nav"
+                isActive={weAreHome}
+                onClick={() => handleMobileNavigate(`/${locale}`)}
+                sx={{
+                  fontSize: '1.2rem',
+                  minHeight: 48,
+                  borderRadius: '24px',
+                }}
+              >
+                {t('home')}
+              </Button>
             )}
 
             {navLinks.map(({ name, href }) => (
-              <Link key={name} href={href} passHref>
-                <Button
-                  variant="nav"
-                  isActive={pathname === href || pathname.startsWith(href + '/')}
-                  onClick={() => setMobileMenuOpen(false)}
-                  sx={{
-                    fontSize: '1.2rem',
-                    minHeight: 48,
-                    borderRadius: '24px',
-                  }}
-                >
-                  {name}
-                </Button>
-              </Link>
+              <Button
+                key={name}
+                variant="nav"
+                isActive={pathname === href || pathname.startsWith(href + '/')}
+                onClick={() => handleMobileNavigate(href)}
+                sx={{
+                  fontSize: '1.2rem',
+                  minHeight: 48,
+                  borderRadius: '24px',
+                }}
+              >
+                {name}
+              </Button>
             ))}
           </Box>
         </Box>
@@ -170,7 +164,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
           ...getContainerSx()
         }}>
           {/* Mobile Layout */}
-          {mounted && isMobile ? (
+          {showMobileLayout ? (
             <>
               {!weAreHome && (
                 <Link href="/" passHref>
@@ -193,7 +187,7 @@ const NavBar = ({ navLinks }: TopBarProps) => {
                 <MenuIcon color="primary" />
               </IconButton>
             </>
-          ) : mounted ? (
+          ) : (
             /* Desktop Layout */
             (<>
               {!weAreHome && (
@@ -220,15 +214,12 @@ const NavBar = ({ navLinks }: TopBarProps) => {
               <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
               <LanguageSelector />
             </>)
-          ) : (
-            // Fallback during hydration
-            (<Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>)
           )}
         </Toolbar>
       </AppBar>
       
       {/* Mobile Menu */}
-      {mounted && isMobile && mobileMenu}
+      {showMobileLayout && mobileMenu}
     </>
   );
 };

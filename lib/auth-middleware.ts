@@ -2,16 +2,11 @@ import { NextRequest } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
 import { JWT_SECRET, CV_ADMIN_PASSWORD } from './env';
 
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required');
-}
-
-const secret = new TextEncoder().encode(JWT_SECRET);
+const secret = JWT_SECRET ? new TextEncoder().encode(JWT_SECRET) : null;
 
 // Session duration configuration
 const SESSION_DURATION_DAYS = 14;
 const SESSION_DURATION_SECONDS = SESSION_DURATION_DAYS * 24 * 60 * 60;
-
 
 export interface AuthResult {
   authenticated: boolean;
@@ -22,6 +17,10 @@ export interface AuthResult {
  * Create a JWT token for authentication using jose library
  */
 export async function createAuthToken(): Promise<string> {
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required to create auth tokens');
+  }
+
   const token = await new SignJWT({})
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -35,6 +34,11 @@ export async function createAuthToken(): Promise<string> {
  * Verify JWT token using jose library
  */
 export async function verifyAuthToken(token: string): Promise<boolean> {
+  if (!secret) {
+    console.error('JWT_SECRET environment variable not set!');
+    return false;
+  }
+
   try {
     await jwtVerify(token, secret);
     return true;

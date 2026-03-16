@@ -4,9 +4,10 @@
     "about": "Om mig",
     "projects": "Projekt",
     "cv": "CV",
-    "blog": "Project Stories",
+    "blog": "Projects",
     "gallery": "Galleri",
-    "chatbot": "Chat"
+    "chatbot": "Chatbot",
+    "tools": "Gratis Verktyg"
   },
   "common": {
     "loading": "Laddar...",
@@ -17,11 +18,12 @@
     "download": "Ladda ner",
     "edit": "Redigera",
     "save": "Spara",
-    "cancel": "Avbryt"
+    "cancel": "Avbryt",
+    "apply": "Tillämpa"
   },
   "about": {
     "title": "Om mig",
-    "content": "Jag är Karel, en utvecklare som skriver kod för arbete och för nöje. Jag jobbar mest med frontend men jag är bekväm med backend också. Jag lärde mig själv att koda efter att ha jobbat med marknadsföring ett tag, så jag tänker mycket på användarupplevelsen.\n\nJag jobbar med TypeScript, Angular, React och C# mestadels. Jag gillar att lista ut hur saker fungerar och göra dem bättre. När jag inte kodar läser jag vanligtvis om ny teknik eller försöker förstöra något bara för att se om jag kan fixa det.\n\nAlltid redo för intressanta projekt eller bara att snacka om kod.",
+    "content": "Jag är en full-stack utvecklare som bygger praktisk mjukvara över frontend och backend. Jag arbetar med produktfunktioner, interna verktyg, integrationer och arbetsflödestunga system i TypeScript, Angular, React, .NET-baserade miljöer och X++.\n\nJag gillar att hitta arbete som kan förenklas, automatiseras eller göras lättare att underhålla. Det kan handla om att minska manuell uppföljning, förbättra överblick, ta bort duplicering eller städa upp klumpiga delar av ett system.\n\nDet viktigaste för mig är att hjälpa människor spara tid med mjukvara som är tydligare, mer pålitlig och lättare att arbeta med.",
     "contactButton": "Skicka ett meddelande",
     "linkedinButton": "Lägg till mig på LinkedIn"
   },
@@ -43,7 +45,8 @@
   },
   "projects": {
     "title": "Projekt",
-    "allProjects": "Alla"
+    "allProjects": "Alla",
+    "viewProject": "Läs mer"
   },
   "language": {
     "english": "English",
@@ -53,10 +56,7 @@
   "homepage": {
     "hero": {
       "tagline": "Full-Stack Developer",
-      "headline": "Jag bygger webbappar och AI-automationer som sparar team riktiga timmar varje vecka.",
-      "subheadline": "För företagare: Jag designar praktiska AI-drivna arbetsflöden för lead-uppföljning, interna processer och repetitiv administration.",
-      "primaryCta": "Boka ett gratis automationssamtal",
-      "secondaryCta": "Se erfarenhet och resultat"
+      "subtitle": "Jag bygger produktfunktioner, interna verktyg och arbetsflödesmjukvara över frontend och backend."
     },
     "about": {
       "fullStack": {
@@ -69,23 +69,46 @@
       },
       "problemSolver": {
         "header": "Problemlösare",
-        "content": "Jag gillar att lista ut varför saker går sönder och fixa dem. Större delen av min dag går åt till att debugga, bygga funktioner och se till att saker faktiskt fungerar."
+        "content": "Jag gillar att hitta den verkliga flaskhalsen i ett system, oavsett om det handlar om prestanda, bristande överblick, klumpiga arbetsflöden eller en funktion som är svårare att använda än den borde vara."
       },
       "userFocused": {
         "header": "Användarfokuserad",
-        "content": "Jag brukade jobba med marknadsföring, så jag tänker på vem som faktiskt ska använda det jag bygger. Jag försöker göra programvara som inte får folk att vilja kasta sin dator genom fönstret."
+        "content": "Min bakgrund i marknadsföring hjälper fortfarande. Jag tänker på vem som ska använda programvaran, vad de försöker få gjort och hur man minskar friktion istället för att lägga till mer process."
       }
     },
     "timeline": {
       "title": "Erfarenhet och bevisad leverans"
+    },
+    "proof": {
+      "heading": "Jag arbetar bäst där produktarbete, interna verktyg och verksamhetens verklighet möts.",
+      "items": [
+        {
+          "eyebrow": "Produktion",
+          "title": "Frontend och backend i levande system",
+          "description": "Jag arbetar med gränssnitt, endpoints, integrationer och affärslogik i system som används varje dag."
+        },
+        {
+          "eyebrow": "Arbetsflöde",
+          "title": "Interna verktyg som minskar friktion",
+          "description": "Jag bygger dashboards, uppgiftsöversikter och mindre arbetsflödesmjukvara som gör upprepat arbete enklare att hantera."
+        },
+        {
+          "eyebrow": "Leverans",
+          "title": "Praktisk engineering i stället för fluff",
+          "description": "Jag gillar att hitta den verkliga flaskhalsen, göra systemet tydligare och leverera något som faktiskt används."
+        }
+      ]
+    },
+    "selectedWork": {
+      "title": "Utvalt Arbete"
     }
   },
   "contact": {
-    "title": "Låt oss förenkla dina arbetsflöden",
-    "subtitle": "Behöver du en utvecklare som både kan bygga produkter och automatisera manuellt arbete? Jag svarar oftast inom 24 timmar.",
+    "title": "Låt oss jobba tillsammans",
+    "subtitle": "Redo att arbeta tillsammans? Jag skulle gärna höra från dig.",
     "email": {
       "label": "E-post",
-      "description": "Bäst för projektförfrågningar"
+      "description": "Bästa sättet att nå mig"
     },
     "linkedin": {
       "label": "LinkedIn",
@@ -93,14 +116,13 @@
     },
     "github": {
       "label": "GitHub",
-      "description": "Kodexempel och tekniskt djup"
+      "description": "Kod och projekt"
     },
     "portfolio": {
       "label": "Portfolio",
-      "description": "Utvalda projekt och case"
+      "description": "Se mitt arbete"
     },
-    "sendEmail": "Starta samtalet",
-    "prompt": "Berätta vad du vill automatisera, så föreslår jag första steget med högst effekt."
+    "sendEmail": "Skicka mig ett e-post"
   },
   "loading": {
     "messages": [
@@ -120,14 +142,90 @@
   "chatbot": {
     "placeholder": "Fråga om min erfarenhet och färdigheter...",
     "sendButton": "Skicka",
-    "clearTooltip": "Clear Chat & Starta Ny Konversation",
+    "clearTooltip": "Clear Chatbot & Starta Ny Konversation",
     "startNewChat": "Starta Ny Chat",
-    "chatError": "Chat Error",
+    "chatError": "Chatbot Error",
     "initializing": "Initialiserar Karel AI...",
     "sending": "..."
   },
   "projectStories": {
     "title": "Projektberättelser",
     "description": "Saker jag har byggt, problem jag har löst och vad jag lärde mig längs vägen"
+  },
+  "tools": {
+    "title": "Gratis Verktyg",
+    "description": "Gratis webbläsarbaserade verktyg. Ingen registrering, inga gränser, 100% privat.",
+    "emailSignature": "E-postsignatur Generator",
+    "emailSignatureDesc": "Skapa professionella e-postsignaturer med anpassade färger, typsnitt och sociala länkar. Inkluderar AI-driven bakgrundsborttagning för profilbilder.",
+    "backgroundRemoval": "Bakgrundsborttagning",
+    "backgroundRemovalDesc": "Ta bort bakgrunder från bilder med AI. Fungerar 100% i din webbläsare - inga uppladdningar, helt privat och gratis."
+  },
+  "emailGenerator": {
+    "title": "E-postsignatur Generator",
+    "signatureDetails": "Signatur Detaljer",
+    "clearAll": "Rensa Allt",
+    "contentTab": "Innehåll",
+    "stylingTab": "Styling",
+    "fullName": "Fullständigt Namn",
+    "jobTitle": "Jobbtitel",
+    "company": "Företag (valfritt)",
+    "email": "E-post",
+    "phone": "Telefon (valfritt)",
+    "website": "Webbplats (valfritt)",
+    "profilePicture": "Profilbild (valfritt)",
+    "imageSize": "Bildstorlek",
+    "companyLogo": "Företagslogotyp (valfritt)",
+    "dropImage": "Släpp profilbild här eller klicka för att ladda upp",
+    "profileUploaded": "Profilbild uppladdad",
+    "removeBackground": "Ta Bort Bakgrund",
+    "removingBackground": "Tar bort...",
+    "delete": "Radera",
+    "socialLinks": "Sociala Länkar",
+    "addLink": "Lägg till Länk",
+    "platform": "Plattform",
+    "url": "URL",
+    "imageShape": "Bildform",
+    "imageShapeCircle": "Cirkel",
+    "imageShapeRounded": "Rundad Fyrkantig",
+    "imageShapeSquare": "Fyrkantig",
+    "imagePosition": "Bildposition",
+    "imagePositionLeft": "Vänster (Mitten)",
+    "imagePositionTop": "Vänster (Topp)",
+    "fontFamily": "Typsnitt",
+    "colorSchemes": "Färgscheman",
+    "advancedColors": "Avancerat: Anpassade Färger",
+    "nameColor": "Namnfärg",
+    "titleColor": "Titel/Företag Färg",
+    "linkColor": "Länk Färg",
+    "iconColor": "Ikon Färg",
+    "copySignature": "Kopiera HTML Signatur",
+    "signatureCopied": "Signatur HTML kopierad till urklipp!",
+    "preview": "Förhandsvisning",
+    "previewDescription": "Så här kommer din signatur att se ut i e-postmeddelanden",
+    "sampleEmailIntro": "Hej,",
+    "sampleEmailBody": "Detta är ett exempel på ett e-postmeddelande för att visa hur din signatur ser ut.",
+    "adjustImageTitle": "Justera Bildposition och Zoom",
+    "zoom": "Zoom",
+    "cancel": "Avbryt",
+    "apply": "Tillämpa",
+    "preparingImage": "Förbereder bild...",
+    "downloadingModel": "Laddar ner AI-modell (endast första gången, ~50MB)...",
+    "downloadingProgress": "Laddar ner modell: {current}MB / {total}MB...",
+    "processingImage": "Bearbetar bild med AI...",
+    "finishingUp": "Avslutar...",
+    "complete": "Klart!",
+    "backgroundRemovalError": "Kunde inte ta bort bakgrund. Försök igen.",
+    "backgroundRemovalInfo": "Bakgrundsborttagning är 100% gratis och körs i din webbläsare. AI-modellen laddas ner en gång (~50MB) och cachas för framtida användning.",
+    "colorPresetProfessionalBlue": "Professionell Blå",
+    "colorPresetModernPurple": "Modern Lila",
+    "colorPresetCorporateGray": "Företags Grå",
+    "colorPresetTechGreen": "Tech Grön",
+    "colorPresetCreativeOrange": "Kreativ Orange",
+    "colorPresetElegantGray": "Elegant Grå",
+    "fontOpenSans": "Open Sans (Google Font)",
+    "fontRoboto": "Roboto (Google Font)"
+  },
+  "backgroundRemoval": {
+    "title": "Bakgrundsborttagning"
   }
 }

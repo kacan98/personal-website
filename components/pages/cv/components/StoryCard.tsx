@@ -29,7 +29,7 @@ export interface StoryCardProps {
 
 export const StoryCard: React.FC<StoryCardProps> = ({
   story,
-  index = 0,
+  index: _index = 0,
   isHighlighted = false,
   showViewButton = true,
   showMatchPercentage = true,
