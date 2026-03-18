@@ -1,6 +1,6 @@
 import { JobCvIntersectionResponse } from '@/app/api/job-cv-intersection/model'
 import { CvUpgradeParams, CvUpgradeResponse, personalizeCvAPIEndpointName } from '@/app/api/personalize-cv/model'
-import { CVSettings } from '@/types'
+import { BulletPoint, CVSettings, CvSection, CvSubSection, Paragraph } from '@/types'
 import { useCallback } from 'react'
 
 interface AdjustCvBasedOnPositionProps {
@@ -17,6 +17,54 @@ interface AdjustCvBasedOnPositionProps {
   setCompanyName: (companyName: string) => void
   setPositionIntersection: (intersection: JobCvIntersectionResponse) => void
   setCacheStatus?: (fromCache: boolean) => void
+}
+
+function preserveParagraphIds(currentParagraphs?: Paragraph[] | null, originalParagraphs?: Paragraph[] | null) {
+  currentParagraphs?.forEach((paragraph, index) => {
+    if (originalParagraphs?.[index] && !paragraph.id) {
+      paragraph.id = originalParagraphs[index].id;
+    }
+  });
+}
+
+function preserveBulletPointIds(currentBulletPoints?: BulletPoint[] | null, originalBulletPoints?: BulletPoint[] | null) {
+  currentBulletPoints?.forEach((bullet, index) => {
+    if (originalBulletPoints?.[index] && !bullet.id) {
+      bullet.id = originalBulletPoints[index].id;
+    }
+  });
+}
+
+function preserveSubSectionIds(currentSubSections?: CvSubSection[] | null, originalSubSections?: CvSubSection[] | null) {
+  currentSubSections?.forEach((subSection, index) => {
+    const originalSubSection = originalSubSections?.[index];
+
+    if (originalSubSection && !subSection.id) {
+      subSection.id = originalSubSection.id;
+    }
+
+    preserveParagraphIds(subSection.paragraphs, originalSubSection?.paragraphs);
+    preserveBulletPointIds(subSection.bulletPoints, originalSubSection?.bulletPoints);
+  });
+}
+
+function preserveSectionIds(currentSections: CvSection[] | null | undefined, originalSections: CvSection[] | null | undefined) {
+  currentSections?.forEach((section, index) => {
+    const originalSection = originalSections?.[index];
+
+    if (originalSection && !section.id) {
+      section.id = originalSection.id;
+    }
+
+    preserveParagraphIds(section.paragraphs, originalSection?.paragraphs);
+    preserveBulletPointIds(section.bulletPoints, originalSection?.bulletPoints);
+    preserveSubSectionIds(section.subSections, originalSection?.subSections);
+  });
+}
+
+function preserveCvIdsFromOriginal(currentCv: CVSettings, originalCv: CVSettings) {
+  preserveSectionIds(currentCv.mainColumn, originalCv.mainColumn);
+  preserveSectionIds(currentCv.sideColumn, originalCv.sideColumn);
 }
 
 export const useAdjustCvBasedOnPosition = ({
@@ -68,42 +116,7 @@ export const useAdjustCvBasedOnPosition = ({
       }
 
       if (cv) {
-        cv.mainColumn?.forEach((section, index) => {
-          if (cvProps.mainColumn?.[index] && !section.id) {
-            section.id = cvProps.mainColumn[index].id;
-          }
-
-          if (section.subSections && cvProps.mainColumn[index]?.subSections) {
-            section.subSections.forEach((subSection, subIndex) => {
-              if (cvProps.mainColumn[index].subSections?.[subIndex] && !subSection.id) {
-                subSection.id = cvProps.mainColumn[index].subSections[subIndex].id;
-              }
-            });
-          }
-
-          if (section.bulletPoints && cvProps.mainColumn[index]?.bulletPoints) {
-            section.bulletPoints.forEach((bullet, bulletIndex) => {
-              if (cvProps.mainColumn[index].bulletPoints?.[bulletIndex] && !bullet.id) {
-                bullet.id = cvProps.mainColumn[index].bulletPoints[bulletIndex].id;
-              }
-            });
-          }
-        });
-
-        cv.sideColumn?.forEach((section, index) => {
-          if (cvProps.sideColumn?.[index] && !section.id) {
-            section.id = cvProps.sideColumn[index].id;
-          }
-
-          if (section.bulletPoints && cvProps.sideColumn[index]?.bulletPoints) {
-            section.bulletPoints.forEach((bullet, bulletIndex) => {
-              if (cvProps.sideColumn[index].bulletPoints?.[bulletIndex] && !bullet.id) {
-                bullet.id = cvProps.sideColumn[index].bulletPoints[bulletIndex].id;
-              }
-            });
-          }
-        });
-
+        preserveCvIdsFromOriginal(cv, cvProps)
         updateCvInRedux(cv)
       }
       if (!positionSummary && newPositionSummary) {
