@@ -1,4 +1,6 @@
 // Data is loose/partial - Zod will parse and fill in required fields with defaults
+import { getMailtoHref, getSiteHost, settings } from "@/data/settings";
+
 export const cvConfigDa = {
   on: true,
   name: "Karel Čančara",
@@ -88,23 +90,23 @@ export const cvConfigDa = {
       bulletPoints: [
         {
           iconName: "translate",
-          text: "cancara.dk",
-          url: "https://cancara.dk/"
+          text: getSiteHost(),
+          url: settings.siteUrl
         },
         {
           iconName: "linkedIn",
-          text: "linkedin.com/in/kcancara",
-          url: "https://www.linkedin.com/in/kcancara"
+          text: settings.linkedinUrl.replace(/^https?:\/\/(www\.)?/, ""),
+          url: settings.linkedinUrl
         },
         {
           iconName: "gitHub",
-          text: "github.com/kacan98",
-          url: "https://github.com/kacan98"
+          text: settings.githubUrl.replace(/^https?:\/\/(www\.)?/, ""),
+          url: settings.githubUrl
         },
         {
           iconName: "mail",
-          text: "karel@cancara.dk",
-          url: "mailto:karel@cancara.dk"
+          text: settings.contactEmail || "",
+          url: getMailtoHref()
         }
       ]
     },

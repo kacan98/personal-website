@@ -4,14 +4,15 @@ import { PROJECTS_PATH } from "@/lib/routes";
 import { settings } from "@/data/settings";
 
 export const SITE_URL = settings.siteUrl;
+export const BUILD_SITE_URL = SITE_URL || "http://localhost:3000";
 export const SITE_NAME = settings.siteName;
 export const SITE_TITLE = `${SITE_NAME} - Full-Stack Developer`;
 export const SITE_DESCRIPTION =
   "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.";
 export const SOCIAL_IMAGE = "/portfolio.png";
-export const CONTACT_EMAIL = "karel@cancara.dk";
-export const GITHUB_URL = "https://github.com/kacan98";
-export const LINKEDIN_URL = "https://www.linkedin.com/in/kcancara";
+export const CONTACT_EMAIL = settings.contactEmail;
+export const GITHUB_URL = settings.githubUrl;
+export const LINKEDIN_URL = settings.linkedinUrl;
 
 export const PROFILE_HEADLINE =
   "Full-stack developer focused on building reliable product features, internal tools, and workflow-heavy systems with TypeScript, React, .NET, and X++.";
@@ -27,15 +28,15 @@ export const PROFILE_CORE_SKILLS = [
 ] as const;
 
 export const PROFILE_KEY_LINKS = [
-  { label: "Portfolio", href: SITE_URL, text: SITE_URL },
-  { label: "Projects", href: `${SITE_URL}/en${PROJECTS_PATH}`, text: `${SITE_URL}/en${PROJECTS_PATH}` },
-  { label: "CV", href: `${SITE_URL}/en/cv`, text: `${SITE_URL}/en/cv` },
-  { label: "LinkedIn", href: LINKEDIN_URL, text: "linkedin.com/in/kcancara" },
+  { label: "Portfolio", href: SITE_URL || "/", text: SITE_URL || "/" },
+  { label: "Projects", href: SITE_URL ? `${SITE_URL}/en${PROJECTS_PATH}` : `/en${PROJECTS_PATH}`, text: SITE_URL ? `${SITE_URL}/en${PROJECTS_PATH}` : `/en${PROJECTS_PATH}` },
+  { label: "CV", href: SITE_URL ? `${SITE_URL}/en/cv` : "/en/cv", text: SITE_URL ? `${SITE_URL}/en/cv` : "/en/cv" },
+  ...(LINKEDIN_URL ? [{ label: "LinkedIn", href: LINKEDIN_URL, text: LINKEDIN_URL.replace(/^https?:\/\/(www\.)?/, "") }] : []),
 ] as const;
 
 export function getBaseMetadata(): Metadata {
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(BUILD_SITE_URL),
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     alternates: {
@@ -43,7 +44,7 @@ export function getBaseMetadata(): Metadata {
     },
     openGraph: {
       type: "website",
-      url: SITE_URL,
+      url: BUILD_SITE_URL,
       title: SITE_TITLE,
       description: SITE_DESCRIPTION,
       images: [
@@ -69,11 +70,11 @@ export function getPersonSchema() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: SITE_NAME,
-    url: SITE_URL,
-    image: `${SITE_URL}${SOCIAL_IMAGE}`,
-    email: `mailto:${CONTACT_EMAIL}`,
+    url: SITE_URL || BUILD_SITE_URL,
+    image: `${BUILD_SITE_URL}${SOCIAL_IMAGE}`,
+    email: CONTACT_EMAIL ? `mailto:${CONTACT_EMAIL}` : undefined,
     jobTitle: "Full-Stack Developer",
-    sameAs: [GITHUB_URL, LINKEDIN_URL],
+    sameAs: [GITHUB_URL, LINKEDIN_URL].filter(Boolean),
     knowsAbout: ["TypeScript", "React", "Next.js", ".NET", "X++", "AI-enhanced development"],
   };
 }
@@ -83,7 +84,7 @@ export function getWebsiteSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE_TITLE,
-    url: SITE_URL,
+    url: SITE_URL || BUILD_SITE_URL,
     description: SITE_DESCRIPTION,
     inLanguage: routing.locales,
   };
@@ -94,12 +95,12 @@ export function getProfileSchema() {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
     name: `About ${SITE_NAME}`,
-    url: `${SITE_URL}/profile`,
+    url: SITE_URL ? `${SITE_URL}/profile` : "/profile",
     mainEntity: {
       "@type": "Person",
       name: SITE_NAME,
       jobTitle: "Full-Stack Developer",
-      url: SITE_URL,
+      url: SITE_URL || BUILD_SITE_URL,
     },
   };
 }

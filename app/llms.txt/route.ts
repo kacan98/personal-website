@@ -3,8 +3,8 @@ import {
   GITHUB_URL,
   LINKEDIN_URL,
   PROFILE_HEADLINE,
+  BUILD_SITE_URL,
   SITE_NAME,
-  SITE_URL,
   getLlmsKeyPages,
 } from "@/lib/site-metadata";
 
@@ -17,10 +17,10 @@ export function GET() {
     PROFILE_HEADLINE,
     "",
     "## Canonical profile",
-    `- ${SITE_URL}/profile`,
+    `- ${BUILD_SITE_URL}/profile`,
     "",
     "## Key pages",
-    ...getLlmsKeyPages().map((path) => `- ${SITE_URL}/en${path}`),
+    ...getLlmsKeyPages().map((path) => `- ${BUILD_SITE_URL}/en${path}`),
     "",
     "## External",
     `- ${LINKEDIN_URL}`,

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/site-metadata";
+import { BUILD_SITE_URL, SITE_URL } from "@/lib/site-metadata";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
+    sitemap: `${BUILD_SITE_URL}/sitemap.xml`,
+    host: SITE_URL || BUILD_SITE_URL,
   };
 }

@@ -1,6 +1,6 @@
 # Personal Portfolio & AI Job Application Platform
 
-**Live Site:** [https://cancara.dk/](https://cancara.dk/)
+**Live Site:** set via `NEXT_PUBLIC_SITE_URL`
 
 My personal portfolio website built with Next.js and TypeScript. This full-stack application combines a professional showcase with AI-powered job application tools.
 

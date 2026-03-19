@@ -8,14 +8,13 @@ import {
   getProfileSchema,
   SITE_DESCRIPTION,
   SITE_NAME,
-  SITE_URL,
 } from "@/lib/site-metadata";
 
 export const metadata: Metadata = {
   title: `About ${SITE_NAME}`,
   description: SITE_DESCRIPTION,
   alternates: {
-    canonical: `${SITE_URL}/profile`,
+    canonical: "/profile",
   },
 };
 

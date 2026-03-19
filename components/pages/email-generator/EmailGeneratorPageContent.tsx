@@ -41,6 +41,7 @@ import { ExpandMore, Clear, LightMode, DarkMode } from "@mui/icons-material";
 import { ContentCopy, Delete, Add, Refresh } from "@mui/icons-material";
 import PageWrapper from "../pageWrapper";
 import { BRAND_COLORS } from "@/app/colors";
+import { settings } from "@/data/settings";
 import ImageUpload from "./ImageUpload";
 
 type SignatureFont = "Arial" | "Helvetica" | "Verdana" | "Georgia" | "Open Sans" | "Roboto";
@@ -155,9 +156,9 @@ const DEFAULT_SIGNATURE_DATA: SignatureData = {
   name: "Karel Čančara",
   title: "Full Stack Developer",
   company: "Dynaway",
-  email: "karel.cancara@gmail.com",
+  email: settings.contactEmail,
   phone: "",
-  website: "https://kcancara.vercel.app",
+  website: settings.siteUrl,
   profileImage: "",
   croppedImage: "",
   imageSize: 80,
@@ -171,8 +172,8 @@ const DEFAULT_SIGNATURE_DATA: SignatureData = {
   companyLogo: "",
   font: "Arial",
   socialLinks: [
-    { id: "1", platform: "LinkedIn", url: "https://www.linkedin.com/in/kcancara" },
-    { id: "2", platform: "GitHub", url: "https://github.com/kacan98" },
+    ...(settings.linkedinUrl ? [{ id: "1", platform: "LinkedIn", url: settings.linkedinUrl }] : []),
+    ...(settings.githubUrl ? [{ id: settings.linkedinUrl ? "2" : "1", platform: "GitHub", url: settings.githubUrl }] : []),
   ],
   colors: {
     nameColor: "#666666",
@@ -397,9 +398,78 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
 
   const generatedHTML = generateSignatureHTML(signatureData);
 
+  const getClipboardHtml = useCallback(() => {
+    if (typeof DOMParser === "undefined") {
+      return generateSignatureHTML(signatureData)
+        .replace(/<\!DOCTYPE.*?<body[^>]*>/s, "")
+        .replace(/<\/body>.*$/s, "");
+    }
+
+    const doc = new DOMParser().parseFromString(generateSignatureHTML(signatureData), "text/html");
+    const signatureTable = doc.body.querySelector("table");
+
+    return signatureTable?.outerHTML || doc.body.innerHTML;
+  }, [signatureData]);
+
+  const svgDataUriToPngDataUri = useCallback(async (svgDataUri: string, size = 24) => {
+    return await new Promise<string>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("Failed to create canvas context for icon conversion."));
+          return;
+        }
+
+        context.clearRect(0, 0, size, size);
+        context.drawImage(image, 0, 0, size, size);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      image.onerror = () => reject(new Error("Failed to load SVG icon for PNG conversion."));
+      image.src = svgDataUri;
+    });
+  }, []);
+
+  const getClipboardHtmlWithPngIcons = useCallback(async () => {
+    const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
+    const iconImages = Array.from(doc.querySelectorAll("a img[src^='data:image/svg+xml']"));
+
+    await Promise.all(
+      iconImages.map(async (image) => {
+        const width = Number(image.getAttribute("width") || "24");
+        const svgDataUri = image.getAttribute("src") || "";
+        if (!svgDataUri) {
+          return;
+        }
+
+        try {
+          const pngDataUri = await svgDataUriToPngDataUri(svgDataUri, width);
+          image.setAttribute("src", pngDataUri);
+        } catch (error) {
+          console.error("Failed to convert icon to PNG data URI:", error);
+        }
+      })
+    );
+
+    return doc.body.innerHTML;
+  }, [getClipboardHtml, svgDataUriToPngDataUri]);
+
   const handleCopy = async () => {
+    const clipboardHtml = await getClipboardHtmlWithPngIcons();
+
     try {
-      await navigator.clipboard.writeText(generatedHTML);
+      if (typeof ClipboardItem !== "undefined") {
+        const clipboardItem = new ClipboardItem({
+          "text/html": new Blob([clipboardHtml], { type: "text/html" }),
+        });
+        await navigator.clipboard.write([clipboardItem]);
+      } else {
+        await navigator.clipboard.writeText(clipboardHtml);
+      }
       setShowCopyAlert(true);
     } catch (err) {
       console.error("Failed to copy:", err);

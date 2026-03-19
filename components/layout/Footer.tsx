@@ -1,5 +1,6 @@
 import { Box, Typography, Link } from "@mui/material";
 import { BACKGROUND_COLORS } from "@/app/colors";
+import { settings } from "@/data/settings";
 
 export default function Footer() {
   return (
@@ -21,9 +22,9 @@ export default function Footer() {
         }}
       >
         © <Link 
-            href="https://www.linkedin.com/in/kcancara" 
-            target="_blank" 
-            rel="noopener noreferrer"
+            href={settings.linkedinUrl || undefined}
+            target={settings.linkedinUrl ? "_blank" : undefined}
+            rel={settings.linkedinUrl ? "noopener noreferrer" : undefined}
             color="inherit"
             underline="hover"
             sx={{ opacity: 0.9 }}
