@@ -397,9 +397,69 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
 
   const generatedHTML = generateSignatureHTML(signatureData);
 
+  const getClipboardHtml = () => {
+    const html = generateSignatureHTML(signatureData)
+      .replace(/<\!DOCTYPE.*?<body[^>]*>/s, "")
+      .replace(/<\/body>.*$/s, "");
+
+    if (typeof DOMParser === "undefined") {
+      return html;
+    }
+
+    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
+
+    doc.querySelectorAll("a img[alt]").forEach((img) => {
+      const link = img.closest("a");
+      const platform = img.getAttribute("alt") || "Link";
+      const replacement = doc.createElement("span");
+      replacement.textContent = platform;
+      replacement.setAttribute(
+        "style",
+        `color: ${signatureData.colors.linkColor}; text-decoration: none; font-size: 13px; line-height: 1.4;`
+      );
+      if (link) {
+        link.replaceChildren(replacement);
+      }
+    });
+
+    const iconLinks = Array.from(doc.querySelectorAll("a")).filter((anchor) => anchor.querySelector("span"));
+    iconLinks.forEach((anchor, index) => {
+      anchor.setAttribute("target", "_blank");
+      if (index < iconLinks.length - 1) {
+        anchor.insertAdjacentHTML(
+          "afterend",
+          '<span style="color: #999999; font-size: 13px;"> | </span>'
+        );
+      }
+    });
+
+    return doc.body.innerHTML;
+  };
+
   const handleCopy = async () => {
+    const clipboardHtml = getClipboardHtml();
+    const plainTextSignature = [
+      signatureData.name,
+      signatureData.title,
+      signatureData.company,
+      signatureData.email,
+      signatureData.phone,
+      signatureData.website,
+      ...signatureData.socialLinks.filter((link) => link.url).map((link) => `${link.platform}: ${link.url}`),
+    ]
+      .filter(Boolean)
+      .join("\n");
+
     try {
-      await navigator.clipboard.writeText(generatedHTML);
+      if (typeof ClipboardItem !== "undefined") {
+        const clipboardItem = new ClipboardItem({
+          "text/html": new Blob([clipboardHtml], { type: "text/html" }),
+          "text/plain": new Blob([plainTextSignature], { type: "text/plain" }),
+        });
+        await navigator.clipboard.write([clipboardItem]);
+      } else {
+        await navigator.clipboard.writeText(plainTextSignature);
+      }
       setShowCopyAlert(true);
     } catch (err) {
       console.error("Failed to copy:", err);
