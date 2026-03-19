@@ -371,6 +371,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   const [tempCrop, setTempCrop] = useState({ x: 0, y: 0 });
   const [tempZoom, setTempZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const signaturePreviewRef = useRef<HTMLDivElement>(null);
   const _profileInputRef = useRef<HTMLInputElement>(null);
   const _companyLogoInputRef = useRef<HTMLInputElement>(null);
 
@@ -408,12 +409,31 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     const clipboardHtml = getClipboardHtml();
 
     try {
-      if (typeof ClipboardItem !== "undefined") {
+      const previewNode = signaturePreviewRef.current;
+      let copied = false;
+
+      if (previewNode) {
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(previewNode);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+
+        try {
+          copied = document.execCommand("copy");
+        } catch (err) {
+          console.error("Native preview copy failed:", err);
+        } finally {
+          selection?.removeAllRanges();
+        }
+      }
+
+      if (!copied && typeof ClipboardItem !== "undefined") {
         const clipboardItem = new ClipboardItem({
           "text/html": new Blob([clipboardHtml], { type: "text/html" }),
         });
         await navigator.clipboard.write([clipboardItem]);
-      } else {
+      } else if (!copied) {
         await navigator.clipboard.writeText(clipboardHtml);
       }
       setShowCopyAlert(true);
@@ -1309,6 +1329,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                   {t('sampleEmailBody')}
                 </Typography>
                 <Box
+                  ref={signaturePreviewRef}
                   sx={{ textAlign: "left" }}
                   dangerouslySetInnerHTML={{
                     __html: generateSignatureHTML(signatureData).replace(
