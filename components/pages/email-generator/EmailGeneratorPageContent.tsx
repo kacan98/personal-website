@@ -41,6 +41,7 @@ import { ExpandMore, Clear, LightMode, DarkMode } from "@mui/icons-material";
 import { ContentCopy, Delete, Add, Refresh } from "@mui/icons-material";
 import PageWrapper from "../pageWrapper";
 import { BRAND_COLORS } from "@/app/colors";
+import { settings } from "@/data/settings";
 import ImageUpload from "./ImageUpload";
 
 type SignatureFont = "Arial" | "Helvetica" | "Verdana" | "Georgia" | "Open Sans" | "Roboto";
@@ -88,6 +89,7 @@ type EmailGeneratorPageContentProps = {
 };
 
 const STORAGE_KEY = "email-signature-data";
+const SIGNATURE_ICON_BASE_URL = `${settings.siteUrl}/images/email-signature-icons`;
 
 const COLOR_PRESETS = [
   {
@@ -409,28 +411,15 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
 
     doc.querySelectorAll("a img[alt]").forEach((img) => {
-      const link = img.closest("a");
       const platform = img.getAttribute("alt") || "Link";
-      const replacement = doc.createElement("span");
-      replacement.textContent = platform;
-      replacement.setAttribute(
-        "style",
-        `color: ${signatureData.colors.linkColor}; text-decoration: none; font-size: 13px; line-height: 1.4;`
-      );
-      if (link) {
-        link.replaceChildren(replacement);
-      }
+      const slug = platform.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      img.setAttribute("src", `${SIGNATURE_ICON_BASE_URL}/${slug}.png`);
+      img.setAttribute("width", "24");
+      img.setAttribute("height", "24");
     });
 
-    const iconLinks = Array.from(doc.querySelectorAll("a")).filter((anchor) => anchor.querySelector("span"));
-    iconLinks.forEach((anchor, index) => {
+    doc.querySelectorAll("a").forEach((anchor) => {
       anchor.setAttribute("target", "_blank");
-      if (index < iconLinks.length - 1) {
-        anchor.insertAdjacentHTML(
-          "afterend",
-          '<span style="color: #999999; font-size: 13px;"> | </span>'
-        );
-      }
     });
 
     return doc.body.innerHTML;
