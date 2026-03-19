@@ -89,15 +89,6 @@ type EmailGeneratorPageContentProps = {
 };
 
 const STORAGE_KEY = "email-signature-data";
-const SIGNATURE_ICON_BASE_URL = `${settings.siteUrl}/images/email-signature-icons`;
-const ICON_PASTE_VARIANTS = [
-  { id: "svg-data-uri", label: "SVG data URI", mode: "img", source: "data-uri" },
-  { id: "svg-inline", label: "SVG inline", mode: "inline-svg", source: "data-uri" },
-  { id: "png-hosted", label: "PNG hosted", mode: "img", source: "hosted-png" },
-  { id: "png-relative", label: "PNG relative", mode: "img", source: "relative-png" },
-  { id: "png-data-uri", label: "PNG data URI", mode: "img", source: "data-png" },
-  { id: "text-only", label: "Text only", mode: "text", source: "text" },
-] as const;
 
 const COLOR_PRESETS = [
   {
@@ -376,7 +367,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   const [_backgroundRemovalStatus, setBackgroundRemovalStatus] = useState("");
   const [_backgroundRemovalProgress, setBackgroundRemovalProgress] = useState(0);
   const [previewMode, setPreviewMode] = useState<'light' | 'dark'>('light');
-  const [iconPasteStatus, setIconPasteStatus] = useState<string>("");
   const [showCropDialog, setShowCropDialog] = useState(false);
   const [tempCrop, setTempCrop] = useState({ x: 0, y: 0 });
   const [tempZoom, setTempZoom] = useState(1);
@@ -454,114 +444,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     } catch (err) {
       console.error("Failed to copy:", err);
     }
-  };
-
-  const getPlatformIconSources = useCallback((platformName: string) => {
-    const platform = SOCIAL_PLATFORMS.find((item) => item.name === platformName);
-    if (!platform) {
-      return null;
-    }
-
-    const slug = platform.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const decodedSvg = decodeURIComponent(platform.icon.replace("data:image/svg+xml,", ""));
-    const hostedPng = `${SIGNATURE_ICON_BASE_URL}/${slug}.png`;
-    const relativePng = `/images/email-signature-icons/${slug}.png`;
-
-    return { platform, slug, decodedSvg, hostedPng, relativePng };
-  }, []);
-
-  const imageUrlToDataUri = useCallback(async (imageUrl: string) => {
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-
-    return await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(typeof reader.result === "string" ? reader.result : "");
-      reader.onerror = () => reject(new Error(`Failed to read image data for ${imageUrl}`));
-      reader.readAsDataURL(blob);
-    });
-  }, []);
-
-  const buildIconVariantHtml = useCallback(async (variantId: string) => {
-    const platformName = signatureData.socialLinks.find((link) => link.url)?.platform || "LinkedIn";
-    const platformSources = getPlatformIconSources(platformName);
-    if (!platformSources) {
-      return "";
-    }
-
-    const activeLink = signatureData.socialLinks.find((link) => link.platform === platformName && link.url)?.url || "https://example.com";
-    const label = platformName;
-    const pngDataUri = variantId === "png-data-uri"
-      ? await imageUrlToDataUri(platformSources.relativePng)
-      : "";
-
-    const iconMarkupMap: Record<string, string> = {
-      "svg-data-uri": `<img src="${platformSources.platform.icon}" alt="${label}" width="24" height="24" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; border: none;">`,
-      "svg-inline": `<span style="display: inline-block; width: 24px; height: 24px; vertical-align: middle;">${platformSources.decodedSvg.replace("<svg ", '<svg width="24" height="24" style="display:block;" ')}</span>`,
-      "png-hosted": `<img src="${platformSources.hostedPng}" alt="${label}" width="24" height="24" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; border: none;">`,
-      "png-relative": `<img src="${platformSources.relativePng}" alt="${label}" width="24" height="24" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; border: none;">`,
-      "png-data-uri": `<img src="${pngDataUri}" alt="${label}" width="24" height="24" style="width: 24px; height: 24px; display: inline-block; vertical-align: middle; border: none;">`,
-      "text-only": `<span style="font-size: 14px; line-height: 24px; vertical-align: middle; color: ${signatureData.colors.linkColor};">${label}</span>`,
-    };
-
-    const iconMarkup = iconMarkupMap[variantId] || iconMarkupMap["text-only"];
-
-    return `<div style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.4; color: #222;">
-  <div style="font-size: 12px; color: #666; margin-bottom: 4px;">${variantId}</div>
-  <a href="${activeLink}" target="_blank" style="text-decoration: none; color: ${signatureData.colors.linkColor}; display: inline-flex; align-items: center; gap: 8px;">
-    ${iconMarkup}
-    <span>${label}</span>
-  </a>
-</div>`;
-  }, [getPlatformIconSources, imageUrlToDataUri, signatureData.colors.linkColor, signatureData.socialLinks]);
-
-  const handleCopyIconVariant = async (variantId: string) => {
-    const html = await buildIconVariantHtml(variantId);
-    if (!html) {
-      setIconPasteStatus("No icon variant available to copy.");
-      return;
-    }
-
-    const temp = document.createElement("div");
-    temp.contentEditable = "true";
-    temp.setAttribute("aria-hidden", "true");
-    temp.style.position = "fixed";
-    temp.style.left = "-9999px";
-    temp.style.top = "0";
-    temp.innerHTML = html;
-    document.body.appendChild(temp);
-
-    const range = document.createRange();
-    range.selectNodeContents(temp);
-    const selection = window.getSelection();
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-
-    let copied = false;
-    try {
-      copied = document.execCommand("copy");
-    } catch (error) {
-      console.error("Native copy failed:", error);
-    }
-
-    selection?.removeAllRanges();
-    document.body.removeChild(temp);
-
-    if (!copied && typeof ClipboardItem !== "undefined") {
-      try {
-        const plainText = `${variantId}: ${signatureData.socialLinks.find((link) => link.url)?.platform || "LinkedIn"}`;
-        const item = new ClipboardItem({
-          "text/html": new Blob([html], { type: "text/html" }),
-          "text/plain": new Blob([plainText], { type: "text/plain" }),
-        });
-        await navigator.clipboard.write([item]);
-        copied = true;
-      } catch (error) {
-        console.error("ClipboardItem copy failed:", error);
-      }
-    }
-
-    setIconPasteStatus(copied ? `Copied ${variantId}.` : `Copy failed for ${variantId}.`);
   };
 
   const handleClearAll = () => {
@@ -1461,41 +1343,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                 />
               </Box>
             </Box>
-            <Box sx={{ p: 2, borderTop: "1px solid #e0e0e0", backgroundColor: "#ffffff" }}>
-              <Typography variant="subtitle2" sx={{ color: "#333", mb: 1, textAlign: "left" }}>
-                Icon Paste Lab
-              </Typography>
-              <Typography variant="caption" sx={{ color: "#666", display: "block", mb: 1.5, textAlign: "left" }}>
-                Copy one variant, paste into Gmail, and see what survives.
-              </Typography>
-              <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", mb: 1, rowGap: 1 }}>
-                {ICON_PASTE_VARIANTS.map((variant) => (
-                  <Button
-                    key={variant.id}
-                    size="small"
-                    variant="outlined"
-                    onClick={() => handleCopyIconVariant(variant.id)}
-                    sx={{
-                      borderColor: BRAND_COLORS.secondary,
-                      color: BRAND_COLORS.secondary,
-                      textTransform: "none",
-                      "&:hover": {
-                        borderColor: BRAND_COLORS.accent,
-                        backgroundColor: `${BRAND_COLORS.accent}12`,
-                      },
-                    }}
-                  >
-                    {variant.label}
-                  </Button>
-                ))}
-              </Stack>
-              {iconPasteStatus && (
-                <Typography variant="caption" sx={{ color: "#666", display: "block", textAlign: "left" }}>
-                  {iconPasteStatus}
-                </Typography>
-              )}
-            </Box>
-
             <Box sx={{ p: 2, borderTop: "1px solid #e0e0e0", backgroundColor: "#ffffff" }}>
               <Button
                 variant="contained"
