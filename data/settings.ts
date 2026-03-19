@@ -10,10 +10,28 @@ export interface AppSettings {
   specialPages?: Record<string, boolean>;
 }
 
+function resolveSiteUrl(): string {
+  const explicitSiteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+
+  if (explicitSiteUrl) {
+    return explicitSiteUrl.replace(/\/$/, "");
+  }
+
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin.replace(/\/$/, "");
+  }
+
+  return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
+}
+
 export const settings: AppSettings = {
   siteName: "Karel Čančara",
   siteDescription: "Full Stack Developer | TypeScript, Angular, React, .NET",
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  siteUrl: resolveSiteUrl(),
   authorName: "Karel Čančara",
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
   linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL || "",
