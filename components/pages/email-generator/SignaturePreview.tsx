@@ -129,7 +129,7 @@ export default function SignaturePreview({ signatureData, onCopy }: SignaturePre
             },
           }}
         >
-          Copy HTML Signature
+          Copy Signature
         </Button>
       </Box>
     </Paper>

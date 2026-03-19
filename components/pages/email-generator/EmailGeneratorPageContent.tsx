@@ -399,46 +399,22 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   const generatedHTML = generateSignatureHTML(signatureData);
 
   const getClipboardHtml = () => {
-    const html = generateSignatureHTML(signatureData)
+    return generateSignatureHTML(signatureData)
       .replace(/<\!DOCTYPE.*?<body[^>]*>/s, "")
       .replace(/<\/body>.*$/s, "");
-
-    if (typeof DOMParser === "undefined") {
-      return html;
-    }
-
-    const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
-
-    doc.querySelectorAll("a").forEach((anchor) => {
-      anchor.setAttribute("target", "_blank");
-    });
-
-    return doc.body.innerHTML;
   };
 
   const handleCopy = async () => {
     const clipboardHtml = getClipboardHtml();
-    const plainTextSignature = [
-      signatureData.name,
-      signatureData.title,
-      signatureData.company,
-      signatureData.email,
-      signatureData.phone,
-      signatureData.website,
-      ...signatureData.socialLinks.filter((link) => link.url).map((link) => `${link.platform}: ${link.url}`),
-    ]
-      .filter(Boolean)
-      .join("\n");
 
     try {
       if (typeof ClipboardItem !== "undefined") {
         const clipboardItem = new ClipboardItem({
           "text/html": new Blob([clipboardHtml], { type: "text/html" }),
-          "text/plain": new Blob([plainTextSignature], { type: "text/plain" }),
         });
         await navigator.clipboard.write([clipboardItem]);
       } else {
-        await navigator.clipboard.writeText(plainTextSignature);
+        await navigator.clipboard.writeText(clipboardHtml);
       }
       setShowCopyAlert(true);
     } catch (err) {
