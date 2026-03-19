@@ -419,14 +419,6 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
 
     const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
 
-    doc.querySelectorAll("a img[alt]").forEach((img) => {
-      const platform = img.getAttribute("alt") || "Link";
-      const slug = platform.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-      img.setAttribute("src", `${SIGNATURE_ICON_BASE_URL}/${slug}.png`);
-      img.setAttribute("width", "24");
-      img.setAttribute("height", "24");
-    });
-
     doc.querySelectorAll("a").forEach((anchor) => {
       anchor.setAttribute("target", "_blank");
     });
