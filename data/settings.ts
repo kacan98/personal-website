@@ -10,6 +10,12 @@ export interface AppSettings {
   specialPages?: Record<string, boolean>;
 }
 
+const DEFAULT_PUBLIC_IDENTITY = {
+  contactEmail: "karel@cancara.dk",
+  linkedinUrl: "https://www.linkedin.com/in/kcancara",
+  githubUrl: "https://github.com/kacan98",
+} as const;
+
 function resolveSiteUrl(): string {
   const explicitSiteUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
@@ -42,9 +48,9 @@ export const settings: AppSettings = {
   siteDescription: "Full Stack Developer | TypeScript, Angular, React, .NET",
   siteUrl: resolveSiteUrl(),
   authorName: "Karel Čančara",
-  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
-  linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL || "",
-  githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL || "",
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || DEFAULT_PUBLIC_IDENTITY.contactEmail,
+  linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL || DEFAULT_PUBLIC_IDENTITY.linkedinUrl,
+  githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL || DEFAULT_PUBLIC_IDENTITY.githubUrl,
   specialPages: {
     chatbot: true
   }
