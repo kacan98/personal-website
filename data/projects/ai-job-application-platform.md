@@ -19,7 +19,7 @@ metrics:
     da: Gør et offentligt CV til et privat, gennemskueligt workflow til hurtigere målretning af ansøgninger
     sv: Gör ett offentligt CV till ett privat, granskbart arbetsflöde för snabbare CV-anpassning
   timeframe: Built from a local-only tool into a production-ready workflow
-liveUrl: https://kcancara.vercel.app/en/cv
+liveUrl: /en/cv
 sourceUrl: https://github.com/openclaw/personal-website-3
 ---
 # A private workflow behind a public CV

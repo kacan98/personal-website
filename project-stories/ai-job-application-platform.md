@@ -1594,6 +1594,6 @@ The platform has significantly streamlined my job application process. I can now
 
 Having it available online with proper authentication means I can access it from anywhere, making the job application process much more flexible and responsive to new opportunities.
 
-**Live site**: [cancara.dk](https://cancara.dk)
+**Live site**: current portfolio host
 
 **Tech used**: Next.js 15, React 19, TypeScript, OpenAI GPT-5 API, Material-UI, Redux Toolkit, Chrome Extension API, JWT authentication, Vercel deployment

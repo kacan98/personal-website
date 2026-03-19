@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import Button from "@/components/ui/Button";
+import { settings } from "@/data/settings";
 import { ReactNode } from "react";
 import PageWrapper from "../pageWrapper";
 import ProfileImage from "./ProfileImage";
@@ -141,9 +142,9 @@ export const About = ({
                                 </Button>
                                 <Button
                                     variant="secondary"
-                                    href="https://www.linkedin.com/in/kcancara"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href={settings.linkedinUrl || undefined}
+                                    target={settings.linkedinUrl ? "_blank" : undefined}
+                                    rel={settings.linkedinUrl ? "noopener noreferrer" : undefined}
                                     sx={{
                                         px: 4,
                                         py: 1.5,

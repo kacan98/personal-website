@@ -1,4 +1,6 @@
 // Social media links data
+import { getMailtoHref, settings } from "@/data/settings";
+
 export interface Social {
   title: string;
   url: string;
@@ -8,20 +10,20 @@ export interface Social {
 export const socials: Social[] = [
   {
     title: "GitHub",
-    url: "https://github.com/kacan98",
+    url: settings.githubUrl,
     iconName: "gitHub"
   },
   {
-    title: "LinkedIn", 
-    url: "https://www.linkedin.com/in/kcancara",
+    title: "LinkedIn",
+    url: settings.linkedinUrl,
     iconName: "linkedIn"
   },
   {
     title: "Email",
-    url: "mailto:karel@cancara.dk", 
+    url: getMailtoHref(),
     iconName: "mail"
   }
-];
+].filter((social) => social.url);
 
 export function getSocials() {
   return socials;

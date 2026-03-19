@@ -1,4 +1,5 @@
 import About from "@/components/pages/about/about";
+import { getMailtoHref } from "@/data/settings";
 import { getTranslations } from 'next-intl/server';
 
 export default async function AboutPage() {
@@ -9,7 +10,7 @@ export default async function AboutPage() {
       heading={t('title')}
       bodyContent={t('content')}
       buttonText={t('contactButton')}
-      buttonHref="mailto:karel@cancara.dk"
+      buttonHref={getMailtoHref()}
       linkedinButtonText={t('linkedinButton')}
     />
   );

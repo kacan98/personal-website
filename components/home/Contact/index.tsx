@@ -8,6 +8,7 @@ import Grid from "@mui/material/Grid";
 import { Email, LinkedIn, GitHub, Language } from "@mui/icons-material";
 import { motion } from "motion/react";
 import { useTranslations } from 'next-intl';
+import { getMailtoHref, getSiteHost, settings } from "@/data/settings";
 
 interface ContactItem {
   icon: React.ReactNode;
@@ -31,35 +32,35 @@ export default function Contact({
   const t = useTranslations('contact');
   
   const defaultContactItems = [
-    {
+    settings.contactEmail && {
       icon: <Email />,
       label: t('email.label'),
-      value: "karel@cancara.dk", 
-      href: "mailto:karel@cancara.dk",
+      value: settings.contactEmail,
+      href: getMailtoHref(),
       description: t('email.description')
     },
-    {
+    settings.linkedinUrl && {
       icon: <LinkedIn />,
       label: t('linkedin.label'),
-      value: "linkedin.com/in/kcancara",
-      href: "https://www.linkedin.com/in/kcancara",
+      value: settings.linkedinUrl.replace(/^https?:\/\/(www\.)?/, ''),
+      href: settings.linkedinUrl,
       description: t('linkedin.description')
     },
-    {
+    settings.githubUrl && {
       icon: <GitHub />,
       label: t('github.label'),
-      value: "github.com/kacan98",
-      href: "https://github.com/kacan98",
+      value: settings.githubUrl.replace(/^https?:\/\/(www\.)?/, ''),
+      href: settings.githubUrl,
       description: t('github.description')
     },
-    {
+    settings.siteUrl && {
       icon: <Language />,
       label: t('portfolio.label'),
-      value: "cancara.dk",
-      href: "https://cancara.dk",
+      value: getSiteHost(),
+      href: settings.siteUrl,
       description: t('portfolio.description')
     }
-  ];
+  ].filter(Boolean) as ContactItem[];
   return (
     <Box sx={{ 
       py: { xs: 8, md: 12 },
@@ -205,7 +206,7 @@ export default function Contact({
           <Box sx={{ textAlign: 'center', mt: { xs: 6, md: 8 } }}>
             <Button
               component="a"
-              href="mailto:karel@cancara.dk"
+              href={getMailtoHref() || undefined}
               variant="primary"
               sx={{
                 px: { xs: 4, md: 6 },

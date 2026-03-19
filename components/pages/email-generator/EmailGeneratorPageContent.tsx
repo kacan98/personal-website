@@ -157,9 +157,9 @@ const DEFAULT_SIGNATURE_DATA: SignatureData = {
   name: "Karel Čančara",
   title: "Full Stack Developer",
   company: "Dynaway",
-  email: "karel.cancara@gmail.com",
+  email: settings.contactEmail,
   phone: "",
-  website: "https://kcancara.vercel.app",
+  website: settings.siteUrl,
   profileImage: "",
   croppedImage: "",
   imageSize: 80,
@@ -173,8 +173,8 @@ const DEFAULT_SIGNATURE_DATA: SignatureData = {
   companyLogo: "",
   font: "Arial",
   socialLinks: [
-    { id: "1", platform: "LinkedIn", url: "https://www.linkedin.com/in/kcancara" },
-    { id: "2", platform: "GitHub", url: "https://github.com/kacan98" },
+    ...(settings.linkedinUrl ? [{ id: "1", platform: "LinkedIn", url: settings.linkedinUrl }] : []),
+    ...(settings.githubUrl ? [{ id: settings.linkedinUrl ? "2" : "1", platform: "GitHub", url: settings.githubUrl }] : []),
   ],
   colors: {
     nameColor: "#666666",

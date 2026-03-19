@@ -9,9 +9,9 @@ export const SITE_TITLE = `${SITE_NAME} - Full-Stack Developer`;
 export const SITE_DESCRIPTION =
   "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.";
 export const SOCIAL_IMAGE = "/portfolio.png";
-export const CONTACT_EMAIL = "karel@cancara.dk";
-export const GITHUB_URL = "https://github.com/kacan98";
-export const LINKEDIN_URL = "https://www.linkedin.com/in/kcancara";
+export const CONTACT_EMAIL = settings.contactEmail;
+export const GITHUB_URL = settings.githubUrl;
+export const LINKEDIN_URL = settings.linkedinUrl;
 
 export const PROFILE_HEADLINE =
   "Full-stack developer focused on building reliable product features, internal tools, and workflow-heavy systems with TypeScript, React, .NET, and X++.";
@@ -30,7 +30,7 @@ export const PROFILE_KEY_LINKS = [
   { label: "Portfolio", href: SITE_URL, text: SITE_URL },
   { label: "Projects", href: `${SITE_URL}/en${PROJECTS_PATH}`, text: `${SITE_URL}/en${PROJECTS_PATH}` },
   { label: "CV", href: `${SITE_URL}/en/cv`, text: `${SITE_URL}/en/cv` },
-  { label: "LinkedIn", href: LINKEDIN_URL, text: "linkedin.com/in/kcancara" },
+  ...(LINKEDIN_URL ? [{ label: "LinkedIn", href: LINKEDIN_URL, text: LINKEDIN_URL.replace(/^https?:\/\/(www\.)?/, "") }] : []),
 ] as const;
 
 export function getBaseMetadata(): Metadata {
@@ -71,9 +71,9 @@ export function getPersonSchema() {
     name: SITE_NAME,
     url: SITE_URL,
     image: `${SITE_URL}${SOCIAL_IMAGE}`,
-    email: `mailto:${CONTACT_EMAIL}`,
+    email: CONTACT_EMAIL ? `mailto:${CONTACT_EMAIL}` : undefined,
     jobTitle: "Full-Stack Developer",
-    sameAs: [GITHUB_URL, LINKEDIN_URL],
+    sameAs: [GITHUB_URL, LINKEDIN_URL].filter(Boolean),
     knowsAbout: ["TypeScript", "React", "Next.js", ".NET", "X++", "AI-enhanced development"],
   };
 }
