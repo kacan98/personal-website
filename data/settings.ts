@@ -17,12 +17,21 @@ function resolveSiteUrl(): string {
     (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
 
+  const normalizeSiteUrl = (value: string) => {
+    const trimmed = value.trim().replace(/\/$/, "");
+    if (!trimmed) {
+      return "";
+    }
+
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  };
+
   if (explicitSiteUrl) {
-    return explicitSiteUrl.replace(/\/$/, "");
+    return normalizeSiteUrl(explicitSiteUrl);
   }
 
   if (typeof window !== "undefined" && window.location?.origin) {
-    return window.location.origin.replace(/\/$/, "");
+    return normalizeSiteUrl(window.location.origin);
   }
 
   return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
