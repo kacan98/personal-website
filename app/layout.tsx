@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { BACKGROUND_COLORS } from "./colors";
 import { getBaseMetadata, getPersonSchema, getWebsiteSchema } from "@/lib/site-metadata";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
