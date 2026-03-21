@@ -550,7 +550,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   };
 
   const createCroppedImage = useCallback(
-    async (imageSrc: string, pixelCrop: Area): Promise<string> => {
+    async (imageSrc: string, pixelCrop: Area, imageShape: ImageShape): Promise<string> => {
       return new Promise((resolve) => {
         const image = new Image();
         image.src = imageSrc;
@@ -566,6 +566,31 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
           canvas.width = pixelCrop.width;
           canvas.height = pixelCrop.height;
 
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.save();
+
+          if (imageShape === "circle") {
+            const radius = Math.min(canvas.width, canvas.height) / 2;
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+          } else if (imageShape === "rounded") {
+            const radius = 8;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(canvas.width - radius, 0);
+            ctx.quadraticCurveTo(canvas.width, 0, canvas.width, radius);
+            ctx.lineTo(canvas.width, canvas.height - radius);
+            ctx.quadraticCurveTo(canvas.width, canvas.height, canvas.width - radius, canvas.height);
+            ctx.lineTo(radius, canvas.height);
+            ctx.quadraticCurveTo(0, canvas.height, 0, canvas.height - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.clip();
+          }
+
           ctx.drawImage(
             image,
             pixelCrop.x,
@@ -577,6 +602,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
             pixelCrop.width,
             pixelCrop.height
           );
+          ctx.restore();
 
           canvas.toBlob((blob) => {
             if (!blob) {
@@ -595,9 +621,42 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     []
   );
 
+  useEffect(() => {
+    if (!signatureData.profileImage || !signatureData.cropArea) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void createCroppedImage(signatureData.profileImage, signatureData.cropArea, signatureData.imageShape).then((croppedImage) => {
+      if (cancelled) {
+        return;
+      }
+
+      setSignatureData((current) => {
+        if (!current.profileImage || !current.cropArea) {
+          return current;
+        }
+
+        if (current.croppedImage === croppedImage) {
+          return current;
+        }
+
+        return {
+          ...current,
+          croppedImage,
+        };
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [createCroppedImage, signatureData.cropArea, signatureData.imageShape, signatureData.profileImage]);
+
   const handleApplyCrop = async () => {
     if (croppedAreaPixels && signatureData.profileImage) {
-      const croppedImage = await createCroppedImage(signatureData.profileImage, croppedAreaPixels);
+      const croppedImage = await createCroppedImage(signatureData.profileImage, croppedAreaPixels, signatureData.imageShape);
       setSignatureData({
         ...signatureData,
         crop: tempCrop,
