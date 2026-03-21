@@ -434,9 +434,58 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     });
   }, []);
 
+  const shapeImageDataUri = useCallback(async (imageSrc: string, width: number, height: number, imageShape: ImageShape) => {
+    return await new Promise<string>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("Failed to create canvas context for avatar conversion."));
+          return;
+        }
+
+        context.clearRect(0, 0, width, height);
+        context.save();
+
+        if (imageShape === "circle") {
+          const radius = Math.min(width, height) / 2;
+          context.beginPath();
+          context.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+          context.closePath();
+          context.clip();
+        } else if (imageShape === "rounded") {
+          const radius = 8;
+          context.beginPath();
+          context.moveTo(radius, 0);
+          context.lineTo(width - radius, 0);
+          context.quadraticCurveTo(width, 0, width, radius);
+          context.lineTo(width, height - radius);
+          context.quadraticCurveTo(width, height, width - radius, height);
+          context.lineTo(radius, height);
+          context.quadraticCurveTo(0, height, 0, height - radius);
+          context.lineTo(0, radius);
+          context.quadraticCurveTo(0, 0, radius, 0);
+          context.closePath();
+          context.clip();
+        }
+
+        context.drawImage(image, 0, 0, width, height);
+        context.restore();
+        resolve(canvas.toDataURL("image/png"));
+      };
+      image.onerror = () => reject(new Error("Failed to load avatar image for conversion."));
+      image.src = imageSrc;
+    });
+  }, []);
+
   const getClipboardHtmlWithPngIcons = useCallback(async () => {
     const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
     const iconImages = Array.from(doc.querySelectorAll("a img[src^='data:image/svg+xml']"));
+    const currentProfileImage = signatureData.croppedImage || signatureData.profileImage;
 
     await Promise.all(
       iconImages.map(async (image) => {
@@ -455,8 +504,24 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
       })
     );
 
+    if (currentProfileImage) {
+      const profileImage = Array.from(doc.querySelectorAll("img")).find((image) => (image.getAttribute("src") || "") === currentProfileImage);
+
+      if (profileImage) {
+        const width = Number(profileImage.getAttribute("width") || signatureData.imageSize || 80);
+        const height = Number(profileImage.getAttribute("height") || signatureData.imageSize || 80);
+
+        try {
+          const shapedPngDataUri = await shapeImageDataUri(currentProfileImage, width, height, signatureData.imageShape);
+          profileImage.setAttribute("src", shapedPngDataUri);
+        } catch (error) {
+          console.error("Failed to convert avatar to shaped PNG data URI:", error);
+        }
+      }
+    }
+
     return doc.body.innerHTML;
-  }, [getClipboardHtml, svgDataUriToPngDataUri]);
+  }, [getClipboardHtml, shapeImageDataUri, signatureData.croppedImage, signatureData.imageShape, signatureData.imageSize, signatureData.profileImage, svgDataUriToPngDataUri]);
 
   const handleCopy = async () => {
     const clipboardHtml = await getClipboardHtmlWithPngIcons();
