@@ -3,6 +3,8 @@ import {
   validatePassword,
   createAuthToken,
   checkRateLimit,
+  clearRateLimit,
+  recordFailedAuthAttempt,
   AUTH_COOKIE_CONFIG
 } from '@/lib/auth-middleware';
 
@@ -69,16 +71,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const isValidPassword = validatePassword(body.password);
 
     if (!isValidPassword) {
+      const { remainingAttempts } = recordFailedAuthAttempt(ip);
       console.log(`Failed auth attempt for IP ${ip}`);
       return NextResponse.json(
         {
           success: false,
           message: 'Invalid password',
-          remainingAttempts: rateLimit.remainingAttempts
+          remainingAttempts
         } as LoginResponse,
         { status: 401 }
       );
     }
+
+    clearRateLimit(ip);
 
     // Create auth token
     const token = await createAuthToken();
