@@ -397,6 +397,11 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   }, [signatureData]);
 
   const generatedHTML = generateSignatureHTML(signatureData);
+  const previewSignatureHtml = generatedHTML
+    .replace(/<\!DOCTYPE.*?<body[^>]*>/s, "")
+    .replace(/<\/body>.*$/s, "");
+  const [selectionCopyHtml, setSelectionCopyHtml] = useState("");
+  const [selectionCopyText, setSelectionCopyText] = useState("");
 
   const getClipboardHtml = useCallback(() => {
     if (typeof DOMParser === "undefined") {
@@ -434,9 +439,58 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     });
   }, []);
 
+  const shapeImageDataUri = useCallback(async (imageSrc: string, width: number, height: number, imageShape: ImageShape) => {
+    return await new Promise<string>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("Failed to create canvas context for avatar conversion."));
+          return;
+        }
+
+        context.clearRect(0, 0, width, height);
+        context.save();
+
+        if (imageShape === "circle") {
+          const radius = Math.min(width, height) / 2;
+          context.beginPath();
+          context.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+          context.closePath();
+          context.clip();
+        } else if (imageShape === "rounded") {
+          const radius = 8;
+          context.beginPath();
+          context.moveTo(radius, 0);
+          context.lineTo(width - radius, 0);
+          context.quadraticCurveTo(width, 0, width, radius);
+          context.lineTo(width, height - radius);
+          context.quadraticCurveTo(width, height, width - radius, height);
+          context.lineTo(radius, height);
+          context.quadraticCurveTo(0, height, 0, height - radius);
+          context.lineTo(0, radius);
+          context.quadraticCurveTo(0, 0, radius, 0);
+          context.closePath();
+          context.clip();
+        }
+
+        context.drawImage(image, 0, 0, width, height);
+        context.restore();
+        resolve(canvas.toDataURL("image/png"));
+      };
+      image.onerror = () => reject(new Error("Failed to load avatar image for conversion."));
+      image.src = imageSrc;
+    });
+  }, []);
+
   const getClipboardHtmlWithPngIcons = useCallback(async () => {
     const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
     const iconImages = Array.from(doc.querySelectorAll("a img[src^='data:image/svg+xml']"));
+    const currentProfileImage = signatureData.croppedImage || signatureData.profileImage;
 
     await Promise.all(
       iconImages.map(async (image) => {
@@ -455,11 +509,64 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
       })
     );
 
+    if (currentProfileImage) {
+      const profileImage = Array.from(doc.querySelectorAll("img")).find((image) => (image.getAttribute("src") || "") === currentProfileImage);
+
+      if (profileImage) {
+        const width = Number(profileImage.getAttribute("width") || signatureData.imageSize || 80);
+        const height = Number(profileImage.getAttribute("height") || signatureData.imageSize || 80);
+
+        try {
+          const shapedPngDataUri = await shapeImageDataUri(currentProfileImage, width, height, signatureData.imageShape);
+          profileImage.setAttribute("src", shapedPngDataUri);
+        } catch (error) {
+          console.error("Failed to convert avatar to shaped PNG data URI:", error);
+        }
+      }
+    }
+
     return doc.body.innerHTML;
-  }, [getClipboardHtml, svgDataUriToPngDataUri]);
+  }, [getClipboardHtml, shapeImageDataUri, signatureData.croppedImage, signatureData.imageShape, signatureData.imageSize, signatureData.profileImage, svgDataUriToPngDataUri]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void getClipboardHtmlWithPngIcons().then((clipboardHtml) => {
+      if (cancelled) {
+        return;
+      }
+
+      setSelectionCopyHtml(clipboardHtml);
+
+      if (typeof DOMParser === "undefined") {
+        setSelectionCopyText(clipboardHtml.replace(/<[^>]+>/g, " " ).replace(/\s+/g, " " ).trim());
+        return;
+      }
+
+      const doc = new DOMParser().parseFromString(clipboardHtml, "text/html");
+      setSelectionCopyText(doc.body.textContent?.replace(/\s+/g, " " ).trim() || "");
+    }).catch((error) => {
+      console.error("Failed to prepare clipboard HTML for preview selection:", error);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getClipboardHtmlWithPngIcons]);
+
+  const handlePreviewCopy = useCallback((event: React.ClipboardEvent<HTMLDivElement>) => {
+    if (!selectionCopyHtml) {
+      return;
+    }
+
+    event.preventDefault();
+    event.clipboardData.setData("text/html", selectionCopyHtml);
+    event.clipboardData.setData("text/plain", selectionCopyText || selectionCopyHtml.replace(/<[^>]+>/g, " " ).replace(/\s+/g, " " ).trim());
+    setShowCopyAlert(true);
+  }, [selectionCopyHtml, selectionCopyText]);
 
   const handleCopy = async () => {
-    const clipboardHtml = await getClipboardHtmlWithPngIcons();
+    const clipboardHtml = selectionCopyHtml || await getClipboardHtmlWithPngIcons();
 
     try {
       if (typeof ClipboardItem !== "undefined") {
@@ -550,7 +657,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   };
 
   const createCroppedImage = useCallback(
-    async (imageSrc: string, pixelCrop: Area): Promise<string> => {
+    async (imageSrc: string, pixelCrop: Area, imageShape: ImageShape): Promise<string> => {
       return new Promise((resolve) => {
         const image = new Image();
         image.src = imageSrc;
@@ -566,6 +673,31 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
           canvas.width = pixelCrop.width;
           canvas.height = pixelCrop.height;
 
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.save();
+
+          if (imageShape === "circle") {
+            const radius = Math.min(canvas.width, canvas.height) / 2;
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, radius, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+          } else if (imageShape === "rounded") {
+            const radius = 8;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(canvas.width - radius, 0);
+            ctx.quadraticCurveTo(canvas.width, 0, canvas.width, radius);
+            ctx.lineTo(canvas.width, canvas.height - radius);
+            ctx.quadraticCurveTo(canvas.width, canvas.height, canvas.width - radius, canvas.height);
+            ctx.lineTo(radius, canvas.height);
+            ctx.quadraticCurveTo(0, canvas.height, 0, canvas.height - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.clip();
+          }
+
           ctx.drawImage(
             image,
             pixelCrop.x,
@@ -577,6 +709,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
             pixelCrop.width,
             pixelCrop.height
           );
+          ctx.restore();
 
           canvas.toBlob((blob) => {
             if (!blob) {
@@ -595,9 +728,42 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     []
   );
 
+  useEffect(() => {
+    if (!signatureData.profileImage || !signatureData.cropArea) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void createCroppedImage(signatureData.profileImage, signatureData.cropArea, signatureData.imageShape).then((croppedImage) => {
+      if (cancelled) {
+        return;
+      }
+
+      setSignatureData((current) => {
+        if (!current.profileImage || !current.cropArea) {
+          return current;
+        }
+
+        if (current.croppedImage === croppedImage) {
+          return current;
+        }
+
+        return {
+          ...current,
+          croppedImage,
+        };
+      });
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [createCroppedImage, signatureData.cropArea, signatureData.imageShape, signatureData.profileImage]);
+
   const handleApplyCrop = async () => {
     if (croppedAreaPixels && signatureData.profileImage) {
-      const croppedImage = await createCroppedImage(signatureData.profileImage, croppedAreaPixels);
+      const croppedImage = await createCroppedImage(signatureData.profileImage, croppedAreaPixels, signatureData.imageShape);
       setSignatureData({
         ...signatureData,
         crop: tempCrop,
@@ -1355,6 +1521,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                   backgroundColor: previewMode === 'light' ? "#fafafa" : "#2a2a2a",
                   mb: 3,
                 }}
+                onCopy={handlePreviewCopy}
               >
                 <Typography variant="body2" sx={{ color: previewMode === 'light' ? "#666" : "#cccccc", mb: 2, textAlign: "left" }}>
                   {t('sampleEmailIntro')}
@@ -1365,10 +1532,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                 <Box
                   sx={{ textAlign: "left" }}
                   dangerouslySetInnerHTML={{
-                    __html: generateSignatureHTML(signatureData).replace(
-                      /<\!DOCTYPE.*?<body[^>]*>/s,
-                      ""
-                    ).replace(/<\/body>.*$/s, ""),
+                    __html: previewSignatureHtml,
                   }}
                 />
               </Box>
