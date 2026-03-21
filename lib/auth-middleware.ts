@@ -143,14 +143,13 @@ export function checkRateLimit(ip: string): { allowed: boolean; remainingAttempt
   const attempts = authAttempts.get(ip);
 
   if (!attempts) {
-    authAttempts.set(ip, { count: 1, lastAttempt: now });
-    return { allowed: true, remainingAttempts: 4 };
+    return { allowed: true, remainingAttempts: 5 };
   }
 
   // Reset if more than an hour has passed
   if (now - attempts.lastAttempt > hour) {
-    authAttempts.set(ip, { count: 1, lastAttempt: now });
-    return { allowed: true, remainingAttempts: 4 };
+    authAttempts.delete(ip);
+    return { allowed: true, remainingAttempts: 5 };
   }
 
   // Check if too many attempts
@@ -158,9 +157,26 @@ export function checkRateLimit(ip: string): { allowed: boolean; remainingAttempt
     return { allowed: false };
   }
 
-  // Increment attempt count
-  attempts.count++;
+  return { allowed: true, remainingAttempts: 5 - attempts.count };
+}
+
+export function recordFailedAuthAttempt(ip: string): { remainingAttempts: number } {
+  const now = Date.now();
+  const hour = 60 * 60 * 1000; // 1 hour in ms
+
+  const attempts = authAttempts.get(ip);
+
+  if (!attempts || now - attempts.lastAttempt > hour) {
+    authAttempts.set(ip, { count: 1, lastAttempt: now });
+    return { remainingAttempts: 4 };
+  }
+
+  attempts.count += 1;
   attempts.lastAttempt = now;
 
-  return { allowed: true, remainingAttempts: 5 - attempts.count };
+  return { remainingAttempts: Math.max(0, 5 - attempts.count) };
+}
+
+export function clearRateLimit(ip: string): void {
+  authAttempts.delete(ip);
 }
