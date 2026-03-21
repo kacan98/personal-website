@@ -1,0 +1,44 @@
+---
+title: Internal tools for agencies and consultancies
+slug: agencies-and-consultancies
+eyebrow: Digital Agencies and Consultancy Teams
+description: Practical internal tooling for agencies and consultancies that need cleaner delivery workflows, better reporting, and less coordination overhead.
+cardSummary: A focused page for agency and consultancy teams that want clearer delivery operations and less internal friction.
+heroTitle: Improve delivery operations without slowing the team down
+heroDescription: I build practical internal tools for agencies and consultancy teams that need better visibility, smoother handoffs, and less manual coordination across sales, delivery, and reporting.
+outcomes:
+  - Reduce internal coordination overhead
+  - Make pipeline, staffing, and delivery status easier to read
+  - Replace repetitive reporting and copy-paste work with small purpose-built tools
+painPoints:
+  - Project status is scattered across Slack, Notion, spreadsheets, and PM tools
+  - Teams waste time rebuilding the same reports, briefs, and internal views
+  - Sales-to-delivery handoffs lose context and create unnecessary back-and-forth
+  - Operational bottlenecks become visible only when deadlines slip
+solutions:
+  - title: Custom reporting and operational dashboards
+    description: Pull the right data into one place so leadership and delivery teams can see project health, workload, and priorities clearly.
+  - title: Workflow tooling for handoffs and approvals
+    description: Small systems for briefs, approvals, intake, and delivery coordination that remove ambiguity without adding ceremony.
+  - title: AI-assisted internal helpers
+    description: Targeted tools for research, drafting, data cleanup, and repetitive operational tasks where speed matters but oversight still matters more.
+proofPoints:
+  - Best fit for teams where operations are outgrowing the default tooling setup
+  - Useful when your bottlenecks are cross-functional and process-heavy
+  - Strong fit for shops that want leverage, not a big internal platform project
+engagementSteps:
+  - We pick one operational bottleneck that people already complain about
+  - I scope a small internal tool around that specific problem
+  - The first version goes live fast and gets tested in the real workflow
+  - We iterate only if it creates measurable clarity or time savings
+ctaSubject: Agency operations tooling
+ctaLabel: Discuss an agency workflow
+---
+## Typical examples
+
+Examples of useful agency-side tooling:
+
+- a leadership dashboard that combines delivery, staffing, and sales signals
+- an intake or briefing flow that reduces manual back-and-forth
+- a reporting helper that turns messy source data into a client-ready view
+- an AI-assisted internal assistant for repetitive research or draft preparation

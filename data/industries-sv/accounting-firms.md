@@ -1,0 +1,46 @@
+---
+title: Internal tools for accounting firms
+slug: accounting-firms
+eyebrow: Accounting and Bookkeeping
+description: Purpose-built internal tools and workflow improvements for accounting firms with too much spreadsheet work, client chasing, and manual reporting.
+cardSummary: A focused page for accounting firms that need less spreadsheet friction, clearer operational visibility, and better admin workflows.
+heroTitle: Cut repetitive admin in accounting firms without adding another bloated system
+heroDescription: I build focused internal tools, dashboards, and workflow automations for accounting firms that spend too much time on spreadsheet work, handoffs, status chasing, and client follow-ups.
+outcomes:
+  - Reduce manual Excel and reporting work
+  - Give partners and advisors clearer operational visibility
+  - Automate repetitive follow-ups, imports, and status updates
+painPoints:
+  - Too much reporting and case-tracking lives in spreadsheets
+  - Client communication and document chasing happen through fragmented email threads
+  - Important deadlines, approvals, and follow-ups rely on memory and manual routines
+  - Data exists in multiple systems, but nobody has one clean operational view
+solutions:
+  - title: Deadline and status dashboards
+    description: A shared operational view for filings, missing documents, client progress, and internal bottlenecks so work is easier to prioritize.
+  - title: Workflow helpers around existing systems
+    description: Small tools that sit around your current stack and remove repetitive admin instead of forcing a full platform migration.
+  - title: Email and document follow-up automation
+    description: Structured reminders, document request flows, and internal notifications that reduce manual chasing without losing control.
+proofPoints:
+  - Best fit for firms with recurring admin-heavy work and owner-led decision making
+  - Useful when the real problem is operational friction, not lack of another ERP module
+  - Good starting point for small projects with visible time savings
+engagementSteps:
+  - We identify one costly recurring workflow
+  - I map the inputs, handoffs, and failure points
+  - I build a narrow tool or automation around that workflow
+  - We keep only what proves useful and extend from there
+ctaSubject: Accounting workflow improvements
+ctaLabel: Discuss an accounting workflow
+---
+## Typical examples
+
+A useful first step is usually a very small internal tool, not a large system project.
+
+Examples:
+
+- a dashboard that shows which clients are blocked because documents are missing
+- a workflow helper for recurring client follow-ups
+- a status overview that reduces the number of manual check-ins between team members
+- an import, cleanup, or reporting helper around the spreadsheets people already use

@@ -1,0 +1,34 @@
+import { IndustryLandingPage } from "@/components/pages/industries/IndustryLandingPage";
+import { getIndustryPageBySlug, INDUSTRY_PAGE_SLUGS } from "@/lib/industry-pages";
+import { SITE_NAME } from "@/lib/site-metadata";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+export function generateStaticParams() {
+  return INDUSTRY_PAGE_SLUGS.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string; locale: string }> }): Promise<Metadata> {
+  const { slug, locale } = await params;
+  const page = getIndustryPageBySlug(locale, slug);
+
+  if (!page) {
+    return { title: SITE_NAME };
+  }
+
+  return {
+    title: `${page.title} | ${SITE_NAME}`,
+    description: page.description,
+  };
+}
+
+export default async function IndustryPage({ params }: { params: Promise<{ slug: string; locale: string }> }) {
+  const { slug, locale } = await params;
+  const page = getIndustryPageBySlug(locale, slug);
+
+  if (!page) {
+    notFound();
+  }
+
+  return <IndustryLandingPage page={page} locale={locale} />;
+}
