@@ -397,6 +397,11 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   }, [signatureData]);
 
   const generatedHTML = generateSignatureHTML(signatureData);
+  const previewSignatureHtml = generatedHTML
+    .replace(/<\!DOCTYPE.*?<body[^>]*>/s, "")
+    .replace(/<\/body>.*$/s, "");
+  const [selectionCopyHtml, setSelectionCopyHtml] = useState("");
+  const [selectionCopyText, setSelectionCopyText] = useState("");
 
   const getClipboardHtml = useCallback(() => {
     if (typeof DOMParser === "undefined") {
@@ -523,8 +528,45 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     return doc.body.innerHTML;
   }, [getClipboardHtml, shapeImageDataUri, signatureData.croppedImage, signatureData.imageShape, signatureData.imageSize, signatureData.profileImage, svgDataUriToPngDataUri]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    void getClipboardHtmlWithPngIcons().then((clipboardHtml) => {
+      if (cancelled) {
+        return;
+      }
+
+      setSelectionCopyHtml(clipboardHtml);
+
+      if (typeof DOMParser === "undefined") {
+        setSelectionCopyText(clipboardHtml.replace(/<[^>]+>/g, " " ).replace(/\s+/g, " " ).trim());
+        return;
+      }
+
+      const doc = new DOMParser().parseFromString(clipboardHtml, "text/html");
+      setSelectionCopyText(doc.body.textContent?.replace(/\s+/g, " " ).trim() || "");
+    }).catch((error) => {
+      console.error("Failed to prepare clipboard HTML for preview selection:", error);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getClipboardHtmlWithPngIcons]);
+
+  const handlePreviewCopy = useCallback((event: React.ClipboardEvent<HTMLDivElement>) => {
+    if (!selectionCopyHtml) {
+      return;
+    }
+
+    event.preventDefault();
+    event.clipboardData.setData("text/html", selectionCopyHtml);
+    event.clipboardData.setData("text/plain", selectionCopyText || selectionCopyHtml.replace(/<[^>]+>/g, " " ).replace(/\s+/g, " " ).trim());
+    setShowCopyAlert(true);
+  }, [selectionCopyHtml, selectionCopyText]);
+
   const handleCopy = async () => {
-    const clipboardHtml = await getClipboardHtmlWithPngIcons();
+    const clipboardHtml = selectionCopyHtml || await getClipboardHtmlWithPngIcons();
 
     try {
       if (typeof ClipboardItem !== "undefined") {
@@ -1479,6 +1521,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                   backgroundColor: previewMode === 'light' ? "#fafafa" : "#2a2a2a",
                   mb: 3,
                 }}
+                onCopy={handlePreviewCopy}
               >
                 <Typography variant="body2" sx={{ color: previewMode === 'light' ? "#666" : "#cccccc", mb: 2, textAlign: "left" }}>
                   {t('sampleEmailIntro')}
@@ -1489,10 +1532,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                 <Box
                   sx={{ textAlign: "left" }}
                   dangerouslySetInnerHTML={{
-                    __html: generateSignatureHTML(signatureData).replace(
-                      /<\!DOCTYPE.*?<body[^>]*>/s,
-                      ""
-                    ).replace(/<\/body>.*$/s, ""),
+                    __html: previewSignatureHtml,
                   }}
                 />
               </Box>
