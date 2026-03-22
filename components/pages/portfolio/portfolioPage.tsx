@@ -11,6 +11,7 @@ interface PortfolioPageProps {
 
 async function PortfolioPage({ title, locale }: PortfolioPageProps) {
   const allProjects = await getListedProjects(locale);
+  const clientProjects = allProjects.map(({ Content: _contentComponent, content: _content, ...project }) => project);
 
   return (
     <Box sx={{ py: 6 }}>
@@ -18,7 +19,7 @@ async function PortfolioPage({ title, locale }: PortfolioPageProps) {
         title={title}
         size="large"
       />
-      <ClientProjectDisplay allProjects={allProjects} locale={locale} />
+      <ClientProjectDisplay allProjects={clientProjects} locale={locale} />
     </Box>
   );
 }
