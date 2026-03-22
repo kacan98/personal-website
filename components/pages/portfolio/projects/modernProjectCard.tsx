@@ -5,9 +5,28 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-export const ModernProjectCard = ({ title, description, image, links, tags, projectHref }: Project & { projectHref?: string }) => {
+export const ModernProjectCard = ({ title, slug, description, image, links, tags, projectHref }: Project & { projectHref?: string }) => {
   const t = useTranslations("projects");
   const imageSrc = image?.trim();
+  const mediaModeBySlug: Record<string, { fit: "cover" | "contain"; position?: string; background?: string; padding?: string }> = {
+    "ai-job-application-platform": {
+      fit: "contain",
+      position: "center",
+      background: "#0f1118",
+      padding: "1rem",
+    },
+    "property-transaction-analyzer": {
+      fit: "contain",
+      position: "center",
+      background: "#11131a",
+      padding: "1rem",
+    },
+  };
+  const mediaMode = slug ? mediaModeBySlug[slug] : undefined;
+  const imageFit = mediaMode?.fit || "cover";
+  const imagePosition = mediaMode?.position || "top";
+  const mediaBackground = mediaMode?.background || "transparent";
+  const mediaPadding = mediaMode?.padding || "0";
   const cardTitle = (
     <Typography
       variant="h5"
@@ -57,7 +76,7 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
           alignItems: "center",
           justifyContent: "center",
           background: imageSrc
-            ? "transparent"
+            ? mediaBackground
             : "linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(17, 24, 39, 0.95) 100%)",
           textDecoration: 'none',
           cursor: projectHref ? 'pointer' : 'default',
@@ -69,7 +88,7 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
               src={imageSrc}
               alt={`${title} project`}
               fill
-              style={{ objectFit: "cover", objectPosition: "top", transition: "transform 0.3s ease" }}
+              style={{ objectFit: imageFit, objectPosition: imagePosition, transition: "transform 0.3s ease", padding: mediaPadding }}
               sizes="(max-width: 768px) 100vw, 45vw"
             />
             <Box

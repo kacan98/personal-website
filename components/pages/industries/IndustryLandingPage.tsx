@@ -180,10 +180,7 @@ function AskCard({ title, body, icon }: { title: string; body: string; icon: Rea
       >
         {icon}
       </Box>
-      <Typography variant="overline" sx={{ display: "block", mt: 2.25, color: "secondary.light", letterSpacing: "0.14em" }}>
-        Ask a developer for this
-      </Typography>
-      <Typography variant="h5" sx={{ mt: 1, mb: 1.25, fontWeight: 700, lineHeight: 1.14 }}>
+      <Typography variant="h5" sx={{ mt: 2.25, mb: 1.25, fontWeight: 700, lineHeight: 1.14 }}>
         {title}
       </Typography>
       <Typography sx={{ color: "rgba(255,255,255,0.76)", lineHeight: 1.72 }}>{body}</Typography>
@@ -286,6 +283,12 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
           {page.solutions.map((solution, index) => (
             <AskCard key={solution.title} title={solution.title} body={solution.description} icon={askIcons[index] || <AutoAwesomeIcon />} />
           ))}
+        </Box>
+
+        <Box sx={{ maxWidth: "54rem", mx: "auto" }}>
+          <Typography sx={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.9, fontSize: { xs: "1rem", md: "1.08rem" } }}>
+            {copy.bridgeBody}
+          </Typography>
         </Box>
 
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 0.9fr) minmax(0, 1.1fr)" }, gap: { xs: 3, md: 4 }, alignItems: "start" }}>

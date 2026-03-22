@@ -237,7 +237,8 @@
     "painPointsLabel": "Where teams usually lose time",
     "examplesLabel": "Examples of a useful first project",
     "startHereTitle": "Good places to start",
-    "startHereBody": "A strong first project is usually one recurring task that already wastes time: reminders, handoffs, document handling, status updates, or spreadsheet cleanup.",
+    "startHereBody": "A good first project is one recurring task that already wastes time: reminders, handoffs, document handling, status updates, or spreadsheet cleanup.",
+    "bridgeBody": "These pages are not meant to sell a giant transformation project. The useful first version is usually smaller: one reminder flow, one handoff, one approval path, or one messy bit of admin turned into something more reliable.",
     "finalCtaBody": "A good place to start is one real workflow that wastes time today, not a big transformation plan."
   }
 }

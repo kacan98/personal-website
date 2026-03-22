@@ -237,7 +237,8 @@
     "painPointsLabel": "Hvor teams typisk mister tid",
     "examplesLabel": "Eksempler på et godt første projekt",
     "startHereTitle": "Gode steder at starte",
-    "startHereBody": "Et godt første projekt er ofte én tilbagevendende opgave, der allerede spilder tid: påmindelser, overleveringer, dokumenthåndtering, statusopdateringer eller regnearksoprydning.",
+    "startHereBody": "Et godt første projekt er én tilbagevendende opgave, der allerede spilder tid: påmindelser, overleveringer, dokumenthåndtering, statusopdateringer eller regnearksoprydning.",
+    "bridgeBody": "Siderne her prøver ikke at sælge et stort transformationsprojekt. Et godt første skridt er ofte mindre: ét påmindelsesflow, én overlevering, én godkendelsessti eller ét rodet admin-led gjort mere stabilt.",
     "finalCtaBody": "Et godt sted at starte er ét konkret workflow, der spilder tid i dag, ikke en stor transformationsplan."
   }
 }
