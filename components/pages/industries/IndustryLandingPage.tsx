@@ -1,27 +1,17 @@
-import { BACKGROUND_COLORS, BRAND_COLORS } from "@/app/colors";
+import { BRAND_COLORS } from "@/app/colors";
 import { getContainerSx } from "@/app/spacing";
 import Button from "@/components/ui/Button";
 import { settings } from "@/data/settings";
 import { type IndustryPageCopy } from "@/lib/industry-page-copy";
 import { IndustryPageDocument } from "@/lib/industry-pages";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import InsightsIcon from "@mui/icons-material/Insights";
-import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { Box, Chip, Container, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-
-type VisualItem = {
-  title: string;
-  detail: string;
-  icon: ReactNode;
-};
 
 function SectionTitle({ title, description }: { title: string; description?: string }) {
   return (
@@ -29,76 +19,23 @@ function SectionTitle({ title, description }: { title: string; description?: str
       <Typography variant="h2" sx={{ fontSize: { xs: "1.7rem", md: "2.2rem" }, lineHeight: 1.05, fontWeight: 700, mb: 1.25 }}>
         {title}
       </Typography>
-      {description ? (
-        <Typography sx={{ color: "rgba(255,255,255,0.72)", lineHeight: 1.75 }}>{description}</Typography>
-      ) : null}
+      {description ? <Typography sx={{ color: "rgba(255,255,255,0.72)", lineHeight: 1.75 }}>{description}</Typography> : null}
     </Box>
   );
 }
 
-function VisualPanel({ page }: { page: IndustryPageDocument }) {
-  const itemsBySlug: Record<string, VisualItem[]> = {
-    "accounting-firms": [
-      {
-        title: "Client reminders",
-        detail: "Keep missing documents, approvals, and follow-up work moving without rewriting the same messages.",
-        icon: <EmailOutlinedIcon />,
-      },
-      {
-        title: "Recurring jobs",
-        detail: "Trigger repeatable tasks, owners, and deadlines from the same monthly or quarterly cadence.",
-        icon: <AssignmentTurnedInOutlinedIcon />,
-      },
-      {
-        title: "Data preparation",
-        detail: "Clean and structure spreadsheet-heavy inputs before review work starts, with AI-assisted extraction where it genuinely helps.",
-        icon: <DescriptionOutlinedIcon />,
-      },
-    ],
-    "agencies-and-consultancies": [
-      {
-        title: "Handoffs",
-        detail: "Turn won work into a cleaner kickoff flow with the right tasks, docs, and owners.",
-        icon: <SyncAltOutlinedIcon />,
-      },
-      {
-        title: "Approvals",
-        detail: "Reduce the back-and-forth around sign-off, revisions, and next steps.",
-        icon: <AssignmentTurnedInOutlinedIcon />,
-      },
-      {
-        title: "Draft support",
-        detail: "Help with repetitive reporting, research, and first drafts, including selective AI support where review still stays in human hands.",
-        icon: <AutoAwesomeIcon />,
-      },
-    ],
-    "transport-and-logistics": [
-      {
-        title: "Email to status",
-        detail: "Convert recurring update emails and documents into structured internal signals, including AI-assisted extraction when the input is messy.",
-        icon: <EmailOutlinedIcon />,
-      },
-      {
-        title: "Exceptions",
-        detail: "Flag delays, missing paperwork, and follow-up work before they turn into fire drills.",
-        icon: <RouteOutlinedIcon />,
-      },
-      {
-        title: "Customer updates",
-        detail: "Trigger consistent milestone communication instead of rewriting the same update again and again.",
-        icon: <AutoAwesomeIcon />,
-      },
-    ],
-  };
-
-  const items = itemsBySlug[page.slug] || itemsBySlug["accounting-firms"];
+function VisualPanel({ page, locale }: { page: IndustryPageDocument; locale: string }) {
   const artworkBySlug: Record<string, string> = {
     "accounting-firms": "/images/industries/accounting-firms-photo.jpg",
     "agencies-and-consultancies": "/images/industries/agencies-and-consultancies-photo.jpg",
     "transport-and-logistics": "/images/industries/transport-and-logistics-photo.jpg",
   };
   const artworkSrc = artworkBySlug[page.slug] || artworkBySlug["accounting-firms"];
-  const artworkAlt = page.title + " illustration";
+  const caption = locale === "da"
+    ? "Små interne værktøjer, workflow-automatisering og AI-assisteret dokumenttolkning for gentaget driftsarbejde."
+    : locale === "sv"
+      ? "Små interna verktyg, arbetsflödesautomatisering och AI-assisterad dokumenttolkning för återkommande operativt arbete."
+      : "Small internal tools, workflow automation, and AI-assisted document parsing for repetitive operational work.";
 
   return (
     <Box
@@ -112,59 +49,27 @@ function VisualPanel({ page }: { page: IndustryPageDocument }) {
         boxShadow: "0 24px 56px rgba(0,0,0,0.22)",
       }}
     >
-      <Box sx={{ position: "relative", aspectRatio: "1.45 / 1", borderRadius: 3.5, overflow: "hidden", mb: 2.5, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}>
-        <Image src={artworkSrc} alt={artworkAlt} fill sizes="(max-width: 1200px) 100vw, 520px" style={{ objectFit: "cover" }} priority />
+      <Box sx={{ position: "relative", aspectRatio: "1.2 / 1", borderRadius: 3.5, overflow: "hidden", mb: 2.5, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}>
+        <Image src={artworkSrc} alt={page.title} fill sizes="(max-width: 1200px) 100vw, 520px" style={{ objectFit: "cover" }} priority />
       </Box>
       <Typography variant="overline" sx={{ color: "rgba(255,255,255,0.6)", letterSpacing: "0.16em" }}>
         {page.eyebrow}
       </Typography>
-      <Box sx={{ display: "grid", gap: 1.5, mt: 2.25 }}>
-        {items.map((item) => (
-          <Box
-            key={item.title}
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "44px 1fr",
-              gap: 1.5,
-              alignItems: "start",
-              p: 2,
-              borderRadius: 3,
-              backgroundColor: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
-            <Box
-              sx={{
-                width: 44,
-                height: 44,
-                borderRadius: 2.5,
-                display: "grid",
-                placeItems: "center",
-                color: "#fff",
-                background: `linear-gradient(135deg, rgba(${BRAND_COLORS.accentRgb}, 0.84), rgba(${BRAND_COLORS.accentRgb}, 0.45))`,
-              }}
-            >
-              {item.icon}
-            </Box>
-            <Box>
-              <Typography sx={{ color: "#fff", fontWeight: 700, mb: 0.4 }}>{item.title}</Typography>
-              <Typography sx={{ color: "rgba(255,255,255,0.7)", lineHeight: 1.65 }}>{item.detail}</Typography>
-            </Box>
-          </Box>
-        ))}
-      </Box>
+      <Typography sx={{ mt: 1.25, color: "rgba(255,255,255,0.78)", lineHeight: 1.75 }}>
+        {caption}
+      </Typography>
     </Box>
   );
 }
 
-function AskCard({ title, body, icon }: { title: string; body: string; icon: ReactNode }) {
+function InfoCard({ title, body, icon, pain }: { title: string; body: string; icon: ReactNode; pain?: string }) {
   return (
     <Box
       sx={{
         p: { xs: 3, md: 3.5 },
         borderRadius: 4,
         border: "1px solid rgba(255,255,255,0.1)",
-        backgroundColor: BACKGROUND_COLORS.surface,
+        backgroundColor: "rgba(255,255,255,0.03)",
       }}
     >
       <Box
@@ -180,7 +85,12 @@ function AskCard({ title, body, icon }: { title: string; body: string; icon: Rea
       >
         {icon}
       </Box>
-      <Typography variant="h5" sx={{ mt: 2.25, mb: 1.25, fontWeight: 700, lineHeight: 1.14 }}>
+      {pain ? (
+        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)", mb: 0.4 }}>
+          {pain}
+        </Typography>
+      ) : null}
+      <Typography variant="h5" sx={{ mt: 0.25, mb: 1.15, fontWeight: 700, lineHeight: 1.14 }}>
         {title}
       </Typography>
       <Typography sx={{ color: "rgba(255,255,255,0.76)", lineHeight: 1.72 }}>{body}</Typography>
@@ -188,37 +98,39 @@ function AskCard({ title, body, icon }: { title: string; body: string; icon: Rea
   );
 }
 
-function BulletCard({ title, items, icon }: { title: string; items: string[]; icon: ReactNode }) {
-  return (
-    <Box
-      sx={{
-        p: { xs: 3, md: 3.5 },
-        borderRadius: 4,
-        border: "1px solid rgba(255,255,255,0.1)",
-        background: "linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1.4, mb: 2.25, color: "secondary.light" }}>
-        {icon}
-        <Typography variant="h5" sx={{ fontWeight: 700, fontSize: { xs: "1.05rem", md: "1.15rem" } }}>
-          {title}
-        </Typography>
-      </Box>
-      <Box component="ul" sx={{ m: 0, pl: 2.5, color: "rgba(255,255,255,0.82)" }}>
-        {items.map((item) => (
-          <Box component="li" key={item} sx={{ mb: 1.1, lineHeight: 1.7 }}>
-            {item}
-          </Box>
-        ))}
-      </Box>
-    </Box>
-  );
+function getOfferCopy(locale: string) {
+  if (locale === "da") {
+    return {
+      title: "Hvad det her er",
+      lead: "Jeg hjælper teams med at afgrænse og bygge små interne værktøjer og automatiseringer omkring én konkret, gentagen proces.",
+      body: "Det her er konsulent- og implementeringsarbejde, ikke et SaaS-produkt. Målet er at gøre én del af den daglige drift enklere, hurtigere eller mere stabil.",
+      proof: "Første version leverer værdi hurtigt, så vi kan justere eller udvide projektet uden at spilde tid.",
+    };
+  }
+
+  if (locale === "sv") {
+    return {
+      title: "Vad det här är",
+      lead: "Jag hjälper team att avgränsa och bygga små interna verktyg och automatiseringar kring en konkret, återkommande process.",
+      body: "Det här är konsult- och implementationsarbete, inte en SaaS-produkt. Målet är att göra en del av det dagliga arbetet enklare, snabbare eller mer stabil.",
+      proof: "Första versionen levererar värde snabbt, så vi kan justera eller bygga vidare utan att förlora fokus.",
+    };
+  }
+
+  return {
+    title: "What this is",
+    lead: "I help teams scope and build small internal tools and workflow automations around one concrete repetitive process.",
+    body: "This is consulting and implementation work, not a SaaS product. The goal is to make one part of day-to-day operations simpler, faster, or more reliable.",
+    proof: "The first version delivers value quickly, so we can refine or expand it without wasting time.",
+  };
 }
 
 export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPageDocument; locale: string; copy: IndustryPageCopy }) {
   const emailHref = `mailto:${settings.contactEmail}?subject=${encodeURIComponent(page.ctaSubject)}`;
   const IndustryContent = page.Content;
+  const offerCopy = getOfferCopy(locale);
   const askIcons = [<EmailOutlinedIcon key="mail" />, <SyncAltOutlinedIcon key="flow" />, <AutoAwesomeIcon key="auto" />];
+
 
   return (
     <Box sx={{ pb: { xs: 8, md: 12 } }}>
@@ -244,23 +156,14 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
           }}
         >
           <Box>
-            <Chip
-              label={page.eyebrow}
-              sx={{
-                mb: 3,
-                color: "#fff",
-                backgroundColor: `rgba(${BRAND_COLORS.accentRgb}, 0.18)`,
-                border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.35)`,
-              }}
-            />
-            <Typography variant="h1" sx={{ maxWidth: "11ch", fontSize: { xs: "2.6rem", md: "4.5rem" }, lineHeight: 0.94, fontWeight: 700, mb: 2 }}>
+            <Typography variant="h1" sx={{ maxWidth: { xs: "14ch", md: "12ch" }, fontSize: { xs: "2.6rem", md: "4.4rem" }, lineHeight: 0.94, fontWeight: 700, mb: 2 }}>
               {page.heroTitle}
             </Typography>
-            <Typography sx={{ maxWidth: "40rem", color: "rgba(255,255,255,0.82)", lineHeight: 1.72, fontSize: { xs: "1.04rem", md: "1.14rem" }, mb: 3 }}>
+            <Typography sx={{ maxWidth: "42rem", color: "rgba(255,255,255,0.82)", lineHeight: 1.72, fontSize: { xs: "1.04rem", md: "1.14rem" }, mb: 1.5 }}>
               {page.heroDescription}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2.25 }}>
-              <Button variant="primary" target={emailHref} endIcon={<ArrowOutwardIcon />}>
+              <Button variant="primary" href={emailHref} endIcon={<ArrowOutwardIcon />}>
                 {page.ctaLabel}
               </Button>
               <Link href={`/${locale}/projects`}>
@@ -269,61 +172,65 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
             </Box>
           </Box>
 
-          <VisualPanel page={page} />
+          <VisualPanel page={page} locale={locale} />
         </Container>
       </Box>
 
-      <Container sx={{ ...getContainerSx(), display: "grid", gap: { xs: 4, md: 5 }, mt: { xs: 4, md: 6 } }}>
-        <SectionTitle
-          title={copy.startHereTitle}
-          description={copy.startHereBody}
-        />
-
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 2, md: 3 } }}>
-          {page.solutions.map((solution, index) => (
-            <AskCard key={solution.title} title={solution.title} body={solution.description} icon={askIcons[index] || <AutoAwesomeIcon />} />
-          ))}
-        </Box>
-
-        <Box sx={{ maxWidth: "54rem", mx: "auto" }}>
-          <Typography sx={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.9, fontSize: { xs: "1rem", md: "1.08rem" } }}>
-            {copy.bridgeBody}
-          </Typography>
-        </Box>
-
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 0.9fr) minmax(0, 1.1fr)" }, gap: { xs: 3, md: 4 }, alignItems: "start" }}>
-          <BulletCard title={copy.painPointsLabel} items={page.painPoints} icon={<InsightsIcon />} />
-
-          <Box
-            sx={{
-              p: { xs: 3, md: 4 },
-              borderRadius: 4,
-              border: "1px solid rgba(255,255,255,0.1)",
-              backgroundColor: "rgba(255,255,255,0.03)",
-              "& h1, & h2, & h3": { lineHeight: 1.2, mt: 0, mb: 2, fontWeight: 700 },
-              "& h1": { fontSize: "2rem" },
-              "& h2": { fontSize: "1.45rem" },
-              "& h3": { fontSize: "1.15rem" },
-              "& p": { mb: 2, lineHeight: 1.8, color: "rgba(255,255,255,0.8)" },
-              "& ul": { mb: 0, pl: 3, color: "rgba(255,255,255,0.8)" },
-              "& li": { mb: 1, lineHeight: 1.8 },
-              "& a": { color: "secondary.main" },
-            }}
-          >
-            <SectionTitle title={copy.examplesLabel} />
-            <Box sx={{ mt: 2.5 }}>
-              <IndustryContent />
-            </Box>
+      <Container sx={{ ...getContainerSx(), display: "grid", gap: { xs: 5, md: 6 }, mt: { xs: 5, md: 7 } }}>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 0.85fr) minmax(0, 1.15fr)" },
+            gap: { xs: 3, md: 4 },
+            alignItems: "start",
+          }}
+        >
+          <SectionTitle title={offerCopy.title} description={offerCopy.lead} />
+          <Box sx={{ display: "grid", gap: 1.5 }}>
+            <Typography sx={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.82, fontSize: { xs: "1rem", md: "1.05rem" } }}>
+              {offerCopy.body}
+            </Typography>
+            <Typography sx={{ color: "rgba(255,255,255,0.62)", lineHeight: 1.72 }}>
+              {offerCopy.proof}
+            </Typography>
           </Box>
         </Box>
 
+        <Box sx={{ display: "grid", gap: 2.5 }}>
+          <SectionTitle title={copy.examplesLabel} description={copy.startHereBody} />
+          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 2, md: 3 } }}>
+            {page.solutions.map((solution, index) => (
+              <InfoCard key={solution.title} title={solution.title} body={solution.description} icon={askIcons[index] || <AutoAwesomeIcon />} pain={page.painPoints[index]} />
+            ))}
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            p: { xs: 3, md: 4 },
+            borderRadius: 4,
+            border: "1px solid rgba(255,255,255,0.1)",
+            backgroundColor: "rgba(255,255,255,0.03)",
+          }}
+        >
+          <IndustryContent />
+        </Box>
+
         <Box sx={{ p: { xs: 3, md: 4 }, borderRadius: 4, border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.28)`, background: `linear-gradient(180deg, rgba(${BRAND_COLORS.accentRgb}, 0.14), rgba(255,255,255,0.03))` }}>
-          <Typography sx={{ color: "rgba(255,255,255,0.76)", lineHeight: 1.75, mb: 3 }}>
-            {copy.finalCtaBody}
+          <SectionTitle title={copy.finalCtaTitle} description={copy.finalCtaBody} />
+          <Typography sx={{ color: "rgba(255,255,255,0.72)", mt: 1 }}>
+            Prefer a quick note? <Link href={emailHref} style={{ color: "inherit", textDecoration: "underline" }}>{settings.contactEmail}</Link>
           </Typography>
-          <Button variant="primary" target={emailHref} endIcon={<ArrowOutwardIcon />}>
-            {page.ctaLabel}
-          </Button>
+          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.72)", mt: 1 }}>
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 3 }}>
+            <Button variant="primary" href={emailHref} endIcon={<ArrowOutwardIcon />}>
+              {page.ctaLabel}
+            </Button>
+            <Link href={`/${locale}/projects`}>
+              <Button variant="outline">{copy.selectedWorkLabel}</Button>
+            </Link>
+          </Box>
         </Box>
       </Container>
     </Box>
@@ -355,3 +262,5 @@ export function IndustryOverviewPage({ pages, locale, copy }: { pages: IndustryP
     </Container>
   );
 }
+
+

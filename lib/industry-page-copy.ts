@@ -11,6 +11,7 @@ export type IndustryPageCopy = {
   startHereTitle: string;
   startHereBody: string;
   bridgeBody: string;
+  finalCtaTitle: string;
   finalCtaBody: string;
 };
 
@@ -26,6 +27,7 @@ export function getIndustryPageCopy(t: Awaited<ReturnType<typeof getTranslations
     startHereTitle: t("startHereTitle"),
     startHereBody: t("startHereBody"),
     bridgeBody: t("bridgeBody"),
+    finalCtaTitle: t("finalCtaTitle"),
     finalCtaBody: t("finalCtaBody"),
   };
 }

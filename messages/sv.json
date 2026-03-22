@@ -234,11 +234,12 @@
     "overviewDescription": "De här sidorna stödjer outreach med konkreta exempel på interna verktyg, arbetsflödesförbättringar och mindre mjukvaruprojekt som verkar relevanta för specifika branscher.",
     "openPageLabel": "Öppna sida",
     "selectedWorkLabel": "Se utvalda projekt",
-    "painPointsLabel": "Var team vanligtvis tappar tid",
-    "examplesLabel": "Exempel på ett bra första projekt",
-    "startHereTitle": "Möjliga ställen att börja",
-    "startHereBody": "Möjliga startpunkter är återkommande uppgifter som redan slösar tid: påminnelser, överlämningar, dokumenthantering, statusuppdateringar eller kalkylbladsstädning.",
-    "bridgeBody": "De här sidorna försöker inte sälja ett stort transformationsprojekt. En mer realistisk startpunkt är ett konkret arbetsflöde: ett påminnelseflöde, en överlämning, en godkännandeväg eller en rörig admin-del som görs mer stabil.",
-    "finalCtaBody": "Om ett arbetsflöde redan känns rörigt eller repetitivt räcker det för att starta ett vettigt samtal."
+    "painPointsLabel": "Var friktionen visar sig",
+    "examplesLabel": "Det skulle jag bygga först",
+    "startHereTitle": "Konkreta exempel",
+    "startHereBody": "Det här är den typ av små verktyg eller automatiseringar jag skulle börja med för den här typen av team.",
+    "bridgeBody": "Det här är de återkommande uppgifter som fortfarande kräver manuella uppföljningar; exemplen nedan visar hur jag gör dem mer stabila.",
+    "finalCtaBody": "Om en återkommande process redan känns irriterande räcker det som kontext för ett vettigt första samtal.",
+    "finalCtaTitle": "Prata om ett arbetsflöde"
   }
 }
