@@ -15,8 +15,8 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { Box, Chip, Container, Typography } from "@mui/material";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 type VisualItem = {
@@ -43,51 +43,51 @@ function VisualPanel({ page }: { page: IndustryPageDocument }) {
     "accounting-firms": [
       {
         title: "Client reminders",
-        detail: "Trigger structured follow-ups for missing documents and approvals.",
+        detail: "Keep missing documents, approvals, and follow-up work moving without rewriting the same messages.",
         icon: <EmailOutlinedIcon />,
       },
       {
         title: "Recurring jobs",
-        detail: "Prefill repeatable work so the same setup does not happen by hand every month.",
+        detail: "Trigger repeatable tasks, owners, and deadlines from the same monthly or quarterly cadence.",
         icon: <AssignmentTurnedInOutlinedIcon />,
       },
       {
-        title: "Data cleanup",
-        detail: "Turn messy spreadsheet inputs into something usable before review starts.",
+        title: "Data preparation",
+        detail: "Clean and structure spreadsheet-heavy inputs before review work starts, with AI-assisted extraction where it genuinely helps.",
         icon: <DescriptionOutlinedIcon />,
       },
     ],
     "agencies-and-consultancies": [
       {
-        title: "Won deal to kickoff",
-        detail: "Turn handoff notes into tasks, folders, briefs, and internal follow-up automatically.",
+        title: "Handoffs",
+        detail: "Turn won work into a cleaner kickoff flow with the right tasks, docs, and owners.",
         icon: <SyncAltOutlinedIcon />,
       },
       {
         title: "Approvals",
-        detail: "Reduce Slack and email chaos around content, design, and delivery sign-off.",
+        detail: "Reduce the back-and-forth around sign-off, revisions, and next steps.",
         icon: <AssignmentTurnedInOutlinedIcon />,
       },
       {
-        title: "Draft helpers",
-        detail: "Assist repetitive research, reporting, and first-draft prep without losing review control.",
+        title: "Draft support",
+        detail: "Help with repetitive reporting, research, and first drafts, including selective AI support where review still stays in human hands.",
         icon: <AutoAwesomeIcon />,
       },
     ],
     "transport-and-logistics": [
       {
         title: "Email to status",
-        detail: "Convert recurring update emails and documents into structured internal signals.",
+        detail: "Convert recurring update emails and documents into structured internal signals, including AI-assisted extraction when the input is messy.",
         icon: <EmailOutlinedIcon />,
       },
       {
         title: "Exceptions",
-        detail: "Flag ETA slips, missing documents, and follow-up work before they become fire drills.",
+        detail: "Flag delays, missing paperwork, and follow-up work before they turn into fire drills.",
         icon: <RouteOutlinedIcon />,
       },
       {
         title: "Customer updates",
-        detail: "Send consistent milestone updates without manually rewriting the same message.",
+        detail: "Trigger consistent milestone communication instead of rewriting the same update again and again.",
         icon: <AutoAwesomeIcon />,
       },
     ],
@@ -100,7 +100,7 @@ function VisualPanel({ page }: { page: IndustryPageDocument }) {
     "transport-and-logistics": "/images/industries/transport-and-logistics-automation.svg",
   };
   const artworkSrc = artworkBySlug[page.slug] || artworkBySlug["accounting-firms"];
-  const artworkAlt = page.title + " illustration";
+  const artworkAlt = `${page.title} illustration`;
 
   return (
     <Box
@@ -283,8 +283,8 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
 
       <Container sx={{ ...getContainerSx(), display: "grid", gap: { xs: 4, md: 5 }, mt: { xs: 4, md: 6 } }}>
         <SectionTitle
-          title="High-value things to automate first"
-          description="The best first project is usually not a big platform. It is one repetitive process that currently burns time every week."
+          title="High-value repetitive work to tackle first"
+          description="A strong first project is usually one recurring process that already wastes time every week: reminders, handoffs, document handling, status updates, spreadsheet cleanup, or selective AI support for repetitive drafting and extraction."
         />
 
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 2, md: 3 } }}>
