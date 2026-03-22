@@ -7,11 +7,9 @@ import { IndustryPageDocument } from "@/lib/industry-pages";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import AssignmentTurnedInOutlinedIcon from "@mui/icons-material/AssignmentTurnedInOutlined";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import InsightsIcon from "@mui/icons-material/Insights";
-import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
 import RouteOutlinedIcon from "@mui/icons-material/RouteOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import { Box, Chip, Container, Typography } from "@mui/material";
@@ -100,7 +98,7 @@ function VisualPanel({ page }: { page: IndustryPageDocument }) {
     "transport-and-logistics": "/images/industries/transport-and-logistics-photo.jpg",
   };
   const artworkSrc = artworkBySlug[page.slug] || artworkBySlug["accounting-firms"];
-  const artworkAlt = `${page.title} illustration`;
+  const artworkAlt = page.title + " illustration";
 
   return (
     <Box
@@ -272,9 +270,6 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
                 <Button variant="outline">{copy.selectedWorkLabel}</Button>
               </Link>
             </Box>
-            <Typography sx={{ color: "rgba(255,255,255,0.66)", lineHeight: 1.7, maxWidth: "35rem" }}>
-              {copy.finalCtaBody}
-            </Typography>
           </Box>
 
           <VisualPanel page={page} />
@@ -293,12 +288,9 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
           ))}
         </Box>
 
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(2, minmax(0, 1fr))" }, gap: { xs: 2, md: 3 } }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 0.9fr) minmax(0, 1.1fr)" }, gap: { xs: 3, md: 4 }, alignItems: "start" }}>
           <BulletCard title={copy.painPointsLabel} items={page.painPoints} icon={<InsightsIcon />} />
-          <BulletCard title={copy.firstStepLabel} items={page.engagementSteps} icon={<PrecisionManufacturingIcon />} />
-        </Box>
 
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 1.1fr) minmax(280px, 0.9fr)" }, gap: { xs: 3, md: 4 }, alignItems: "start" }}>
           <Box
             sx={{
               p: { xs: 3, md: 4 },
@@ -320,21 +312,18 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
               <IndustryContent />
             </Box>
           </Box>
+        </Box>
 
-          <Box sx={{ display: "grid", gap: 2.5 }}>
-            <BulletCard title={copy.fitLabel} items={page.proofPoints} icon={<CheckCircleOutlineIcon />} />
-            <Box sx={{ p: { xs: 3, md: 4 }, borderRadius: 4, border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.28)`, background: `linear-gradient(180deg, rgba(${BRAND_COLORS.accentRgb}, 0.14), rgba(255,255,255,0.03))` }}>
-              <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1.1, mb: 1.5 }}>
-                {copy.finalCtaTitle}
-              </Typography>
-              <Typography sx={{ color: "rgba(255,255,255,0.76)", lineHeight: 1.75, mb: 3 }}>
-                {copy.finalCtaBody}
-              </Typography>
-              <Button variant="primary" target={emailHref} endIcon={<ArrowOutwardIcon />}>
-                {page.ctaLabel}
-              </Button>
-            </Box>
-          </Box>
+        <Box sx={{ p: { xs: 3, md: 4 }, borderRadius: 4, border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.28)`, background: `linear-gradient(180deg, rgba(${BRAND_COLORS.accentRgb}, 0.14), rgba(255,255,255,0.03))` }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1.1, mb: 1.5 }}>
+            {copy.finalCtaTitle}
+          </Typography>
+          <Typography sx={{ color: "rgba(255,255,255,0.76)", lineHeight: 1.75, mb: 3 }}>
+            {copy.finalCtaBody}
+          </Typography>
+          <Button variant="primary" target={emailHref} endIcon={<ArrowOutwardIcon />}>
+            {page.ctaLabel}
+          </Button>
         </Box>
       </Container>
     </Box>

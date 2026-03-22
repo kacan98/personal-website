@@ -30,7 +30,7 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
         src={imageSrc}
         alt={`${title} project`}
         fill
-        style={{ objectFit: "cover", objectPosition: "top", transition: "transform 0.3s ease" }}
+        style={{ objectFit: "cover", objectPosition: "center", transition: "transform 0.3s ease" }}
         sizes="(max-width: 768px) 100vw, 45vw"
       />
       <Box
@@ -70,9 +70,11 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
       }}
     >
       {projectHref ? (
-        <Link href={projectHref} style={{ display: "block", width: "100%", maxWidth: "45%", textDecoration: "none" }}>
-          <Box sx={mediaSx}>{mediaContent}</Box>
-        </Link>
+        <Box sx={{ width: { xs: "100%", md: "45%" }, flexShrink: 0 }}>
+          <Link href={projectHref} style={{ display: "block", width: "100%", textDecoration: "none" }}>
+            <Box sx={mediaSx}>{mediaContent}</Box>
+          </Link>
+        </Box>
       ) : (
         <Box sx={mediaSx}>{mediaContent}</Box>
       )}
