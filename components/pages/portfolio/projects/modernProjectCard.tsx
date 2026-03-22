@@ -8,20 +8,44 @@ import { useTranslations } from "next-intl";
 export const ModernProjectCard = ({ title, description, image, links, tags, projectHref }: Project & { projectHref?: string }) => {
   const t = useTranslations("projects");
   const imageSrc = image?.trim();
-  const cardTitle = (
-    <Typography
-      variant="h5"
-      sx={{
-        fontWeight: 700,
-        mb: 2,
-        color: "text.primary",
-        fontSize: { xs: "1.25rem", md: "1.5rem" },
-        lineHeight: 1.2,
-        textAlign: { xs: "center", md: "left" },
-        transition: 'color 0.2s ease',
-        '&:hover': projectHref ? { color: 'secondary.main' } : undefined,
-      }}
-    >
+  const mediaSx = {
+    width: { xs: "100%", md: "45%" },
+    height: { xs: "240px", md: "320px" },
+    position: "relative",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: imageSrc
+      ? "transparent"
+      : "linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(17, 24, 39, 0.95) 100%)",
+    textDecoration: "none",
+    cursor: projectHref ? "pointer" : "default",
+    flexShrink: 0,
+  } as const;
+
+  const mediaContent = imageSrc ? (
+    <>
+      <Image
+        src={imageSrc}
+        alt={`${title} project`}
+        fill
+        style={{ objectFit: "cover", objectPosition: "top", transition: "transform 0.3s ease" }}
+        sizes="(max-width: 768px) 100vw, 45vw"
+      />
+      <Box
+        sx={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(168, 85, 247, 0.1) 100%)",
+          opacity: 0,
+          transition: "opacity 0.3s ease",
+          ".modern-project-card:hover &": { opacity: 1 },
+        }}
+      />
+    </>
+  ) : (
+    <Typography variant="h6" sx={{ px: 3, textAlign: "center", color: "rgba(255,255,255,0.92)", fontWeight: 700, letterSpacing: "0.04em" }}>
       {title}
     </Typography>
   );
@@ -45,50 +69,13 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
         },
       }}
     >
-      <Box
-        component={projectHref ? Link : 'div'}
-        href={projectHref}
-        sx={{
-          width: { xs: "100%", md: "45%" },
-          height: { xs: "240px", md: "320px" },
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: imageSrc
-            ? "transparent"
-            : "linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(17, 24, 39, 0.95) 100%)",
-          textDecoration: 'none',
-          cursor: projectHref ? 'pointer' : 'default',
-        }}
-      >
-        {imageSrc ? (
-          <>
-            <Image
-              src={imageSrc}
-              alt={`${title} project`}
-              fill
-              style={{ objectFit: "cover", objectPosition: "top", transition: "transform 0.3s ease" }}
-              sizes="(max-width: 768px) 100vw, 45vw"
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(168, 85, 247, 0.1) 100%)",
-                opacity: 0,
-                transition: "opacity 0.3s ease",
-                '.modern-project-card:hover &': { opacity: 1 },
-              }}
-            />
-          </>
-        ) : (
-          <Typography variant="h6" sx={{ px: 3, textAlign: "center", color: "rgba(255,255,255,0.92)", fontWeight: 700, letterSpacing: "0.04em" }}>
-            {title}
-          </Typography>
-        )}
-      </Box>
+      {projectHref ? (
+        <Link href={projectHref} style={{ display: "block", width: "100%", maxWidth: "45%", textDecoration: "none" }}>
+          <Box sx={mediaSx}>{mediaContent}</Box>
+        </Link>
+      ) : (
+        <Box sx={mediaSx}>{mediaContent}</Box>
+      )}
 
       <Box sx={{ width: { xs: "100%", md: "55%" }, p: { xs: 3, md: 4 }, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
         <Box>
@@ -116,10 +103,38 @@ export const ModernProjectCard = ({ title, description, image, links, tags, proj
           )}
 
           {projectHref ? (
-            <Link href={projectHref} style={{ textDecoration: 'none' }}>
-              {cardTitle}
+            <Link href={projectHref} style={{ textDecoration: "none" }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 700,
+                  mb: 2,
+                  color: "text.primary",
+                  fontSize: { xs: "1.25rem", md: "1.5rem" },
+                  lineHeight: 1.2,
+                  textAlign: { xs: "center", md: "left" },
+                  transition: "color 0.2s ease",
+                  "&:hover": { color: "secondary.main" },
+                }}
+              >
+                {title}
+              </Typography>
             </Link>
-          ) : cardTitle}
+          ) : (
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                mb: 2,
+                color: "text.primary",
+                fontSize: { xs: "1.25rem", md: "1.5rem" },
+                lineHeight: 1.2,
+                textAlign: { xs: "center", md: "left" },
+              }}
+            >
+              {title}
+            </Typography>
+          )}
 
           <Typography variant="body1" sx={{ color: "text.secondary", lineHeight: 1.6, mb: 3, fontSize: "0.95rem", textAlign: { xs: "center", md: "left" } }}>
             {description}
