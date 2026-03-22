@@ -95,9 +95,9 @@ function VisualPanel({ page }: { page: IndustryPageDocument }) {
 
   const items = itemsBySlug[page.slug] || itemsBySlug["accounting-firms"];
   const artworkBySlug: Record<string, string> = {
-    "accounting-firms": "/images/industries/accounting-firms-automation.svg",
-    "agencies-and-consultancies": "/images/industries/agencies-and-consultancies-automation.svg",
-    "transport-and-logistics": "/images/industries/transport-and-logistics-automation.svg",
+    "accounting-firms": "/images/industries/accounting-firms-photo.jpg",
+    "agencies-and-consultancies": "/images/industries/agencies-and-consultancies-photo.jpg",
+    "transport-and-logistics": "/images/industries/transport-and-logistics-photo.jpg",
   };
   const artworkSrc = artworkBySlug[page.slug] || artworkBySlug["accounting-firms"];
   const artworkAlt = `${page.title} illustration`;
