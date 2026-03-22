@@ -15,11 +15,8 @@ export type IndustryPageDocument = {
   cardSummary: string;
   heroTitle: string;
   heroDescription: string;
-  outcomes: string[];
   painPoints: string[];
   solutions: IndustrySolution[];
-  proofPoints: string[];
-  engagementSteps: string[];
   ctaSubject: string;
   ctaLabel: string;
   locale: string;
@@ -83,11 +80,8 @@ async function readIndustryFile(
     cardSummary: frontmatter.cardSummary || frontmatter.description || "",
     heroTitle: frontmatter.heroTitle || frontmatter.title || "",
     heroDescription: frontmatter.heroDescription || frontmatter.description || "",
-    outcomes: frontmatter.outcomes || [],
     painPoints: frontmatter.painPoints || [],
     solutions: frontmatter.solutions || [],
-    proofPoints: frontmatter.proofPoints || [],
-    engagementSteps: frontmatter.engagementSteps || [],
     ctaSubject: frontmatter.ctaSubject || "Website enquiry",
     ctaLabel: frontmatter.ctaLabel || "Get in touch",
     locale,

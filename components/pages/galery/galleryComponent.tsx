@@ -73,7 +73,7 @@ export const GalleryComponent = ({
           return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.title}>
               <animated.div style={props}>
-                <Link href={`/project/${project.slug}`}>
+                <Link href={`/en/projects/${project.slug}`}>
                   {card}
                 </Link>
               </animated.div>

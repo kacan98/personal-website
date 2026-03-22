@@ -234,18 +234,10 @@
     "overviewDescription": "These pages are designed to support outreach with concrete examples of the kinds of internal tools, workflow fixes, and small software projects that are often useful in specific industries.",
     "openPageLabel": "Open page",
     "selectedWorkLabel": "See selected work",
-    "solutionLabel": "Solution",
     "painPointsLabel": "Where teams usually lose time",
-    "approachLabel": "How I would approach it",
-    "fitLabel": "Why this can be a good fit",
-    "pagePurposeLabel": "What this page is for",
-    "pagePurposeBody": "This is not a polished agency-style funnel. It is a practical page to show the kinds of operational problems I can help with, and the kind of narrow first project that usually makes sense.",
-    "pagePurposeBodyFollowup": "If that is relevant, the next useful step is usually a short conversation about one recurring workflow that is costing time today.",
-    "resultsLabel": "What improves",
-    "commonSignalsLabel": "Common signals",
-    "firstStepLabel": "A practical first step",
     "examplesLabel": "Examples of a useful first project",
-    "finalCtaTitle": "One recurring bottleneck is enough to start.",
+    "startHereTitle": "Good places to start",
+    "startHereBody": "A strong first project is usually one recurring task that already wastes time: reminders, handoffs, document handling, status updates, or spreadsheet cleanup.",
     "finalCtaBody": "A good place to start is one real workflow that wastes time today, not a big transformation plan."
   }
 }

@@ -234,18 +234,10 @@
     "overviewDescription": "De her sider er lavet til outreach med konkrete eksempler på den slags interne værktøjer, workflow-forbedringer og mindre softwareprojekter, som ofte giver mening i bestemte brancher.",
     "openPageLabel": "Åbn side",
     "selectedWorkLabel": "Se udvalgte projekter",
-    "solutionLabel": "Løsning",
     "painPointsLabel": "Hvor teams typisk mister tid",
-    "approachLabel": "Sådan ville jeg gribe det an",
-    "fitLabel": "Hvorfor det kan være et godt match",
-    "pagePurposeLabel": "Hvad siden er til for",
-    "pagePurposeBody": "Det her er ikke en poleret bureau-agtig salgsside. Det er en praktisk side, der viser den slags driftsproblemer jeg kan hjælpe med, og den slags afgrænsede første projekt der typisk giver mening.",
-    "pagePurposeBodyFollowup": "Hvis det er relevant, er næste nyttige skridt som regel en kort snak om et tilbagevendende workflow, der koster tid i dag.",
-    "resultsLabel": "Det der forbedres",
-    "commonSignalsLabel": "Typiske signaler",
-    "firstStepLabel": "Et praktisk første skridt",
     "examplesLabel": "Eksempler på et godt første projekt",
-    "finalCtaTitle": "Én tilbagevendende flaskehals er nok til at starte.",
+    "startHereTitle": "Gode steder at starte",
+    "startHereBody": "Et godt første projekt er ofte én tilbagevendende opgave, der allerede spilder tid: påmindelser, overleveringer, dokumenthåndtering, statusopdateringer eller regnearksoprydning.",
     "finalCtaBody": "Et godt sted at starte er ét konkret workflow, der spilder tid i dag, ikke en stor transformationsplan."
   }
 }

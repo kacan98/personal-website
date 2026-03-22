@@ -6,18 +6,10 @@ export type IndustryPageCopy = {
   overviewDescription: string;
   openPageLabel: string;
   selectedWorkLabel: string;
-  solutionLabel: string;
   painPointsLabel: string;
-  approachLabel: string;
-  fitLabel: string;
-  pagePurposeLabel: string;
-  pagePurposeBody: string;
-  pagePurposeBodyFollowup: string;
-  resultsLabel: string;
-  commonSignalsLabel: string;
-  firstStepLabel: string;
   examplesLabel: string;
-  finalCtaTitle: string;
+  startHereTitle: string;
+  startHereBody: string;
   finalCtaBody: string;
 };
 
@@ -28,18 +20,10 @@ export function getIndustryPageCopy(t: Awaited<ReturnType<typeof getTranslations
     overviewDescription: t("overviewDescription"),
     openPageLabel: t("openPageLabel"),
     selectedWorkLabel: t("selectedWorkLabel"),
-    solutionLabel: t("solutionLabel"),
     painPointsLabel: t("painPointsLabel"),
-    approachLabel: t("approachLabel"),
-    fitLabel: t("fitLabel"),
-    pagePurposeLabel: t("pagePurposeLabel"),
-    pagePurposeBody: t("pagePurposeBody"),
-    pagePurposeBodyFollowup: t("pagePurposeBodyFollowup"),
-    resultsLabel: t("resultsLabel"),
-    commonSignalsLabel: t("commonSignalsLabel"),
-    firstStepLabel: t("firstStepLabel"),
     examplesLabel: t("examplesLabel"),
-    finalCtaTitle: t("finalCtaTitle"),
+    startHereTitle: t("startHereTitle"),
+    startHereBody: t("startHereBody"),
     finalCtaBody: t("finalCtaBody"),
   };
 }

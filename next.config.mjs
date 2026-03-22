@@ -68,7 +68,6 @@ const nextConfig = {
       '.vscode/**',
       '.github/**',
       'chrome-extension/**',
-      'public/images/**',
       'node_modules/jest/**',
       'node_modules/@testing-library/**',
       'node_modules/docs/**',

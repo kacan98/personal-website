@@ -278,8 +278,8 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
 
       <Container sx={{ ...getContainerSx(), display: "grid", gap: { xs: 4, md: 5 }, mt: { xs: 4, md: 6 } }}>
         <SectionTitle
-          title="Good places to start"
-          description="A useful first project is often one recurring task that already wastes time every week: reminders, handoffs, document handling, status updates, or spreadsheet cleanup."
+          title={copy.startHereTitle}
+          description={copy.startHereBody}
         />
 
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 2, md: 3 } }}>
@@ -307,17 +307,14 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
               "& a": { color: "secondary.main" },
             }}
           >
-            <SectionTitle title={copy.examplesLabel} description={copy.pagePurposeBody} />
-            <Box sx={{ mt: 3 }}>
+            <SectionTitle title={copy.examplesLabel} />
+            <Box sx={{ mt: 2.5 }}>
               <IndustryContent />
             </Box>
           </Box>
         </Box>
 
         <Box sx={{ p: { xs: 3, md: 4 }, borderRadius: 4, border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.28)`, background: `linear-gradient(180deg, rgba(${BRAND_COLORS.accentRgb}, 0.14), rgba(255,255,255,0.03))` }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, lineHeight: 1.1, mb: 1.5 }}>
-            {copy.finalCtaTitle}
-          </Typography>
           <Typography sx={{ color: "rgba(255,255,255,0.76)", lineHeight: 1.75, mb: 3 }}>
             {copy.finalCtaBody}
           </Typography>
