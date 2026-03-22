@@ -14,6 +14,10 @@ type ClientProjectDisplayProps = {
 const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps) => {
   const t = useTranslations('projects');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const collator = useMemo(
+    () => new Intl.Collator(locale || 'en', { sensitivity: 'base', numeric: true }),
+    [locale],
+  );
 
   const uniqueTags = useMemo(() => {
     const tagCounts = allProjects.reduce<Record<string, number>>((acc, project) => {
@@ -25,10 +29,10 @@ const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps
     }, {});
 
     return Object.entries(tagCounts)
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .sort((a, b) => b[1] - a[1] || collator.compare(a[0], b[0]))
       .slice(0, 10)
       .map(([tag]) => tag);
-  }, [allProjects]);
+  }, [allProjects, collator]);
 
   const filteredProjects = useMemo(() => {
     if (selectedTags.length === 0) {
