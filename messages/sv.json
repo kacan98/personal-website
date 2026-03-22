@@ -240,6 +240,12 @@
     "fitLabel": "Varför det kan vara en bra match",
     "pagePurposeLabel": "Vad sidan är till för",
     "pagePurposeBody": "Det här är inte en polerad byrå-liknande säljsida. Det är en praktisk sida som visar vilken typ av operativa problem jag kan hjälpa till med och vilken typ av avgränsat första projekt som oftast är rimligt.",
-    "pagePurposeBodyFollowup": "Om det känns relevant är nästa vettiga steg vanligtvis ett kort samtal om ett återkommande arbetsflöde som kostar tid i dag."
+    "pagePurposeBodyFollowup": "Om det känns relevant är nästa vettiga steg vanligtvis ett kort samtal om ett återkommande arbetsflöde som kostar tid i dag.",
+    "resultsLabel": "Det som förbättras",
+    "commonSignalsLabel": "Vanliga signaler",
+    "firstStepLabel": "Ett praktiskt första steg",
+    "examplesLabel": "Exempel på ett bra första projekt",
+    "finalCtaTitle": "En återkommande flaskhals räcker för att börja.",
+    "finalCtaBody": "Nästa bästa steg är vanligtvis ett kort samtal om ett konkret arbetsflöde som slösar tid i dag, inte en stor transformationsplan."
   }
 }

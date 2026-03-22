@@ -240,6 +240,12 @@
     "fitLabel": "Hvorfor det kan være et godt match",
     "pagePurposeLabel": "Hvad siden er til for",
     "pagePurposeBody": "Det her er ikke en poleret bureau-agtig salgsside. Det er en praktisk side, der viser den slags driftsproblemer jeg kan hjælpe med, og den slags afgrænsede første projekt der typisk giver mening.",
-    "pagePurposeBodyFollowup": "Hvis det er relevant, er næste nyttige skridt som regel en kort snak om et tilbagevendende workflow, der koster tid i dag."
+    "pagePurposeBodyFollowup": "Hvis det er relevant, er næste nyttige skridt som regel en kort snak om et tilbagevendende workflow, der koster tid i dag.",
+    "resultsLabel": "Det der forbedres",
+    "commonSignalsLabel": "Typiske signaler",
+    "firstStepLabel": "Et praktisk første skridt",
+    "examplesLabel": "Eksempler på et godt første projekt",
+    "finalCtaTitle": "Én tilbagevendende flaskehals er nok til at starte.",
+    "finalCtaBody": "Det bedste næste skridt er som regel en kort snak om ét konkret workflow, der spilder tid i dag, ikke en stor transformationsplan."
   }
 }

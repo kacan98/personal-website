@@ -240,6 +240,12 @@
     "fitLabel": "Why this can be a good fit",
     "pagePurposeLabel": "What this page is for",
     "pagePurposeBody": "This is not a polished agency-style funnel. It is a practical page to show the kinds of operational problems I can help with, and the kind of narrow first project that usually makes sense.",
-    "pagePurposeBodyFollowup": "If that is relevant, the next useful step is usually a short conversation about one recurring workflow that is costing time today."
+    "pagePurposeBodyFollowup": "If that is relevant, the next useful step is usually a short conversation about one recurring workflow that is costing time today.",
+    "resultsLabel": "What improves",
+    "commonSignalsLabel": "Common signals",
+    "firstStepLabel": "A practical first step",
+    "examplesLabel": "Examples of a useful first project",
+    "finalCtaTitle": "One recurring bottleneck is enough to start.",
+    "finalCtaBody": "The best next step is usually a short conversation about one real workflow that wastes time today, not a big transformation plan."
   }
 }

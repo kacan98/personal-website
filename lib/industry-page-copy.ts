@@ -13,6 +13,12 @@ export type IndustryPageCopy = {
   pagePurposeLabel: string;
   pagePurposeBody: string;
   pagePurposeBodyFollowup: string;
+  resultsLabel: string;
+  commonSignalsLabel: string;
+  firstStepLabel: string;
+  examplesLabel: string;
+  finalCtaTitle: string;
+  finalCtaBody: string;
 };
 
 export function getIndustryPageCopy(t: Awaited<ReturnType<typeof getTranslations>>): IndustryPageCopy {
@@ -29,5 +35,11 @@ export function getIndustryPageCopy(t: Awaited<ReturnType<typeof getTranslations
     pagePurposeLabel: t("pagePurposeLabel"),
     pagePurposeBody: t("pagePurposeBody"),
     pagePurposeBodyFollowup: t("pagePurposeBodyFollowup"),
+    resultsLabel: t("resultsLabel"),
+    commonSignalsLabel: t("commonSignalsLabel"),
+    firstStepLabel: t("firstStepLabel"),
+    examplesLabel: t("examplesLabel"),
+    finalCtaTitle: t("finalCtaTitle"),
+    finalCtaBody: t("finalCtaBody"),
   };
 }
