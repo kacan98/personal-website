@@ -227,5 +227,19 @@
   },
   "backgroundRemoval": {
     "title": "Bakgrundsborttagning"
+  },
+  "industries": {
+    "overviewEyebrow": "Branschsidor",
+    "overviewTitle": "Fokuserade sidor för de branscher jag aktivt kontaktar",
+    "overviewDescription": "De här sidorna är gjorda för outreach med konkreta exempel på den typ av interna verktyg, arbetsflödesförbättringar och mindre mjukvaruprojekt som ofta är användbara i specifika branscher.",
+    "openPageLabel": "Öppna sida",
+    "selectedWorkLabel": "Se utvalda projekt",
+    "solutionLabel": "Lösning",
+    "painPointsLabel": "Var team vanligtvis tappar tid",
+    "approachLabel": "Så skulle jag angripa det",
+    "fitLabel": "Varför det kan vara en bra match",
+    "pagePurposeLabel": "Vad sidan är till för",
+    "pagePurposeBody": "Det här är inte en polerad byrå-liknande säljsida. Det är en praktisk sida som visar vilken typ av operativa problem jag kan hjälpa till med och vilken typ av avgränsat första projekt som oftast är rimligt.",
+    "pagePurposeBodyFollowup": "Om det känns relevant är nästa vettiga steg vanligtvis ett kort samtal om ett återkommande arbetsflöde som kostar tid i dag."
   }
 }

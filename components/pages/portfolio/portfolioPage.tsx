@@ -10,7 +10,7 @@ interface PortfolioPageProps {
 }
 
 async function PortfolioPage({ title, locale }: PortfolioPageProps) {
-  const allProjects = getListedProjects(locale);
+  const allProjects = await getListedProjects(locale);
 
   return (
     <Box sx={{ py: 6 }}>

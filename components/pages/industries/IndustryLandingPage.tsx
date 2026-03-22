@@ -2,7 +2,8 @@ import { BACKGROUND_COLORS, BRAND_COLORS } from "@/app/colors";
 import { getContainerSx } from "@/app/spacing";
 import Button from "@/components/ui/Button";
 import { settings } from "@/data/settings";
-import { getIndustryUiCopy, IndustryPageDocument } from "@/lib/industry-pages";
+import { type IndustryPageCopy } from "@/lib/industry-page-copy";
+import { IndustryPageDocument } from "@/lib/industry-pages";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import InsightsIcon from "@mui/icons-material/Insights";
@@ -11,39 +12,6 @@ import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturi
 import { Box, Chip, Container, Typography } from "@mui/material";
 import Link from "next/link";
 import type { ReactNode } from "react";
-
-function renderMarkdownToHtml(content: string): string {
-  let html = content
-    .replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>")
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/\[(.+?)\]\((.+?)\)/g, `<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>`);
-
-  html = html.replace(/(?:^[-*] .+$\n?)+/gm, (match) => {
-    const items = match
-      .split("\n")
-      .filter((line) => line.trim())
-      .map((line) => line.replace(/^[-*] /, ""))
-      .map((item) => `<li>${item}</li>`)
-      .join("");
-    return `<ul>${items}</ul>`;
-  });
-
-  return html
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block) => {
-      if (/^<(h1|h2|h3|ul|pre)/.test(block)) {
-        return block;
-      }
-      return `<p>${block.replace(/\n/g, "<br />")}</p>`;
-    })
-    .join("");
-}
 
 function SectionCard({ title, items, icon }: { title: string; items: string[]; icon: ReactNode }) {
   return (
@@ -73,9 +41,9 @@ function SectionCard({ title, items, icon }: { title: string; items: string[]; i
   );
 }
 
-export function IndustryLandingPage({ page, locale }: { page: IndustryPageDocument; locale: string }) {
-  const copy = getIndustryUiCopy(locale);
+export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPageDocument; locale: string; copy: IndustryPageCopy }) {
   const emailHref = `mailto:${settings.contactEmail}?subject=${encodeURIComponent(page.ctaSubject)}`;
+  const IndustryContent = page.Content;
 
   return (
     <Box sx={{ pb: { xs: 8, md: 12 } }}>
@@ -89,15 +57,7 @@ export function IndustryLandingPage({ page, locale }: { page: IndustryPageDocume
         }}
       >
         <Container sx={{ ...getContainerSx(), pt: { xs: 8, md: 12 }, pb: { xs: 6, md: 8 } }}>
-          <Chip
-            label={page.eyebrow}
-            sx={{
-              mb: 3,
-              color: "#fff",
-              backgroundColor: `rgba(${BRAND_COLORS.accentRgb}, 0.18)`,
-              border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.35)`,
-            }}
-          />
+          <Chip label={page.eyebrow} sx={{ mb: 3, color: "#fff", backgroundColor: `rgba(${BRAND_COLORS.accentRgb}, 0.18)`, border: `1px solid rgba(${BRAND_COLORS.accentRgb}, 0.35)` }} />
           <Typography variant="h1" sx={{ maxWidth: "14ch", fontSize: { xs: "2.5rem", md: "4.4rem" }, lineHeight: 0.98, fontWeight: 700, mb: 2 }}>
             {page.heroTitle}
           </Typography>
@@ -157,19 +117,34 @@ export function IndustryLandingPage({ page, locale }: { page: IndustryPageDocume
             "& p": { mb: 2, lineHeight: 1.8, color: "rgba(255,255,255,0.8)" },
             "& ul": { mb: 3, pl: 3, color: "rgba(255,255,255,0.8)" },
             "& li": { mb: 1, lineHeight: 1.8 },
+            "& figure": { my: 4, mx: 0 },
+            "& img": {
+              width: "100%",
+              height: "auto",
+              display: "block",
+              borderRadius: 2,
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
+            },
+            "& figcaption": {
+              mt: 1,
+              fontSize: "0.95rem",
+              lineHeight: 1.6,
+              color: "rgba(255,255,255,0.8)",
+            },
             "& pre": { p: 2, overflowX: "auto", borderRadius: 2, backgroundColor: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", mb: 3 },
             "& code": { fontFamily: "monospace" },
             "& a": { color: "secondary.main" },
           }}
-          dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(page.content) }}
-        />
+        >
+          <IndustryContent />
+        </Box>
       </Container>
     </Box>
   );
 }
 
-export function IndustryOverviewPage({ pages, locale }: { pages: IndustryPageDocument[]; locale: string }) {
-  const copy = getIndustryUiCopy(locale);
+export function IndustryOverviewPage({ pages, locale, copy }: { pages: IndustryPageDocument[]; locale: string; copy: IndustryPageCopy }) {
   return (
     <Container sx={{ ...getContainerSx(), py: { xs: 8, md: 12 } }}>
       <Box sx={{ maxWidth: "46rem", mb: { xs: 5, md: 7 } }}>

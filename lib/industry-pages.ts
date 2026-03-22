@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter";
+import { cache, type ComponentType } from "react";
 
 export type IndustrySolution = {
   title: string;
@@ -22,24 +22,18 @@ export type IndustryPageDocument = {
   engagementSteps: string[];
   ctaSubject: string;
   ctaLabel: string;
-  content: string;
   locale: string;
+  Content: ComponentType;
 };
 
-export type IndustryUiCopy = {
-  overviewEyebrow: string;
-  overviewTitle: string;
-  overviewDescription: string;
-  openPageLabel: string;
-  selectedWorkLabel: string;
-  solutionLabel: string;
-  painPointsLabel: string;
-  approachLabel: string;
-  fitLabel: string;
-  pagePurposeLabel: string;
-  pagePurposeBody: string;
-  pagePurposeBodyFollowup: string;
+type IndustryFrontmatter = Omit<IndustryPageDocument, "locale" | "Content">;
+
+type IndustryMdxModule = {
+  default: ComponentType;
+  metadata?: IndustryFrontmatter;
 };
+
+type SupportedLocale = "en" | "da" | "sv";
 
 export const INDUSTRY_ROUTE_PREFIX = "/industries";
 export const INDUSTRY_PAGE_SLUGS = [
@@ -48,20 +42,41 @@ export const INDUSTRY_PAGE_SLUGS = [
   "transport-and-logistics",
 ] as const;
 
-function getLocaleDir(locale: string): string {
+function normalizeLocale(locale: string): SupportedLocale {
+  if (locale === "da" || locale === "sv") return locale;
+  return "en";
+}
+
+function getLocaleDir(locale: SupportedLocale): string {
   if (locale === "da") return "data/industries-da";
   if (locale === "sv") return "data/industries-sv";
   return "data/industries";
 }
 
-function readIndustryFile(filePath: string, locale: string): IndustryPageDocument | null {
+async function importLocalizedIndustryModule(locale: SupportedLocale, slug: string): Promise<IndustryMdxModule> {
+  switch (locale) {
+    case "da":
+      return import(`../data/industries-da/${slug}.mdx`) as Promise<IndustryMdxModule>;
+    case "sv":
+      return import(`../data/industries-sv/${slug}.mdx`) as Promise<IndustryMdxModule>;
+    case "en":
+    default:
+      return import(`../data/industries/${slug}.mdx`) as Promise<IndustryMdxModule>;
+  }
+}
+
+async function readIndustryFile(
+  filePath: string,
+  importer: () => Promise<IndustryMdxModule>,
+  locale: SupportedLocale,
+): Promise<IndustryPageDocument | null> {
   if (!fs.existsSync(filePath)) return null;
 
-  const fileContent = fs.readFileSync(filePath, "utf8");
-  const { data: frontmatter, content } = matter(fileContent);
+  const mdxModule = await importer();
+  const frontmatter = (mdxModule.metadata || {}) as IndustryFrontmatter;
 
   return {
-    slug: frontmatter.slug || path.basename(filePath, ".md"),
+    slug: frontmatter.slug || path.basename(filePath, ".mdx"),
     title: frontmatter.title || "Untitled",
     eyebrow: frontmatter.eyebrow || "Industry page",
     description: frontmatter.description || "",
@@ -75,70 +90,25 @@ function readIndustryFile(filePath: string, locale: string): IndustryPageDocumen
     engagementSteps: frontmatter.engagementSteps || [],
     ctaSubject: frontmatter.ctaSubject || "Website enquiry",
     ctaLabel: frontmatter.ctaLabel || "Get in touch",
-    content,
     locale,
+    Content: mdxModule.default,
   };
 }
 
-export function getIndustryPageBySlug(locale: string, slug: string): IndustryPageDocument | null {
-  const localizedPath = path.join(process.cwd(), getLocaleDir(locale), `${slug}.md`);
-  const fallbackPath = path.join(process.cwd(), "data/industries", `${slug}.md`);
-  return readIndustryFile(localizedPath, locale) || readIndustryFile(fallbackPath, "en");
-}
+export const getIndustryPageBySlug = cache(async (locale: string, slug: string): Promise<IndustryPageDocument | null> => {
+  const normalizedLocale = normalizeLocale(locale);
+  const localizedPath = path.join(process.cwd(), getLocaleDir(normalizedLocale), `${slug}.mdx`);
+  const fallbackPath = path.join(process.cwd(), "data/industries", `${slug}.mdx`);
 
-export function getAllIndustryPages(locale: string): IndustryPageDocument[] {
-  return INDUSTRY_PAGE_SLUGS.map((slug) => getIndustryPageBySlug(locale, slug)).filter(
-    (page): page is IndustryPageDocument => Boolean(page)
+  return (
+    await readIndustryFile(localizedPath, () => importLocalizedIndustryModule(normalizedLocale, slug), normalizedLocale) ||
+    (normalizedLocale === "en"
+      ? null
+      : await readIndustryFile(fallbackPath, () => importLocalizedIndustryModule("en", slug), "en"))
   );
-}
+});
 
-export function getIndustryUiCopy(locale: string): IndustryUiCopy {
-  if (locale === "da") {
-    return {
-      overviewEyebrow: "Branche-sider",
-      overviewTitle: "Fokuserede sider til de brancher jeg aktivt raekker ud til",
-      overviewDescription: "De her sider er lavet til outreach. Hver side forklarer hvilke workflow-problemer jeg kan hjaelpe med, hvilke interne vaerktoejer der giver mening, og hvordan et lille foerste projekt kan se ud.",
-      openPageLabel: "Aabn side",
-      selectedWorkLabel: "Se udvalgte projekter",
-      solutionLabel: "Loesning",
-      painPointsLabel: "Hvor teams typisk mister tid",
-      approachLabel: "Saadan ville jeg angribe det",
-      fitLabel: "Hvorfor det kan vaere et godt fit",
-      pagePurposeLabel: "Hvad siden er til for",
-      pagePurposeBody: "Det her er ikke en klassisk salgsfunnel. Det er en kort forklaring af den type interne vaerktoejer og workflow-forbedringer jeg kan hjaelpe med i den her branche.",
-      pagePurposeBodyFollowup: "Hvis det er relevant, er naeste nyttige skridt en kort samtale om et tilbagevendende workflow, der i dag spilder tid.",
-    };
-  }
-
-  if (locale === "sv") {
-    return {
-      overviewEyebrow: "Branschsidor",
-      overviewTitle: "Fokuserade sidor foer de branscher jag aktivt kontaktar",
-      overviewDescription: "De haer sidorna aer gjorda foer outreach. Varje sida foerklarar vilka arbetsfloedesproblem jag kan hjaelpa till med, vilka interna verktyg som aer rimliga och hur ett litet foersta projekt kan se ut.",
-      openPageLabel: "Oeppna sida",
-      selectedWorkLabel: "Se utvalda projekt",
-      solutionLabel: "Loesning",
-      painPointsLabel: "Var team vanligtvis tappar tid",
-      approachLabel: "Sa skulle jag angripa det",
-      fitLabel: "Varfoer det kan vara en bra match",
-      pagePurposeLabel: "Vad sidan aer till foer",
-      pagePurposeBody: "Det haer aer inte en klassisk saeljfunnel. Det aer en kompakt foerklaring av vilken typ av interna verktyg och arbetsfloedesfoerbaettringar jag kan hjaelpa till med i den haer branschen.",
-      pagePurposeBodyFollowup: "Om det kaenns relevant aer naesta vettiga steg ett kort samtal om ett aaterkommande arbetsfloede som idag sloesar tid.",
-    };
-  }
-
-  return {
-    overviewEyebrow: "Industry pages",
-    overviewTitle: "Focused pages for the industries I am actively reaching out to",
-    overviewDescription: "These pages are designed to support outreach. Each one explains the kinds of workflow problems I can help with, the kinds of internal tools that make sense, and what a small first project could look like.",
-    openPageLabel: "Open page",
-    selectedWorkLabel: "See selected work",
-    solutionLabel: "Solution",
-    painPointsLabel: "Where teams usually lose time",
-    approachLabel: "How I would approach it",
-    fitLabel: "Why this can be a good fit",
-    pagePurposeLabel: "What this page is for",
-    pagePurposeBody: "This is not a polished agency-style funnel. It is a compact explanation of the kinds of internal tools and workflow improvements I can help with in this industry.",
-    pagePurposeBodyFollowup: "If that is relevant, the next useful step is a short conversation about one recurring workflow that currently wastes time.",
-  };
+export async function getAllIndustryPages(locale: string): Promise<IndustryPageDocument[]> {
+  const pages = await Promise.all(INDUSTRY_PAGE_SLUGS.map((slug) => getIndustryPageBySlug(locale, slug)));
+  return pages.filter((page): page is IndustryPageDocument => Boolean(page));
 }

@@ -42,8 +42,8 @@ function getProjectsTitleByLocale(locale: string): string {
   }
 }
 
-function getProjectDisplayData(locale: Locale, projectRef: CuratedProjectRef): ProjectDisplayData {
-  const project = getProjectBySlug(locale, projectRef.slug) || getProjectBySlug("en", projectRef.slug);
+async function getProjectDisplayData(locale: Locale, projectRef: CuratedProjectRef): Promise<ProjectDisplayData> {
+  const project = await getProjectBySlug(locale, projectRef.slug) || await getProjectBySlug("en", projectRef.slug);
 
   if (!project) {
     return {
@@ -67,16 +67,14 @@ function getProjectDisplayData(locale: Locale, projectRef: CuratedProjectRef): P
   };
 }
 
-export function getCuratedProjects(locale: Locale): CuratedProject[] {
-  return curatedProjects.map((projectRef) => {
-    const project = getProjectDisplayData(locale, projectRef);
-    return {
-      iconName: project.iconName,
-      text: project.title,
-      description: project.description || undefined,
-      url: project.url,
-    };
-  });
+export async function getCuratedProjects(locale: Locale): Promise<CuratedProject[]> {
+  const projects = await Promise.all(curatedProjects.map((projectRef) => getProjectDisplayData(locale, projectRef)));
+  return projects.map((project) => ({
+    iconName: project.iconName,
+    text: project.title,
+    description: project.description || undefined,
+    url: project.url,
+  }));
 }
 
 function toSection(projects: ProjectDisplayData[], locale: string): CvSection {
@@ -102,6 +100,6 @@ export async function getCVProjectsSectionForJob(_jobDescription: string, locale
 
 export async function getCVProjectsSection(locale: string = "en"): Promise<CvSection> {
   const validLocale: Locale = locale === "da" || locale === "sv" ? locale : "en";
-  const projects = curatedProjects.map((projectRef) => getProjectDisplayData(validLocale, projectRef));
+  const projects = await Promise.all(curatedProjects.map((projectRef) => getProjectDisplayData(validLocale, projectRef)));
   return toSection(projects, validLocale);
 }

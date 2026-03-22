@@ -1,12 +1,13 @@
 import React from "react";
 import PageWrapper from "@/components/pages/pageWrapper";
 import { Grid } from "@mui/material";
-import { Gallery, Project } from "@/types";
-import { readMarkdownFiles } from "@/lib/markdown";
+import { Gallery } from "@/types";
+import { getListedProjects } from "@/lib/projects";
 import GalleryComponent from "@/components/pages/galery/galleryComponent";
 
 async function GalleryPage(gallery: Gallery) {
-  const projects = readMarkdownFiles<Project>('data/projects');
+  const projects = await getListedProjects("en");
+
   return (
     <PageWrapper title={gallery.title} containerMaxWidth="lg">
       <Grid
