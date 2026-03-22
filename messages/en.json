@@ -230,15 +230,15 @@
   },
   "industries": {
     "overviewEyebrow": "Industry pages",
-    "overviewTitle": "Focused pages for the industries I am actively reaching out to",
-    "overviewDescription": "These pages are designed to support outreach with concrete examples of the kinds of internal tools, workflow fixes, and small software projects that are often useful in specific industries.",
+    "overviewTitle": "Focused pages for industries I think are a strong fit for this kind of work",
+    "overviewDescription": "These pages support outreach with concrete examples of internal tools, workflow fixes, and small software projects that seem relevant for specific industries.",
     "openPageLabel": "Open page",
     "selectedWorkLabel": "See selected work",
     "painPointsLabel": "Where teams usually lose time",
     "examplesLabel": "Examples of a useful first project",
-    "startHereTitle": "Good places to start",
-    "startHereBody": "A good first project is one recurring task that already wastes time: reminders, handoffs, document handling, status updates, or spreadsheet cleanup.",
-    "bridgeBody": "These pages are not meant to sell a giant transformation project. The useful first version is usually smaller: one reminder flow, one handoff, one approval path, or one messy bit of admin turned into something more reliable.",
-    "finalCtaBody": "A good place to start is one real workflow that wastes time today, not a big transformation plan."
+    "startHereTitle": "Possible places to start",
+    "startHereBody": "Possible starting points include recurring tasks that already waste time: reminders, handoffs, document handling, status updates, or spreadsheet cleanup.",
+    "bridgeBody": "These pages are not trying to sell a giant transformation project. What seems more realistic is one concrete workflow: one reminder flow, one handoff, one approval path, or one messy bit of admin made more reliable.",
+    "finalCtaBody": "If one workflow already feels messy or repetitive, that is enough to start a useful conversation."
   }
 }

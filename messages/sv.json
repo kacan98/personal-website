@@ -230,15 +230,15 @@
   },
   "industries": {
     "overviewEyebrow": "Branschsidor",
-    "overviewTitle": "Fokuserade sidor för de branscher jag aktivt kontaktar",
-    "overviewDescription": "De här sidorna är gjorda för outreach med konkreta exempel på den typ av interna verktyg, arbetsflödesförbättringar och mindre mjukvaruprojekt som ofta är användbara i specifika branscher.",
+    "overviewTitle": "Fokuserade sidor för branscher som jag tror passar bra för den här typen av arbete",
+    "overviewDescription": "De här sidorna stödjer outreach med konkreta exempel på interna verktyg, arbetsflödesförbättringar och mindre mjukvaruprojekt som verkar relevanta för specifika branscher.",
     "openPageLabel": "Öppna sida",
     "selectedWorkLabel": "Se utvalda projekt",
     "painPointsLabel": "Var team vanligtvis tappar tid",
     "examplesLabel": "Exempel på ett bra första projekt",
-    "startHereTitle": "Bra ställen att börja",
-    "startHereBody": "Ett bra första projekt är en återkommande uppgift som redan slösar tid: påminnelser, överlämningar, dokumenthantering, statusuppdateringar eller kalkylbladsstädning.",
-    "bridgeBody": "De här sidorna försöker inte sälja ett stort transformationsprojekt. Ett bra första steg är ofta mindre: ett påminnelseflöde, en överlämning, en godkännandeväg eller en rörig admin-del som görs mer stabil.",
-    "finalCtaBody": "En bra startpunkt är ett konkret arbetsflöde som slösar tid i dag, inte en stor transformationsplan."
+    "startHereTitle": "Möjliga ställen att börja",
+    "startHereBody": "Möjliga startpunkter är återkommande uppgifter som redan slösar tid: påminnelser, överlämningar, dokumenthantering, statusuppdateringar eller kalkylbladsstädning.",
+    "bridgeBody": "De här sidorna försöker inte sälja ett stort transformationsprojekt. En mer realistisk startpunkt är ett konkret arbetsflöde: ett påminnelseflöde, en överlämning, en godkännandeväg eller en rörig admin-del som görs mer stabil.",
+    "finalCtaBody": "Om ett arbetsflöde redan känns rörigt eller repetitivt räcker det för att starta ett vettigt samtal."
   }
 }

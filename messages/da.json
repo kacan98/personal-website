@@ -230,15 +230,15 @@
   },
   "industries": {
     "overviewEyebrow": "Branche-sider",
-    "overviewTitle": "Fokuserede sider til de brancher jeg aktivt rækker ud til",
-    "overviewDescription": "De her sider er lavet til outreach med konkrete eksempler på den slags interne værktøjer, workflow-forbedringer og mindre softwareprojekter, som ofte giver mening i bestemte brancher.",
+    "overviewTitle": "Fokuserede sider til brancher, som jeg tror er et godt match til den her type arbejde",
+    "overviewDescription": "De her sider støtter outreach med konkrete eksempler på interne værktøjer, workflow-forbedringer og mindre softwareprojekter, som virker relevante for bestemte brancher.",
     "openPageLabel": "Åbn side",
     "selectedWorkLabel": "Se udvalgte projekter",
     "painPointsLabel": "Hvor teams typisk mister tid",
     "examplesLabel": "Eksempler på et godt første projekt",
-    "startHereTitle": "Gode steder at starte",
-    "startHereBody": "Et godt første projekt er én tilbagevendende opgave, der allerede spilder tid: påmindelser, overleveringer, dokumenthåndtering, statusopdateringer eller regnearksoprydning.",
-    "bridgeBody": "Siderne her prøver ikke at sælge et stort transformationsprojekt. Et godt første skridt er ofte mindre: ét påmindelsesflow, én overlevering, én godkendelsessti eller ét rodet admin-led gjort mere stabilt.",
-    "finalCtaBody": "Et godt sted at starte er ét konkret workflow, der spilder tid i dag, ikke en stor transformationsplan."
+    "startHereTitle": "Mulige steder at starte",
+    "startHereBody": "Mulige startpunkter er tilbagevendende opgaver, der allerede spilder tid: påmindelser, overleveringer, dokumenthåndtering, statusopdateringer eller regnearksoprydning.",
+    "bridgeBody": "Siderne her prøver ikke at sælge et stort transformationsprojekt. Det mere realistiske udgangspunkt er ét konkret workflow: ét påmindelsesflow, én overlevering, én godkendelsessti eller ét rodet admin-led gjort mere stabilt.",
+    "finalCtaBody": "Hvis ét workflow allerede føles rodet eller gentaget, er det nok til at starte en nyttig samtale."
   }
 }
