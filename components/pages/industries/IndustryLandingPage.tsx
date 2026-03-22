@@ -283,8 +283,8 @@ export function IndustryLandingPage({ page, locale, copy }: { page: IndustryPage
 
       <Container sx={{ ...getContainerSx(), display: "grid", gap: { xs: 4, md: 5 }, mt: { xs: 4, md: 6 } }}>
         <SectionTitle
-          title="High-value repetitive work to tackle first"
-          description="A strong first project is usually one recurring process that already wastes time every week: reminders, handoffs, document handling, status updates, spreadsheet cleanup, or selective AI support for repetitive drafting and extraction."
+          title="Good places to start"
+          description="A useful first project is often one recurring task that already wastes time every week: reminders, handoffs, document handling, status updates, or spreadsheet cleanup."
         />
 
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" }, gap: { xs: 2, md: 3 } }}>
