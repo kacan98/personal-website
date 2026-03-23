@@ -152,6 +152,29 @@ const SOCIAL_PLATFORMS = [
   },
 ];
 
+const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").replace(/\/$/, "");
+const HOSTED_PROFILE_IMAGE_URL = `${SIGNATURE_ASSET_HOST}/images/cv/profile.jpg`;
+const HOSTED_SOCIAL_ICON_URLS: Record<string, string> = {
+  LinkedIn: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/linkedin.png`,
+  GitHub: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/github.png`,
+  Twitter: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/twitter.png`,
+  Instagram: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/instagram.png`,
+  Facebook: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/facebook.png`,
+  YouTube: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/youtube.png`,
+  Medium: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/medium.png`,
+  Website: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/website.png`,
+};
+const MAX_PROFILE_IMAGE_SIZE = 64;
+
+const normalizeHostedImageUrl = (value: string | null | undefined) => {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return "";
+  if (/^(data:|blob:)/i.test(trimmed)) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("/")) return `${SIGNATURE_ASSET_HOST}${trimmed}`;
+  return trimmed;
+};
+
 const DEFAULT_SIGNATURE_DATA: SignatureData = {
   name: "Karel Čančara",
   title: "Full Stack Developer",
@@ -159,9 +182,9 @@ const DEFAULT_SIGNATURE_DATA: SignatureData = {
   email: settings.contactEmail,
   phone: "",
   website: settings.siteUrl,
-  profileImage: "",
+  profileImage: HOSTED_PROFILE_IMAGE_URL,
   croppedImage: "",
-  imageSize: 80,
+  imageSize: 64,
   imageShape: "circle",
   imagePosition: "left",
   crop: { x: 0, y: 0 },
@@ -226,37 +249,27 @@ const generateSignatureHTML = (data: SignatureData): string => {
   const fontFamily = getFontStack(font);
   const fontImport = getFontImport(font);
   const lineHeight = "1.4";
-
-  // Helper function to create colored icon SVG
-  const createColoredIcon = (platform: typeof SOCIAL_PLATFORMS[0], color: string) => {
-    // Decode the data URI to get the actual SVG
-    const svgContent = decodeURIComponent(platform.icon.replace('data:image/svg+xml,', ''));
-
-    // Replace the fill color (matches fill='#hexcolor' or fill='%23hexcolor')
-    const coloredSvg = svgContent.replace(/fill='[^']*'/g, `fill='${color}'`);
-
-    // Re-encode for data URI
-    return `data:image/svg+xml,${encodeURIComponent(coloredSvg)}`;
-  };
+  const avatarSize = Math.min(Math.max(imageSize || MAX_PROFILE_IMAGE_SIZE, 24), MAX_PROFILE_IMAGE_SIZE);
 
   const socialIconsHtml = socialLinks
     .map((link) => {
       const platform = SOCIAL_PLATFORMS.find((p) => p.name === link.platform);
       if (!platform || !link.url) return "";
-      const iconSrc = createColoredIcon(platform, colors.iconColor);
-      return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank">
+      const iconSrc = HOSTED_SOCIAL_ICON_URLS[platform.name] || HOSTED_SOCIAL_ICON_URLS.Website;
+      return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank" rel="noreferrer">
         <img src="${iconSrc}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
       </a>`;
     })
     .join("");
 
-  // Use croppedImage if available, otherwise fall back to profileImage
-  const imageToUse = croppedImage || profileImage;
+  const imageToUse = normalizeHostedImageUrl(croppedImage || profileImage) || HOSTED_PROFILE_IMAGE_URL;
   const profileImageHtml = imageToUse
     ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
-        <img src="${imageToUse}" alt="${name}" width="${imageSize}" height="${imageSize}" style="width: ${imageSize}px; height: ${imageSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
+        <img src="${imageToUse}" alt="${name}" width="${avatarSize}" height="${avatarSize}" style="width: ${avatarSize}px; height: ${avatarSize}px; max-width: ${avatarSize}px; max-height: ${avatarSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
       </td>`
     : "";
+
+  const hostedCompanyLogo = normalizeHostedImageUrl(companyLogo);
 
   return `<!DOCTYPE html>
 <html>
@@ -302,28 +315,20 @@ const generateSignatureHTML = (data: SignatureData): string => {
           ${website ? `<tr>
             <td style="padding: 0 0 10px 0;">
               <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank">${website.replace(/^https?:\/\//, "")}</a>
+                <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank" rel="noreferrer">${website.replace(/^https?:\/\//, "")}</a>
               </span>
             </td>
           </tr>` : ""}
-          ${
-            socialIconsHtml
-              ? `<tr>
+          ${socialIconsHtml ? `<tr>
             <td style="padding: 0;">
               ${socialIconsHtml}
             </td>
-          </tr>`
-              : ""
-          }
-          ${
-            companyLogo
-              ? `<tr>
+          </tr>` : ""}
+          ${hostedCompanyLogo ? `<tr>
             <td style="padding: 10px 0 0 0;">
-              <img src="${companyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
+              <img src="${hostedCompanyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
             </td>
-          </tr>`
-              : ""
-          }
+          </tr>` : ""}
         </table>
       </td>
     </tr>
@@ -416,122 +421,48 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     return signatureTable?.outerHTML || doc.body.innerHTML;
   }, [signatureData]);
 
-  const svgDataUriToPngDataUri = useCallback(async (svgDataUri: string, size = 24) => {
-    return await new Promise<string>((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = size;
-        canvas.height = size;
-
-        const context = canvas.getContext("2d");
-        if (!context) {
-          reject(new Error("Failed to create canvas context for icon conversion."));
-          return;
-        }
-
-        context.clearRect(0, 0, size, size);
-        context.drawImage(image, 0, 0, size, size);
-        resolve(canvas.toDataURL("image/png"));
-      };
-      image.onerror = () => reject(new Error("Failed to load SVG icon for PNG conversion."));
-      image.src = svgDataUri;
-    });
-  }, []);
-
-  const shapeImageDataUri = useCallback(async (imageSrc: string, width: number, height: number, imageShape: ImageShape) => {
-    return await new Promise<string>((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const context = canvas.getContext("2d");
-        if (!context) {
-          reject(new Error("Failed to create canvas context for avatar conversion."));
-          return;
-        }
-
-        context.clearRect(0, 0, width, height);
-        context.save();
-
-        if (imageShape === "circle") {
-          const radius = Math.min(width, height) / 2;
-          context.beginPath();
-          context.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
-          context.closePath();
-          context.clip();
-        } else if (imageShape === "rounded") {
-          const radius = 8;
-          context.beginPath();
-          context.moveTo(radius, 0);
-          context.lineTo(width - radius, 0);
-          context.quadraticCurveTo(width, 0, width, radius);
-          context.lineTo(width, height - radius);
-          context.quadraticCurveTo(width, height, width - radius, height);
-          context.lineTo(radius, height);
-          context.quadraticCurveTo(0, height, 0, height - radius);
-          context.lineTo(0, radius);
-          context.quadraticCurveTo(0, 0, radius, 0);
-          context.closePath();
-          context.clip();
-        }
-
-        context.drawImage(image, 0, 0, width, height);
-        context.restore();
-        resolve(canvas.toDataURL("image/png"));
-      };
-      image.onerror = () => reject(new Error("Failed to load avatar image for conversion."));
-      image.src = imageSrc;
-    });
-  }, []);
-
-  const getClipboardHtmlWithPngIcons = useCallback(async () => {
-    const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
-    const iconImages = Array.from(doc.querySelectorAll("a img[src^='data:image/svg+xml']"));
-    const currentProfileImage = signatureData.croppedImage || signatureData.profileImage;
-
-    await Promise.all(
-      iconImages.map(async (image) => {
-        const width = Number(image.getAttribute("width") || "24");
-        const svgDataUri = image.getAttribute("src") || "";
-        if (!svgDataUri) {
-          return;
-        }
-
-        try {
-          const pngDataUri = await svgDataUriToPngDataUri(svgDataUri, width);
-          image.setAttribute("src", pngDataUri);
-        } catch (error) {
-          console.error("Failed to convert icon to PNG data URI:", error);
-        }
-      })
-    );
-
-    if (currentProfileImage) {
-      const profileImage = Array.from(doc.querySelectorAll("img")).find((image) => (image.getAttribute("src") || "") === currentProfileImage);
-
-      if (profileImage) {
-        const width = Number(profileImage.getAttribute("width") || signatureData.imageSize || 80);
-        const height = Number(profileImage.getAttribute("height") || signatureData.imageSize || 80);
-
-        try {
-          const shapedPngDataUri = await shapeImageDataUri(currentProfileImage, width, height, signatureData.imageShape);
-          profileImage.setAttribute("src", shapedPngDataUri);
-        } catch (error) {
-          console.error("Failed to convert avatar to shaped PNG data URI:", error);
-        }
-      }
+  const getClipboardHtmlWithHostedImages = useCallback(async () => {
+    if (typeof DOMParser === "undefined") {
+      return getClipboardHtml();
     }
 
+    const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
+
+    Array.from(doc.querySelectorAll("img")).forEach((image) => {
+      const src = (image.getAttribute("src") || "").trim();
+      const alt = (image.getAttribute("alt") || "").trim();
+      const parentHref = image.closest("a")?.getAttribute("href") || "";
+
+      if (!src) {
+        return;
+      }
+
+      if (/^(data:|blob:)/i.test(src)) {
+        if (/company logo/i.test(alt)) {
+          image.remove();
+          return;
+        }
+
+        const matchedPlatform = Object.keys(HOSTED_SOCIAL_ICON_URLS).find((platform) =>
+          alt.toLowerCase().includes(platform.toLowerCase()) || parentHref.toLowerCase().includes(platform.toLowerCase())
+        );
+
+        image.setAttribute("src", matchedPlatform ? HOSTED_SOCIAL_ICON_URLS[matchedPlatform] : HOSTED_PROFILE_IMAGE_URL);
+        return;
+      }
+
+      if (src.startsWith("/")) {
+        image.setAttribute("src", `${SIGNATURE_ASSET_HOST}${src}`);
+      }
+    });
+
     return doc.body.innerHTML;
-  }, [getClipboardHtml, shapeImageDataUri, signatureData.croppedImage, signatureData.imageShape, signatureData.imageSize, signatureData.profileImage, svgDataUriToPngDataUri]);
+  }, [getClipboardHtml]);
 
   useEffect(() => {
     let cancelled = false;
 
-    void getClipboardHtmlWithPngIcons().then((clipboardHtml) => {
+    void getClipboardHtmlWithHostedImages().then((clipboardHtml) => {
       if (cancelled) {
         return;
       }
@@ -552,7 +483,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     return () => {
       cancelled = true;
     };
-  }, [getClipboardHtmlWithPngIcons]);
+  }, [getClipboardHtmlWithHostedImages]);
 
   const handlePreviewCopy = useCallback((event: React.ClipboardEvent<HTMLDivElement>) => {
     if (!selectionCopyHtml) {
@@ -566,7 +497,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   }, [selectionCopyHtml, selectionCopyText]);
 
   const handleCopy = async () => {
-    const clipboardHtml = selectionCopyHtml || await getClipboardHtmlWithPngIcons();
+    const clipboardHtml = selectionCopyHtml || await getClipboardHtmlWithHostedImages();
 
     try {
       if (typeof ClipboardItem !== "undefined") {

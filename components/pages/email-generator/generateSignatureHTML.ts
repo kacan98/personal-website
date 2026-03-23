@@ -1,5 +1,15 @@
+import { SIGNATURE_HOSTED_ASSETS } from "./constants";
 import type { SignatureData } from "./types";
-import { getFontStack, getFontImport, getBorderRadius, createColoredIcon, getSocialPlatform } from "./utils";
+import { getFontStack, getFontImport, getBorderRadius, getSocialPlatform } from "./utils";
+
+const MAX_PROFILE_IMAGE_SIZE = 64;
+
+const normalizeImageUrl = (value: string | null | undefined) => {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return "";
+  if (/^(data:|blob:)/i.test(trimmed)) return "";
+  return trimmed;
+};
 
 export const generateSignatureHTML = (data: SignatureData, options?: { includeImage?: boolean; minimal?: boolean }): string => {
   const { name, title, company, email, phone, website, profileImage, croppedImage, imageSize, imageShape, imagePosition, companyLogo, font, socialLinks, colors } = data;
@@ -8,25 +18,26 @@ export const generateSignatureHTML = (data: SignatureData, options?: { includeIm
   const lineHeight = "1.4";
   const includeImage = options?.includeImage !== false;
   const minimal = options?.minimal || false;
+  const avatarSize = Math.min(Math.max(imageSize || MAX_PROFILE_IMAGE_SIZE, 24), MAX_PROFILE_IMAGE_SIZE);
 
   const socialIconsHtml = socialLinks
     .map((link) => {
       const platform = getSocialPlatform(link.platform);
       if (!platform || !link.url) return "";
-      const iconSrc = createColoredIcon(platform, colors.iconColor);
-      return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank">
-        <img src="${iconSrc}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
+      return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank" rel="noreferrer">
+        <img src="${platform.icon}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
       </a>`;
     })
     .join("");
 
-  // Use croppedImage if available, otherwise fall back to profileImage
-  const imageToUse = croppedImage || profileImage;
+  const imageToUse = normalizeImageUrl(croppedImage || profileImage) || SIGNATURE_HOSTED_ASSETS.profileImage;
   const profileImageHtml = (includeImage && imageToUse)
     ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
-        <img src="${imageToUse}" alt="${name}" width="${imageSize}" height="${imageSize}" style="width: ${imageSize}px; height: ${imageSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
+        <img src="${imageToUse}" alt="${name}" width="${avatarSize}" height="${avatarSize}" style="width: ${avatarSize}px; height: ${avatarSize}px; max-width: ${avatarSize}px; max-height: ${avatarSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
       </td>`
     : "";
+
+  const hostedCompanyLogo = normalizeImageUrl(companyLogo);
 
   const signatureBody = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${fontFamily};">
     <tr>
@@ -65,34 +76,25 @@ export const generateSignatureHTML = (data: SignatureData, options?: { includeIm
           ${website ? `<tr>
             <td style="padding: 0 0 10px 0;">
               <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank">${website.replace(/^https?:\/\//, "")}</a>
+                <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank" rel="noreferrer">${website.replace(/^https?:\/\//, "")}</a>
               </span>
             </td>
           </tr>` : ""}
-          ${
-            socialIconsHtml
-              ? `<tr>
+          ${socialIconsHtml ? `<tr>
             <td style="padding: 0;">
               ${socialIconsHtml}
             </td>
-          </tr>`
-              : ""
-          }
-          ${
-            companyLogo
-              ? `<tr>
+          </tr>` : ""}
+          ${hostedCompanyLogo ? `<tr>
             <td style="padding: 10px 0 0 0;">
-              <img src="${companyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
+              <img src="${hostedCompanyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
             </td>
-          </tr>`
-              : ""
-          }
+          </tr>` : ""}
         </table>
       </td>
     </tr>
   </table>`;
 
-  // For minimal/Gmail mode, skip the DOCTYPE and wrapper
   if (minimal) {
     return signatureBody;
   }
