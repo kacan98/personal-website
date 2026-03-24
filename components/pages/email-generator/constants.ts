@@ -7,7 +7,7 @@ const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").repl
 const hostedAssetUrl = (path: string) => `${SIGNATURE_ASSET_HOST}${path.startsWith("/") ? path : `/${path}`}`;
 
 export const SIGNATURE_HOSTED_ASSETS = {
-  profileImage: hostedAssetUrl("/images/cv/profile.jpg"),
+  profileImage: hostedAssetUrl("/images/email-signature/profile-96.jpg"),
   icons: {
     LinkedIn: hostedAssetUrl("/images/email-signature-icons/linkedin.png"),
     GitHub: hostedAssetUrl("/images/email-signature-icons/github.png"),

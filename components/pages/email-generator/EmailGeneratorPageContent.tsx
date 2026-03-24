@@ -43,6 +43,7 @@ import PageWrapper from "../pageWrapper";
 import { BRAND_COLORS } from "@/app/colors";
 import { settings } from "@/data/settings";
 import ImageUpload from "./ImageUpload";
+import { compressImageForGmail } from "./imageCompression";
 
 type SignatureFont = "Arial" | "Helvetica" | "Verdana" | "Georgia" | "Open Sans" | "Roboto";
 
@@ -153,7 +154,7 @@ const SOCIAL_PLATFORMS = [
 ];
 
 const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").replace(/\/$/, "");
-const HOSTED_PROFILE_IMAGE_URL = `${SIGNATURE_ASSET_HOST}/images/cv/profile.jpg`;
+const HOSTED_PROFILE_IMAGE_URL = `${SIGNATURE_ASSET_HOST}/images/email-signature/profile-96.jpg`;
 const HOSTED_SOCIAL_ICON_URLS: Record<string, string> = {
   LinkedIn: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/linkedin.png`,
   GitHub: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/github.png`,
@@ -169,7 +170,6 @@ const MAX_PROFILE_IMAGE_SIZE = 64;
 const normalizeHostedImageUrl = (value: string | null | undefined) => {
   const trimmed = String(value || "").trim();
   if (!trimmed) return "";
-  if (/^(data:|blob:)/i.test(trimmed)) return "";
   if (/^https?:\/\//i.test(trimmed)) return trimmed;
   if (trimmed.startsWith("/")) return `${SIGNATURE_ASSET_HOST}${trimmed}`;
   return trimmed;
@@ -408,6 +408,31 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   const [selectionCopyHtml, setSelectionCopyHtml] = useState("");
   const [selectionCopyText, setSelectionCopyText] = useState("");
 
+  const compressSignatureImage = useCallback(async (imageSrc: string, maxSize = 96) => {
+    const trimmed = imageSrc.trim();
+    if (!trimmed) return "";
+    if (!/^(data:|blob:)/i.test(trimmed)) return trimmed;
+
+    return await compressImageForGmail(trimmed, maxSize, 0.82);
+  }, []);
+
+  const updateProfileImage = useCallback(async (image: string) => {
+    if (!image) {
+      setSignatureData((current) => ({ ...current, profileImage: "", croppedImage: "" }));
+      return;
+    }
+
+    const compressedImage = await compressSignatureImage(image, 96);
+    setSignatureData((current) => ({
+      ...current,
+      profileImage: image,
+      croppedImage: compressedImage,
+      cropArea: null,
+      crop: { x: 0, y: 0 },
+      zoom: 1,
+    }));
+  }, [compressSignatureImage]);
+
   const getClipboardHtml = useCallback(() => {
     if (typeof DOMParser === "undefined") {
       return generateSignatureHTML(signatureData)
@@ -421,48 +446,41 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     return signatureTable?.outerHTML || doc.body.innerHTML;
   }, [signatureData]);
 
-  const getClipboardHtmlWithHostedImages = useCallback(async () => {
+  const getClipboardHtmlWithPreparedImages = useCallback(async () => {
     if (typeof DOMParser === "undefined") {
       return getClipboardHtml();
     }
 
     const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
+    const images = Array.from(doc.querySelectorAll("img"));
 
-    Array.from(doc.querySelectorAll("img")).forEach((image) => {
+    for (const image of images) {
       const src = (image.getAttribute("src") || "").trim();
       const alt = (image.getAttribute("alt") || "").trim();
-      const parentHref = image.closest("a")?.getAttribute("href") || "";
 
       if (!src) {
-        return;
-      }
-
-      if (/^(data:|blob:)/i.test(src)) {
-        if (/company logo/i.test(alt)) {
-          image.remove();
-          return;
-        }
-
-        const matchedPlatform = Object.keys(HOSTED_SOCIAL_ICON_URLS).find((platform) =>
-          alt.toLowerCase().includes(platform.toLowerCase()) || parentHref.toLowerCase().includes(platform.toLowerCase())
-        );
-
-        image.setAttribute("src", matchedPlatform ? HOSTED_SOCIAL_ICON_URLS[matchedPlatform] : HOSTED_PROFILE_IMAGE_URL);
-        return;
+        continue;
       }
 
       if (src.startsWith("/")) {
         image.setAttribute("src", `${SIGNATURE_ASSET_HOST}${src}`);
+        continue;
       }
-    });
+
+      if (/^(data:|blob:)/i.test(src)) {
+        const targetSize = /company logo/i.test(alt) ? 150 : 96;
+        const compressedSrc = await compressSignatureImage(src, targetSize);
+        image.setAttribute("src", compressedSrc);
+      }
+    }
 
     return doc.body.innerHTML;
-  }, [getClipboardHtml]);
+  }, [compressSignatureImage, getClipboardHtml]);
 
   useEffect(() => {
     let cancelled = false;
 
-    void getClipboardHtmlWithHostedImages().then((clipboardHtml) => {
+    void getClipboardHtmlWithPreparedImages().then((clipboardHtml) => {
       if (cancelled) {
         return;
       }
@@ -483,7 +501,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     return () => {
       cancelled = true;
     };
-  }, [getClipboardHtmlWithHostedImages]);
+  }, [getClipboardHtmlWithPreparedImages]);
 
   const handlePreviewCopy = useCallback((event: React.ClipboardEvent<HTMLDivElement>) => {
     if (!selectionCopyHtml) {
@@ -497,7 +515,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   }, [selectionCopyHtml, selectionCopyText]);
 
   const handleCopy = async () => {
-    const clipboardHtml = selectionCopyHtml || await getClipboardHtmlWithHostedImages();
+    const clipboardHtml = selectionCopyHtml || await getClipboardHtmlWithPreparedImages();
 
     try {
       if (typeof ClipboardItem !== "undefined") {
@@ -551,7 +569,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSignatureData({ ...signatureData, profileImage: reader.result as string });
+        void updateProfileImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -563,7 +581,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSignatureData({ ...signatureData, profileImage: reader.result as string });
+        void updateProfileImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -648,8 +666,8 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
               return;
             }
             const reader = new FileReader();
-            reader.onloadend = () => {
-              resolve(reader.result as string);
+            reader.onloadend = async () => {
+              resolve(await compressSignatureImage(reader.result as string, 96));
             };
             reader.readAsDataURL(blob);
           }, "image/png");
@@ -785,7 +803,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSignatureData({ ...signatureData, profileImage: reader.result as string });
+        void updateProfileImage(reader.result as string);
         setBackgroundRemovalProgress(100);
         setBackgroundRemovalStatus(t('complete'));
         setTimeout(() => {
@@ -1011,7 +1029,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                 <ImageUpload
                   label={t('profilePicture')}
                   image={signatureData.profileImage}
-                  onImageChange={(image) => setSignatureData({ ...signatureData, profileImage: image, croppedImage: "" })}
+                  onImageChange={(image) => { void updateProfileImage(image); }}
                   showRemoveBackground={true}
                   showCropButton={true}
                   onCropClick={handleOpenCropDialog}
@@ -1452,6 +1470,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                   backgroundColor: previewMode === 'light' ? "#fafafa" : "#2a2a2a",
                   mb: 3,
                 }}
+                data-testid="signature-preview-card"
                 onCopy={handlePreviewCopy}
               >
                 <Typography variant="body2" sx={{ color: previewMode === 'light' ? "#666" : "#cccccc", mb: 2, textAlign: "left" }}>
@@ -1470,6 +1489,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
             </Box>
             <Box sx={{ p: 2, borderTop: "1px solid #e0e0e0", backgroundColor: "#ffffff" }}>
               <Button
+                data-testid="signature-copy-button"
                 variant="contained"
                 fullWidth
                 startIcon={<ContentCopy />}

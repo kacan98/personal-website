@@ -7,7 +7,6 @@ const MAX_PROFILE_IMAGE_SIZE = 64;
 const normalizeImageUrl = (value: string | null | undefined) => {
   const trimmed = String(value || "").trim();
   if (!trimmed) return "";
-  if (/^(data:|blob:)/i.test(trimmed)) return "";
   return trimmed;
 };
 
