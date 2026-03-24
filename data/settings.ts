@@ -36,10 +36,6 @@ function resolveSiteUrl(): string {
     return normalizeSiteUrl(explicitSiteUrl);
   }
 
-  if (typeof window !== "undefined" && window.location?.origin) {
-    return normalizeSiteUrl(window.location.origin);
-  }
-
   return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
 }
 
