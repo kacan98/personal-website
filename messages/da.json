@@ -227,5 +227,19 @@
   },
   "backgroundRemoval": {
     "title": "Baggrundsfjernelse"
+  },
+  "industries": {
+    "overviewEyebrow": "Branche-sider",
+    "overviewTitle": "Fokuserede sider til brancher, som jeg tror er et godt match til den her type arbejde",
+    "overviewDescription": "De her sider støtter outreach med konkrete eksempler på interne værktøjer, workflow-forbedringer og mindre softwareprojekter, som virker relevante for bestemte brancher.",
+    "openPageLabel": "Åbn side",
+    "selectedWorkLabel": "Se udvalgte projekter",
+    "painPointsLabel": "Hvor friktionen viser sig",
+    "examplesLabel": "Det ville jeg bygge først",
+    "startHereTitle": "Konkrete eksempler",
+    "startHereBody": "Det her er den slags små værktøjer eller automatiseringer, jeg ville starte med for den her type team.",
+    "bridgeBody": "Det her er de tilbagevendende opgaver, som stadig kræver manuel opfølgning; eksemplerne nedenfor viser, hvordan jeg gør dem mere stabile.",
+    "finalCtaBody": "Hvis én gentagen proces allerede føles irriterende, er det nok kontekst til en nyttig første samtale.",
+    "finalCtaTitle": "Tag en snak om ét workflow"
   }
 }
