@@ -3,6 +3,10 @@ import { routing } from "@/i18n/routing";
 import { BUILD_SITE_URL, getSitemapRoutes } from "@/lib/site-metadata";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  if (!BUILD_SITE_URL) {
+    return [];
+  }
+
   const now = new Date();
   const routes = getSitemapRoutes();
   const entries: MetadataRoute.Sitemap = [
