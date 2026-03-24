@@ -106,7 +106,7 @@ export default function SignaturePreview({ signatureData, onCopy }: SignaturePre
           <Box
             sx={{ textAlign: "left" }}
             dangerouslySetInnerHTML={{
-              __html: generateSignatureHTML(signatureData).replace(
+              __html: generateSignatureHTML(signatureData, { assetBaseUrl: "" }).replace(
                 /<\!DOCTYPE.*?<body[^>]*>/s,
                 ""
               ).replace(/<\/body>.*$/s, ""),

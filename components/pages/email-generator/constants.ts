@@ -15,6 +15,8 @@ export const hostedAssetUrl = (path: string) => {
   return SIGNATURE_ASSET_HOST ? `${SIGNATURE_ASSET_HOST}${normalizedPath}` : normalizedPath;
 };
 
+export const signatureAssetPath = (path: string) => (path.startsWith("/") ? path : `/${path}`);
+
 export const presetSlug = (presetName: string) => presetName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export const COLOR_PRESETS: ColorPreset[] = [
@@ -55,12 +57,20 @@ export const getMatchingColorPreset = (colors: SignatureData["colors"]) => (
   COLOR_PRESETS.find((preset) => colorsMatchPreset(colors, preset)) || null
 );
 
-export const getPresetHostedIconUrl = (presetName: string, platformName: SocialIconPlatformName) => (
-  hostedAssetUrl(`/images/email-signature-icons/presets/${presetSlug(presetName)}/${SOCIAL_ICON_SLUGS[platformName]}.png`)
+export const getPresetIconPath = (presetName: string, platformName: SocialIconPlatformName) => (
+  signatureAssetPath(`/images/email-signature-icons/presets/${presetSlug(presetName)}/${SOCIAL_ICON_SLUGS[platformName]}.png`)
 );
 
+export const getPresetHostedIconUrl = (presetName: string, platformName: SocialIconPlatformName) => (
+  hostedAssetUrl(getPresetIconPath(presetName, platformName))
+);
+
+export const SIGNATURE_ASSET_PATHS = {
+  profileImage: signatureAssetPath("/images/email-signature/profile-96.jpg"),
+} as const;
+
 export const SIGNATURE_HOSTED_ASSETS = {
-  profileImage: hostedAssetUrl("/images/email-signature/profile-96.jpg"),
+  profileImage: hostedAssetUrl(SIGNATURE_ASSET_PATHS.profileImage),
 } as const;
 
 const SOCIAL_PLATFORM_PLACEHOLDERS: Record<SocialIconPlatformName, string> = {
@@ -89,7 +99,7 @@ export const DEFAULT_SIGNATURE_DATA: SignatureData = {
   email: settings.contactEmail,
   phone: "",
   website: settings.siteUrl,
-  profileImage: SIGNATURE_HOSTED_ASSETS.profileImage,
+  profileImage: SIGNATURE_ASSET_PATHS.profileImage,
   croppedImage: "",
   imageSize: 64,
   imageShape: "circle",

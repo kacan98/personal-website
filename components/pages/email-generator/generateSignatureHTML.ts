@@ -1,7 +1,7 @@
 import {
   getMatchingColorPreset,
-  getPresetHostedIconUrl,
-  SIGNATURE_HOSTED_ASSETS,
+  getPresetIconPath,
+  SIGNATURE_ASSET_PATHS,
 } from "./constants";
 import type { SocialIconPlatformName } from "./iconSources";
 import type { SignatureData } from "./types";
@@ -15,13 +15,26 @@ const normalizeImageUrl = (value: string | null | undefined) => {
   return trimmed;
 };
 
-export const generateSignatureHTML = (data: SignatureData, options?: { includeImage?: boolean; minimal?: boolean }): string => {
+const resolveAssetUrl = (value: string, assetBaseUrl?: string) => {
+  if (!value.startsWith("/")) {
+    return value;
+  }
+
+  const normalizedBaseUrl = (assetBaseUrl || "").replace(/\/$/, "");
+  return normalizedBaseUrl ? `${normalizedBaseUrl}${value}` : value;
+};
+
+export const generateSignatureHTML = (
+  data: SignatureData,
+  options?: { includeImage?: boolean; minimal?: boolean; assetBaseUrl?: string }
+): string => {
   const { name, title, company, email, phone, website, profileImage, croppedImage, imageSize, imageShape, imagePosition, companyLogo, font, socialLinks, colors } = data;
   const fontFamily = getFontStack(font);
   const fontImport = getFontImport(font);
   const lineHeight = "1.4";
   const includeImage = options?.includeImage !== false;
   const minimal = options?.minimal || false;
+  const assetBaseUrl = options?.assetBaseUrl;
   const avatarSize = Math.min(Math.max(imageSize || MAX_PROFILE_IMAGE_SIZE, 24), MAX_PROFILE_IMAGE_SIZE);
   const matchingPreset = getMatchingColorPreset(colors);
 
@@ -31,7 +44,7 @@ export const generateSignatureHTML = (data: SignatureData, options?: { includeIm
       if (!platform || !link.url) return "";
 
       const iconSrc = matchingPreset
-        ? getPresetHostedIconUrl(matchingPreset.name, platform.name as SocialIconPlatformName)
+        ? resolveAssetUrl(getPresetIconPath(matchingPreset.name, platform.name as SocialIconPlatformName), assetBaseUrl)
         : createColoredIcon(platform.name, colors.iconColor);
 
       return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank" rel="noreferrer">
@@ -40,7 +53,10 @@ export const generateSignatureHTML = (data: SignatureData, options?: { includeIm
     })
     .join("");
 
-  const imageToUse = normalizeImageUrl(croppedImage || profileImage) || SIGNATURE_HOSTED_ASSETS.profileImage;
+  const imageToUse = resolveAssetUrl(
+    normalizeImageUrl(croppedImage || profileImage) || SIGNATURE_ASSET_PATHS.profileImage,
+    assetBaseUrl
+  );
   const profileImageHtml = (includeImage && imageToUse)
     ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
         <img src="${imageToUse}" alt="${name}" width="${avatarSize}" height="${avatarSize}" style="width: ${avatarSize}px; height: ${avatarSize}px; max-width: ${avatarSize}px; max-height: ${avatarSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
