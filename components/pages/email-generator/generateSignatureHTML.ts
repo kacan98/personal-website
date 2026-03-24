@@ -57,9 +57,12 @@ export const generateSignatureHTML = (
     normalizeImageUrl(croppedImage || profileImage) || SIGNATURE_ASSET_PATHS.profileImage,
     assetBaseUrl
   );
+  const imageBorderRadius = getBorderRadius(imageShape);
   const profileImageHtml = (includeImage && imageToUse)
     ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
-        <img src="${imageToUse}" alt="${name}" width="${avatarSize}" height="${avatarSize}" style="width: ${avatarSize}px; height: ${avatarSize}px; max-width: ${avatarSize}px; max-height: ${avatarSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
+        <span style="display: block; width: ${avatarSize}px; height: ${avatarSize}px; border-radius: ${imageBorderRadius}; overflow: hidden; line-height: 0;">
+          <img src="${imageToUse}" alt="${name}" width="${avatarSize}" height="${avatarSize}" style="width: ${avatarSize}px; height: ${avatarSize}px; max-width: ${avatarSize}px; max-height: ${avatarSize}px; border-radius: ${imageBorderRadius}; display: block; object-fit: cover; border: none;">
+        </span>
       </td>`
     : "";
 
@@ -76,43 +79,43 @@ export const generateSignatureHTML = (
             </td>
           </tr>
           ${title ? `<tr>
-            <td style="padding: 0 0 2px 0;">
+            <td style="padding: 0 0 4px 0;">
               <span style="font-size: 14px; color: ${colors.titleColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${title}</span>
             </td>
           </tr>` : ""}
           ${company ? `<tr>
-            <td style="padding: 0 0 10px 0;">
+            <td style="padding: 0 0 8px 0;">
               <span style="font-size: 14px; color: ${colors.titleColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${company}</span>
             </td>
           </tr>` : ""}
           ${email ? `<tr>
-            <td style="padding: 0 0 3px 0;">
+            <td style="padding: 0 0 4px 0;">
               <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
                 <a href="mailto:${email}" style="color: ${colors.linkColor}; text-decoration: none;">${email}</a>
               </span>
             </td>
           </tr>` : ""}
           ${phone ? `<tr>
-            <td style="padding: 0 0 3px 0;">
+            <td style="padding: 0 0 4px 0;">
               <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
                 <a href="tel:${phone.replace(/\s/g, "")}" style="color: ${colors.linkColor}; text-decoration: none;">${phone}</a>
               </span>
             </td>
           </tr>` : ""}
           ${website ? `<tr>
-            <td style="padding: 0 0 10px 0;">
+            <td style="padding: 0 0 8px 0;">
               <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
                 <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank" rel="noreferrer">${website.replace(/^https?:\/\//, "")}</a>
               </span>
             </td>
           </tr>` : ""}
           ${socialIconsHtml ? `<tr>
-            <td style="padding: 0;">
+            <td style="padding: 8px 0 0 0;">
               ${socialIconsHtml}
             </td>
           </tr>` : ""}
           ${hostedCompanyLogo ? `<tr>
-            <td style="padding: 10px 0 0 0;">
+            <td style="padding: 12px 0 0 0;">
               <img src="${hostedCompanyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
             </td>
           </tr>` : ""}
