@@ -1,7 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { removeBackground } from "@imgly/background-removal";
@@ -41,303 +40,26 @@ import { ExpandMore, Clear, LightMode, DarkMode } from "@mui/icons-material";
 import { ContentCopy, Delete, Add, Refresh } from "@mui/icons-material";
 import PageWrapper from "../pageWrapper";
 import { BRAND_COLORS } from "@/app/colors";
-import { settings } from "@/data/settings";
 import ImageUpload from "./ImageUpload";
+import { DEFAULT_SIGNATURE_DATA, SOCIAL_PLATFORMS, STORAGE_KEY, SIGNATURE_ASSET_HOST, COLOR_PRESETS as BASE_COLOR_PRESETS } from "./constants";
 import { compressImageForGmail } from "./imageCompression";
-
-type SignatureFont = "Arial" | "Helvetica" | "Verdana" | "Georgia" | "Open Sans" | "Roboto";
-
-type SocialLink = {
-  id: string;
-  platform: string;
-  url: string;
-};
-
-type ImageShape = "circle" | "square" | "rounded";
-type ImagePosition = "top" | "left";
-
-type SignatureData = {
-  name: string;
-  title: string;
-  company: string;
-  email: string;
-  phone: string;
-  website: string;
-  profileImage: string;
-  croppedImage: string; // The final cropped image to use
-  imageSize: number;
-  imageShape: ImageShape;
-  imagePosition: ImagePosition;
-  imageFocusX: number; // Horizontal focus point (0-100)
-  imageFocusY: number; // Vertical focus point (0-100)
-  crop: { x: number; y: number }; // Crop position
-  zoom: number; // Zoom level
-  cropArea: Area | null; // Cropped area pixels
-  companyLogo: string;
-  font: SignatureFont;
-  socialLinks: SocialLink[];
-  colors: {
-    nameColor: string;
-    titleColor: string;
-    linkColor: string;
-    iconColor: string;
-  };
-};
+import { generateSignatureHTML } from "./generateSignatureHTML";
+import { getCachedPngIcon } from "./svgToPng";
+import type { SignatureData, SignatureFont, SocialLink, ImageShape, ImagePosition } from "./types";
 
 type EmailGeneratorPageContentProps = {
   title: string;
   locale: string;
 };
 
-const STORAGE_KEY = "email-signature-data";
-
 const COLOR_PRESETS = [
-  {
-    name: "colorPresetProfessionalBlue",
-    colors: { nameColor: "#666666", titleColor: "#999999", linkColor: "#0066cc", iconColor: "#777777" },
-  },
-  {
-    name: "colorPresetModernPurple",
-    colors: { nameColor: "#7a6090", titleColor: "#999999", linkColor: "#9b6cf6", iconColor: "#7a6090" },
-  },
-  {
-    name: "colorPresetCorporateGray",
-    colors: { nameColor: "#666666", titleColor: "#888888", linkColor: "#4a5568", iconColor: "#777777" },
-  },
-  {
-    name: "colorPresetTechGreen",
-    colors: { nameColor: "#2a8a6b", titleColor: "#999999", linkColor: "#15a679", iconColor: "#2a8a6b" },
-  },
-  {
-    name: "colorPresetCreativeOrange",
-    colors: { nameColor: "#bc6d52", titleColor: "#999999", linkColor: "#fa681c", iconColor: "#bc6d52" },
-  },
-  {
-    name: "colorPresetElegantGray",
-    colors: { nameColor: "#7a8598", titleColor: "#999999", linkColor: "#7b8593", iconColor: "#8a9098" },
-  },
+  { name: "colorPresetProfessionalBlue", colors: BASE_COLOR_PRESETS[0].colors },
+  { name: "colorPresetModernPurple", colors: BASE_COLOR_PRESETS[1].colors },
+  { name: "colorPresetCorporateGray", colors: BASE_COLOR_PRESETS[2].colors },
+  { name: "colorPresetTechGreen", colors: BASE_COLOR_PRESETS[3].colors },
+  { name: "colorPresetCreativeOrange", colors: BASE_COLOR_PRESETS[4].colors },
+  { name: "colorPresetElegantGray", colors: BASE_COLOR_PRESETS[5].colors },
 ];
-
-const SOCIAL_PLATFORMS = [
-  {
-    name: "LinkedIn",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230077b5'%3E%3Cpath d='M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "GitHub",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23181717'%3E%3Cpath d='M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "Twitter",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231DA1F2'%3E%3Cpath d='M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "Instagram",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='url(%23instaGradient)'%3E%3Cdefs%3E%3ClinearGradient id='instaGradient' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23f09433;stop-opacity:1'/%3E%3Cstop offset='25%25' style='stop-color:%23e6683c;stop-opacity:1'/%3E%3Cstop offset='50%25' style='stop-color:%23dc2743;stop-opacity:1'/%3E%3Cstop offset='75%25' style='stop-color:%23cc2366;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23bc1888;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "Facebook",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231877F2'%3E%3Cpath d='M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "YouTube",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF0000'%3E%3Cpath d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "Medium",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000000'%3E%3Cpath d='M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z'/%3E%3C/svg%3E"
-  },
-  {
-    name: "Website",
-    icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666666'%3E%3Cpath d='M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm1 16.057v-3.057h2.994c-.059 1.143-.212 2.24-.456 3.279-.823-.12-1.674-.188-2.538-.222zm1.957 2.162c-.499 1.33-1.159 2.497-1.957 3.456v-3.62c.666.028 1.319.081 1.957.164zm-1.957-7.219v-3.015c.868-.034 1.721-.103 2.548-.224.238 1.027.389 2.111.446 3.239h-2.994zm0-5.014v-3.661c.806.969 1.471 2.15 1.971 3.496-.642.084-1.3.137-1.971.165zm2.703-3.267c1.237.496 2.354 1.228 3.29 2.146-.642.234-1.311.442-2.019.607-.344-.992-.775-1.91-1.271-2.753zm-7.241 13.56c-.244-1.039-.398-2.136-.456-3.279h2.994v3.057c-.865.034-1.714.102-2.538.222zm2.538 1.776v3.62c-.798-.959-1.458-2.126-1.957-3.456.638-.083 1.291-.136 1.957-.164zm-2.994-7.055c.057-1.128.207-2.212.446-3.239.827.121 1.68.19 2.548.224v3.015h-2.994zm1.024-5.179c.5-1.346 1.165-2.527 1.97-3.496v3.661c-.671-.028-1.329-.081-1.97-.165zm-2.005-.35c-.708-.165-1.377-.373-2.018-.607.937-.918 2.053-1.65 3.29-2.146-.496.844-.927 1.762-1.272 2.753zm-.549 1.918c-.264 1.151-.434 2.36-.492 3.611h-3.933c.165-1.658.739-3.197 1.617-4.518.88.361 1.816.67 2.808.907zm.009 9.262c-.988.236-1.92.542-2.797.9-.89-1.328-1.471-2.879-1.637-4.551h3.934c.058 1.265.231 2.488.5 3.651zm.553 1.917c.342.976.768 1.881 1.257 2.712-1.223-.49-2.326-1.211-3.256-2.115.636-.229 1.299-.435 1.999-.597zm9.924 0c.7.163 1.362.367 1.999.597-.931.903-2.034 1.625-3.257 2.116.489-.832.915-1.737 1.258-2.713zm.553-1.917c.27-1.163.442-2.386.501-3.651h3.934c-.167 1.672-.748 3.223-1.638 4.551-.877-.358-1.81-.664-2.797-.9zm.501-5.651c-.058-1.251-.229-2.46-.492-3.611.992-.237 1.929-.546 2.809-.907.877 1.321 1.451 2.86 1.616 4.518h-3.933z'/%3E%3C/svg%3E"
-  },
-];
-
-const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").replace(/\/$/, "");
-const HOSTED_PROFILE_IMAGE_URL = `${SIGNATURE_ASSET_HOST}/images/email-signature/profile-96.jpg`;
-const HOSTED_SOCIAL_ICON_URLS: Record<string, string> = {
-  LinkedIn: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/linkedin.png`,
-  GitHub: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/github.png`,
-  Twitter: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/twitter.png`,
-  Instagram: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/instagram.png`,
-  Facebook: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/facebook.png`,
-  YouTube: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/youtube.png`,
-  Medium: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/medium.png`,
-  Website: `${SIGNATURE_ASSET_HOST}/images/email-signature-icons/website.png`,
-};
-const MAX_PROFILE_IMAGE_SIZE = 64;
-
-const normalizeHostedImageUrl = (value: string | null | undefined) => {
-  const trimmed = String(value || "").trim();
-  if (!trimmed) return "";
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
-  if (trimmed.startsWith("/")) return `${SIGNATURE_ASSET_HOST}${trimmed}`;
-  return trimmed;
-};
-
-const DEFAULT_SIGNATURE_DATA: SignatureData = {
-  name: "Karel Čančara",
-  title: "Full Stack Developer",
-  company: "Dynaway",
-  email: settings.contactEmail,
-  phone: "",
-  website: settings.siteUrl,
-  profileImage: HOSTED_PROFILE_IMAGE_URL,
-  croppedImage: "",
-  imageSize: 64,
-  imageShape: "circle",
-  imagePosition: "left",
-  crop: { x: 0, y: 0 },
-  zoom: 1,
-  cropArea: null,
-  imageFocusX: 50,
-  imageFocusY: 50,
-  companyLogo: "",
-  font: "Arial",
-  socialLinks: [
-    ...(settings.linkedinUrl ? [{ id: "1", platform: "LinkedIn", url: settings.linkedinUrl }] : []),
-    ...(settings.githubUrl ? [{ id: settings.linkedinUrl ? "2" : "1", platform: "GitHub", url: settings.githubUrl }] : []),
-  ],
-  colors: {
-    nameColor: "#666666",
-    titleColor: "#999999",
-    linkColor: "#0066cc",
-    iconColor: "#777777",
-  },
-};
-
-const getFontStack = (font: SignatureFont): string => {
-  const fontStacks: Record<SignatureFont, string> = {
-    Arial: "Arial, Helvetica, sans-serif",
-    Helvetica: "Helvetica, Arial, sans-serif",
-    Verdana: "Verdana, Geneva, sans-serif",
-    Georgia: "Georgia, 'Times New Roman', serif",
-    "Open Sans": "'Open Sans', Arial, sans-serif",
-    Roboto: "Roboto, Arial, sans-serif",
-  };
-  return fontStacks[font];
-};
-
-const getFontImport = (font: SignatureFont): string => {
-  const googleFonts: Record<SignatureFont, string> = {
-    Arial: "",
-    Helvetica: "",
-    Verdana: "",
-    Georgia: "",
-    "Open Sans":
-      "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap",
-    Roboto: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
-  };
-  return googleFonts[font];
-};
-
-const getBorderRadius = (shape: ImageShape): string => {
-  switch (shape) {
-    case "circle":
-      return "50%";
-    case "rounded":
-      return "8px";
-    case "square":
-      return "0";
-    default:
-      return "50%";
-  }
-};
-
-const generateSignatureHTML = (data: SignatureData): string => {
-  const { name, title, company, email, phone, website, profileImage, croppedImage, imageSize, imageShape, imagePosition, companyLogo, font, socialLinks, colors } = data;
-  const fontFamily = getFontStack(font);
-  const fontImport = getFontImport(font);
-  const lineHeight = "1.4";
-  const avatarSize = Math.min(Math.max(imageSize || MAX_PROFILE_IMAGE_SIZE, 24), MAX_PROFILE_IMAGE_SIZE);
-
-  const socialIconsHtml = socialLinks
-    .map((link) => {
-      const platform = SOCIAL_PLATFORMS.find((p) => p.name === link.platform);
-      if (!platform || !link.url) return "";
-      const iconSrc = HOSTED_SOCIAL_ICON_URLS[platform.name] || HOSTED_SOCIAL_ICON_URLS.Website;
-      return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank" rel="noreferrer">
-        <img src="${iconSrc}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
-      </a>`;
-    })
-    .join("");
-
-  const imageToUse = normalizeHostedImageUrl(croppedImage || profileImage) || HOSTED_PROFILE_IMAGE_URL;
-  const profileImageHtml = imageToUse
-    ? `<td style="padding-right: 15px; vertical-align: ${imagePosition === "top" ? "top" : "middle"};">
-        <img src="${imageToUse}" alt="${name}" width="${avatarSize}" height="${avatarSize}" style="width: ${avatarSize}px; height: ${avatarSize}px; max-width: ${avatarSize}px; max-height: ${avatarSize}px; border-radius: ${getBorderRadius(imageShape)}; display: block; object-fit: cover; border: none;">
-      </td>`
-    : "";
-
-  const hostedCompanyLogo = normalizeHostedImageUrl(companyLogo);
-
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  ${fontImport ? `<link href="${fontImport}" rel="stylesheet">` : ""}
-</head>
-<body style="margin: 0; padding: 0; font-family: ${fontFamily};">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; font-family: ${fontFamily};">
-    <tr>
-      ${profileImageHtml}
-      <td style="vertical-align: ${imagePosition === "top" ? "top" : "middle"}; padding: 0;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
-          <tr>
-            <td style="padding: 0 0 4px 0;">
-              <span style="font-size: 16px; font-weight: 700; color: ${colors.nameColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${name}</span>
-            </td>
-          </tr>
-          ${title ? `<tr>
-            <td style="padding: 0 0 2px 0;">
-              <span style="font-size: 14px; color: ${colors.titleColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${title}</span>
-            </td>
-          </tr>` : ""}
-          ${company ? `<tr>
-            <td style="padding: 0 0 10px 0;">
-              <span style="font-size: 14px; color: ${colors.titleColor}; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">${company}</span>
-            </td>
-          </tr>` : ""}
-          ${email ? `<tr>
-            <td style="padding: 0 0 3px 0;">
-              <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="mailto:${email}" style="color: ${colors.linkColor}; text-decoration: none;">${email}</a>
-              </span>
-            </td>
-          </tr>` : ""}
-          ${phone ? `<tr>
-            <td style="padding: 0 0 3px 0;">
-              <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="tel:${phone.replace(/\s/g, "")}" style="color: ${colors.linkColor}; text-decoration: none;">${phone}</a>
-              </span>
-            </td>
-          </tr>` : ""}
-          ${website ? `<tr>
-            <td style="padding: 0 0 10px 0;">
-              <span style="font-size: 13px; color: #333333; font-family: ${fontFamily}; display: block; margin: 0; line-height: ${lineHeight};">
-                <a href="${website}" style="color: ${colors.linkColor}; text-decoration: none;" target="_blank" rel="noreferrer">${website.replace(/^https?:\/\//, "")}</a>
-              </span>
-            </td>
-          </tr>` : ""}
-          ${socialIconsHtml ? `<tr>
-            <td style="padding: 0;">
-              ${socialIconsHtml}
-            </td>
-          </tr>` : ""}
-          ${hostedCompanyLogo ? `<tr>
-            <td style="padding: 10px 0 0 0;">
-              <img src="${hostedCompanyLogo}" alt="Company Logo" style="max-width: 150px; height: auto; display: block; border: none;">
-            </td>
-          </tr>` : ""}
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-
-};
-
 export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageContentProps) {
   const t = useTranslations('emailGenerator');
   const [signatureData, setSignatureData] = useState<SignatureData>(() => {
@@ -464,6 +186,12 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
 
       if (src.startsWith("/")) {
         image.setAttribute("src", `${SIGNATURE_ASSET_HOST}${src}`);
+        continue;
+      }
+
+      if (/^data:image\/svg\+xml/i.test(src)) {
+        const inlinePngSrc = await getCachedPngIcon(src, 24, 24);
+        image.setAttribute("src", inlinePngSrc);
         continue;
       }
 
@@ -1358,6 +1086,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                       </Typography>
                       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                         <input
+                          data-testid="signature-icon-color-input"
                           type="color"
                           value={signatureData.colors.iconColor}
                           onChange={(e) =>
@@ -1369,6 +1098,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
                           style={{ width: 50, height: 40, cursor: "pointer", border: "none" }}
                         />
                         <TextField
+                          data-testid="signature-icon-color-text"
                           size="small"
                           value={signatureData.colors.iconColor}
                           onChange={(e) =>

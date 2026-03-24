@@ -1,6 +1,11 @@
-import { SIGNATURE_HOSTED_ASSETS } from "./constants";
+import {
+  getMatchingColorPreset,
+  getPresetHostedIconUrl,
+  SIGNATURE_HOSTED_ASSETS,
+} from "./constants";
+import type { SocialIconPlatformName } from "./iconSources";
 import type { SignatureData } from "./types";
-import { getFontStack, getFontImport, getBorderRadius, getSocialPlatform } from "./utils";
+import { getFontStack, getFontImport, getBorderRadius, getSocialPlatform, createColoredIcon } from "./utils";
 
 const MAX_PROFILE_IMAGE_SIZE = 64;
 
@@ -18,13 +23,19 @@ export const generateSignatureHTML = (data: SignatureData, options?: { includeIm
   const includeImage = options?.includeImage !== false;
   const minimal = options?.minimal || false;
   const avatarSize = Math.min(Math.max(imageSize || MAX_PROFILE_IMAGE_SIZE, 24), MAX_PROFILE_IMAGE_SIZE);
+  const matchingPreset = getMatchingColorPreset(colors);
 
   const socialIconsHtml = socialLinks
     .map((link) => {
       const platform = getSocialPlatform(link.platform);
       if (!platform || !link.url) return "";
+
+      const iconSrc = matchingPreset
+        ? getPresetHostedIconUrl(matchingPreset.name, platform.name as SocialIconPlatformName)
+        : createColoredIcon(platform.name, colors.iconColor);
+
       return `<a href="${link.url}" style="display: inline-block; margin-right: 8px;" target="_blank" rel="noreferrer">
-        <img src="${platform.icon}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
+        <img src="${iconSrc}" alt="${link.platform}" width="24" height="24" style="width: 24px; height: 24px; display: block; border: none;">
       </a>`;
     })
     .join("");
