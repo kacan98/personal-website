@@ -1,3 +1,7 @@
+echo "Generating email signature preset icons..."
+npm run generate:signature-icons || exit 1
+git add public/images/email-signature-icons/presets || exit 1
+
 echo "Running TypeScript type check..."
 npm run type-check || exit 1
 

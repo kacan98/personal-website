@@ -1,24 +1,18 @@
 import { settings } from "@/data/settings";
 import type { SignatureData, ColorPreset, SocialPlatform } from "./types";
+import {
+  createSocialIconDataUrl,
+  SOCIAL_ICON_PLATFORM_NAMES,
+  SOCIAL_ICON_SLUGS,
+  type SocialIconPlatformName,
+} from "./iconSources";
 
 export const STORAGE_KEY = "email-signature-data";
-const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").replace(/\/$/, "");
+export const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").replace(/\/$/, "");
 
-const hostedAssetUrl = (path: string) => `${SIGNATURE_ASSET_HOST}${path.startsWith("/") ? path : `/${path}`}`;
+export const hostedAssetUrl = (path: string) => `${SIGNATURE_ASSET_HOST}${path.startsWith("/") ? path : `/${path}`}`;
 
-export const SIGNATURE_HOSTED_ASSETS = {
-  profileImage: hostedAssetUrl("/images/email-signature/profile-96.jpg"),
-  icons: {
-    LinkedIn: hostedAssetUrl("/images/email-signature-icons/linkedin.png"),
-    GitHub: hostedAssetUrl("/images/email-signature-icons/github.png"),
-    Twitter: hostedAssetUrl("/images/email-signature-icons/twitter.png"),
-    Instagram: hostedAssetUrl("/images/email-signature-icons/instagram.png"),
-    Facebook: hostedAssetUrl("/images/email-signature-icons/facebook.png"),
-    YouTube: hostedAssetUrl("/images/email-signature-icons/youtube.png"),
-    Medium: hostedAssetUrl("/images/email-signature-icons/medium.png"),
-    Website: hostedAssetUrl("/images/email-signature-icons/website.png"),
-  },
-} as const;
+export const presetSlug = (presetName: string) => presetName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 export const COLOR_PRESETS: ColorPreset[] = [
   {
@@ -47,48 +41,43 @@ export const COLOR_PRESETS: ColorPreset[] = [
   },
 ];
 
-export const SOCIAL_PLATFORMS: SocialPlatform[] = [
-  {
-    name: "LinkedIn",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.LinkedIn,
-    placeholder: "https://linkedin.com/in/yourprofile",
-  },
-  {
-    name: "GitHub",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.GitHub,
-    placeholder: "https://github.com/yourusername",
-  },
-  {
-    name: "Twitter",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.Twitter,
-    placeholder: "https://twitter.com/yourusername",
-  },
-  {
-    name: "Instagram",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.Instagram,
-    placeholder: "https://instagram.com/yourusername",
-  },
-  {
-    name: "Facebook",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.Facebook,
-    placeholder: "https://facebook.com/yourprofile",
-  },
-  {
-    name: "YouTube",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.YouTube,
-    placeholder: "https://youtube.com/@yourchannel",
-  },
-  {
-    name: "Medium",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.Medium,
-    placeholder: "https://medium.com/@yourusername",
-  },
-  {
-    name: "Website",
-    icon: SIGNATURE_HOSTED_ASSETS.icons.Website,
-    placeholder: "https://yourwebsite.com",
-  },
-];
+export const colorsMatchPreset = (colors: SignatureData["colors"], preset: ColorPreset) => (
+  colors.nameColor === preset.colors.nameColor
+  && colors.titleColor === preset.colors.titleColor
+  && colors.linkColor === preset.colors.linkColor
+  && colors.iconColor === preset.colors.iconColor
+);
+
+export const getMatchingColorPreset = (colors: SignatureData["colors"]) => (
+  COLOR_PRESETS.find((preset) => colorsMatchPreset(colors, preset)) || null
+);
+
+export const getPresetHostedIconUrl = (presetName: string, platformName: SocialIconPlatformName) => (
+  hostedAssetUrl(`/images/email-signature-icons/presets/${presetSlug(presetName)}/${SOCIAL_ICON_SLUGS[platformName]}.png`)
+);
+
+export const SIGNATURE_HOSTED_ASSETS = {
+  profileImage: hostedAssetUrl("/images/email-signature/profile-96.jpg"),
+} as const;
+
+const SOCIAL_PLATFORM_PLACEHOLDERS: Record<SocialIconPlatformName, string> = {
+  LinkedIn: "https://linkedin.com/in/yourprofile",
+  GitHub: "https://github.com/yourusername",
+  Twitter: "https://twitter.com/yourusername",
+  Instagram: "https://instagram.com/yourusername",
+  Facebook: "https://facebook.com/yourprofile",
+  YouTube: "https://youtube.com/@yourchannel",
+  Medium: "https://medium.com/@yourusername",
+  Website: "https://yourwebsite.com",
+};
+
+const defaultPreset = COLOR_PRESETS[0];
+
+export const SOCIAL_PLATFORMS: SocialPlatform[] = SOCIAL_ICON_PLATFORM_NAMES.map((name) => ({
+  name,
+  icon: createSocialIconDataUrl(name, defaultPreset.colors.iconColor),
+  placeholder: SOCIAL_PLATFORM_PLACEHOLDERS[name],
+}));
 
 export const DEFAULT_SIGNATURE_DATA: SignatureData = {
   name: "Karel Čančara",
@@ -114,9 +103,9 @@ export const DEFAULT_SIGNATURE_DATA: SignatureData = {
     ...(settings.githubUrl ? [{ id: settings.linkedinUrl ? "2" : "1", platform: "GitHub", url: settings.githubUrl }] : []),
   ],
   colors: {
-    nameColor: "#666666",
-    titleColor: "#999999",
-    linkColor: "#0066cc",
-    iconColor: "#777777",
+    nameColor: defaultPreset.colors.nameColor,
+    titleColor: defaultPreset.colors.titleColor,
+    linkColor: defaultPreset.colors.linkColor,
+    iconColor: defaultPreset.colors.iconColor,
   },
 };
