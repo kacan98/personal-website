@@ -3,16 +3,14 @@ import BackgroundEffect from "@/components/layout/BackgroundEffect";
 import Footer from "@/components/layout/Footer";
 import NavBar from "@/components/menu/navBar";
 import CustomThemeProvider from "@/components/theme/customThemeProvider";
-import { BRAND_COLORS } from "../colors";
 import { getSettings } from "@/data";
 import "@fontsource/cormorant-garamond";
 import "@fontsource/open-sans";
 import "@fontsource/urbanist";
 import "@fontsource/yeseva-one";
-import { Box, CssBaseline, LinearProgress, Typography } from "@mui/material";
+import { Box, CssBaseline } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -74,37 +72,7 @@ export default async function LocaleLayout({ children, params }: Props) {
               pt: { xs: 7, md: 8 },
             }}
           >
-            <Box component="main" sx={{ flexGrow: 1 }}>
-              <Suspense
-                fallback={
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: "50vh",
-                      gap: 2,
-                    }}
-                  >
-                    <LinearProgress
-                      sx={{
-                        width: "200px",
-                        "& .MuiLinearProgress-bar": {
-                          backgroundColor: BRAND_COLORS.accent,
-                        },
-                        backgroundColor: "rgba(255,255,255,0.1)",
-                      }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      Loading...
-                    </Typography>
-                  </Box>
-                }
-              >
-                {children}
-              </Suspense>
-            </Box>
+            <Box component="main" sx={{ flexGrow: 1 }}>{children}</Box>
             <Footer />
           </Box>
         </CustomThemeProvider>
