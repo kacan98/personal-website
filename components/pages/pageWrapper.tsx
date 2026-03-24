@@ -18,6 +18,8 @@ function PageWrapper({
   containerMaxWidth,
   onTitleClicked
 }: PageWrapperProps) {
+  const hasHeader = Boolean(title.trim() || description?.trim());
+
   return (
     <Container
       maxWidth={containerMaxWidth || SPACING.maxWidth}
@@ -27,12 +29,14 @@ function PageWrapper({
         textAlign: "center",
       }}
     >
-      <SectionHeader
-        title={title}
-        description={description}
-        size="large"
-        onClick={onTitleClicked}
-      />
+      {hasHeader ? (
+        <SectionHeader
+          title={title}
+          description={description}
+          size="large"
+          onClick={onTitleClicked}
+        />
+      ) : null}
       {children}
     </Container >
   );

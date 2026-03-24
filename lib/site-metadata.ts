@@ -9,7 +9,7 @@ export const SITE_NAME = settings.siteName;
 export const SITE_TITLE = `${SITE_NAME} - Full-Stack Developer`;
 export const SITE_DESCRIPTION =
   "Full-Stack Developer working across TypeScript, React, Angular, .NET-based environments, and X++. Building practical software, internal tools, and workflow-heavy systems.";
-export const SOCIAL_IMAGE = "/portfolio.png";
+export const SOCIAL_IMAGE = "/opengraph-image";
 export const CONTACT_EMAIL = settings.contactEmail;
 export const GITHUB_URL = settings.githubUrl;
 export const LINKEDIN_URL = settings.linkedinUrl;
