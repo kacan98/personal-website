@@ -115,6 +115,10 @@ function shouldUseLegacyContent(project: ProjectDocument | null, legacyProject: 
   if (!legacyProject) return false;
   if (!project) return true;
 
+  // If a locale-specific project file exists, prefer that localized copy over
+  // an English legacy story even when the localized article is intentionally brief.
+  if (project.locale !== 'en') return false;
+
   const trimmed = project.content.trim();
   const lineCount = trimmed ? trimmed.split(/\n+/).length : 0;
   return trimmed.length < 900 || lineCount < 18;
