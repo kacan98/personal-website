@@ -32,6 +32,19 @@ interface GitHubRelease {
   assets?: GitHubReleaseAsset[];
 }
 
+function resolveRepoUrl(hostname: string): string {
+  if (hostname.endsWith('.github.io')) {
+    const owner = hostname.replace('.github.io', '');
+    return `${owner}/personal-website`;
+  }
+
+  if (process.env.NEXT_PUBLIC_GITHUB_REPO) {
+    return process.env.NEXT_PUBLIC_GITHUB_REPO;
+  }
+
+  throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required');
+}
+
 const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [extensionDownloaded, setExtensionDownloaded] = useState(false);
@@ -42,29 +55,8 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
   useEffect(() => {
     const fetchLatestVersion = async () => {
       try {
-        // Simple: just fetch from the current domain's GitHub repo
-        // This will work for most deployments automatically
         const hostname = window.location.hostname;
-        let repoUrl;
-
-        // Auto-detect common patterns
-        if (hostname.includes('vercel.app')) {
-          // For Vercel deployments, use environment or throw error
-          if (!process.env.NEXT_PUBLIC_GITHUB_REPO) {
-            throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required for Vercel deployments');
-          }
-          repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO;
-        } else if (hostname.endsWith('.github.io')) {
-          // GitHub Pages
-          const owner = hostname.replace('.github.io', '');
-          repoUrl = `${owner}/personal-website`;
-        } else {
-          // Custom domain or localhost - use environment or throw error
-          if (!process.env.NEXT_PUBLIC_GITHUB_REPO) {
-            throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required');
-          }
-          repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO;
-        }
+        const repoUrl = resolveRepoUrl(hostname);
 
         const apiUrl = `https://api.github.com/repos/${repoUrl}/releases/latest`;
         const response = await fetch(apiUrl);
@@ -87,19 +79,8 @@ const ExtensionDownload: React.FC<ExtensionDownloadProps> = ({ open, onClose }) 
 
   const handleDownload = async () => {
     try {
-      // Auto-detect repo from domain
       const hostname = window.location.hostname;
-      let repoUrl;
-
-      if (hostname.endsWith('.github.io')) {
-        const owner = hostname.replace('.github.io', '');
-        repoUrl = `${owner}/personal-website`;
-      } else {
-        if (!process.env.NEXT_PUBLIC_GITHUB_REPO) {
-          throw new Error('NEXT_PUBLIC_GITHUB_REPO environment variable is required');
-        }
-        repoUrl = process.env.NEXT_PUBLIC_GITHUB_REPO;
-      }
+      const repoUrl = resolveRepoUrl(hostname);
 
       // Try to get the exact asset from the latest release
       const apiUrl = `https://api.github.com/repos/${repoUrl}/releases/latest`;

@@ -1,5 +1,7 @@
 import type { SignatureFont, ImageShape, SocialLink } from "./types";
 import { SOCIAL_PLATFORMS } from "./constants";
+import { createSocialIconDataUrl } from "./iconSources";
+import type { SocialIconPlatformName } from "./iconSources";
 
 export const getFontStack = (font: SignatureFont): string => {
   const fontStacks: Record<SignatureFont, string> = {
@@ -39,10 +41,9 @@ export const getBorderRadius = (shape: ImageShape): string => {
   }
 };
 
-export const createColoredIcon = (platform: typeof SOCIAL_PLATFORMS[0], color: string) => {
-  const svgContent = decodeURIComponent(platform.icon.replace('data:image/svg+xml,', ''));
-  const coloredSvg = svgContent.replace(/fill='[^']*'/g, `fill='${color}'`);
-  return `data:image/svg+xml,${encodeURIComponent(coloredSvg)}`;
+export const createColoredIcon = (platform: typeof SOCIAL_PLATFORMS[0] | string, color: string) => {
+  const platformName = typeof platform === "string" ? platform : platform.name;
+  return createSocialIconDataUrl(platformName as SocialIconPlatformName, color);
 };
 
 export const getSocialPlatform = (platformName: string) => {
@@ -50,5 +51,5 @@ export const getSocialPlatform = (platformName: string) => {
 };
 
 export const generateSocialLinkId = (socialLinks: SocialLink[]) => {
-  return Math.max(0, ...socialLinks.map((link) => parseInt(link.id)|| 0)) + 1;
+  return Math.max(0, ...socialLinks.map((link) => parseInt(link.id) || 0)) + 1;
 };
