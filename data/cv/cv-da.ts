@@ -128,7 +128,7 @@ export const cvConfigDa = {
         },
         {
           iconName: "science",
-          text: "Testing: Unit testing i Jasmine, Karma"
+          text: "Test: Unit testing i Jasmine, Karma"
         },
         {
           iconName: "gitHub",
@@ -160,26 +160,30 @@ export const cvConfigDa = {
     },
     {
       id: "personal-projects",
-      title: "Personlige Projekter",
+      title: "Projekter",
       bulletPoints: [
         {
           iconName: "speed",
-          text: "10x Præstationsforbedring - Reducerede synkroniseringstid fra 20+ min til <2 min",
+          text: "10x performanceforbedring",
+          description: "Reducerede et synkroniseringsflow i produktion fra 20+ minutter til under 2 minutter i et enterprise-workflow for teknikere.",
           url: "/da/projects/10x-performance-improvement"
         },
         {
           iconName: "schedule",
-          text: "Git-til-Jira Bro - Sparer ~1 time/måned per udvikler i tidssporing",
+          text: "Git-to-Jira Bridge",
+          description: "Automatiserede Jira-tidsregistrering ud fra Git-aktivitet for at fjerne gentagen manuel rapportering og holde worklogs tættere på det reelle udviklingsarbejde.",
           url: "/da/projects/git-to-jira-bridge"
         },
         {
           iconName: "dashboard",
-          text: "Udviklerdashboard - Samler Jira og GitHub i ét overblik for aktive opgaver, PR'er og opfølgning",
-          url: "/da/projects/git-to-jira-bridge"
+          text: "Udviklerdashboard",
+          description: "Internt dashboard der samler Jira-opgaver, PR'er, fejlende checks, konflikter og branch-opfølgning i ét handlingsorienteret overblik.",
+          url: "/da/projects/developer-task-overview-dashboard"
         },
         {
           iconName: "psychology",
-          text: "AI-drevet jobansøgningsplatform - GPT-baseret CV-tilpasning og cover letters",
+          text: "AI-jobansøgningsplatform",
+          description: "Adgangskodebeskyttet CV-workflow med AI-tilpasning, diff-review, oversættelse og et browser-til-ansøgning-flow til hurtigere tilpasning.",
           url: "/da/projects/ai-job-application-platform"
         }
       ]

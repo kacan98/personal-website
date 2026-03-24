@@ -128,7 +128,7 @@ export const cvSv = {
         },
         {
           iconName: "science",
-          text: "Testning: Unit testing i Jasmine, Karma"
+          text: "Testning: enhetstester i Jasmine och Karma"
         },
         {
           iconName: "gitHub",
@@ -160,26 +160,30 @@ export const cvSv = {
     },
     {
       id: "personal-projects",
-      title: "Personliga Projekt",
+      title: "Projekt",
       bulletPoints: [
         {
           iconName: "speed",
-          text: "10x Prestandaförbättring - Minskade synkroniseringstid från 20+ min till <2 min",
+          text: "10x prestandaförbättring",
+          description: "Minskade ett synkflöde i produktion från 20+ minuter till under 2 minuter i ett enterprise-arbetsflöde för tekniker.",
           url: "/sv/projects/10x-performance-improvement"
         },
         {
           iconName: "schedule",
-          text: "Git-till-Jira Bro - Sparar ~1 timme/månad per utvecklare i tidsspårning",
+          text: "Git-to-Jira Bridge",
+          description: "Automatiserade Jira-tidsrapportering utifrån Git-aktivitet för att ta bort repetitiv manuell rapportering och hålla worklogs närmare det faktiska utvecklingsflödet.",
           url: "/sv/projects/git-to-jira-bridge"
         },
         {
           iconName: "dashboard",
-          text: "Utvecklardashboard - Samlar Jira och GitHub i en vy för aktiva uppgifter, PR:er och uppföljning",
-          url: "/sv/projects/git-to-jira-bridge"
+          text: "Utvecklardashboard",
+          description: "Intern dashboard som samlar Jira-ärenden, PR:er, felande checks, konflikter och branchuppföljning i en handlingsorienterad vy.",
+          url: "/sv/projects/developer-task-overview-dashboard"
         },
         {
           iconName: "psychology",
-          text: "AI-driven jobbansökningsplattform - GPT-baserad CV-anpassning och cover letters",
+          text: "AI-plattform för jobbansökningar",
+          description: "Lösenordsskyddat CV-flöde med AI-anpassning, diffgranskning, översättning och ett flöde från webbläsare till ansökan för snabbare anpassning.",
           url: "/sv/projects/ai-job-application-platform"
         }
       ]

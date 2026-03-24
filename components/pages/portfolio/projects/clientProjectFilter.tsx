@@ -1,7 +1,7 @@
 "use client";
 import { Project } from "@/types";
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useCallback } from 'react';
 import { Box, Chip } from "@mui/material";
 import { BRAND_COLORS } from "@/app/colors";
@@ -17,9 +17,15 @@ const ClientProjectFilter = ({
   initialSelectedTags = []
 }: ClientProjectFilterProps) => {
   const t = useTranslations('projects');
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const labels = {
+    en: { tag: 'tag', tags: 'tags', selected: 'selected' },
+    da: { tag: 'tag', tags: 'tags', selected: 'valgt' },
+    sv: { tag: 'tagg', tags: 'taggar', selected: 'valda' },
+  }[locale as 'en' | 'da' | 'sv'] || { tag: 'tag', tags: 'tags', selected: 'selected' };
 
   // Get selected tags from URL or use initial
   const selectedTags = searchParams.get('tags')?.split(',').filter(Boolean) || initialSelectedTags;
@@ -125,7 +131,7 @@ const ClientProjectFilter = ({
           fontSize: '0.875rem',
           color: BRAND_COLORS.secondary,
         }}>
-          {selectedTags.length} {selectedTags.length === 1 ? 'tag' : 'tags'} selected
+          {selectedTags.length} {selectedTags.length === 1 ? labels.tag : labels.tags} {labels.selected}
         </Box>
       )}
     </Box>

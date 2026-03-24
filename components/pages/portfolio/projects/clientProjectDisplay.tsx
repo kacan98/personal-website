@@ -14,6 +14,11 @@ type ClientProjectDisplayProps = {
 const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps) => {
   const t = useTranslations('projects');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const labels = {
+    en: { tag: 'tag', tags: 'tags', selected: 'selected', project: 'project', projects: 'projects' },
+    da: { tag: 'tag', tags: 'tags', selected: 'valgt', project: 'projekt', projects: 'projekter' },
+    sv: { tag: 'tagg', tags: 'taggar', selected: 'valda', project: 'projekt', projects: 'projekt' },
+  }[locale as 'en' | 'da' | 'sv'] || { tag: 'tag', tags: 'tags', selected: 'selected', project: 'project', projects: 'projects' };
 
   const uniqueTags = useMemo(() => {
     const tagCounts = allProjects.reduce<Record<string, number>>((acc, project) => {
@@ -93,7 +98,7 @@ const ClientProjectDisplay = ({ allProjects, locale }: ClientProjectDisplayProps
 
         {selectedTags.length > 0 && (
           <Box sx={{ fontSize: '0.875rem', color: BRAND_COLORS.secondary }}>
-            {selectedTags.length} {selectedTags.length === 1 ? 'tag' : 'tags'} selected • {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
+            {selectedTags.length} {selectedTags.length === 1 ? labels.tag : labels.tags} {labels.selected} • {filteredProjects.length} {filteredProjects.length === 1 ? labels.project : labels.projects}
           </Box>
         )}
       </Box>

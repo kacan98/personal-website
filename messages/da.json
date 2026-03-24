@@ -4,7 +4,7 @@
     "about": "Om mig",
     "projects": "Projekter",
     "cv": "CV",
-    "blog": "Projects",
+    "blog": "Projekthistorier",
     "gallery": "Galleri",
     "chatbot": "Chatbot",
     "tools": "Gratis Værktøjer"
@@ -55,16 +55,16 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer",
+      "tagline": "Full-stack udvikler",
       "subtitle": "Jeg bygger produktfunktioner, interne værktøjer og workflow-software på tværs af frontend og backend."
     },
     "about": {
       "fullStack": {
-        "header": "Full-Stack Developer",
+        "header": "Full-stack udvikler",
         "content": "Jeg arbejder på tværs af frontend og backend med interfaces, endpoints, integrationer og interne værktøjer i rigtige produktionssystemer. Det meste af mit arbejde er i TypeScript, .NET og X++."
       },
       "aiEnhanced": {
-        "header": "Practical Development",
+        "header": "Praktisk udvikling",
         "content": "Jeg bruger AI-værktøjer som en del af mit udviklingsarbejde til research, implementering og iteration, men jeg går stadig op i ren kode, korrekthed og vedligeholdbarhed."
       },
       "problemSolver": {
@@ -119,7 +119,7 @@
       "description": "Kode og projekter"
     },
     "portfolio": {
-      "label": "Portfolio",
+      "label": "Portefølje",
       "description": "Se mit arbejde"
     },
     "sendEmail": "Send mig en email"
@@ -136,15 +136,15 @@
       "Færdiggør oplevelse...",
       "Næsten klar..."
     ],
-    "terminal": "Karels Portfolio Terminal",
+    "terminal": "Karels porteføljeterminal",
     "loadingAssets": "Indlæser aktiver..."
   },
   "chatbot": {
     "placeholder": "Spørg om min erfaring og færdigheder...",
     "sendButton": "Send",
-    "clearTooltip": "Clear Chatbot & Start Ny Samtale",
+    "clearTooltip": "Ryd chatbot og start ny samtale",
     "startNewChat": "Start Ny Chat",
-    "chatError": "Chatbot Error",
+    "chatError": "Chatbot-fejl",
     "initializing": "Initialiserer Karel AI...",
     "sending": "..."
   },
@@ -156,8 +156,8 @@
     "title": "Gratis Værktøjer",
     "description": "Gratis browserbaserede værktøjer. Ingen tilmelding, ingen grænser, 100% privat.",
     "emailSignature": "Email Signatur Generator",
-    "emailSignatureDesc": "Lav professionelle email signaturer med brugerdefinerede farver, skrifttyper og sociale links. Inkluderer AI-drevet baggrundsfjer nelse til profilbilleder.",
-    "backgroundRemoval": "Baggrundsfjer nelse",
+    "emailSignatureDesc": "Lav professionelle email-signaturer med brugerdefinerede farver, skrifttyper og sociale links. Inkluderer AI-drevet baggrundsfjernelse til profilbilleder.",
+    "backgroundRemoval": "Baggrundsfjernelse",
     "backgroundRemovalDesc": "Fjern baggrunde fra billeder ved hjælp af AI. Fungerer 100% i din browser - ingen uploads, helt privat og gratis."
   },
   "emailGenerator": {
@@ -226,6 +226,6 @@
     "fontRoboto": "Roboto (Google Font)"
   },
   "backgroundRemoval": {
-    "title": "Baggrundsfjer nelse"
+    "title": "Baggrundsfjernelse"
   }
 }

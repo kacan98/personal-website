@@ -11,6 +11,12 @@ interface ProjectPageProps {
   params: Promise<{ slug: string; locale: string }>;
 }
 
+const localizedLabels = {
+  en: { home: "Home", projects: "Projects", impact: "Impact" },
+  da: { home: "Hjem", projects: "Projekter", impact: "Effekt" },
+  sv: { home: "Hem", projects: "Projekt", impact: "Effekt" },
+} as const;
+
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug, locale } = await params;
   const project = await getProjectBySlug(locale, slug);
@@ -24,12 +30,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const impact = typeof project.metrics?.impact === "string"
     ? project.metrics.impact
     : project.metrics?.impact?.[locale as "en" | "da" | "sv"] || project.metrics?.impact?.en;
+  const labels = localizedLabels[(locale as keyof typeof localizedLabels)] || localizedLabels.en;
 
   return (
     <Container sx={{ ...getContainerSx(), py: 4 }}>
       <Breadcrumbs sx={{ mb: 4, maxWidth: "70ch", mx: "auto" }}>
-        <Link href={"/" + locale}>Home</Link>
-        <Link href={"/" + locale + "/projects"}>Projects</Link>
+        <Link href={"/" + locale}>{labels.home}</Link>
+        <Link href={"/" + locale + "/projects"}>{labels.projects}</Link>
         <Typography color="text.primary">{project.title}</Typography>
       </Breadcrumbs>
 
@@ -37,7 +44,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         {project.category ? <Chip label={project.category} sx={{ mb: 2 }} /> : null}
         <Typography variant="h3" sx={{ mb: 2 }}>{project.title}</Typography>
         {project.description ? <Typography variant="subtitle1" sx={{ mb: 3, color: "text.secondary" }}>{project.description}</Typography> : null}
-        {impact ? <Typography variant="subtitle1" sx={{ mb: 3, color: "primary.main", fontWeight: "bold" }}>Impact: {impact}</Typography> : null}
+        {impact ? <Typography variant="subtitle1" sx={{ mb: 3, color: "primary.main", fontWeight: "bold" }}>{labels.impact}: {impact}</Typography> : null}
         {project.tags?.length ? (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 3 }}>
             {project.tags.map((tag) => <Chip key={tag} label={tag} size="small" variant="outlined" />)}

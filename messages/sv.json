@@ -4,7 +4,7 @@
     "about": "Om mig",
     "projects": "Projekt",
     "cv": "CV",
-    "blog": "Projects",
+    "blog": "Projektberättelser",
     "gallery": "Galleri",
     "chatbot": "Chatbot",
     "tools": "Gratis Verktyg"
@@ -55,16 +55,16 @@
   },
   "homepage": {
     "hero": {
-      "tagline": "Full-Stack Developer",
+      "tagline": "Fullstackutvecklare",
       "subtitle": "Jag bygger produktfunktioner, interna verktyg och arbetsflödesmjukvara över frontend och backend."
     },
     "about": {
       "fullStack": {
-        "header": "Full-Stack Developer",
+        "header": "Fullstackutvecklare",
         "content": "Jag arbetar över både frontend och backend med gränssnitt, endpoints, integrationer och interna verktyg i riktiga produktionssystem. Det mesta av mitt arbete är i TypeScript, .NET och X++."
       },
       "aiEnhanced": {
-        "header": "Practical Development",
+        "header": "Praktisk utveckling",
         "content": "Jag använder AI-verktyg som en del av mitt utvecklingsarbete för research, implementation och iteration, men jag bryr mig fortfarande om ren kod, korrekthet och underhållbarhet."
       },
       "problemSolver": {
@@ -119,10 +119,10 @@
       "description": "Kod och projekt"
     },
     "portfolio": {
-      "label": "Portfolio",
+      "label": "Portfölj",
       "description": "Se mitt arbete"
     },
-    "sendEmail": "Skicka mig ett e-post"
+    "sendEmail": "Skicka mig ett mejl"
   },
   "loading": {
     "messages": [
@@ -136,15 +136,15 @@
       "Slutför upplevelsen...",
       "Nästan redo..."
     ],
-    "terminal": "Karels Portfolio Terminal",
+    "terminal": "Karels portföljterminal",
     "loadingAssets": "Laddar tillgångar..."
   },
   "chatbot": {
     "placeholder": "Fråga om min erfarenhet och färdigheter...",
     "sendButton": "Skicka",
-    "clearTooltip": "Clear Chatbot & Starta Ny Konversation",
+    "clearTooltip": "Rensa chatboten och starta en ny konversation",
     "startNewChat": "Starta Ny Chat",
-    "chatError": "Chatbot Error",
+    "chatError": "Chatbot-fel",
     "initializing": "Initialiserar Karel AI...",
     "sending": "..."
   },
