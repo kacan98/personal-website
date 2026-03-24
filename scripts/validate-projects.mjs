@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter";
 
 const root = process.cwd();
 const baseDir = path.join(root, "data", "projects");
@@ -15,8 +14,11 @@ const warnings = [];
 function readMarkdownFile(filePath) {
   try {
     const raw = fs.readFileSync(filePath, "utf8");
-    const parsed = matter(raw);
-    return { raw, data: parsed.data, content: parsed.content };
+    const match = raw.match(/^export const metadata = (\{[\s\S]*?\});\n\n([\s\S]*)$/);
+    if (!match) {
+      throw new Error("missing metadata export");
+    }
+    return { raw, data: JSON.parse(match[1]), content: match[2] };
   } catch (error) {
     publicProjectErrors.push(`${relative(filePath)}: ${error.message}`);
     return null;
@@ -112,7 +114,7 @@ function validateLocalizedProject(filePath, data) {
   }
 }
 
-const baseFiles = fs.readdirSync(baseDir).filter((file) => file.endsWith(".md"));
+const baseFiles = fs.readdirSync(baseDir).filter((file) => file.endsWith(".mdx"));
 const visibleSlugs = new Set();
 
 for (const file of baseFiles) {
@@ -133,14 +135,14 @@ for (const file of baseFiles) {
 
 for (const localeDir of localeDirs) {
   if (!fs.existsSync(localeDir)) continue;
-  for (const file of fs.readdirSync(localeDir).filter((name) => name.endsWith(".md"))) {
+  for (const file of fs.readdirSync(localeDir).filter((name) => name.endsWith(".mdx"))) {
     const filePath = path.join(localeDir, file);
     const parsed = readMarkdownFile(filePath);
     if (!parsed) continue;
 
     const slug = isNonEmptyString(parsed.data.slug)
       ? parsed.data.slug
-      : path.basename(file, ".md");
+      : path.basename(file, ".mdx");
 
     if (!visibleSlugs.has(slug)) continue;
     if (parsed.data.archived === true || parsed.data.listed === false) continue;

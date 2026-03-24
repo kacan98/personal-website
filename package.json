@@ -17,8 +17,8 @@
     "test:e2e:update-cv-screens": "UPDATE_CV_STORY_SCREENSHOTS=1 playwright test e2e/cv-tailoring.spec.ts",
     "capture:dashboard-screens": "node scripts/capture-dashboard-story-screens.mjs",
     "prepare": "husky",
-    "validate-md": "remark data/ --use remark-lint-frontmatter-schema",
-    "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch",
+    "validate-md": "remark data/",
+    "validate-md:watch": "remark data/ --watch",
     "validate:projects": "node scripts/validate-projects.mjs",
     "analyze": "ANALYZE=true npm run build",
     "generate-embeddings": "node scripts/generate-embeddings.js",
@@ -28,8 +28,7 @@
     "db:studio": "drizzle-kit studio",
     "lint:fix": "eslint . --fix",
     "check:links": "node scripts/check-links.mjs",
-    "check": "npm run validate:projects && npm run type-check && npm run lint && npm run check:links",
-    "generate:signature-icons": "node scripts/generate-email-signature-icons.mjs"
+    "check": "npm run validate:projects && npm run type-check && npm run lint && npm run check:links"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -39,9 +38,12 @@
     "@fontsource/urbanist": "^5.2.6",
     "@fontsource/yeseva-one": "^5.2.6",
     "@imgly/background-removal": "^1.7.0",
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
     "@mui/icons-material": "^7.3.1",
     "@mui/material": "^7.3.1",
     "@mui/material-nextjs": "^7.3.9",
+    "@next/mdx": "^16.2.1",
     "@portabletext/react": "^3.2.1",
     "@react-spring/web": "^10.0.1",
     "@reduxjs/toolkit": "^2.8.2",
@@ -104,8 +106,6 @@
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "remark-cli": "^12.0.1",
-    "remark-frontmatter": "^5.0.0",
-    "remark-lint-frontmatter-schema": "^3.15.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   },

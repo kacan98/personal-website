@@ -42,9 +42,9 @@ export default async function App({ params }: { params: Promise<{ locale: string
     },
   ];
 
-  const selectedWork = getCuratedProjects(
+  const selectedWork = (await getCuratedProjects(
     locale === 'da' || locale === 'sv' ? locale : 'en'
-  ).slice(0, 3);
+  )).slice(0, 3);
 
   const careerTimeline = convertJobsToTimeline(jobsData);
 

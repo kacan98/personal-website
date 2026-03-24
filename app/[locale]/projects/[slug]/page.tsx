@@ -11,50 +11,15 @@ interface ProjectPageProps {
   params: Promise<{ slug: string; locale: string }>;
 }
 
-function renderMarkdownToHtml(content: string): string {
-  let html = content
-    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<figure><img src="$2" alt="$1" loading="lazy" /><figcaption>$1</figcaption></figure>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-  html = html.replace(/(?:^[-*] .+$\n?)+/gm, (match) => {
-    const items = match
-      .split('\n')
-      .filter((line) => line.trim())
-      .map((line) => line.replace(/^[-*] /, ''))
-      .map((item) => `<li>${item}</li>`)
-      .join('');
-    return `<ul>${items}</ul>`;
-  });
-
-  html = html
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block) => {
-      if (/^<(h1|h2|h3|ul|pre|figure)/.test(block)) {
-        return block;
-      }
-      return `<p>${block.replace(/\n/g, '<br />')}</p>`;
-    })
-    .join('');
-
-  return html;
-}
-
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug, locale } = await params;
-  const project = getProjectBySlug(locale, slug);
+  const project = await getProjectBySlug(locale, slug);
 
   if (!project) {
     notFound();
   }
 
+  const ProjectContent = project.Content;
   const links = getProjectActionLinks(project);
   const impact = typeof project.metrics?.impact === "string"
     ? project.metrics.impact
@@ -153,8 +118,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           '& code': { fontFamily: "monospace" },
           '& a': { color: "secondary.main" },
         }}
-        dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(project.content) }}
-      />
+      >
+        <ProjectContent />
+      </Box>
     </Container>
   );
 }

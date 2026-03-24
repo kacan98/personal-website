@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{
+    locale: string;
     slug: string;
   }>;
 }
@@ -21,7 +22,7 @@ export async function generateStaticParams() {
 }
 
 export default async function GalleryRoute({ params }: Props) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const galleries = getGalleries();
   
   if (!galleries || !Array.isArray(galleries)) {
@@ -36,5 +37,5 @@ export default async function GalleryRoute({ params }: Props) {
     notFound();
   }
 
-  return <GalleryPage {...gallery} />;
+  return <GalleryPage {...gallery} locale={locale} />;
 }

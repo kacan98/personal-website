@@ -18,7 +18,7 @@ export interface Story {
 }
 
 export async function getAllStories(): Promise<Story[]> {
-  return getAllProjects("en")
+  return (await getAllProjects("en"))
     .filter((project) => project.content && project.content.trim().length > 0)
     .map((project) => ({
       id: project.slug,
@@ -28,7 +28,7 @@ export async function getAllStories(): Promise<Story[]> {
       category: project.category || "uncategorized",
       archived: project.archived || false,
       metrics: project.metrics,
-      embedding: undefined,
+      embedding: project.embedding,
     }));
 }
 

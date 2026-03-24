@@ -1,12 +1,17 @@
 import React from "react";
 import PageWrapper from "@/components/pages/pageWrapper";
 import { Grid } from "@mui/material";
-import { Gallery, Project } from "@/types";
-import { readMarkdownFiles } from "@/lib/markdown";
+import { Gallery } from "@/types";
+import { getListedProjects } from "@/lib/projects";
 import GalleryComponent from "@/components/pages/galery/galleryComponent";
 
-async function GalleryPage(gallery: Gallery) {
-  const projects = readMarkdownFiles<Project>('data/projects');
+type GalleryPageProps = Gallery & {
+  locale: string;
+};
+
+async function GalleryPage({ locale, ...gallery }: GalleryPageProps) {
+  const projects = await getListedProjects(locale);
+
   return (
     <PageWrapper title={gallery.title} containerMaxWidth="lg">
       <Grid
@@ -17,6 +22,7 @@ async function GalleryPage(gallery: Gallery) {
         direction="row"
       >
         <GalleryComponent
+          locale={locale}
           projects={projects}
           filteringIsEnabled={!!gallery.filteringIsEnabled}
         />

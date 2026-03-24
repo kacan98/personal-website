@@ -3,11 +3,11 @@
  * Run with: node scripts/generate-embeddings.js
  */
 
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import OpenAI from 'openai';
-import dotenv from 'dotenv';
+import fs from "fs";
+import path from "path";
+import matter from "gray-matter";
+import OpenAI from "openai";
+import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
@@ -16,8 +16,38 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const BLOG_DIR = path.join(process.cwd(), 'blog');
-const PROJECT_STORIES_DIR = path.join(process.cwd(), 'project-stories');
+const BLOG_DIR = path.join(process.cwd(), "blog");
+const PROJECT_STORIES_DIR = path.join(process.cwd(), "project-stories");
+
+function extractMdxMetadataAndBody(fileContent) {
+  const match = fileContent.match(/^export const metadata = (\{[\s\S]*?\});\n\n([\s\S]*)$/);
+
+  if (!match) {
+    throw new Error("missing metadata export");
+  }
+
+  return {
+    metadata: JSON.parse(match[1]),
+    body: match[2],
+  };
+}
+
+function serializeMdx(metadata, body) {
+  return `export const metadata = ${JSON.stringify(metadata, null, 2)};\n\n${body.trim()}\n`;
+}
+
+function extractMarkdownFrontmatterAndBody(fileContent) {
+  const parsed = matter(fileContent);
+
+  return {
+    metadata: parsed.data,
+    body: parsed.content,
+  };
+}
+
+function serializeMarkdown(metadata, body) {
+  return matter.stringify(body.trim(), metadata);
+}
 
 async function createEmbedding(text) {
   const response = await openai.embeddings.create({
@@ -28,72 +58,67 @@ async function createEmbedding(text) {
 }
 
 async function generateEmbeddingsForDirectory(directory, directoryName) {
-  console.log(`🚀 Generating embeddings for ${directoryName}...`);
+  console.log(`Generating embeddings for ${directoryName}...`);
 
-  // Check if directory exists
   if (!fs.existsSync(directory)) {
-    console.log(`⚠️  ${directoryName} directory not found, skipping...`);
+    console.log(`${directoryName} directory not found, skipping...`);
     return;
   }
 
-  // Get all markdown files in directory
-  const files = fs.readdirSync(directory).filter(file => file.endsWith('.md'));
+  const extension = directoryName === "project stories" ? ".mdx" : ".md";
+  const files = fs.readdirSync(directory).filter((file) => file.endsWith(extension));
 
   if (files.length === 0) {
-    console.log(`ℹ️  No markdown files found in ${directoryName}`);
+    console.log(`No content files found in ${directoryName}`);
     return;
   }
 
   for (const file of files) {
     const filePath = path.join(directory, file);
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const { data: frontmatter, content } = matter(fileContent);
+    const fileContent = fs.readFileSync(filePath, "utf8");
+    const parsed = file.endsWith(".mdx")
+      ? extractMdxMetadataAndBody(fileContent)
+      : extractMarkdownFrontmatterAndBody(fileContent);
+    const metadata = parsed.metadata;
+    const content = parsed.body;
 
-    // Skip if embedding already exists
-    if (frontmatter.embedding && frontmatter.embedding !== null) {
-      console.log(`✅ ${file} - embedding already exists`);
+    if (metadata.embedding && metadata.embedding !== null) {
+      console.log(`${file} - embedding already exists`);
       continue;
     }
 
-    console.log(`📝 Processing ${file}...`);
+    console.log(`Processing ${file}...`);
 
     try {
-      // Create embedding from full content (excluding frontmatter)
       const embedding = await createEmbedding(content);
-
-      // Update frontmatter with embedding
-      const updatedFrontmatter = {
-        ...frontmatter,
-        embedding: embedding
+      const updatedMetadata = {
+        ...metadata,
+        embedding,
       };
+      const updatedContent = file.endsWith(".mdx")
+        ? serializeMdx(updatedMetadata, content)
+        : serializeMarkdown(updatedMetadata, content);
 
-      // Reconstruct file with updated frontmatter
-      const updatedContent = matter.stringify(content, updatedFrontmatter);
-
-      // Write back to file
       fs.writeFileSync(filePath, updatedContent);
+      console.log(`${file} - embedding generated and saved`);
 
-      console.log(`✅ ${file} - embedding generated and saved`);
-
-      // Small delay to respect rate limits
-      await new Promise(resolve => setTimeout(resolve, 200));
-
+      await new Promise((resolve) => setTimeout(resolve, 200));
     } catch (error) {
-      console.error(`❌ Error processing ${file}:`, error.message);
+      console.error(`Error processing ${file}:`, error.message);
     }
   }
 
-  console.log(`🎉 ${directoryName} embedding generation complete!`);
+  console.log(`${directoryName} embedding generation complete.`);
 }
 
 async function generateEmbeddingsForAllPosts() {
-  await generateEmbeddingsForDirectory(BLOG_DIR, 'blog posts');
-  await generateEmbeddingsForDirectory(PROJECT_STORIES_DIR, 'project stories');
+  await generateEmbeddingsForDirectory(BLOG_DIR, "blog posts");
+  await generateEmbeddingsForDirectory(PROJECT_STORIES_DIR, "project stories");
 }
 
 async function main() {
   if (!process.env.OPENAI_API_KEY) {
-    console.error('❌ OPENAI_API_KEY environment variable is required');
+    console.error("OPENAI_API_KEY environment variable is required");
     process.exit(1);
   }
 

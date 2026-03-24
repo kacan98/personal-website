@@ -7,11 +7,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 type GalleryComponentProps = {
+  locale: string;
   projects: Project[];
   filteringIsEnabled: boolean;
 };
 
 export const GalleryComponent = ({
+  locale,
   projects,
   filteringIsEnabled,
 }: GalleryComponentProps) => {
@@ -73,7 +75,7 @@ export const GalleryComponent = ({
           return (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={project.title}>
               <animated.div style={props}>
-                <Link href={`/project/${project.slug}`}>
+                <Link href={`/${locale}/projects/${project.slug}`}>
                   {card}
                 </Link>
               </animated.div>
