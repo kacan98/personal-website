@@ -5,14 +5,14 @@ import { getBaseMetadata, getPersonSchema, getWebsiteSchema } from "@/lib/site-m
 
 export const metadata: Metadata = getBaseMetadata();
 
-const personSchema = getPersonSchema();
-const websiteSchema = getWebsiteSchema();
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const personSchema = getPersonSchema();
+  const websiteSchema = getWebsiteSchema();
+
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
@@ -24,14 +24,18 @@ export default function RootLayout({
           fontFamily: "Urbanist, sans-serif",
         }}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
+        {Object.keys(personSchema).length > 2 ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+          />
+        ) : null}
+        {Object.keys(websiteSchema).length > 2 ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          />
+        ) : null}
         {children}
         <SpeedInsights />
       </body>

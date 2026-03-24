@@ -29,7 +29,8 @@
     "db:studio": "drizzle-kit studio",
     "lint:fix": "eslint . --fix",
     "check:links": "node scripts/check-links.mjs",
-    "check": "npm run validate:projects && npm run validate:localized-projects && npm run type-check && npm run lint && npm run check:links"
+    "check": "npm run validate:projects && npm run validate:localized-projects && npm run type-check && npm run lint && npm run check:links",
+    "generate:signature-icons": "node scripts/generate-email-signature-icons.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

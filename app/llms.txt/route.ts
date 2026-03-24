@@ -11,17 +11,23 @@ import {
 export const dynamic = "force-static";
 
 export function GET() {
+  const canonicalLines = BUILD_SITE_URL
+    ? [
+        "## Canonical profile",
+        `- ${BUILD_SITE_URL}/profile`,
+        "",
+        "## Key pages",
+        ...getLlmsKeyPages().map((path) => `- ${BUILD_SITE_URL}/en${path}`),
+        "",
+      ]
+    : [];
+
   const content = [
     `# ${SITE_NAME}`,
     "",
     PROFILE_HEADLINE,
     "",
-    "## Canonical profile",
-    `- ${BUILD_SITE_URL}/profile`,
-    "",
-    "## Key pages",
-    ...getLlmsKeyPages().map((path) => `- ${BUILD_SITE_URL}/en${path}`),
-    "",
+    ...canonicalLines,
     "## External",
     `- ${LINKEDIN_URL}`,
     `- ${GITHUB_URL}`,
