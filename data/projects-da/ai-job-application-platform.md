@@ -1,0 +1,86 @@
+---
+title: "En skjult AI-CV-workflow inde i min portfolio"
+description: "En adgangskodebeskyttet CV-editor med AI-tilpasning, diff-review, oversættelse og et browser-til-ansøgning-workflow."
+image: "/images/project-stories/ai-job-application-platform/cv-ai-diff-view.png"
+imageAlt: "AI-diffvisning der viser målrettede CV-ændringer fremhævet direkte i det redigerbare CV"
+featured: true
+listed: true
+order: 4
+category: fullstack
+tags:
+  - Full-Stack
+  - AI
+  - Frontend
+  - Chrome Extension
+metrics:
+  impact:
+    en: Turns a public CV into a private, reviewable workflow for tailoring applications faster
+    da: Gør et offentligt CV til et privat, gennemskueligt workflow til hurtigere målretning af ansøgninger
+    sv: Gör ett offentligt CV till ett privat, granskbart arbetsflöde för snabbare CV-anpassning
+  timeframe: Built from a local-only tool into a production-ready workflow
+liveUrl: /en/cv
+sourceUrl: https://github.com/openclaw/personal-website-3
+---
+# Et privat workflow bag et offentligt CV
+
+Denne del af siden er ikke tænkt til almindelige besøgende.
+
+Det offentlige CV skal forblive roligt, læsbart og nemt at skimme for rekruttere eller kunder. Redigeringsværktøjerne er kun relevante for mig, når jeg målretter en ansøgning, så jeg holdt dem bevidst skjult. Før det her levede i siden, brugte jeg det samme workflow lokalt på min egen maskine. Det fungerede, men det var irriterende: for mange context switches, for meget copy-paste og intet fælles sted, hvor det polerede offentlige CV og det private redigeringsworkflow kunne leve sammen.
+
+Så jeg samlede det i én side. Den offentlige version forbliver ren. Arbejdsværktøjerne er der, når jeg har brug for dem.
+
+## Trin 1: siden ser normal ud, indtil jeg har brug for værkstedet
+
+For en almindelig besøgende er CV'et bare et CV. Det er bevidst.
+
+![Offentlig CV-visning uden synlige redigeringskontroller.](/images/project-stories/ai-job-application-platform/cv-public.png)
+
+Den skjulte del er næsten en lille joke: et klik på sideoverskriften åbner passwordprompten. Jeg kan godt lide det, fordi det holder redigeringsflowet tilgængeligt uden at gøre hele siden til et admin-dashboard.
+
+![Adgangskodebeskyttet indgang til det private CV-workflow.](/images/project-stories/ai-job-application-platform/cv-auth-modal.png)
+
+## Trin 2: den samme side bliver til et redigeringsarbejdsrum
+
+Efter login bliver siden et arbejdsværktøj i stedet for et statisk dokument. Jeg kan stadig se det endelige CV præcis som en recruiter ville læse det, men nu får jeg de værktøjer, der skal til for at målrette det på stedet.
+
+![Redigerbar CV-tilstand med den kompakte handlingsliste synlig til højre.](/images/project-stories/ai-job-application-platform/cv-edit-mode.png)
+
+Det er den vigtigste produktbeslutning i flowet: hold dig tæt på det endelige output. Jeg ønsker ikke et separat adminværktøj med separat preview og endnu et eksporttrin, hvis jeg kan undgå det.
+
+## Trin 3: start i browseren, ikke i en tom tekstboks
+
+Ét indgangspunkt er Chrome-udvidelsen. Målet er enkelt: når jeg finder et relevant jobopslag, skal jeg hurtigt kunne flytte det ind i CV-workflowet i stedet for manuelt at genopbygge konteksten hver gang.
+
+![Chrome extension-flow til at bringe et jobopslag ind i CV-tilpasningsprocessen.](/images/project-stories/ai-job-application-platform/cv-extension-modal.png)
+
+Det lyder småt, men det fjerner en masse friktion. Det bedste workflow er ofte det, der reducerer antallet af faner og beslutninger.
+
+## Trin 4: indsæt jobbeskrivelsen og lad CV'et tilpasse sig
+
+Hvis jeg allerede har rollebeskrivelsen, kan jeg indsætte den direkte i tilpasningsflowet. Interfacet er bevidst simpelt, fordi det vigtige er briefet, ikke en lang liste af indstillinger.
+
+![Modal til at målrette CV'et mod en indsat jobbeskrivelse.](/images/project-stories/ai-job-application-platform/cv-manual-adjustment.png)
+
+Det er her det lokale værktøj blev værd at produktisere. Jeg gjorde allerede det samme manuelt igen og igen. At flytte det ind i siden gjorde processen hurtigere, mere konsistent og nemmere at gennemgå.
+
+## Trin 5: AI må gerne hjælpe, men alle ændringer skal kunne reviewes
+
+Den vigtigste del er ikke at generere ændringer. Det er at gennemgå dem. Efter at CV'et er justeret, kan jeg inspicere præcis hvad der ændrede sig direkte på siden i stedet for at stole på en usynlig omskrivning.
+
+![Diffvisning der viser præcis hvordan AI målrettede CV'et til en rolle.](/images/project-stories/ai-job-application-platform/cv-ai-diff-view.png)
+
+Det er den del, jeg gerne vil have, at en recruiter eller kunde lægger mærke til. AI'en er nyttig, men den behandles ikke som magi. Workflowet holder outputtet transparent, redigerbart og nemt at validere, før jeg bruger det.
+
+## Trin 6: oversættelse bliver i det samme flow
+
+Hvis jeg vil lave en version på et andet sprog, kan jeg gøre det uden at forlade det samme arbejdsrum. Det betyder noget, fordi oversættelse er en reel del af ansøgningsprocessen og ikke bare en eftertanke.
+
+![Oversættelsesmodal bygget direkte ind i CV-workflowet.](/images/project-stories/ai-job-application-platform/cv-translation-modal.png)
+
+Når oversættelsen bliver i samme sted, forbliver workflowet sammenhængende fra start til slut: fang rollen, målret CV'et, gennemgå diffen og forbered den rigtige version til modtageren.
+
+## Hvorfor jeg synes, det er værd at vise
+
+Det her er ikke hele websitet. Det er en meget specifik produktidé skjult inde i det: et privat ansøgningsværksted bygget oven på et offentligt CV.
+
+Jeg synes, det afspejler den slags udvikler, jeg er, på en nyttig måde. Jeg kan lide værktøjer, der løser et reelt tilbagevendende problem, jeg kan lide at holde avancerede funktioner ude af vejen, indtil de er nødvendige, og jeg kan bedst lide AI-funktioner, når de er praktiske, gennemsigtige og forankret i et rigtigt workflow.

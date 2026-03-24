@@ -20,6 +20,7 @@
     "validate-md": "remark data/ --use remark-lint-frontmatter-schema",
     "validate-md:watch": "remark data/ --use remark-lint-frontmatter-schema --watch",
     "validate:projects": "node scripts/validate-projects.mjs",
+    "validate:localized-projects": "node scripts/validate-localized-projects.mjs",
     "analyze": "ANALYZE=true npm run build",
     "generate-embeddings": "node scripts/generate-embeddings.js",
     "db:generate": "drizzle-kit generate",
@@ -28,7 +29,7 @@
     "db:studio": "drizzle-kit studio",
     "lint:fix": "eslint . --fix",
     "check:links": "node scripts/check-links.mjs",
-    "check": "npm run validate:projects && npm run type-check && npm run lint && npm run check:links"
+    "check": "npm run validate:projects && npm run validate:localized-projects && npm run type-check && npm run lint && npm run check:links"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

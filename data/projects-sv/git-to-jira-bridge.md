@@ -2,7 +2,7 @@
 title: "Git-to-Jira Bridge"
 description: "Full-stack tidsspårningssystem som automatiskt synkroniserar utvecklingstimmar från Git commits till Jira worklogs, vilket eliminerar manuell tidsrapportering."
 image: "/images/projects/git-to-jira-bridge.png"
-imageAlt: "Git-to-Jira Bridge dashboard som visar tidsspårning interface"
+imageAlt: "Git-to-Jira Bridge-dashboard som visar gränssnittet för tidsspårning"
 tech: ["TypeScript", "React", "Node.js", "Express", "Git API", "Jira API", "Vercel", "CSV Processing"]
 links:
   - title: "Deployment"
