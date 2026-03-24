@@ -84,6 +84,25 @@ const migrateStoredSignatureData = (parsed: Partial<SignatureData>): Partial<Sig
   companyLogo: migrateStoredAssetUrl(parsed.companyLogo),
 });
 
+const isSignatureAssetPathname = (pathname: string) => (
+  pathname.startsWith("/images/email-signature/")
+  || pathname.startsWith("/images/email-signature-icons/")
+);
+
+const readBlobAsDataUrl = async (blob: Blob) => await new Promise<string>((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    if (typeof reader.result === "string") {
+      resolve(reader.result);
+      return;
+    }
+
+    reject(new Error("Failed to read image blob as data URL"));
+  };
+  reader.onerror = () => reject(reader.error || new Error("Failed to read image blob"));
+  reader.readAsDataURL(blob);
+});
+
 const COLOR_PRESETS = [
   { name: "colorPresetProfessionalBlue", colors: BASE_COLOR_PRESETS[0].colors },
   { name: "colorPresetModernPurple", colors: BASE_COLOR_PRESETS[1].colors },
@@ -158,6 +177,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
   const assetBaseUrl = typeof window !== "undefined"
     ? window.location.origin
     : SIGNATURE_ASSET_HOST;
+  const shouldInlinePreviewHostedAssets = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 
   const generatedHTML = generateSignatureHTML(signatureData);
   const previewSignatureHtml = generatedHTML
@@ -209,6 +229,40 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
       return getClipboardHtml();
     }
 
+    const inlineHostedAssetIfNeeded = async (src: string) => {
+      if (typeof window === "undefined" || !shouldInlinePreviewHostedAssets) {
+        return src;
+      }
+
+      let parsed: URL;
+      try {
+        parsed = new URL(src, window.location.origin);
+      } catch {
+        return src;
+      }
+
+      if (parsed.origin !== window.location.origin || !isSignatureAssetPathname(parsed.pathname)) {
+        return src;
+      }
+
+      try {
+        const response = await fetch(parsed.toString(), { credentials: "include" });
+        if (!response.ok) {
+          return src;
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.startsWith("image/")) {
+          return src;
+        }
+
+        return await readBlobAsDataUrl(await response.blob());
+      } catch (error) {
+        console.warn("Failed to inline hosted signature asset for clipboard:", error);
+        return src;
+      }
+    };
+
     const doc = new DOMParser().parseFromString(getClipboardHtml(), "text/html");
     const images = Array.from(doc.querySelectorAll("img"));
 
@@ -221,7 +275,13 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
       }
 
       if (src.startsWith("/")) {
-        image.setAttribute("src", assetBaseUrl ? `${assetBaseUrl}${src}` : src);
+        const absoluteSrc = assetBaseUrl ? `${assetBaseUrl}${src}` : src;
+        image.setAttribute("src", await inlineHostedAssetIfNeeded(absoluteSrc));
+        continue;
+      }
+
+      if (/^https?:/i.test(src)) {
+        image.setAttribute("src", await inlineHostedAssetIfNeeded(src));
         continue;
       }
 
@@ -239,7 +299,7 @@ export default function EmailGeneratorPageContent({ title }: EmailGeneratorPageC
     }
 
     return doc.body.innerHTML;
-  }, [assetBaseUrl, compressSignatureImage, getClipboardHtml]);
+  }, [assetBaseUrl, compressSignatureImage, getClipboardHtml, shouldInlinePreviewHostedAssets]);
 
   useEffect(() => {
     let cancelled = false;

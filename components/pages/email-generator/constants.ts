@@ -74,6 +74,7 @@ export const SIGNATURE_HOSTED_ASSETS = {
 } as const;
 
 const SOCIAL_PLATFORM_PLACEHOLDERS: Record<SocialIconPlatformName, string> = {
+  Email: "mailto:you@example.com",
   LinkedIn: "https://linkedin.com/in/yourprofile",
   GitHub: "https://github.com/yourusername",
   Twitter: "https://twitter.com/yourusername",
@@ -86,6 +87,17 @@ const SOCIAL_PLATFORM_PLACEHOLDERS: Record<SocialIconPlatformName, string> = {
 
 const defaultPreset = COLOR_PRESETS[0];
 
+const defaultSocialLinks = [
+  settings.contactEmail ? { platform: "Email", url: `mailto:${settings.contactEmail}` } : null,
+  settings.linkedinUrl ? { platform: "LinkedIn", url: settings.linkedinUrl } : null,
+  settings.githubUrl ? { platform: "GitHub", url: settings.githubUrl } : null,
+].filter((link): link is { platform: SocialIconPlatformName; url: string } => Boolean(link))
+  .map((link, index) => ({
+    id: String(index + 1),
+    platform: link.platform,
+    url: link.url,
+  }));
+
 export const SOCIAL_PLATFORMS: SocialPlatform[] = SOCIAL_ICON_PLATFORM_NAMES.map((name) => ({
   name,
   icon: createSocialIconDataUrl(name, defaultPreset.colors.iconColor),
@@ -95,7 +107,7 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = SOCIAL_ICON_PLATFORM_NAMES.map
 export const DEFAULT_SIGNATURE_DATA: SignatureData = {
   name: "Karel Čančara",
   title: "Full Stack Developer",
-  company: "Dynaway",
+  company: "",
   email: settings.contactEmail,
   phone: "",
   website: settings.siteUrl,
@@ -111,10 +123,7 @@ export const DEFAULT_SIGNATURE_DATA: SignatureData = {
   imageFocusY: 50,
   companyLogo: "",
   font: "Arial",
-  socialLinks: [
-    ...(settings.linkedinUrl ? [{ id: "1", platform: "LinkedIn", url: settings.linkedinUrl }] : []),
-    ...(settings.githubUrl ? [{ id: settings.linkedinUrl ? "2" : "1", platform: "GitHub", url: settings.githubUrl }] : []),
-  ],
+  socialLinks: defaultSocialLinks,
   colors: {
     nameColor: defaultPreset.colors.nameColor,
     titleColor: defaultPreset.colors.titleColor,
