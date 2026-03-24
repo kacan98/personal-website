@@ -1,8 +1,9 @@
 ---
 title: "Udviklerdashboard"
 description: "Internt dashboard der samler Jira og GitHub i én visning for aktive opgaver, PR'er, fejlende checks, branch conflicts og opfølgning."
-image: "/images/projects/developer-task-overview-dashboard.svg"
-tech: ["TypeScript", "React", "Node.js", "Internal Tools", "Developer Tools", "APIs"]
+image: "/images/projects/developer-task-overview-dashboard/overview-dashboard.png"
+imageAlt: "Udviklerdashboard der samler Jira-opgaver, pull requests, handlingspunkter og opfølgning i én visning"
+tech: ["Internal Tools", "Developer Tools", "Frontend"]
 links:
   - title: "Project Story"
     url: "/da/projects/git-to-jira-bridge"
@@ -16,16 +17,26 @@ order: 2
 
 ## Overblik
 
-Et personligt internt dashboard bygget for at reducere context switching i udviklingsarbejde ved at samle GitHub- og Jira-opfølgning i ét overblik.
+Dette er et internt dashboard, jeg byggede for at løse et meget praktisk problem: for meget projektstatus var spredt over for mange faner.
 
-## Hvad det viser
+På en almindelig arbejdsdag kan jeg have brug for at vide, hvilken Jira-opgave der er aktiv, hvilken pull request der stadig mangler feedback, hvilken build der er rød, om en branch er klar til en PR, og om noget allerede er merged og venter på test. Al den information fandtes allerede, men den var fragmenteret. Dashboardet samler det ét sted og omsætter det til en kort liste over ting, der kræver handling.
 
-- Aktive Jira-opgaver i gang
-- Åbne pull requests og review-status
-- Fejlende pipelines og checks
-- Branch conflicts og opfølgningspunkter
-- Kommentarer der stadig kræver handling
+![Udviklerdashboard med Jira-opgaver, tilknyttede pull requests og handlingsprioriteter samlet på én side.](/images/projects/developer-task-overview-dashboard/overview-dashboard.png)
+
+## Hvad dashboardet fremhæver først
+
+Toppen af siden er designet til hurtigt at besvare ét spørgsmål: hvad skal jeg tage mig af nu?
+
+I stedet for bare at liste tickets og PR'er fremhæver det det arbejde, der faktisk er blokeret eller venter. Det gælder merge conflicts, fejlende checks, requested changes, opgaver der er klar til test, og branches der findes, men stadig mangler en pull request.
+
+![Handlingsoversigt der viser merge conflicts, requested changes, fejlende checks, testoverdragelse og branches klar til PR.](/images/projects/developer-task-overview-dashboard/overview-action-items.png)
+
+## Hvorfor detaljerne betyder noget
+
+Hvert task-kort kombinerer Jira-opgaven med GitHub-statussen omkring den. Det betyder, at jeg kan se review-status, mængden af kommentarer, seneste aktivitet, fejlende pipeline-trin og branch readiness uden at hoppe mellem værktøjer for manuelt at genskabe sammenhængen.
+
+![Detaljeret opgavekort der viser en pull request med fejl, check-status og nylig review-aktivitet koblet til Jira-opgaven.](/images/projects/developer-task-overview-dashboard/overview-task-card.png)
 
 ## Hvorfor jeg byggede det
 
-Jeg ville have ét sted at se, hvad der stadig krævede handling, i stedet for hele tiden at tjekke flere værktøjer og sider. Det reducerer mentalt overhead, gør det lettere at holde arbejdet i gang og mindsker risikoen for at overse noget vigtigt.
+Jeg ville have én skærm, der reducerer context switching og gør opfølgningsarbejde tydeligt. Det er et udviklerværktøj, men værdien er enkel: mindre overhead, færre tabte overdragelser og en hurtigere vej fra "noget kræver opmærksomhed" til "jeg ved præcis, hvad jeg skal gøre nu."
