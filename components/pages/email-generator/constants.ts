@@ -8,9 +8,12 @@ import {
 } from "./iconSources";
 
 export const STORAGE_KEY = "email-signature-data";
-export const SIGNATURE_ASSET_HOST = (settings.siteUrl || "https://www.cancara.dk").replace(/\/$/, "");
+export const SIGNATURE_ASSET_HOST = settings.siteUrl.replace(/\/$/, "");
 
-export const hostedAssetUrl = (path: string) => `${SIGNATURE_ASSET_HOST}${path.startsWith("/") ? path : `/${path}`}`;
+export const hostedAssetUrl = (path: string) => {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return SIGNATURE_ASSET_HOST ? `${SIGNATURE_ASSET_HOST}${normalizedPath}` : normalizedPath;
+};
 
 export const presetSlug = (presetName: string) => presetName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 

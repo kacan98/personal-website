@@ -1,6 +1,6 @@
 # Personal Portfolio & AI Job Application Platform
 
-**Live Site:** set via `NEXT_PUBLIC_SITE_URL`
+**Live Site:** resolved from Vercel's standard deployment URL variables
 
 My personal portfolio website built with Next.js and TypeScript. This full-stack application combines a professional showcase with AI-powered job application tools.
 
