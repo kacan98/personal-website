@@ -126,9 +126,9 @@ const Options = () => {
         autoOpen: DEFAULT_AUTO_OPEN,
       },
       (items) => {
-        setTargetUrl(items.targetUrl);
-        setDebugLogging(items.debugLogging);
-        setAutoOpen(items.autoOpen);
+        setTargetUrl(String(items.targetUrl));
+        setDebugLogging(Boolean(items.debugLogging));
+        setAutoOpen(Boolean(items.autoOpen));
       }
     );
   }, []);

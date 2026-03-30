@@ -41,6 +41,7 @@ export default defineConfig([
   globalIgnores([
     '.next/**',
     'node_modules/**',
+    'chrome-extension/dist/**',
     'coverage/**',
   ]),
 ]);

@@ -8,27 +8,34 @@ import { z } from 'zod';
  */
 function deepRemoveDefaults(schema: z.ZodTypeAny): z.ZodTypeAny {
   if (schema instanceof z.ZodDefault)
-    return deepRemoveDefaults(schema.removeDefault());
+    return deepRemoveDefaults(schema.removeDefault() as unknown as z.ZodTypeAny);
 
   if (schema instanceof z.ZodObject) {
     const newShape: Record<string, z.ZodTypeAny> = {};
     for (const key in schema.shape) {
       newShape[key] = deepRemoveDefaults(schema.shape[key]);
     }
-    return new z.ZodObject({
-      ...schema._def,
-      shape: () => newShape,
-    }) as z.ZodTypeAny;
+
+    const objectSchema = z.object(newShape);
+    const unknownKeys = (schema as { _def?: { unknownKeys?: string } })._def?.unknownKeys;
+
+    if (unknownKeys === 'strict')
+      return objectSchema.strict();
+
+    if (unknownKeys === 'passthrough')
+      return objectSchema.passthrough();
+
+    return objectSchema;
   }
 
   if (schema instanceof z.ZodArray)
-    return z.ZodArray.create(deepRemoveDefaults(schema.element));
+    return z.array(deepRemoveDefaults(schema.element as unknown as z.ZodTypeAny));
 
   if (schema instanceof z.ZodOptional)
-    return z.ZodOptional.create(deepRemoveDefaults(schema.unwrap()));
+    return deepRemoveDefaults(schema.unwrap() as unknown as z.ZodTypeAny).optional();
 
   if (schema instanceof z.ZodNullable)
-    return z.ZodNullable.create(deepRemoveDefaults(schema.unwrap()));
+    return deepRemoveDefaults(schema.unwrap() as unknown as z.ZodTypeAny).nullable();
 
   return schema;
 }

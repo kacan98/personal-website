@@ -8,6 +8,16 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './vitest.setup.ts',
+    include: [
+      '__tests__/**/*.test.{ts,tsx}',
+      'app/**/__tests__/**/*.test.{ts,tsx}',
+    ],
+    exclude: [
+      '**/node_modules/**',
+      '.next/**',
+      'e2e/**',
+      'playwright.config.ts',
+    ],
   },
   resolve: {
     alias: {

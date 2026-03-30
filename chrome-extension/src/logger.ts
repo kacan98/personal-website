@@ -9,7 +9,7 @@ class CVTailorLogger {
     // Load debug setting from storage
     try {
       const result = await chrome.storage.sync.get({ debugLogging: DEFAULT_DEBUG_LOGGING });
-      this.debugEnabled = result.debugLogging;
+      this.debugEnabled = Boolean(result.debugLogging);
     } catch {
       // Fallback for content scripts that can't access chrome.storage directly
       this.debugEnabled = DEFAULT_DEBUG_LOGGING;

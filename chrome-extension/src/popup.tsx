@@ -194,7 +194,15 @@ const Popup = () => {
             type: "normal",
           });
 
+          if (!newWindowDetails) {
+            return;
+          }
+
           const newWindowId = newWindowDetails.id;
+          if (newWindowId == null) {
+            return;
+          }
+
           // Open CV tool using the configured URL
           await chrome.tabs.create({
             url: `${targetUrl}/cv/${jobId}`,
@@ -256,8 +264,11 @@ const Popup = () => {
         autoOpen: DEFAULT_AUTO_OPEN
       },
       (items) => {
-        setTargetUrl(items.targetUrl);
-        setAutoOpen(items.autoOpen);
+        const resolvedTargetUrl = String(items.targetUrl);
+        const resolvedAutoOpen = Boolean(items.autoOpen);
+
+        setTargetUrl(resolvedTargetUrl);
+        setAutoOpen(resolvedAutoOpen);
 
         // Only after URL is loaded, check for page text and auto-navigate
         const checkForText = (retryCount = 0) => {
@@ -289,20 +300,20 @@ const Popup = () => {
                 console.log("Popup: Extracted selectedText:", selectedText ? `${selectedText.length} characters` : "none");
                 console.log("Popup: First 100 chars:", selectedText ? selectedText.substring(0, 100) : "N/A");
 
-                if (selectedText && selectedText.length > 0) {
+                  if (selectedText && selectedText.length > 0) {
                   console.log("Popup: Setting page text with", selectedText.length, "characters");
                   setPageText(selectedText);
                   console.log("Popup: State should be updated now");
 
                   // Only auto-open if the setting is enabled
-                  if (items.autoOpen) {
+                  if (resolvedAutoOpen) {
                     console.log("Popup: Auto-open is enabled, opening CV tool");
                     // Store job description and URL
                     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
                       const currentTabUrl = tabs[0]?.url || '';
 
                       chrome.storage.local.set({
-                        [jobIdRef.current]: {
+                        [jobId]: {
                           description: selectedText,
                           url: currentTabUrl
                         }
@@ -314,10 +325,18 @@ const Popup = () => {
                             type: "normal",
                           });
 
+                          if (!newWindowDetails) {
+                            return;
+                          }
+
                           const newWindowId = newWindowDetails.id;
+                          if (newWindowId == null) {
+                            return;
+                          }
+
                           // Open CV tool using the configured URL from settings
                           await chrome.tabs.create({
-                            url: `${items.targetUrl}/cv/${jobIdRef.current}`,
+                            url: `${resolvedTargetUrl}/cv/${jobId}`,
                             windowId: newWindowId,
                           });
                         }

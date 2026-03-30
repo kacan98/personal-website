@@ -1,5 +1,11 @@
 import { logger } from "./logger";
 
+declare global {
+  interface Window {
+    __cvTailorInjected?: boolean;
+  }
+}
+
 // Check if already injected to prevent multiple injections in same context
 if (window.__cvTailorInjected) {
   // Don't log here as it would be spammy
@@ -10,7 +16,7 @@ if (window.__cvTailorInjected) {
 
   // Initialize logger and check debug setting
   chrome.storage.sync.get({ debugLogging: false }, (result) => {
-    logger.setDebugMode(result.debugLogging);
+    logger.setDebugMode(Boolean(result.debugLogging));
     logger.log(`Content script loaded [${scriptId}] in frame: ${frameUrl}`);
   });
 

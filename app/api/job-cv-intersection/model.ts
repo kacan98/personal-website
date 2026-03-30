@@ -18,4 +18,4 @@ export const JobCVIntersectionResponse = z.object({
   rating: z.number(),
 })
 
-export type JobCvIntersectionResponse = typeof JobCVIntersectionResponse._type
+export type JobCvIntersectionResponse = z.infer<typeof JobCVIntersectionResponse>

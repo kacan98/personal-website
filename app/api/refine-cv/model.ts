@@ -6,7 +6,7 @@ export const RefineCvRequest = z.object({
   originalCv: CVSettingsSchema.optional(), // Original CV as baseline (optional - can be omitted to focus on current CV only)
   currentCv: CVSettingsSchema, // Current (potentially modified) CV
   checkedImprovements: z.array(z.string()).optional(), // Selected improvements from position analysis
-  improvementInputs: z.record(z.string()).optional(), // User inputs for specific improvements
+  improvementInputs: z.record(z.string(), z.string()).optional(), // User inputs for specific improvements
   missingSkills: z.string().nullable().optional(), // Skills/experience user has but missing from CV
   otherChanges: z.string().nullable().optional(), // Other specific changes requested
   positionContext: z.string().nullable().optional(), // Optional position context for relevance
