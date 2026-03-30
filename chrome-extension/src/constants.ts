@@ -1,7 +1,9 @@
 import { normalizeTargetUrl } from "./url";
 
 // Default configuration for the extension
-const RAW_DEFAULT_TARGET_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const RAW_DEFAULT_TARGET_URL =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL
+  || "http://localhost:3000";
 
 export const DEFAULT_TARGET_URL = normalizeTargetUrl(RAW_DEFAULT_TARGET_URL);
 export const DEFAULT_DEBUG_LOGGING = false;

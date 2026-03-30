@@ -262,12 +262,13 @@ test.describe("CV tailoring flow", () => {
   test("shows absolute work example URLs in edit mode", async ({ page }) => {
     test.setTimeout(45000);
     await openEditor(page);
-    const siteUrl = await getExpectedSiteUrl(page);
+    const expectedAbsoluteProjectUrl =
+      /https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/en\/projects\/developer-task-overview-dashboard/;
 
-    await expect(page.getByText(`${siteUrl}/en/projects/developer-task-overview-dashboard`).first()).toBeVisible();
+    await expect(page.getByText(expectedAbsoluteProjectUrl).first()).toBeVisible();
 
     const dashboardLinks = page.locator('a[href$="/en/projects/developer-task-overview-dashboard"]');
-    await expect(dashboardLinks.first()).toHaveAttribute("href", `${siteUrl}/en/projects/developer-task-overview-dashboard`);
+    await expect(dashboardLinks.first()).toHaveAttribute("href", expectedAbsoluteProjectUrl);
   });
 
   test("captures the article screenshots from the same mocked workflow", async ({ page }) => {
