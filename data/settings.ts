@@ -27,7 +27,8 @@ function normalizeSiteUrl(value: string) {
 
 function resolveSiteUrl(): string {
   return normalizeSiteUrl(
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
+    || process.env.VERCEL_PROJECT_PRODUCTION_URL
     || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "")
   );
 }
