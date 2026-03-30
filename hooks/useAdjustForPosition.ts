@@ -7,6 +7,16 @@ import {
   StoryRankingResponse
 } from '@/types/adjustment';
 
+const isE2E = process.env.NEXT_PUBLIC_E2E === 'true';
+
+async function waitForStepDelay(ms: number) {
+  if (isE2E || ms <= 0) {
+    return;
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const useAdjustForPosition = ({
   onCvUpdate,
   onMotivationalLetterUpdate,
@@ -59,14 +69,12 @@ export const useAdjustForPosition = ({
     const result: StoryRankingResponse = await response.json();
     setStepCompleted('analyzing');
 
-    // Add delay before moving to next step
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await waitForStepDelay(1000);
 
     setStepActive('ranking');
     setCurrentOperation('Ranking project stories...');
 
-    // Add delay to show ranking step
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await waitForStepDelay(1500);
 
     setRankedStories(result.selectedStories);
     setStepCompleted('ranking');
@@ -133,6 +141,7 @@ export const useAdjustForPosition = ({
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       onError?.(errorMessage);
+      throw err;
     } finally {
       setIsLoading(false);
     }

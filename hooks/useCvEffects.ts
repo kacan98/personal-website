@@ -14,10 +14,12 @@ interface CvEffectsConfig {
   reduxCvProps: CVSettings;
   jobDescription?: string;
   positionDetails: string;
+  shouldAdjustCv: boolean;
   setPositionDetails: (details: string) => void;
   setShouldAdjustCv: (should: boolean) => void;
   snackbarMessage: string | null;
   setCvAdjusted: (adjusted: boolean) => void;
+  setShowDiff: (show: boolean) => void;
   motivationalLetter: MotivationalLetterResponse | null;
   setEditableMotivationalLetter: (letter: MotivationalLetterResponse | null) => void;
   companyName: string | null;
@@ -106,7 +108,7 @@ export function useCvEffects(config: CvEffectsConfig) {
 
   // Auto-adjust CV when position details are available
   useEffect(() => {
-    if (config.positionDetails && config.positionDetails.trim().length > 0) {
+    if (config.shouldAdjustCv && config.positionDetails && config.positionDetails.trim().length > 0) {
       // Wait for auth loading to complete before checking authentication
       if (config.authLoading) {
         return;
@@ -134,10 +136,12 @@ export function useCvEffects(config: CvEffectsConfig) {
       
       config.handleAdjustForPosition(config.positionDetails, config.checked, config.selectedLanguage)
         .finally(() => {
+          config.setShouldAdjustCv(false);
           adjustmentInProgress.current = false;
         });
     }
   }, [
+    config.shouldAdjustCv,
     config.positionDetails,
     config.authLoading,
     config.isAuthenticated,
@@ -145,6 +149,7 @@ export function useCvEffects(config: CvEffectsConfig) {
     config.selectedLanguage,
     config.handleAdjustForPosition,
     config.openModal,
+    config.setShouldAdjustCv,
     config.adjustmentWorkflow.isLoading,
     config.adjustmentWorkflow.resetWorkflow
   ]);
@@ -153,8 +158,9 @@ export function useCvEffects(config: CvEffectsConfig) {
   useEffect(() => {
     if (config.snackbarMessage === 'CV personalized with relevant projects and motivational letter generated successfully!') {
       config.setCvAdjusted(true);
+      config.setShowDiff(true);
     }
-  }, [config.snackbarMessage, config.setCvAdjusted]);
+  }, [config.snackbarMessage, config.setCvAdjusted, config.setShowDiff]);
 
   // Sync motivational letter with editable version
   useEffect(() => {

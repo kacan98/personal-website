@@ -16,30 +16,19 @@ const DEFAULT_PUBLIC_IDENTITY = {
   githubUrl: "https://github.com/kacan98",
 } as const;
 
-function resolveSiteUrl(): string {
-  const explicitSiteUrl =
-    process.env.NEXT_PUBLIC_VERCEL_URL ||
-    process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL ||
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
-    (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : "") ||
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") ||
-    "";
-
-  const normalizeSiteUrl = (value: string) => {
-    const trimmed = value.trim().replace(/\/$/, "");
-    if (!trimmed) {
-      return "";
-    }
-
-    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-  };
-
-  if (explicitSiteUrl) {
-    return normalizeSiteUrl(explicitSiteUrl);
+function normalizeSiteUrl(value: string) {
+  const trimmed = value.trim().replace(/\/$/, "");
+  if (!trimmed) {
+    return "";
   }
 
-  return process.env.NODE_ENV === "development" ? "http://localhost:3000" : "";
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
+function resolveSiteUrl(): string {
+  return normalizeSiteUrl(
+    process.env.NEXT_PUBLIC_SITE_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "")
+  );
 }
 
 export const settings: AppSettings = {
@@ -57,6 +46,22 @@ export const settings: AppSettings = {
 
 export function getSiteHost() {
   return settings.siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
+
+export function toAbsoluteSiteUrl(pathOrUrl: string, baseSiteUrl = settings.siteUrl) {
+  if (!pathOrUrl) {
+    return pathOrUrl;
+  }
+
+  if (/^(?:https?:|mailto:|tel:)/i.test(pathOrUrl)) {
+    return pathOrUrl;
+  }
+
+  if (!baseSiteUrl) {
+    return pathOrUrl;
+  }
+
+  return `${baseSiteUrl}${pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`}`;
 }
 
 export function getMailtoHref() {

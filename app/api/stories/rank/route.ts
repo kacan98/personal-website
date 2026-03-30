@@ -5,7 +5,7 @@ import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
 import { CACHE_CONFIG } from '@/lib/cache-config'
 import { findRelevantStories } from '@/lib/project-stories'
 import { PROJECT_STORIES_PATH } from '@/lib/routes'
-import { getSettings } from '@/data/settings'
+import { settings, toAbsoluteSiteUrl } from '@/data/settings'
 
 export const runtime = 'nodejs';
 
@@ -64,7 +64,6 @@ async function handleStoryRanking(req: Request): Promise<Response> {
 
 async function rankStories(body: { jobDescription: string; maxStories: number }) {
   const openai = getOpenAIClient();
-  const settings = getSettings();
 
   // Get relevant stories for this job
   const relevantStories = await findRelevantStories(body.jobDescription, 8); // Get more for AI to choose from
@@ -127,7 +126,7 @@ Select the most relevant stories (up to ${body.maxStories}) that would strengthe
       tags: story.tags,
       metrics: story.metrics,
       url: `${PROJECT_STORIES_PATH}/${story.id}`,
-      fullUrl: `${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}`,
+      fullUrl: toAbsoluteSiteUrl(`${PROJECT_STORIES_PATH}/${story.id}`, settings.siteUrl),
       content: story.content
     };
   });

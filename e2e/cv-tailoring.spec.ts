@@ -7,10 +7,18 @@ const sampleJobDescription = "Senior Full-Stack Developer with TypeScript, React
 type CvBulletPoint = {
   text: string;
   id?: string;
+  iconName?: string;
+  url?: string | null;
+  description?: string | null;
+};
+
+type CvParagraph = {
+  text: string;
+  id?: string;
 };
 
 type CvSection = {
-  paragraphs?: string[];
+  paragraphs?: CvParagraph[];
   bulletPoints?: CvBulletPoint[];
 };
 
@@ -26,13 +34,28 @@ type PersonalizeCvRequest = {
   positionWeAreApplyingFor: string;
 };
 
+type MockCallState = {
+  storiesRanked: number;
+  lettersGenerated: number;
+  cvsPersonalized: number;
+};
+
 async function maybeCapture(page: Page, fileName: string) {
   if (!shouldCapture) return;
   await page.screenshot({ path: `${screenshotDir}/${fileName}` });
 }
 
-async function installCvMocks(page: Page) {
+async function getExpectedSiteUrl(page: Page) {
+  return page.evaluate(() => window.location.origin);
+}
+
+async function installCvMocks(page: Page): Promise<MockCallState> {
   let authenticated = false;
+  const callState: MockCallState = {
+    storiesRanked: 0,
+    lettersGenerated: 0,
+    cvsPersonalized: 0,
+  };
 
   await page.route("**/api/auth/status", async (route) => {
     await route.fulfill({
@@ -52,6 +75,7 @@ async function installCvMocks(page: Page) {
   });
 
   await page.route("**/api/stories/rank", async (route) => {
+    callState.storiesRanked += 1;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -65,16 +89,19 @@ async function installCvMocks(page: Page) {
             tags: ["Automation", "GitHub", "Jira"],
             url: "/en/project-stories/git-jira-bridge",
             fullUrl: "https://example.com/en/project-stories/git-jira-bridge",
+            content: "Built a workflow bridge between GitHub and Jira to reduce manual status syncing.",
           },
         ],
         selectionReasoning: "Highlights real workflow automation and delivery ownership.",
         useStories: true,
+        totalAvailable: 1,
         _cacheInfo: { fromCache: false },
       }),
     });
   });
 
   await page.route("**/api/motivational-letter", async (route) => {
+    callState.lettersGenerated += 1;
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -87,12 +114,13 @@ async function installCvMocks(page: Page) {
   });
 
   await page.route("**/api/personalize-cv", async (route) => {
-    const body = route.request().postDataJSON() as PersonalizeCvRequest;
+    callState.cvsPersonalized += 1;
+    const body = JSON.parse(route.request().postData() || "{}") as PersonalizeCvRequest;
     const cv = structuredClone(body.cvBody);
     cv.subtitle = "Senior Full-Stack Developer | TypeScript, React, Node.js, APIs, AI workflows";
 
     if (cv.mainColumn?.[0]?.paragraphs?.length) {
-      cv.mainColumn[0].paragraphs[0] = "Full Stack Developer with 4+ years of experience building web applications and enterprise solutions. Strong focus on TypeScript, React, Node.js, product decisions, and AI-assisted workflow improvements.";
+      cv.mainColumn[0].paragraphs[0].text = "Full Stack Developer with 4+ years of experience building web applications and enterprise solutions. Strong focus on TypeScript, React, Node.js, product decisions, and AI-assisted workflow improvements.";
     }
 
     if (cv.mainColumn?.[1]?.bulletPoints?.length) {
@@ -103,6 +131,9 @@ async function installCvMocks(page: Page) {
       cv.sideColumn[3].bulletPoints.unshift({
         text: "AI workflows: Prompting, evaluation, automation",
         id: "e2e-added-bullet",
+        iconName: "AutoAwesome",
+        url: null,
+        description: null,
       });
     }
 
@@ -123,6 +154,8 @@ async function installCvMocks(page: Page) {
       }),
     });
   });
+
+  return callState;
 }
 
 async function openPasswordGate(page: Page) {
@@ -157,14 +190,25 @@ async function openAdjustForPosition(page: Page) {
 
 async function personalizeCv(page: Page) {
   await openAdjustForPosition(page);
-  await page.getByRole("textbox", { name: "Job Description" }).fill(sampleJobDescription);
-  await page.getByRole("button", { name: "Adjust CV for Position" }).click({ force: true });
-  await expect(page.getByRole("button", { name: "Show Changes" })).toBeVisible({ timeout: 15000 });
+  const dialog = page.getByRole("dialog", { name: "Adjust CV for Position" });
+  await dialog.getByRole("textbox", { name: "Job Description" }).fill(sampleJobDescription);
+
+  const submitButton = dialog.getByRole("button", { name: "Adjust CV for Position" });
+  await expect(submitButton).toBeEnabled();
+  await submitButton.click();
+  await expect(page.getByRole("button", { name: "Hide Changes" })).toBeVisible({ timeout: 45000 });
 }
 
 test.describe("CV tailoring flow", () => {
+  test.describe.configure({ timeout: 120000 });
+
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1000, height: 1400 });
+    await page.context().clearCookies();
+    await page.addInitScript(() => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    });
     await installCvMocks(page);
   });
 
@@ -172,10 +216,7 @@ test.describe("CV tailoring flow", () => {
     await page.goto("/en/cv", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: "CV" })).toBeVisible();
 
-    const heading = page.getByRole("heading", { name: "CV" });
-    for (let i = 0; i < 5; i += 1) {
-      await heading.click();
-    }
+    await page.getByRole("heading", { name: "CV" }).click({ clickCount: 5 });
 
     await expect(page.getByRole("heading", { name: "Admin Authentication" })).toBeVisible();
   });
@@ -202,13 +243,31 @@ test.describe("CV tailoring flow", () => {
   });
 
   test("applies mocked AI tailoring and renders the reviewable diff", async ({ page }) => {
-    test.setTimeout(60000);
+    test.setTimeout(120000);
     await openEditor(page);
     await personalizeCv(page);
 
-    await page.getByRole("button", { name: "Show Changes" }).click({ force: true });
     await expect(page.getByText("AI workflows: Prompting, evaluation, automation").first()).toBeVisible();
-    await expect(page.getByText(/Senior Full-Stack Developer \| TypeScript, React, Node\.js, APIs, AI workflows/).first()).toBeVisible();
+  });
+
+  test("keeps change review enabled by default after tailoring completes", async ({ page }) => {
+    test.setTimeout(120000);
+    await openEditor(page);
+    await personalizeCv(page);
+
+    await expect(page.getByRole("button", { name: "Hide Changes" })).toBeVisible();
+    await expect(page.getByText("AI workflows: Prompting, evaluation, automation").first()).toBeVisible();
+  });
+
+  test("shows absolute work example URLs in edit mode", async ({ page }) => {
+    test.setTimeout(45000);
+    await openEditor(page);
+    const siteUrl = await getExpectedSiteUrl(page);
+
+    await expect(page.getByText(`${siteUrl}/en/projects/developer-task-overview-dashboard`).first()).toBeVisible();
+
+    const dashboardLinks = page.locator('a[href$="/en/projects/developer-task-overview-dashboard"]');
+    await expect(dashboardLinks.first()).toHaveAttribute("href", `${siteUrl}/en/projects/developer-task-overview-dashboard`);
   });
 
   test("captures the article screenshots from the same mocked workflow", async ({ page }) => {

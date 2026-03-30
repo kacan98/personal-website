@@ -1,6 +1,7 @@
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import { EditableText, EditableTextExtraProps } from "@/components/editableText";
 import { SUPPORTED_ICONS } from "@/components/icon";
+import { toAbsoluteSiteUrl } from "@/data/settings";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv } from "@/redux/slices/cv";
 import { BulletPoint } from "@/types";
@@ -13,7 +14,8 @@ import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
 const ensureProtocol = (url: string): string => {
     if (!url) return url;
     if (url.startsWith('mailto:')) return url;
-    if (url.startsWith('/') || url.startsWith('#')) return url;
+    if (url.startsWith('#')) return url;
+    if (url.startsWith('/')) return toAbsoluteSiteUrl(url);
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `https://${url}`;
 };

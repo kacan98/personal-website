@@ -18,6 +18,8 @@ interface EventHandlersConfig {
   // State setters
   setLanguage: (lang: string) => void;
   setSnackbarMessage: (msg: string | null) => void;
+  setShowDiff: (show: boolean) => void;
+  setCvAdjusted: (adjusted: boolean) => void;
   setTitleClickedTimes: (count: number) => void;
   setHasManualRefinements: (has: boolean) => void;
   setIsManualAdjustmentMinimized: (minimized: boolean) => void;
@@ -99,6 +101,8 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
 
       try {
         await config.adjustmentWorkflow.startAdjustment(positionDetails, checked, selectedLanguage);
+        config.setCvAdjusted(true);
+        config.setShowDiff(true);
         config.setSnackbarMessage('CV personalized with relevant projects and motivational letter generated successfully!');
       } catch (error) {
         console.error('Error during position adjustment:', error);
@@ -108,7 +112,9 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
   }, [
     config.isAuthenticated,
     config.adjustmentWorkflow,
+    config.setCvAdjusted,
     config.setSnackbarMessage,
+    config.setShowDiff,
     openModal
   ]);
 
