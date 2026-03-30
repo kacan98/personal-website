@@ -271,6 +271,24 @@ test.describe("CV tailoring flow", () => {
     await expect(dashboardLinks.first()).toHaveAttribute("href", expectedAbsoluteProjectUrl);
   });
 
+  test("keeps contact and project links clickable in edit mode", async ({ page }) => {
+    test.setTimeout(45000);
+    await openEditor(page);
+
+    await expect(page.getByRole("link", { name: "Open linkedin.com/in/kcancara link" })).toHaveAttribute(
+      "href",
+      "https://www.linkedin.com/in/kcancara"
+    );
+    await expect(page.getByRole("link", { name: "Open github.com/kacan98 link" })).toHaveAttribute(
+      "href",
+      "https://github.com/kacan98"
+    );
+    await expect(page.getByRole("link", { name: "Open Developer Task Overview Dashboard link" })).toHaveAttribute(
+      "href",
+      /https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/en\/projects\/developer-task-overview-dashboard/
+    );
+  });
+
   test("captures the article screenshots from the same mocked workflow", async ({ page }) => {
     test.skip(!shouldCapture, "Screenshot refresh only runs when explicitly requested.");
     test.setTimeout(120000);
