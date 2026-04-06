@@ -21,7 +21,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `OPENAI_API_KEY= NEXT_PUBLIC_E2E=true NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL=127.0.0.1:${port} npm run dev -- --port ${port}`,
+    // Turbopack currently crashes in this environment with a permission error, so use webpack for e2e.
+    command: `OPENAI_API_KEY= NEXT_PUBLIC_E2E=true NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL=127.0.0.1:${port} npm run dev -- --webpack --port ${port}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

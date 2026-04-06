@@ -11,7 +11,7 @@ interface UseDocumentTitleProps {
 const stepTitles: Record<keyof ProgressSteps, string> = {
   analyzing: '🔍 Analyzing Position...',
   ranking: '📊 Ranking Stories...',
-  personalizingCV: '✨ Personalizing CV...',
+  personalizingCV: '✨ Tailoring CV...',
   generatingLetter: '✍️ Generating Letter...'
 };
 

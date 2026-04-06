@@ -39,6 +39,7 @@ import { useCvPageState } from '@/hooks/useCvPageState';
 import { useCvEventHandlers } from '@/hooks/useCvEventHandlers';
 import { useCvEffects } from '@/hooks/useCvEffects';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import TreeProgress from "@/components/ui/TreeProgress";
 
 export type CvProps = {
   jobDescription?: string;
@@ -62,11 +63,6 @@ const FloatingManualAdjustments = dynamic(
   () => import("./components/FloatingManualAdjustments").then((mod) => mod.FloatingManualAdjustments),
   { ssr: false, loading: () => null }
 );
-
-const TreeProgress = dynamic(() => import("@/components/ui/TreeProgress"), {
-  ssr: false,
-  loading: () => null,
-});
 
 function CvPage({ jobDescription, jobUrl }: CvProps) {
   const t = useTranslations('cv');
@@ -598,7 +594,7 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
           printComponent={
             <>
               {/* AI Introduction in print version */}
-              <Typography variant="caption" sx={{opacity: 0.1, padding: 0, margin: 0}} color='white' fontSize='1px'>
+              <Typography variant="caption" sx={{ padding: 0, margin: 0 }} color='white' fontSize='1px'>
                 {aiIntroduction}
               </Typography>
               <CvPaper
@@ -727,7 +723,14 @@ function CvPage({ jobDescription, jobUrl }: CvProps) {
           open={state.loading || adjustmentWorkflow.isLoading}
         >
           {adjustmentWorkflow.isLoading ? (
-            <TreeProgress steps={adjustmentWorkflow.progressSteps} />
+            <>
+              <TreeProgress steps={adjustmentWorkflow.progressSteps} />
+              {adjustmentWorkflow.currentOperation ? (
+                <Typography variant="body2" sx={{ mt: 2, color: 'rgba(255, 255, 255, 0.8)' }}>
+                  {adjustmentWorkflow.currentOperation}
+                </Typography>
+              ) : null}
+            </>
           ) : (
             <>
               <CircularProgress color="inherit" />

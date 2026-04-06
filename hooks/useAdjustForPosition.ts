@@ -119,12 +119,14 @@ export const useAdjustForPosition = ({
       setIsLoading(true);
       setError(null);
       resetAllSteps();
+      setStepActive('analyzing');
+      setCurrentOperation('Analyzing position requirements...');
 
       // Step 1: Rank stories first
       const stories = await rankStories(positionDetails);
 
       // Step 2: Run CV adjustment and motivational letter generation in parallel
-      setCurrentOperation('Personalizing CV and generating motivational letter...');
+      setCurrentOperation('Tailoring CV and generating motivational letter...');
 
       await Promise.all([
         adjustCv(positionDetails),
@@ -152,7 +154,8 @@ export const useAdjustForPosition = ({
     onCvUpdate,
     onMotivationalLetterUpdate,
     onError,
-    resetAllSteps
+    resetAllSteps,
+    setStepActive
   ]);
 
   const state: AdjustmentWorkflowState = {

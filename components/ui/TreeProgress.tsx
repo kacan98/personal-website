@@ -19,7 +19,7 @@ const TreeProgress: React.FC<TreeProgressProps> = ({ steps }) => {
   const progressSteps: ProgressStep[] = [
     { id: 'analyzing', label: 'Analyzing Position Requirements', status: steps.analyzing },
     { id: 'ranking', label: 'Ranking Project Stories', status: steps.ranking, isChild: true },
-    { id: 'personalizingCV', label: 'Personalizing CV', status: steps.personalizingCV, isChild: true },
+    { id: 'personalizingCV', label: 'Tailoring CV', status: steps.personalizingCV, isChild: true },
     { id: 'generatingLetter', label: 'Generating Motivational Letter', status: steps.generatingLetter, isChild: true },
   ];
 

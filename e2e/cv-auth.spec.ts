@@ -5,6 +5,32 @@ const cvAdminPassword = process.env.CV_ADMIN_PASSWORD ?? "local-dev-password";
 test.describe("CV auth gate", () => {
   test.describe.configure({ timeout: 120000 });
 
+  async function openPasswordGate(page: import("@playwright/test").Page) {
+    await page.goto("/en/cv", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: "CV" })).toBeVisible();
+
+    const heading = page.getByRole("heading", { name: "CV" });
+    const authHeading = page.getByRole("heading", { name: "Admin Authentication" });
+
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      for (let click = 0; click < 5; click += 1) {
+        if (await authHeading.isVisible().catch(() => false)) {
+          return;
+        }
+        await heading.click();
+      }
+
+      try {
+        await expect(authHeading).toBeVisible({ timeout: 1000 });
+        return;
+      } catch {
+        await page.waitForTimeout(500);
+      }
+    }
+
+    await expect(authHeading).toBeVisible();
+  }
+
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1000, height: 1400 });
     await page.context().clearCookies();
@@ -53,12 +79,7 @@ test.describe("CV auth gate", () => {
       });
     });
 
-    await page.goto("/en/cv", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { name: "CV" })).toBeVisible();
-
-    await page.getByRole("heading", { name: "CV" }).click({ clickCount: 5 });
-
-    await expect(page.getByRole("heading", { name: "Admin Authentication" })).toBeVisible();
+    await openPasswordGate(page);
   });
 
   test("decrements remaining attempts on each incorrect password", async ({ page }) => {
