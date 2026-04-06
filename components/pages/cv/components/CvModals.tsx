@@ -136,9 +136,7 @@ export function CvModals({
         _companyName={companyName}
         positionDetails={positionDetails}
         setPositionDetails={setPositionDetails}
-        onAdjustForPosition={(nextPositionDetails: string) =>
-          handleAdjustForPosition(nextPositionDetails, checked, selectedLanguage)
-        }
+        onAdjustForPosition={() => handleAdjustForPosition(positionDetails, checked, selectedLanguage)}
         isMinimized={isManualAdjustmentMinimized}
         onToggleMinimize={() => setIsManualAdjustmentMinimized(!isManualAdjustmentMinimized)}
         otherChanges={manualOtherChanges}

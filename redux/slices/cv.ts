@@ -1,7 +1,6 @@
 import { CVSettings, CvSubSection, BulletPoint } from '@/types'
 import { createSlice } from '@reduxjs/toolkit'
 import { ensureCvIds } from '@/utils/cvIds'
-import { normalizeCvUrls } from '@/utils/normalizeCvUrls'
 
 export type UpdateSectionAction = {
   payload: {
@@ -35,7 +34,7 @@ export const cvSlice = createSlice({
       }
     ) => {
       // Ensure all sections have IDs before storing in Redux
-      const cvWithIds = ensureCvIds(normalizeCvUrls(action.payload));
+      const cvWithIds = ensureCvIds(action.payload);
       state.on = cvWithIds.on
       state.name = cvWithIds.name
       state.subtitle = cvWithIds.subtitle
@@ -51,7 +50,7 @@ export const cvSlice = createSlice({
       }
     ) => {
       // Completely replace the CV data with new language data, ensuring IDs
-      const cvWithIds = ensureCvIds(normalizeCvUrls(action.payload));
+      const cvWithIds = ensureCvIds(action.payload);
       return { ...cvWithIds, hasChanges: false }; // Reset changes when switching language
     },
     updateCv: (state, action: UpdateSectionAction) => {
@@ -141,7 +140,7 @@ export const cvSlice = createSlice({
       }
     ) => {
       // Update CV content but keep hasChanges = true to maintain diff view
-      const cvWithIds = ensureCvIds(normalizeCvUrls(action.payload));
+      const cvWithIds = ensureCvIds(action.payload);
       state.on = cvWithIds.on
       state.name = cvWithIds.name
       state.subtitle = cvWithIds.subtitle

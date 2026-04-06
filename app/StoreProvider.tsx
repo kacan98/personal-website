@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { Provider } from 'react-redux';
 import { makeStore } from '../redux/store';
 import { ensureCvIds } from '@/utils/cvIds';
-import { normalizeCvUrls } from '@/utils/normalizeCvUrls';
 
 
 export default function StoreProvider({
@@ -17,7 +16,7 @@ export default function StoreProvider({
     // Create a new store whenever cvConfig changes (for language switching)
     const store = useMemo(() => {
         // Ensure IDs are present before initializing Redux
-        const cvWithIds = cvConfig ? ensureCvIds(normalizeCvUrls(cvConfig)) : {} as CVSettings;
+        const cvWithIds = cvConfig ? ensureCvIds(cvConfig) : {} as CVSettings;
         return makeStore(cvWithIds);
     }, [cvConfig]);
 

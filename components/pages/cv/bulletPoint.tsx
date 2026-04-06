@@ -1,12 +1,10 @@
 import { ConditionalWrapper } from "@/components/conditionalWrapper";
 import { EditableText, EditableTextExtraProps } from "@/components/editableText";
 import { SUPPORTED_ICONS } from "@/components/icon";
-import { toAbsoluteSiteUrl } from "@/data/settings";
 import { useAppDispatch } from "@/redux/hooks";
 import { updateCv } from "@/redux/slices/cv";
 import { BulletPoint } from "@/types";
 import { Grid, ListItem, ListItemIcon, ListItemText, Box, Typography } from "@mui/material";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import React from "react";
 import { IconPicker } from "./IconPicker";
 import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
@@ -15,8 +13,7 @@ import { BRAND_COLORS, SHAPE_COLORS } from "@/app/colors";
 const ensureProtocol = (url: string): string => {
     if (!url) return url;
     if (url.startsWith('mailto:')) return url;
-    if (url.startsWith('#')) return url;
-    if (url.startsWith('/')) return toAbsoluteSiteUrl(url);
+    if (url.startsWith('/') || url.startsWith('#')) return url;
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `https://${url}`;
 };
@@ -200,27 +197,6 @@ export const CvBulletPoint = React.memo(function CvBulletPoint({
                                             dispatch(updateCv({ query: [...baseQuery, 'url'], newValue: originalBulletPoint.url || "" }));
                                         } : undefined}
                                     />
-                                    {safeUrl && (
-                                        bulletPoint.url?.startsWith("mailto:") ? (
-                                            <a
-                                                href={safeUrl}
-                                                aria-label={`Open ${bulletPoint.text} link`}
-                                                style={{ display: 'inline-flex', alignItems: 'center', color: 'inherit' }}
-                                            >
-                                                <OpenInNewIcon fontSize="inherit" />
-                                            </a>
-                                        ) : (
-                                            <a
-                                                href={safeUrl}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                aria-label={`Open ${bulletPoint.text} link`}
-                                                style={{ display: 'inline-flex', alignItems: 'center', color: 'inherit' }}
-                                            >
-                                                <OpenInNewIcon fontSize="inherit" />
-                                            </a>
-                                        )
-                                    )}
                                 </Box>
                             </Box>
                         )}

@@ -24,7 +24,7 @@ interface ManualAdjustmentModalProps {
   _companyName?: string | null;
   positionDetails: string;
   setPositionDetails: (value: string) => void;
-  onAdjustForPosition: (positionDetails: string) => Promise<void>;
+  onAdjustForPosition: () => Promise<void>;
   isMinimized?: boolean;
   onToggleMinimize?: () => void;
   otherChanges?: string;
@@ -157,19 +157,12 @@ const ManualAdjustmentModal = ({
   }, []);
 
   const handleAdjustForPositionClick = async () => {
-    const nextPositionDetails = localPositionDetails.trim();
-
-    if (!nextPositionDetails) {
+    if (!positionDetails.trim()) {
       return;
     }
 
-    if (positionDetailsDebounceRef.current) {
-      clearTimeout(positionDetailsDebounceRef.current);
-    }
-
-    setPositionDetails(nextPositionDetails);
     onClose();
-    await onAdjustForPosition(nextPositionDetails);
+    await onAdjustForPosition();
   };
 
   const _handleManualRefinement = async () => {

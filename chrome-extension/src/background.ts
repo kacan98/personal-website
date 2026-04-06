@@ -1,5 +1,3 @@
-import { DEFAULT_TARGET_URL } from "./constants";
-
 // Background service worker for Chrome Extension
 
 // On installation, try to detect the domain from where the extension was likely downloaded
@@ -31,7 +29,15 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
       // Fall back to the configured production URL when available, otherwise local dev.
       if (!(await chrome.storage.sync.get('targetUrl')).targetUrl) {
-        await chrome.storage.sync.set({ targetUrl: DEFAULT_TARGET_URL });
+        const fallbackUrl =
+          process.env.NEXT_PUBLIC_VERCEL_URL
+          || process.env.NEXT_PUBLIC_VERCEL_BRANCH_URL
+          || process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
+          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '')
+          || (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : '')
+          || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '')
+          || 'http://localhost:3000';
+        await chrome.storage.sync.set({ targetUrl: fallbackUrl });
       }
     }
   }

@@ -6,7 +6,7 @@ import { withCacheStatus, generateCacheKey } from '@/lib/cache-server'
 import { CACHE_CONFIG } from '@/lib/cache-config'
 import { findRelevantStories } from '@/lib/project-stories'
 import { PROJECT_STORIES_PATH } from '@/lib/routes'
-import { settings, toAbsoluteSiteUrl } from '@/data/settings'
+import { getSettings } from '@/data/settings'
 
 export const runtime = 'nodejs';
 
@@ -61,6 +61,7 @@ async function handleMotivationalLetter(req: Request): Promise<Response> {
 
 async function generateMotivationalLetter(body: MotivationalLetterParams) {
   const openai = getOpenAIClient();
+  const settings = getSettings();
 
   // Get relevant stories for this job
   const relevantStories = await findRelevantStories(body.jobDescription, 5);
@@ -139,6 +140,7 @@ ${body.strongPoints?.length > 0 ? body.strongPoints.join(', ') : 'Whatever fits 
 ${requestedStories.length > 0 ? `DETAILED PROJECT STORIES:
 ${requestedStories.map((storyIndex, i) => {
   const story = relevantStories[storyIndex];
+  const settings = getSettings();
   
   // Extract key facts from the story for accurate summarization
   const storyLines = story.content.split('\n');
@@ -154,7 +156,7 @@ ${story.metrics?.impact ? `Impact: ${story.metrics.impact}` : ''}
 ${story.metrics?.timeframe ? `Timeline: ${story.metrics.timeframe}` : ''}
 ${story.metrics?.usersAffected ? `Users affected: ${story.metrics.usersAffected}` : ''}
 Technologies: ${story.tags.join(', ')}
-Full story URL: ${toAbsoluteSiteUrl(`${PROJECT_STORIES_PATH}/${story.id}`, settings.siteUrl)}
+Full story URL: ${settings.siteUrl}${PROJECT_STORIES_PATH}/${story.id}
 
 KEY FACTS TO USE (only mention these specific details):
 ${keyFacts}

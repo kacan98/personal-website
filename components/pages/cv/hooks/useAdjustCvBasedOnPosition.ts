@@ -80,10 +80,8 @@ export const useAdjustCvBasedOnPosition = ({
   setPositionIntersection,
   setCacheStatus,
 }: AdjustCvBasedOnPositionProps) => {
-  const adjustCvBasedOnPosition = useCallback(async (positionOverride?: string) => {
-    const effectivePositionDetails = positionOverride ?? positionDetails;
-
-    if (!effectivePositionDetails) {
+  const adjustCvBasedOnPosition = useCallback(async () => {
+    if (!positionDetails) {
       throw new Error('Please provide position details');
     }
 
@@ -91,7 +89,7 @@ export const useAdjustCvBasedOnPosition = ({
 
     const cvUpgradeParams: CvUpgradeParams = {
       cvBody: cvProps,
-      positionWeAreApplyingFor: effectivePositionDetails,
+      positionWeAreApplyingFor: positionDetails,
       positionIntersection: positionIntersection ?? undefined,
       positionSummary: positionSummary ?? undefined,
     }
