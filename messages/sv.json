@@ -227,5 +227,19 @@
   },
   "backgroundRemoval": {
     "title": "Bakgrundsborttagning"
+  },
+  "industries": {
+    "overviewEyebrow": "Branschsidor",
+    "overviewTitle": "Fokuserade sidor för branscher som jag tror passar bra för den här typen av arbete",
+    "overviewDescription": "De här sidorna stödjer outreach med konkreta exempel på interna verktyg, arbetsflödesförbättringar och mindre mjukvaruprojekt som verkar relevanta för specifika branscher.",
+    "openPageLabel": "Öppna sida",
+    "selectedWorkLabel": "Se utvalda projekt",
+    "painPointsLabel": "Var friktionen visar sig",
+    "examplesLabel": "Det skulle jag bygga först",
+    "startHereTitle": "Konkreta exempel",
+    "startHereBody": "Det här är den typ av små verktyg eller automatiseringar jag skulle börja med för den här typen av team.",
+    "bridgeBody": "Det här är de återkommande uppgifter som fortfarande kräver manuella uppföljningar; exemplen nedan visar hur jag gör dem mer stabila.",
+    "finalCtaBody": "Om en återkommande process redan känns irriterande räcker det som kontext för ett vettigt första samtal.",
+    "finalCtaTitle": "Prata om ett arbetsflöde"
   }
 }

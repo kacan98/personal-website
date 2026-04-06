@@ -227,5 +227,19 @@
   },
   "backgroundRemoval": {
     "title": "Background Removal"
+  },
+  "industries": {
+    "overviewEyebrow": "Industry pages",
+    "overviewTitle": "Focused pages for industries I think are a strong fit for this kind of work",
+    "overviewDescription": "These pages support outreach with concrete examples of internal tools, workflow fixes, and small software projects that seem relevant for specific industries.",
+    "openPageLabel": "Open page",
+    "selectedWorkLabel": "See selected work",
+    "painPointsLabel": "Where the friction shows up",
+    "examplesLabel": "What I would build first",
+    "startHereTitle": "Concrete examples",
+    "startHereBody": "These are the kinds of small tools or automations I would start with for this kind of team.",
+    "bridgeBody": "These are the recurring tasks that still demand manual follow-up; the examples below show how I would harden them.",
+    "finalCtaBody": "If one repetitive process already feels annoying, that is enough context for a useful first conversation.",
+    "finalCtaTitle": "Talk through one workflow"
   }
 }

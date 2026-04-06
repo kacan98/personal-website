@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
 import { PROJECTS_PATH } from "@/lib/routes";
+import { INDUSTRY_ROUTE_PREFIX, INDUSTRY_PAGE_SLUGS } from "@/lib/industry-pages";
 import { settings } from "@/data/settings";
 
 export const SITE_URL = settings.siteUrl;
@@ -106,7 +107,15 @@ export function getProfileSchema() {
 }
 
 export function getSitemapRoutes(): string[] {
-  const routes = ["", "/about", PROJECTS_PATH, "/cv", "/tools"];
+  const routes = [
+    "",
+    "/about",
+    PROJECTS_PATH,
+    "/cv",
+    "/tools",
+    INDUSTRY_ROUTE_PREFIX,
+    ...INDUSTRY_PAGE_SLUGS.map((slug) => `${INDUSTRY_ROUTE_PREFIX}/${slug}`),
+  ];
 
   if (settings.specialPages?.chatbot) {
     routes.push("/chatbot");
