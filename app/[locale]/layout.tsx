@@ -48,6 +48,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     { name: tNav("projects"), href: `/${locale}${PROJECTS_PATH}` },
     { name: tNav("cv"), href: `/${locale}/cv` },
     { name: tNav("tools"), href: `/${locale}/tools` },
+    { name: tNav("schedule"), href: `/${locale}/schedule` },
   ];
 
   if (settings?.specialPages?.chatbot) {

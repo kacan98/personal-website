@@ -52,16 +52,67 @@ export type NewJobApplication = typeof jobApplications.$inferInsert;
 // Improvement memories table - stores reusable CV improvement descriptions
 export const improvementMemories = personalWebsiteSchema.table('improvement_memories', {
   id: serial('id').primaryKey(),
-  userId: text('user_id').notNull(), // From JWT auth
-  improvementKey: text('improvement_key').notNull(), // e.g., "Docker experience"
-  userDescription: text('user_description').notNull(), // The actual experience description
-  confidence: integer('confidence').notNull().default(1), // How often this is reused
-  usageCount: integer('usage_count').notNull().default(1), // Track reuse count
+  userId: text('user_id').notNull(),
+  improvementKey: text('improvement_key').notNull(),
+  userDescription: text('user_description').notNull(),
+  confidence: integer('confidence').notNull().default(1),
+  usageCount: integer('usage_count').notNull().default(1),
   lastUsed: timestamp('last_used').notNull().defaultNow(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-// Type exports for improvement memories
 export type ImprovementMemory = typeof improvementMemories.$inferSelect;
 export type NewImprovementMemory = typeof improvementMemories.$inferInsert;
+
+// Bookings table - stores actual meeting bookings
+// Note: Meeting types and availability are configured in app/lib/schedule-config.ts
+export const bookings = personalWebsiteSchema.table('bookings', {
+  id: serial('id').primaryKey(),
+  meetingTypeId: text('meeting_type_id').notNull(), // References config, not a FK
+
+  // Attendee information
+  attendeeName: text('attendee_name').notNull(),
+  attendeeEmail: text('attendee_email').notNull(),
+  attendeePhone: text('attendee_phone'),
+  attendeeCompany: text('attendee_company'),
+  meetingTopic: text('meeting_topic'),
+
+  // Meeting details
+  scheduledAt: timestamp('scheduled_at').notNull(),
+  scheduledEndAt: timestamp('scheduled_end_at').notNull(),
+  timezone: text('timezone').notNull().default('UTC'),
+
+  // Google Calendar integration
+  googleCalendarEventId: text('google_calendar_event_id'),
+  googleMeetLink: text('google_meet_link'),
+
+  // Status tracking
+  status: text('status').notNull().default('scheduled').$type<'scheduled' | 'cancelled' | 'completed'>(),
+  cancellationReason: text('cancellation_reason'),
+  cancelledAt: timestamp('cancelled_at'),
+
+  // Unique cancellation token for public cancellation link
+  cancellationToken: text('cancellation_token').notNull().unique(),
+
+  // Timestamps
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export type Booking = typeof bookings.$inferSelect;
+export type NewBooking = typeof bookings.$inferInsert;
+
+// Google Calendar OAuth tokens
+export const googleCalendarTokens = personalWebsiteSchema.table('google_calendar_tokens', {
+  id: serial('id').primaryKey(),
+  accessToken: text('access_token').notNull(),
+  refreshToken: text('refresh_token').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  scope: text('scope').notNull(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export type GoogleCalendarToken = typeof googleCalendarTokens.$inferSelect;
+export type NewGoogleCalendarToken = typeof googleCalendarTokens.$inferInsert;

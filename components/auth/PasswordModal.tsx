@@ -17,11 +17,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 
 interface PasswordModalProps {
-  open: boolean;
-  onClose: () => void;
+  open?: boolean;
+  onClose?: () => void;
+  onSuccess?: () => void;
 }
 
-export default function PasswordModal({ open, onClose }: PasswordModalProps) {
+export default function PasswordModal({ open = true, onClose, onSuccess }: PasswordModalProps): JSX.Element {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +65,8 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps) {
         }
         setError('');
         setRemainingAttempts(undefined);
-        onClose();
+        onSuccess?.();
+        onClose?.();
       } else {
         // Failed - show error
         setError(result.message);
@@ -88,7 +90,7 @@ export default function PasswordModal({ open, onClose }: PasswordModalProps) {
     }
     setError('');
     setRemainingAttempts(undefined);
-    onClose();
+    onClose?.();
   };
 
   return (

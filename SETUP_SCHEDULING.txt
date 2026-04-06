@@ -1,0 +1,56 @@
+SCHEDULING SYSTEM - QUICK SETUP
+================================
+
+1. INSTALL (already done! ✓)
+   npm install date-fns @mui/x-date-pickers
+
+2. SET UP GOOGLE CALENDAR API
+   - Go to: https://console.cloud.google.com/
+   - Enable "Google Calendar API"
+   - Create OAuth 2.0 Client ID
+   - Add redirect: http://localhost:3000/api/calendar/oauth/callback
+   - Copy Client ID & Secret
+
+3. ADD TO .env
+   GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
+   EMAIL_PROVIDER=console
+
+4. DATABASE SETUP (only 2 commands!)
+   npm run db:generate
+   npm run db:push
+
+5. CUSTOMIZE (optional)
+   Edit: app/lib/schedule-config.ts
+   - Meeting types (15/30/60 min)
+   - Your weekly availability (Mon-Fri 9-5 by default)
+   - Buffer time between meetings
+
+6. START
+   npm run dev
+   Visit: /schedule/admin
+   Click "Connect Google Calendar"
+   Done!
+
+NO DATABASE SEEDING NEEDED!
+---------------------------
+Meeting types and availability are in config file - just edit and restart.
+Database only stores actual bookings.
+
+EMAIL NOTIFICATIONS
+-------------------
+Console mode (default): Logs to terminal
+Real emails: Sign up at resend.com, add API key to .env, uncomment code in app/lib/email.ts
+
+WHO GETS EMAILS:
+- Booker: Confirmation at their email
+- You: Google Calendar sends invite
+
+USAGE
+-----
+Public: /schedule
+Admin: /schedule/admin
+Nav link: "Book a Meeting" (already added!)
+
+That's it!
