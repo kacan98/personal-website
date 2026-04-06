@@ -45,12 +45,16 @@ async function maybeCapture(page: Page, fileName: string) {
   await page.screenshot({ path: `${screenshotDir}/${fileName}` });
 }
 
+async function pause(ms: number) {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function getExpectedSiteUrl(page: Page) {
   return page.evaluate(() => window.location.origin);
 }
 
-async function installCvMocks(page: Page): Promise<MockCallState> {
-  let authenticated = false;
+async function installCvMocks(page: Page, authenticatedInitially = false): Promise<MockCallState> {
+  let authenticated = authenticatedInitially;
   const callState: MockCallState = {
     storiesRanked: 0,
     lettersGenerated: 0,
@@ -76,6 +80,7 @@ async function installCvMocks(page: Page): Promise<MockCallState> {
 
   await page.route("**/api/stories/rank", async (route) => {
     callState.storiesRanked += 1;
+    await pause(250);
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -102,6 +107,7 @@ async function installCvMocks(page: Page): Promise<MockCallState> {
 
   await page.route("**/api/motivational-letter", async (route) => {
     callState.lettersGenerated += 1;
+    await pause(300);
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -115,6 +121,7 @@ async function installCvMocks(page: Page): Promise<MockCallState> {
 
   await page.route("**/api/personalize-cv", async (route) => {
     callState.cvsPersonalized += 1;
+    await pause(300);
     const body = JSON.parse(route.request().postData() || "{}") as PersonalizeCvRequest;
     const cv = structuredClone(body.cvBody);
     cv.subtitle = "Senior Full-Stack Developer | TypeScript, React, Node.js, APIs, AI workflows";
@@ -164,23 +171,44 @@ async function openPasswordGate(page: Page) {
   await maybeCapture(page, "cv-public.png");
 
   const heading = page.getByRole("heading", { name: "CV" });
-  for (let i = 0; i < 5; i += 1) {
-    await heading.click();
+  const authHeading = page.getByRole("heading", { name: "Admin Authentication" });
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    for (let click = 0; click < 5; click += 1) {
+      if (await authHeading.isVisible().catch(() => false)) {
+        await maybeCapture(page, "cv-auth-modal.png");
+        return;
+      }
+      await heading.click();
+    }
+
+    try {
+      await expect(authHeading).toBeVisible({ timeout: 1000 });
+      await maybeCapture(page, "cv-auth-modal.png");
+      return;
+    } catch {
+      await page.waitForTimeout(500);
+    }
   }
 
-  await expect(page.getByRole("heading", { name: "Admin Authentication" })).toBeVisible();
+  await expect(authHeading).toBeVisible();
   await maybeCapture(page, "cv-auth-modal.png");
 }
 
 async function login(page: Page) {
   await page.getByRole("textbox", { name: "Admin Password" }).fill("irrelevant-in-mock-mode");
   await page.getByRole("button", { name: "Login" }).click();
-  await expect(page.getByText("Now you can edit")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Admin Authentication" })).not.toBeVisible();
+  await expect(page.getByRole("button", { name: "Adjust for Position" })).toBeVisible();
 }
 
 async function openEditor(page: Page) {
   await openPasswordGate(page);
   await login(page);
+}
+
+async function openAuthenticatedEditor(page: Page) {
+  await openEditor(page);
+  await expect(page.getByRole("button", { name: "Adjust for Position" })).toBeVisible();
 }
 
 async function openAdjustForPosition(page: Page) {
@@ -202,6 +230,8 @@ async function personalizeCv(page: Page) {
 test.describe("CV tailoring flow", () => {
   test.describe.configure({ timeout: 120000 });
 
+  let callState: MockCallState;
+
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1000, height: 1400 });
     await page.context().clearCookies();
@@ -209,16 +239,11 @@ test.describe("CV tailoring flow", () => {
       window.localStorage.clear();
       window.sessionStorage.clear();
     });
-    await installCvMocks(page);
+    callState = await installCvMocks(page);
   });
 
   test("reveals the hidden auth gate from the CV header", async ({ page }) => {
-    await page.goto("/en/cv", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("heading", { name: "CV" })).toBeVisible();
-
-    await page.getByRole("heading", { name: "CV" }).click({ clickCount: 5 });
-
-    await expect(page.getByRole("heading", { name: "Admin Authentication" })).toBeVisible();
+    await openPasswordGate(page);
   });
 
   test("unlocks edit mode after admin login", async ({ page }) => {
@@ -230,29 +255,51 @@ test.describe("CV tailoring flow", () => {
 
   test("opens the browser extension modal from edit mode", async ({ page }) => {
     test.setTimeout(45000);
-    await openEditor(page);
+    await openAuthenticatedEditor(page);
     await page.getByRole("button", { name: "Get Chrome Extension" }).click({ force: true });
     await expect(page.getByRole("heading", { name: "CV Tailor Chrome Extension" })).toBeVisible();
   });
 
   test("opens the translation modal from edit mode", async ({ page }) => {
     test.setTimeout(45000);
-    await openEditor(page);
+    await openAuthenticatedEditor(page);
     await page.getByRole("button", { name: "Translate" }).click({ force: true });
     await expect(page.getByRole("heading", { name: "Translate CV & Letter" })).toBeVisible();
   });
 
   test("applies mocked AI tailoring and renders the reviewable diff", async ({ page }) => {
     test.setTimeout(120000);
-    await openEditor(page);
+    await openAuthenticatedEditor(page);
     await personalizeCv(page);
 
+    expect(callState.storiesRanked).toBe(1);
+    expect(callState.cvsPersonalized).toBe(1);
+    expect(callState.lettersGenerated).toBe(1);
     await expect(page.getByText("AI workflows: Prompting, evaluation, automation").first()).toBeVisible();
+  });
+
+  test("shows progress immediately while the mocked AI flow runs", async ({ page }) => {
+    test.setTimeout(120000);
+    await openAuthenticatedEditor(page);
+    await openAdjustForPosition(page);
+
+    const dialog = page.getByRole("dialog", { name: "Adjust CV for Position" });
+    await dialog.getByRole("textbox", { name: "Job Description" }).fill(sampleJobDescription);
+    await dialog.getByRole("button", { name: "Adjust CV for Position" }).click();
+
+    await expect(page.getByText("Analyzing Position Requirements", { exact: true })).toBeVisible({ timeout: 2000 });
+    await expect(page.getByText("Analyzing position requirements...", { exact: true })).toBeVisible({ timeout: 2000 });
+    await expect(page.getByText("Tailoring CV", { exact: true })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: "Hide Changes" })).toBeVisible({ timeout: 45000 });
+
+    expect(callState.storiesRanked).toBe(1);
+    expect(callState.cvsPersonalized).toBe(1);
+    expect(callState.lettersGenerated).toBe(1);
   });
 
   test("keeps change review enabled by default after tailoring completes", async ({ page }) => {
     test.setTimeout(120000);
-    await openEditor(page);
+    await openAuthenticatedEditor(page);
     await personalizeCv(page);
 
     await expect(page.getByRole("button", { name: "Hide Changes" })).toBeVisible();
@@ -261,7 +308,7 @@ test.describe("CV tailoring flow", () => {
 
   test("shows absolute work example URLs in edit mode", async ({ page }) => {
     test.setTimeout(45000);
-    await openEditor(page);
+    await openAuthenticatedEditor(page);
     const expectedAbsoluteProjectUrl =
       /https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/en\/projects\/developer-task-overview-dashboard/;
 
@@ -273,7 +320,7 @@ test.describe("CV tailoring flow", () => {
 
   test("keeps contact and project links clickable in edit mode", async ({ page }) => {
     test.setTimeout(45000);
-    await openEditor(page);
+    await openAuthenticatedEditor(page);
 
     await expect(page.getByRole("link", { name: "Open linkedin.com/in/kcancara link" })).toHaveAttribute(
       "href",

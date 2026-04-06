@@ -156,7 +156,7 @@ export function useCvEffects(config: CvEffectsConfig) {
 
   // Handle CV adjusted flag
   useEffect(() => {
-    if (config.snackbarMessage === 'CV personalized with relevant projects and motivational letter generated successfully!') {
+    if (config.snackbarMessage === 'CV tailored with relevant projects and motivational letter generated successfully!') {
       config.setCvAdjusted(true);
       config.setShowDiff(true);
     }

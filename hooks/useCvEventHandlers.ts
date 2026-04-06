@@ -20,7 +20,7 @@ interface EventHandlersConfig {
   setSnackbarMessage: (msg: string | null) => void;
   setShowDiff: (show: boolean) => void;
   setCvAdjusted: (adjusted: boolean) => void;
-  setTitleClickedTimes: (count: number) => void;
+  setTitleClickedTimes: React.Dispatch<React.SetStateAction<number>>;
   setHasManualRefinements: (has: boolean) => void;
   setIsManualAdjustmentMinimized: (minimized: boolean) => void;
   setLoggingOut: (loading: boolean) => void;
@@ -75,18 +75,20 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
   // Title click handler for authentication
   const onTitleClicked = useCallback(() => {
     if (!config.isAuthenticated && !config.showPasswordModal) {
-      const newClickCount = config.titleClickedTimes + 1;
-      config.setTitleClickedTimes(newClickCount);
+      config.setTitleClickedTimes((prevCount) => {
+        const newClickCount = prevCount + 1;
 
-      if (newClickCount >= 5) {
-        config.setTitleClickedTimes(0);
-        openModal('password');
-      }
+        if (newClickCount >= 5) {
+          openModal('password');
+          return 0;
+        }
+
+        return newClickCount;
+      });
     }
   }, [
     config.isAuthenticated,
     config.showPasswordModal,
-    config.titleClickedTimes,
     config.setTitleClickedTimes,
     openModal
   ]);
@@ -103,10 +105,10 @@ export function useCvEventHandlers(config: EventHandlersConfig) {
         await config.adjustmentWorkflow.startAdjustment(positionDetails, checked, selectedLanguage);
         config.setCvAdjusted(true);
         config.setShowDiff(true);
-        config.setSnackbarMessage('CV personalized with relevant projects and motivational letter generated successfully!');
+        config.setSnackbarMessage('CV tailored with relevant projects and motivational letter generated successfully!');
       } catch (error) {
         console.error('Error during position adjustment:', error);
-        config.setSnackbarMessage('Error during CV personalization or letter generation');
+        config.setSnackbarMessage('Error during CV tailoring or letter generation');
       }
     }
   }, [
