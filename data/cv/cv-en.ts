@@ -1,5 +1,5 @@
 // Data is loose/partial - Zod will parse and fill in required fields with defaults
-import { getMailtoHref, getSiteHost, settings } from "@/data/settings";
+import { getMailtoHref, getSiteHost, settings, toAbsoluteSiteUrl } from "@/data/settings";
 
 export const cvConfigEn = {
   on: true,
@@ -170,25 +170,25 @@ export const cvConfigEn = {
           iconName: "speed",
           text: "10x Performance Improvement",
           description: "Reduced a production synchronization flow from 20+ minutes to under 2 minutes for a technician-facing enterprise workflow.",
-          url: "/en/projects/10x-performance-improvement"
+          url: toAbsoluteSiteUrl("/en/projects/10x-performance-improvement")
         },
         {
           iconName: "schedule",
           text: "Git-to-Jira Bridge",
           description: "Automated Jira time logging from Git activity to remove repetitive manual reporting and keep worklogs closer to real development flow.",
-          url: "/en/projects/git-to-jira-bridge"
+          url: toAbsoluteSiteUrl("/en/projects/git-to-jira-bridge")
         },
         {
           iconName: "dashboard",
           text: "Developer Task Overview Dashboard",
           description: "Internal dashboard that combines Jira tasks, PRs, failing checks, conflicts, and branch follow-up into one action-oriented view.",
-          url: "/en/projects/developer-task-overview-dashboard"
+          url: toAbsoluteSiteUrl("/en/projects/developer-task-overview-dashboard")
         },
         {
           iconName: "psychology",
           text: "AI Job Application Platform",
           description: "Password-gated CV workflow with AI tailoring, diff review, translation, and a browser-to-application flow for faster customization.",
-          url: "/en/projects/ai-job-application-platform"
+          url: toAbsoluteSiteUrl("/en/projects/ai-job-application-platform")
         }
       ]
     }

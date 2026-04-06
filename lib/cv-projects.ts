@@ -1,3 +1,4 @@
+import { toAbsoluteSiteUrl } from "@/data/settings";
 import { getProjectBySlug } from "@/lib/projects";
 import { CvSection } from "@/types";
 
@@ -49,7 +50,7 @@ function getProjectDisplayData(locale: Locale, projectRef: CuratedProjectRef): P
     return {
       title: projectRef.titleOverride || projectRef.slug,
       description: null,
-      url: `/${locale}/projects/${projectRef.slug}`,
+      url: toAbsoluteSiteUrl(`/${locale}/projects/${projectRef.slug}`),
       iconName: projectRef.iconName,
     };
   }
@@ -62,7 +63,7 @@ function getProjectDisplayData(locale: Locale, projectRef: CuratedProjectRef): P
   return {
     title: projectRef.titleOverride || projectWithCvFields.cvTitle || project.title,
     description: projectWithCvFields.cvDescription || project.description || null,
-    url: `/${locale}/projects/${project.slug}`,
+    url: toAbsoluteSiteUrl(`/${locale}/projects/${project.slug}`),
     iconName: projectRef.iconName,
   };
 }

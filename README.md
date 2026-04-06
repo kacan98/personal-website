@@ -45,4 +45,4 @@ Some features require environment variables to be configured before they can be 
 
 - `OPENAI_API_KEY` for AI-powered routes
 - `JWT_SECRET` and `CV_ADMIN_PASSWORD` for protected CV tooling
-- `NEXT_PUBLIC_SITE_URL` for the canonical public site URL
+- `NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL` (or `VERCEL_PROJECT_PRODUCTION_URL`) for the canonical public site URL in production

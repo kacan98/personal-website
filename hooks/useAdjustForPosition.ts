@@ -7,6 +7,16 @@ import {
   StoryRankingResponse
 } from '@/types/adjustment';
 
+const isE2E = process.env.NEXT_PUBLIC_E2E === 'true';
+
+async function waitForStepDelay(ms: number) {
+  if (isE2E || ms <= 0) {
+    return;
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const useAdjustForPosition = ({
   onCvUpdate,
   onMotivationalLetterUpdate,
@@ -14,7 +24,7 @@ export const useAdjustForPosition = ({
   adjustCvBasedOnPosition,
   getMotivationalLetter
 }: UseAdjustForPositionProps & {
-  adjustCvBasedOnPosition?: () => Promise<unknown>;
+  adjustCvBasedOnPosition?: (positionDetails: string) => Promise<unknown>;
   getMotivationalLetter?: (positionDetails: string, checked: string[], selectedLanguage: string) => Promise<void>;
 } = {}) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,14 +69,12 @@ export const useAdjustForPosition = ({
     const result: StoryRankingResponse = await response.json();
     setStepCompleted('analyzing');
 
-    // Add delay before moving to next step
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await waitForStepDelay(1000);
 
     setStepActive('ranking');
     setCurrentOperation('Ranking project stories...');
 
-    // Add delay to show ranking step
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await waitForStepDelay(1500);
 
     setRankedStories(result.selectedStories);
     setStepCompleted('ranking');
@@ -74,11 +82,11 @@ export const useAdjustForPosition = ({
     return result.selectedStories;
   }, [setStepActive, setStepCompleted]);
 
-  const adjustCv = useCallback(async () => {
+  const adjustCv = useCallback(async (positionDetails: string) => {
     setStepActive('personalizingCV');
 
     if (adjustCvBasedOnPosition) {
-      const result = await adjustCvBasedOnPosition();
+      const result = await adjustCvBasedOnPosition(positionDetails);
       setStepCompleted('personalizingCV');
       return result;
     }
@@ -119,7 +127,7 @@ export const useAdjustForPosition = ({
       setCurrentOperation('Personalizing CV and generating motivational letter...');
 
       await Promise.all([
-        adjustCv(),
+        adjustCv(positionDetails),
         generateMotivationalLetterWrapper(positionDetails, checked, selectedLanguage)
       ]);
 
@@ -133,6 +141,7 @@ export const useAdjustForPosition = ({
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       onError?.(errorMessage);
+      throw err;
     } finally {
       setIsLoading(false);
     }

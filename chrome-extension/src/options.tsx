@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_TARGET_URL, PRESET_URLS, DEFAULT_DEBUG_LOGGING, DEFAULT_AUTO_OPEN } from "./constants";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
+import { normalizeTargetUrl } from "./url";
 
 const styles = {
   container: {
@@ -134,19 +135,23 @@ const Options = () => {
   }, []);
 
   const saveOptions = () => {
+    let normalizedTargetUrl = targetUrl;
+
     // Validate URL
     try {
-      new URL(targetUrl);
+      normalizedTargetUrl = normalizeTargetUrl(targetUrl);
     } catch {
       setStatus("Please enter a valid URL");
       setTimeout(() => setStatus(""), 3000);
       return;
     }
 
+    setTargetUrl(normalizedTargetUrl);
+
     // Save to chrome storage
     chrome.storage.sync.set(
       {
-        targetUrl: targetUrl,
+        targetUrl: normalizedTargetUrl,
         debugLogging: debugLogging,
         autoOpen: autoOpen,
       },
@@ -201,13 +206,10 @@ const Options = () => {
               key={preset.value}
               onClick={() => {
                 setTargetUrl(preset.value);
-                // Auto-save after a short delay to let state update
-                setTimeout(() => {
-                  chrome.storage.sync.set({ targetUrl: preset.value }, () => {
-                    setStatus("Settings saved successfully!");
-                    setTimeout(() => setStatus(""), 3000);
-                  });
-                }, 50);
+                chrome.storage.sync.set({ targetUrl: preset.value }, () => {
+                  setStatus("Settings saved successfully!");
+                  setTimeout(() => setStatus(""), 3000);
+                });
               }}
               style={{
                 padding: "6px 12px",
