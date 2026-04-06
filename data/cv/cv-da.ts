@@ -1,5 +1,5 @@
 // Data is loose/partial - Zod will parse and fill in required fields with defaults
-import { getMailtoHref, getSiteHost, settings, toAbsoluteSiteUrl } from "@/data/settings";
+import { getMailtoHref, getSiteHost, settings } from "@/data/settings";
 
 export const cvConfigDa = {
   on: true,
@@ -165,22 +165,22 @@ export const cvConfigDa = {
         {
           iconName: "speed",
           text: "10x Præstationsforbedring - Reducerede synkroniseringstid fra 20+ min til <2 min",
-          url: toAbsoluteSiteUrl("/da/projects/10x-performance-improvement")
+          url: "/da/projects/10x-performance-improvement"
         },
         {
           iconName: "schedule",
           text: "Git-til-Jira Bro - Sparer ~1 time/måned per udvikler i tidssporing",
-          url: toAbsoluteSiteUrl("/da/projects/git-to-jira-bridge")
+          url: "/da/projects/git-to-jira-bridge"
         },
         {
           iconName: "dashboard",
           text: "Udviklerdashboard - Samler Jira og GitHub i ét overblik for aktive opgaver, PR'er og opfølgning",
-          url: toAbsoluteSiteUrl("/da/projects/git-to-jira-bridge")
+          url: "/da/projects/git-to-jira-bridge"
         },
         {
           iconName: "psychology",
           text: "AI-drevet jobansøgningsplatform - GPT-baseret CV-tilpasning og cover letters",
-          url: toAbsoluteSiteUrl("/da/projects/ai-job-application-platform")
+          url: "/da/projects/ai-job-application-platform"
         }
       ]
     }

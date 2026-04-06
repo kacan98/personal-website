@@ -18,7 +18,7 @@ import LanguageSelector from "@/components/ui/LanguageSelector";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations, useLocale } from 'next-intl';
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 
 type NavLink = {
   name: string;
@@ -34,18 +34,13 @@ const NavBar = ({ navLinks }: TopBarProps) => {
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
-  const hasMounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false
-  );
   const t = useTranslations('navigation');
   const locale = useLocale();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const weAreHome = pathname === "/" || pathname === `/${locale}`;
-  const showMobileLayout = hasMounted ? isMobile : false;
+  const showMobileLayout = isMobile;
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);

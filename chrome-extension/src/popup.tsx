@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { DEFAULT_TARGET_URL, PRESET_URLS, DEFAULT_AUTO_OPEN } from "./constants";
 import { BRAND_COLORS, BACKGROUND_COLORS } from "./colors";
-import { normalizeTargetUrl } from "./url";
 
 console.log("Popup script starting...");
 
@@ -173,7 +172,6 @@ const Popup = () => {
   const [autoOpen, setAutoOpen] = useState(DEFAULT_AUTO_OPEN);
   const [isEditingUrl, setIsEditingUrl] = useState(false);
   const [editingUrl, setEditingUrl] = useState("");
-  const [urlError, setUrlError] = useState("");
   const [jobId] = useState(() => `job-${crypto.randomUUID()}`);
 
   const openCVTool = (textToStore?: string) => {
@@ -209,27 +207,24 @@ const Popup = () => {
 
   const startEditingUrl = () => {
     setEditingUrl(targetUrl);
-    setUrlError("");
     setIsEditingUrl(true);
   };
 
   const saveUrl = () => {
     try {
-      const normalizedTargetUrl = normalizeTargetUrl(editingUrl);
-      chrome.storage.sync.set({ targetUrl: normalizedTargetUrl }, () => {
-        setTargetUrl(normalizedTargetUrl);
-        setEditingUrl(normalizedTargetUrl);
-        setUrlError("");
+      new URL(editingUrl); // Validate URL
+      chrome.storage.sync.set({ targetUrl: editingUrl }, () => {
+        setTargetUrl(editingUrl);
         setIsEditingUrl(false);
       });
     } catch {
-      setUrlError("Enter a valid host or URL");
+      // Invalid URL - show some feedback or just cancel
+      cancelEditingUrl();
     }
   };
 
   const cancelEditingUrl = () => {
     setEditingUrl("");
-    setUrlError("");
     setIsEditingUrl(false);
   };
 
@@ -244,8 +239,6 @@ const Popup = () => {
   const selectPresetUrl = (presetValue: string) => {
     chrome.storage.sync.set({ targetUrl: presetValue }, () => {
       setTargetUrl(presetValue);
-      setEditingUrl(presetValue);
-      setUrlError("");
     });
   };
 
@@ -309,7 +302,7 @@ const Popup = () => {
                       const currentTabUrl = tabs[0]?.url || '';
 
                       chrome.storage.local.set({
-                        [jobId]: {
+                        [jobIdRef.current]: {
                           description: selectedText,
                           url: currentTabUrl
                         }
@@ -324,7 +317,7 @@ const Popup = () => {
                           const newWindowId = newWindowDetails.id;
                           // Open CV tool using the configured URL from settings
                           await chrome.tabs.create({
-                            url: `${items.targetUrl}/cv/${jobId}`,
+                            url: `${items.targetUrl}/cv/${jobIdRef.current}`,
                             windowId: newWindowId,
                           });
                         }
@@ -396,11 +389,6 @@ const Popup = () => {
           </span>
         )}
       </div>
-      {urlError && (
-        <div style={{ marginTop: "6px", fontSize: "10px", color: "#ff8a80" }}>
-          {urlError}
-        </div>
-      )}
       <div style={styles.presetContainer}>
         {PRESET_URLS.map((preset) => (
           <button
