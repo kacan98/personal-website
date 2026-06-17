@@ -1,5 +1,5 @@
 ---
-title: "AI Entreprenørstyring til D365 F&O"
+title: "AI Agent til Entreprenørstyring i D365 F&O"
 slug: "ai-contractor-management"
 description: "AI-drevet email-integration, der lader entreprenører interagere med D365 Finance & Operations ved hjælp af naturligt sprog, med streng rettighedskontrol og gennemsigtige revisionsspor."
 image: "/images/projects/ai-contractor-management.jpg"

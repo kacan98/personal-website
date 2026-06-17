@@ -1,5 +1,5 @@
 ---
-title: "AI Entreprenörshantering för D365 F&O"
+title: "AI Agent til Entreprenörshantering i D365 F&O"
 slug: "ai-contractor-management"
 description: "AI-driven e-postintegration som låter entreprenörer interagera med D365 Finance & Operations med naturligt språk, med strikt behörighetskontroll och transparenta revisionsspår."
 image: "/images/projects/ai-contractor-management.jpg"
@@ -8,7 +8,7 @@ tech: ["AI", "AI Agents", "D365 F&O", "Enterprise Systems"]
 featured: true
 listed: true
 order: 2
-date: 2026-01-15
+date: 2026-06-17
 ---
 
 <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="100%" height="450" src="https://embed.figma.com/board/ZGq40iH5ncosiXILccQRhQ/Dynaway-Contractor-Management-AI-Agent?embed-host=share" allowfullscreen></iframe>
