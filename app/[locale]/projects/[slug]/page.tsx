@@ -6,45 +6,12 @@ import CodeIcon from "@mui/icons-material/Code";
 import { getContainerSx } from "@/app/spacing";
 import { BRAND_COLORS } from "@/app/colors";
 import { getProjectActionLinks, getProjectBySlug } from "@/lib/projects";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface ProjectPageProps {
   params: Promise<{ slug: string; locale: string }>;
-}
-
-function renderMarkdownToHtml(content: string): string {
-  let html = content
-    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<figure><img src="$2" alt="$1" loading="lazy" /><figcaption>$1</figcaption></figure>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-  html = html.replace(/(?:^[-*] .+$\n?)+/gm, (match) => {
-    const items = match
-      .split('\n')
-      .filter((line) => line.trim())
-      .map((line) => line.replace(/^[-*] /, ''))
-      .map((item) => `<li>${item}</li>`)
-      .join('');
-    return `<ul>${items}</ul>`;
-  });
-
-  html = html
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block) => {
-      if (/^<(h1|h2|h3|ul|pre|figure)/.test(block)) {
-        return block;
-      }
-      return `<p>${block.replace(/\n/g, '<br />')}</p>`;
-    })
-    .join('');
-
-  return html;
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
@@ -114,20 +81,17 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           color: "text.primary",
           '& h1, & h2, & h3': {
             lineHeight: 1.2,
-            mt: 4,
-            mb: 2,
+            mt: 3,
+            mb: 1.5,
             fontWeight: 700,
           },
           '& h1': { fontSize: "2rem" },
           '& h2': { fontSize: "1.5rem" },
           '& h3': { fontSize: "1.2rem" },
-          '& p': { mb: 2, lineHeight: 1.8, color: "text.secondary" },
-          '& ul': { mb: 3, pl: 3, color: "text.secondary" },
-          '& li': { mb: 1, lineHeight: 1.8 },
-          '& figure': {
-            my: 4,
-            mx: 0,
-          },
+          '& p': { mb: 2, lineHeight: 1.7, color: "text.secondary" },
+          '& ul': { mb: 2, pl: 3, color: "text.secondary" },
+          '& ol': { mb: 2, pl: 3, color: "text.secondary" },
+          '& li': { mb: 0.5, lineHeight: 1.7 },
           '& img': {
             width: "100%",
             height: "auto",
@@ -135,12 +99,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             borderRadius: 2,
             border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-          },
-          '& figcaption': {
-            mt: 1,
-            fontSize: "0.95rem",
-            lineHeight: 1.6,
-            color: "text.secondary",
+            my: 3,
           },
           '& pre': {
             p: 2,
@@ -150,11 +109,34 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             border: "1px solid rgba(255,255,255,0.08)",
             mb: 3,
           },
-          '& code': { fontFamily: "monospace" },
-          '& a': { color: "secondary.main" },
+          '& code': {
+            fontFamily: "monospace",
+            fontSize: "0.9em",
+          },
+          '& a': {
+            color: "secondary.main",
+            textDecoration: "none",
+            '&:hover': {
+              textDecoration: "underline",
+            },
+          },
+          '& strong': { fontWeight: 700 },
+          '& em': { fontStyle: "italic" },
+          '& iframe': {
+            width: "100%",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 2,
+            mb: 3,
+          },
         }}
-        dangerouslySetInnerHTML={{ __html: renderMarkdownToHtml(project.content) }}
-      />
+      >
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+        >
+          {project.content}
+        </ReactMarkdown>
+      </Box>
     </Container>
   );
 }

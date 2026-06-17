@@ -42,5 +42,6 @@ export default defineConfig([
     '.next/**',
     'node_modules/**',
     'coverage/**',
+    'chrome-extension/dist/**',
   ]),
 ]);

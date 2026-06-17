@@ -1,0 +1,38 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#1a1a2e"/>
+
+  <!-- Email icon (left) -->
+  <rect x="30" y="100" width="80" height="60" rx="4" fill="#16213e" stroke="#00d4ff" stroke-width="2"/>
+  <path d="M 40 110 L 70 130 L 100 110" stroke="#00d4ff" stroke-width="2" fill="none"/>
+  <text x="70" y="155" font-family="Arial" font-size="12" fill="#00d4ff" text-anchor="middle">Email</text>
+
+  <!-- Arrow 1 -->
+  <path d="M 120 130 L 160 130" stroke="#00d4ff" stroke-width="2"/>
+  <path d="M 155 125 L 160 130 L 155 135" fill="#00d4ff"/>
+
+  <!-- AI Agent (center) -->
+  <circle cx="200" cy="130" r="35" fill="#16213e" stroke="#00d4ff" stroke-width="2"/>
+  <text x="200" y="135" font-family="Arial" font-size="20" fill="#00d4ff" text-anchor="middle">AI</text>
+  <text x="200" y="180" font-family="Arial" font-size="12" fill="#00d4ff" text-anchor="middle">Agent</text>
+
+  <!-- Arrow 2 -->
+  <path d="M 240 130 L 280 130" stroke="#00d4ff" stroke-width="2"/>
+  <path d="M 275 125 L 280 130 L 275 135" fill="#00d4ff"/>
+
+  <!-- D365 (right) -->
+  <rect x="290" y="100" width="80" height="60" rx="4" fill="#16213e" stroke="#00d4ff" stroke-width="2"/>
+  <text x="330" y="125" font-family="Arial" font-size="14" fill="#00d4ff" text-anchor="middle">D365</text>
+  <text x="330" y="143" font-family="Arial" font-size="12" fill="#00d4ff" text-anchor="middle">F&O</text>
+  <text x="330" y="180" font-family="Arial" font-size="10" fill="#00d4ff" text-anchor="middle">Work Orders</text>
+
+  <!-- Permissions box (bottom) -->
+  <rect x="140" y="220" width="120" height="60" rx="4" fill="#16213e" stroke="#ff6b6b" stroke-width="2"/>
+  <text x="200" y="238" font-family="Arial" font-size="11" fill="#ff6b6b" text-anchor="middle">Limited to 3 actions:</text>
+  <text x="200" y="252" font-family="Arial" font-size="9" fill="#ff6b6b" text-anchor="middle">• Update status</text>
+  <text x="200" y="264" font-family="Arial" font-size="9" fill="#ff6b6b" text-anchor="middle">• Add remarks</text>
+  <text x="200" y="276" font-family="Arial" font-size="9" fill="#ff6b6b" text-anchor="middle">• Save attachments</text>
+
+  <!-- Arrow pointing to permissions -->
+  <path d="M 200 165 L 200 210" stroke="#ff6b6b" stroke-width="1.5" stroke-dasharray="4,4"/>
+</svg>
